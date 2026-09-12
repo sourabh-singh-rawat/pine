@@ -82,7 +82,6 @@
     "@changesets/cli": "^3.0.2",
     "@redocly/cli": "^2.40.0",
     "@types/node": "^26.1.1",
-    "depcheck": "^1.4.7",
     "js-tiktoken": "^1.0.21",
     "knip": "6.35.1",
     "oxfmt": "^0.60.0",
