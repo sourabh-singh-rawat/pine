@@ -2,30 +2,32 @@
 name: http-route
 description: >
   Fastify HTTP routes via @pine/server: HttpRoute, operationId, TypeBox schemas,
-  thin handlers. Triggers: HttpRoute, operationId, OpenAPI route, routes/index.
+  thin handlers. Use when adding or changing a REST/OpenAPI route.
+when-to-use: >
+  HttpRoute, operationId, OpenAPI route, TypeBox schema, routes/index
 ---
 
 # HTTP route
 
-REST / OpenAPI transport. Canonical: `authorization-service` `features/authorization/routes`, `identity-service` `features/verification`, `attachment-service` `features/attachment-upload`.
-
-Domain logic: `service`. Feature slice: `service-feature`. GraphQL counterpart: `graphql`. Naming: `AGENTS.md`.
+REST / OpenAPI transport. Canonical: `authorization-service` `features/authorization/routes`. Also: `identity-service` `features/verification`, `attachment-service` `features/attachment-upload`. Related: `service`, `service-feature`, `graphql`, `identity-auth`, `schema-codegen`.
 
 ## Layout
 
 ```text
 features/<feature>/
   routes/
-    checkRelationship.ts   # one operation per file
-    index.ts               # export const <feature>Routes: HttpRoute[]
+    checkRelationship.ts
+    index.ts
   schemas/
     CheckRelationshipBodySchema.ts
     CheckRelationshipResponseSchema.ts
     index.ts
-services/<svc>/src/routes/index.ts   # spread feature route arrays
+services/<svc>/src/routes/index.ts
 ```
 
-## One public identifier
+One operation per route file. Feature barrel: `export const <feature>Routes: HttpRoute[]`. Service `src/routes/index.ts` spreads feature arrays.
+
+## Naming
 
 Filename = exported const = `operationId`. Client codegen uses that name.
 
@@ -36,11 +38,11 @@ Filename = exported const = `operationId`. Client codegen uses that name.
 | `operationId` | `"checkRelationship"` |
 | URL | namespaced path is separate (`/authorization/checkRelationship`) |
 
-Do not invent a second name (`consent.ts` + `operationId: "getConsentChallenge"`). Prefer `getConsentChallenge` for file, export, and `operationId`.
-
-New reads prefer `get*` verbs when the operation is a fetch (`getAttachmentContent`, `getIdentityFromSession`).
+Do not invent a second name (`consent.ts` + `operationId: "getConsentChallenge"`). New reads prefer `get*` (`getAttachmentContent`, `getIdentityFromSession`).
 
 ## Recipe
+
+TypeBox schemas under `features/<feature>/schemas/`; `{ additionalProperties: false }` on bodies. Validate body/query; throw feature errors on bad input. Handler: map args → **one** service method → `json(response)` / cookies. Authenticated routes read `request.identity` or throw `UnauthorizedError`. Public routes need OpenAPI tags/summary/description.
 
 ```ts
 export const checkRelationship: HttpRoute = {
@@ -75,19 +77,15 @@ export const authorizationRoutes: HttpRoute[] = [
 ];
 ```
 
-Register in the service `src/routes/index.ts` (spread into the server route list).
+## Anti-patterns
 
-## Rules
-
-- TypeBox schemas under `features/<feature>/schemas/`; `{ additionalProperties: false }` on bodies
-- Validate body/query in the handler (or rely on framework schema); throw feature errors on bad input
-- Handler stays thin: map args → **one** service method → `json(response)` / cookies
-- Call short service verbs (`service.create`, `service.hasRelationship`) — do not re-implement domain logic
-- Auth identity from `request.identity` when the route is authenticated; throw `UnauthorizedError` if missing
-- OpenAPI tags/summary/description required for public routes
+- File name ≠ export ≠ `operationId`
+- Domain logic or transactions in the handler
+- Per-package env files (`docker-infra`: root `.env` only)
+- Mutating routes without TypeBox body schemas
 
 ## Done when
 
 - File = export = `operationId`
 - Feature `*Routes` array + service `routes/index.ts` wired
-- Schemas colocated; handler calls the feature service only
+- Handler calls the feature service only
