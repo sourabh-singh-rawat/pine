@@ -69,7 +69,7 @@ EOF
 - Never hand-edit `**/__generated__/**` or `api-gateway/dist/*`.
 - Do not search or edit `infra/data/` or `node_modules/` for product work.
 - Use current packages only: `@pine/server`, `@pine/events` — not `server-core` / `event-bus`.
-- Load the matching skill under `.grok/skills/` (`orientation`, `service-feature`, `repository`, `service`, `graphql`, `http-route`, `events`, `web-feature`, `material-design-3`, `changeset-release`, `docker-infra`, `k8s`, `observability`, `dev-loop`). Skill folders have no `pine-` prefix.
+- Load the matching skill under `.grok/skills/` (`orientation`, `service-feature`, `repository`, `drizzle`, `service`, `graphql`, `http-route`, `events`, `outbox`, `workers`, `authorization`, `identity-auth`, `testing`, `web-feature`, `schema-codegen`, `shared-packages`, `material-design-3`, `changeset-release`, `docker-infra`, `k8s`, `observability`, `dev-loop`). Skill folders have no `pine-` prefix.
 - **No comments in code.** Do not add `//`, `/* */`, or JSDoc unless the user explicitly asks. Prefer clear names and structure over explanatory comments.
 - **Standalone functions are arrows; class methods are not.** Module-level and other standalone functions use `const name = (…) => { … }` / `const name = async (…) => { … }` — never `function` declarations. Inside classes, use normal methods (`method(…) { … }` / `async method(…) { … }`), not arrow property methods. Constructors stay as `constructor`. Interfaces/types express callables as properties (`name: (arg: T) => R`), not method syntax.
 - **Public members first.** In classes and modules, put the constructor and public methods/functions above private/protected helpers. Keep the public surface at the top of the type or file.

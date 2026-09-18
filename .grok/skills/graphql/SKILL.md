@@ -1,36 +1,35 @@
 ---
 name: graphql
 description: >
-  Pothos GraphQL via @pine/server: inputs/objects/resolvers, schema compose,
-  supergraph. Triggers: CreateIssueInput, mutation, query, schemas:compose, supergraph.
+  Pothos GraphQL via @pine/server: inputs, objects, resolvers, schema compose.
+  Use when adding or changing a GraphQL field or federated compose step.
+when-to-use: >
+  Pothos, CreateWorkspaceInput, builder.mutationFields, getWorkspace,
+  schemas:compose, supergraph
 ---
 
-# GraphQL (Pothos)
+# GraphQL
 
-- Builder: `builder` from `@pine/server` (scalars: `DateTimeISO`, `UUID`, `EmailAddress`)
-- Service emits `dist/schema.graphql` on start/build
-- Compose: `pnpm schemas:compose` → `services/api-gateway/dist/supergraph.graphql`
-- Clients: `apps/*/src/graphql/**/*.gql` + app `gen:gql` (`web-feature`)
-- Layers: `repository`, `service`, slice wiring `service-feature`, HTTP counterpart `http-route`, naming `AGENTS.md`
+Pothos `builder` from `@pine/server` (scalars: `DateTimeISO`, `UUID`, `EmailAddress`). Canonical: `platform-service` `features/workspaces`. Related: `service`, `service-feature`, `web-feature`, `http-route`, `schema-codegen`.
 
-Canonical field naming: `platform-service` `features/workspaces`.
+Service emits `dist/schema.graphql`. Compose: `pnpm schemas:compose` → `services/api-gateway/dist/supergraph.graphql`. Clients: `web-feature`.
 
-## Feature layout
+## Layout
 
 ```text
 features/<domain>/graphql/
-  index.ts              # side-effect imports ONLY (registration)
+  index.ts
   inputs/CreateXInput.ts
   objects/XObject.ts
-  queries/getX.ts       # one file per field, camelCase = field name
+  queries/getX.ts
   mutations/createX.ts
 ```
 
-`src/graphql/schema.ts` imports each domain’s `graphql` barrel. **Missing import ⇒ field absent from schema.** Put GraphQL in the feature that owns the problem — not a shared `graphql/` grab-bag of unrelated aggregates.
+`index.ts` is side-effect imports only. `src/graphql/schema.ts` must import the feature barrel or the field is absent. GraphQL lives in the feature that owns the problem.
 
 ## Naming
 
-Field name = filename. Keep the resource (flat schema namespace). New reads use `get*`, not `find*`.
+Field name = filename. Keep the resource. New reads use `get*`, not `find*`.
 
 | Thing | Style | Example |
 | ----- | ----- | ------- |
@@ -38,11 +37,8 @@ Field name = filename. Keep the resource (flat schema namespace). New reads use 
 | Query (many) | `get{Resources}` | `getWorkspaces` |
 | Query (caller) | `getMy{Resources}` | `getMyWorkspaces` |
 | Mutation | `create` / `update` / `delete{Resource}` | `createWorkspace` |
-| GraphQL type | PascalCase | `CreateWorkspaceInput` |
-| Input/object files | PascalCase | `CreateWorkspaceInput.ts` |
-| Query / mutation modules | camelCase, one field per file | `getWorkspace.ts` |
-
-Resolver calls the **short** service method:
+| GraphQL type / input file | PascalCase | `CreateWorkspaceInput.ts` |
+| Query / mutation module | camelCase, one field per file | `getWorkspace.ts` |
 
 | Field | Service |
 | ----- | ------- |
@@ -53,9 +49,9 @@ Resolver calls the **short** service method:
 | `updateWorkspace` | `workspaceService.update(...)` |
 | `deleteWorkspace` | `workspaceService.delete(...)` |
 
-Do not add `createIssue` on `IIssueService` because the field is `createIssue`. Existing `findIssue` / `findProjects` / `findIdentities` stay until a dedicated schema rename — do not mix `get` and `find` on the same resource.
+Existing `findIssue` / `findProjects` / `findIdentities` stay until a dedicated schema rename. Do not mix `get` and `find` on the same resource.
 
-## Recipe (mutation)
+## Recipe
 
 ```ts
 export const CreateWorkspaceInput = builder.inputType("CreateWorkspaceInput", {
@@ -87,13 +83,25 @@ builder.mutationFields((t) => ({
 }));
 ```
 
-Queries: `builder.queryFields`. Auth identity: `ctx.identity` from `src/graphql/context.ts` — don’t invent parallel auth. Transactions and events belong in the service, not the resolver.
-
-## After change
+Queries: `builder.queryFields`. Identity: `createContext` copies `request.identity` (from `resolveIdentityFromHeaders`) onto `ctx`; use `requireIdentityId(ctx)`. Do not invent a second auth context. Tx and events belong in `service`. `api-gateway` federates subgraphs — it does not declare feature fields.
 
 ```bash
 pnpm schemas:compose
-pnpm --filter @pine/pine-web gen:gql   # if UI consumes it; platform-web / identity-web same pattern
+pnpm --filter @pine/pine-web gen:gql
 ```
 
-Never hand-edit `api-gateway/dist` or app `__generated__`.
+Same `gen:gql` on `platform-web` / `identity-web` when those apps consume the field.
+
+## Anti-patterns
+
+- Domain logic or transactions in the resolver
+- Parallel client name (`FindWorkspace` over field `getWorkspace`)
+- Mixing `get*` and `find*` on the same resource in one change
+- Skipping the feature `graphql/index.ts` import
+- Hand-editing `api-gateway/dist` or `__generated__`
+
+## Done when
+
+- Field file name = GraphQL field name
+- Resolver is a thin service call; feature barrel imported from `schema.ts`
+- `schemas:compose` (and client `gen:gql` if UI consumes it) run when needed

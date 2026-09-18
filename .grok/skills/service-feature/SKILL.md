@@ -1,24 +1,30 @@
 ---
 name: service-feature
 description: >
-  Backend feature slice in services/*: feature folders, DI TYPES, wire repository +
-  service + GraphQL or HTTP. Triggers: new feature, DI, feature module, container bind.
+  Wire a backend feature slice: one problem folder, DI TYPES, repository +
+  service + GraphQL or HTTP. Use when scaffolding a domain folder or binding
+  the container.
+when-to-use: >
+  new feature, feature folder, DI TYPES, container.bind, scaffold domain module
 ---
 
 # Service feature
 
-One **feature folder** = one **problem**. Wire the layers; do not re-implement them here.
+Wire layers; do not re-implement them. Canonical GraphQL: `platform-service` `features/workspaces`. Canonical HTTP: `authorization-service` `features/authorization`. Related: `repository`, `drizzle`, `service`, `graphql`, `http-route`, `events`, `outbox`, `workers`, `authorization`, `testing`.
 
 | Layer | Skill |
 | ----- | ----- |
-| Repository / Drizzle tables | `repository` |
-| Application service / authz / outbox | `service` |
+| Repository / Drizzle tables | `repository` / `drizzle` |
+| Application service | `service` |
+| Authz checks / relation events | `authorization` |
 | GraphQL fields | `graphql` |
 | HTTP routes | `http-route` |
 | NATS publish / consumers | `events` |
-| Naming (all layers) | `AGENTS.md` |
+| Outbox schedule + pollers | `outbox` |
+| Background process kind | `workers` |
+| Colocated tests | `testing` |
 
-Canonical slice: `platform-service` `features/workspaces`. Canonical HTTP feature: `authorization-service` `features/authorization`.
+Verbs and rename rules: `AGENTS.md`.
 
 ## Layout
 
@@ -31,40 +37,24 @@ services/<svc>/src/
   main.ts
 ```
 
-## Feature folders — one problem
+## Feature folders
 
 | Kind | Folder | Examples |
 | ---- | ------ | -------- |
 | Entity aggregate | plural kebab-case | `workspaces`, `identities`, `tenants` |
 | Use-case / protocol | the problem | `signin`, `oauth`, `verification`, `attachment-upload` |
-| Foreign projection | source entity name | `identities`, `tenants` in a consuming service |
+| Foreign projection | source entity name | `identities` / `tenants` in a consuming service |
 
-**Keep together:** aggregate + relations/preferences + transport + repos + services + errors.
-
-**Split** when the lifecycle differs (`attachment` vs `attachment-upload`; foreign projection vs local aggregate).
-
-**Do not:** dump two aggregates in one folder; one feature per field; new singular entity folders (`issue`). Legacy singular folders stay until a dedicated rename.
-
-## Names by layer (summary)
-
-| Layer | One | Many | Create | Update | Delete |
-| ----- | --- | ---- | ------ | ------ | ------ |
-| Repository | `findById` → null | `findMany` | `save` | `update` | `softDelete` |
-| Service | `getById` throws | `list` | `create` | `update` | `delete` |
-| GraphQL / HTTP | `getWorkspace` | `getWorkspaces` | `createWorkspace` | `updateWorkspace` | `deleteWorkspace` |
-
-Public operation: filename = field or `operationId` = client `.gql` / OpenAPI name. Details in `repository`, `service`, `graphql`, `http-route`.
+Keep aggregate + relations + transport + repos + services + errors together. Split only when the lifecycle differs (`attachment` vs `attachment-upload`). Legacy singular folders stay until a dedicated rename.
 
 ## Recipe
 
 1. Table (if needed) → `repository`
-2. `IFooRepository` + `FooRepository` + TYPES + bind → `repository`
-3. `IFooService` + `FooService` + TYPES + bind → `service` (tx / events / authz here)
-4. Transport in the **same** feature:
-   - GraphQL → `graphql`
-   - HTTP → `http-route`
-5. Async → `events` (`createCloudEvent` + publisher / outbox; consumers under `consumers/`)
-6. Colocated `*.test.ts` for non-trivial service logic
+2. `IFooRepository` + impl + TYPES + bind → `repository`
+3. `IFooService` + impl + TYPES + bind → `service`
+4. Transport in the **same** feature: GraphQL → `graphql`; HTTP → `http-route`
+5. Async → `events` (publish/outbox; consumers under `consumers/`)
+6. Colocated `*.test.ts` for non-trivial service logic → `testing`
 
 ```ts
 TYPES.WorkspaceRepository = Symbol.for("IWorkspaceRepository");
@@ -84,7 +74,7 @@ container.bind<IWorkspaceService>(TYPES.WorkspaceService).to(WorkspaceService);
 | Outbox | `@pine/outbox` |
 | Enums / errors | `@pine/common`, `@pine/errors` |
 
-**Forbidden:** `@pine/server-core`, `@pine/event-bus`, `@pine/orm`, `@pine/comm`, TypeORM.
+Live vs dead package names: `orientation`.
 
 ## Service-specific
 
@@ -92,13 +82,15 @@ container.bind<IWorkspaceService>(TYPES.WorkspaceService).to(WorkspaceService);
 
 **Notification email:** `integrations/email/{IMailer,NodeMailer}`; `TYPES.Mailer`; `bootstrap/mailer.ts`.
 
-## Drizzle / migrations
+## Anti-patterns
 
-Change table TS only. **Do not** generate/apply migrations unless the user asks. Command from `AGENTS.md`.
+- Domain rules in the repository or resolver
+- Two aggregates in one folder, or a feature per field
+- Renaming GraphQL fields / HTTP `operationId`s during a service method cleanup
+- Auto-generating Drizzle migrations
 
 ## Done when
 
-- Feature folder matches the problem
-- Repository + service + transport skills satisfied
-- TYPES + bind + barrels wired
+- Feature folder matches one problem
+- Layer skills satisfied; TYPES + bind + barrels wired
 - `pnpm exec turbo run build --filter=@pine/<service>` green
