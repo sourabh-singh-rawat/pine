@@ -1,7 +1,7 @@
 {
   "$schema": "https://json.schemastore.org/package.json",
   "name": "@pine/data-gateway",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Data Gateway",
   "keywords": [
     "data-gateway"

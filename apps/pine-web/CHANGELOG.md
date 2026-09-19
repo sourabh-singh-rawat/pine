@@ -1,5 +1,15 @@
 # @pine/pine-web
 
+## 0.7.1
+
+### Patch Changes
+
+- 961e77f: chore(deps): pin @graphql-codegen/cli to 7.4.1
+- b4b54ab: chore(pine-web): remove unused firebase dependency
+- c0fa509: chore(deps): remove deprecated @hey-api/client-axios
+- Updated dependencies [522b0cd]
+  - @pine/common@0.1.2
+
 ## 0.7.0
 
 ### Minor Changes

@@ -1,5 +1,11 @@
 # @pine/authorization
 
+## 0.6.0
+
+### Minor Changes
+
+- 908358f: feat(authz): space/project/item graph + IssueCreated outbox
+
 ## 0.5.0
 
 ### Minor Changes
