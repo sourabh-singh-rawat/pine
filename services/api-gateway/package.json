@@ -17,7 +17,7 @@
     "@as-integrations/fastify": "^3.1.0",
     "@fastify/http-proxy": "^11.6.0",
     "@fastify/swagger": "^9.8.1",
-    "@fastify/swagger-ui": "^5.2.6",
+    "@fastify/swagger-ui": "6.1.1",
     "@pine/common": "workspace:*",
     "@pine/identity": "workspace:*",
     "@pine/observability": "workspace:*",
