@@ -22,6 +22,13 @@ export type CreateIssueMutationVariables = Exact<{
 
 export type CreateIssueMutation = { createIssue: string | null };
 
+export type DeleteIssueMutationVariables = Exact<{
+  id: string;
+}>;
+
+
+export type DeleteIssueMutation = { deleteIssue: string | null };
+
 export type FindIssueQueryVariables = Exact<{
   findIssueId: string;
 }>;
@@ -170,6 +177,27 @@ export const useCreateIssueMutation = <
     )};
 
 useCreateIssueMutation.getKey = () => ['CreateIssue'];
+
+export const DeleteIssueDocument = new TypedDocumentString(`
+    mutation DeleteIssue($id: String!) {
+  deleteIssue(id: $id)
+}
+    `);
+
+export const useDeleteIssueMutation = <
+      TError = unknown,
+      TContext = unknown
+    >(options?: UseMutationOptions<DeleteIssueMutation, TError, DeleteIssueMutationVariables, TContext>) => {
+    
+    return useMutation<DeleteIssueMutation, TError, DeleteIssueMutationVariables, TContext>(
+      {
+    mutationKey: ['DeleteIssue'],
+    mutationFn: (variables?: DeleteIssueMutationVariables) => graphQLFetcher<DeleteIssueMutation, DeleteIssueMutationVariables>(DeleteIssueDocument, variables)(),
+    ...options
+  }
+    )};
+
+useDeleteIssueMutation.getKey = () => ['DeleteIssue'];
 
 export const FindIssueDocument = new TypedDocumentString(`
     query FindIssue($findIssueId: String!) {

@@ -5,10 +5,16 @@ import {
   GridActionsCellItem,
   GridColDef,
   GridRenderCellParams,
+  GridRowId,
   GridValidRowModel,
 } from "@mui/x-data-grid";
-import { useFindProjectIssuesQuery, useFindSubIssuesQuery } from "@generated/gql";
-import { DataGrid, Link } from "@shared";
+import { useQueryClient } from "@tanstack/react-query";
+import {
+  useDeleteIssueMutation,
+  useFindProjectIssuesQuery,
+  useFindSubIssuesQuery,
+} from "@generated/gql";
+import { DataGrid, Link, useSnackbar } from "@shared";
 
 interface IssueListProps {
   issueId?: string;
@@ -23,10 +29,10 @@ interface IssueListStyles {
   showBorder?: boolean;
 }
 
-/**
- * Shows issues in a project or sub-issues under an issue
- */
 export const IssueList = ({ issueId, projectId, style }: IssueListProps) => {
+  const queryClient = useQueryClient();
+  const snackbar = useSnackbar();
+  const deleteIssueMutation = useDeleteIssueMutation();
   const projectIssues = useFindProjectIssuesQuery(
     { projectId: projectId! },
     {
@@ -42,6 +48,25 @@ export const IssueList = ({ issueId, projectId, style }: IssueListProps) => {
     },
   );
   const rows: GridValidRowModel[] = issueId ? (subIssues.data ?? []) : (projectIssues.data ?? []);
+
+  const handleDelete = async (id: GridRowId) => {
+    try {
+      const response = await deleteIssueMutation.mutateAsync({ id: String(id) });
+      if (projectId) {
+        await queryClient.invalidateQueries({
+          queryKey: useFindProjectIssuesQuery.getKey({ projectId }),
+        });
+      }
+      if (issueId) {
+        await queryClient.invalidateQueries({
+          queryKey: useFindSubIssuesQuery.getKey({ input: { parentIssueId: issueId } }),
+        });
+      }
+      snackbar.success(response.deleteIssue ?? "Issue deleted");
+    } catch (error) {
+      snackbar.error(error instanceof Error ? error.message : "Failed to delete issue");
+    }
+  };
 
   const columns: GridColDef<GridValidRowModel>[] = [
     {
@@ -60,22 +85,28 @@ export const IssueList = ({ issueId, projectId, style }: IssueListProps) => {
       headerName: "Actions",
       width: 80,
       type: "actions",
-      getActions() {
+      getActions({ id }) {
         return [
           <GridActionsCellItem
+            key="rename"
             label="Rename"
             icon={<EditOutlined fontSize="small" />}
             showInMenu
           />,
           <GridActionsCellItem
+            key="archive"
             label="Archive"
             icon={<ArchiveOutlined fontSize="small" />}
             showInMenu
           />,
           <GridActionsCellItem
+            key="delete"
             label="Delete"
             icon={<DeleteOutlineOutlined fontSize="small" />}
             showInMenu
+            onClick={() => {
+              void handleDelete(id);
+            }}
           />,
         ];
       },
