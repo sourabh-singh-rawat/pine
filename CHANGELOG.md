@@ -1,5 +1,41 @@
 # Changelog
 
+## v2026.09.19.1
+
+### Minor
+
+- 908358f7: feat(authz): space/project/item graph + IssueCreated outbox — Sourabh Singh Rawat (`@pine/authorization`, `@pine/authorization-service`, `@pine/issues-service`)
+
+### Patch
+
+- 5e0aff49: chore(deps): update @fastify/swagger-ui to 6.1.1 — Sourabh Singh Rawat (`@pine/api-gateway`)
+- 522b0cd6: chore(deps): upgrade fastify to 5.12.4 — Sourabh Singh Rawat (`@pine/api-gateway`, `@pine/common`, `@pine/data-gateway`, `@pine/server`)
+- 961e77fb: chore(deps): pin @graphql-codegen/cli to 7.4.1 — Sourabh Singh Rawat (`@pine/identity-web`, `@pine/pine-web`, `@pine/platform-web`)
+- b4b54ab2: chore(pine-web): remove unused firebase dependency — Sourabh Singh Rawat (`@pine/pine-web`)
+- c0fa5093: chore(deps): remove deprecated @hey-api/client-axios — Sourabh Singh Rawat (`@pine/identity-web`, `@pine/pine-web`, `@pine/platform-web`)
+- 14fb8632: chore(vitest): upgrade to 5.0.0 — Sourabh Singh Rawat (`@pine/attachment-scanner-service`, `@pine/attachment-service`, `@pine/authorization-service`, `@pine/events`, `@pine/identity`, `@pine/identity-service`, `@pine/issues-service`, `@pine/notification-service`, `@pine/outbox`, `@pine/platform-service`)
+
+### Packages
+
+- `@pine/api-gateway@0.4.2`
+- `@pine/attachment-scanner-service@0.1.2`
+- `@pine/attachment-service@0.5.2`
+- `@pine/authorization@0.6.0`
+- `@pine/authorization-service@0.6.0`
+- `@pine/common@0.1.2`
+- `@pine/data-gateway@0.1.2`
+- `@pine/events@0.5.1`
+- `@pine/identity@0.3.1`
+- `@pine/identity-service@0.6.1`
+- `@pine/identity-web@0.6.1`
+- `@pine/issues-service@0.6.0`
+- `@pine/notification-service@0.4.2`
+- `@pine/outbox@0.1.3`
+- `@pine/pine-web@0.7.1`
+- `@pine/platform-service@0.5.1`
+- `@pine/platform-web@0.5.1`
+- `@pine/server@1.1.2`
+
 ## v2026.09.12.1
 
 ### Minor

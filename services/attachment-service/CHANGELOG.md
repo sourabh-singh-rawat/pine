@@ -1,5 +1,18 @@
 # @pine/attachment-service
 
+## 0.5.2
+
+### Patch Changes
+
+- 14fb863: chore(vitest): upgrade to 5.0.0
+- Updated dependencies [522b0cd]
+- Updated dependencies [14fb863]
+  - @pine/common@0.1.2
+  - @pine/server@1.1.2
+  - @pine/events@0.5.1
+  - @pine/identity@0.3.1
+  - @pine/outbox@0.1.3
+
 ## 0.5.1
 
 ### Patch Changes

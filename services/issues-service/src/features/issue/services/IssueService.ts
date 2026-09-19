@@ -3,7 +3,7 @@ import { createCloudEvent, IssueCreatedEvent } from "@pine/events";
 import type { IOutboxService } from "@pine/outbox";
 import { inject, injectable } from "inversify";
 import { TYPES } from "@/bootstrap/container-types";
-import type { Database, Issue } from "@/db";
+import type { DbClient, Issue } from "@/db";
 import type { IIssueAssigneeRepository, IIssueRepository } from "@/features/issue/repositories";
 import type {
   CreateIssueOptions,
@@ -15,11 +15,15 @@ import type {
   UpdateIssueOptions,
 } from "./IIssueService";
 
+export type IssueDatabase = {
+  transaction: <T>(callback: (tx: DbClient) => Promise<T>) => Promise<T>;
+};
+
 @injectable()
 export class IssueService implements IIssueService {
   constructor(
     @inject(TYPES.Database)
-    private readonly db: Database,
+    private readonly db: IssueDatabase,
     @inject(TYPES.IssueRepository)
     private readonly issueRepository: IIssueRepository,
     @inject(TYPES.IssueAssigneeRepository)

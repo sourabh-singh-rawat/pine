@@ -1,5 +1,17 @@
 # @pine/api-gateway
 
+## 0.4.2
+
+### Patch Changes
+
+- 5e0aff4: chore(deps): update @fastify/swagger-ui to 6.1.1
+- 522b0cd: chore(deps): upgrade fastify to 5.12.4
+- Updated dependencies [522b0cd]
+- Updated dependencies [14fb863]
+  - @pine/common@0.1.2
+  - @pine/server@1.1.2
+  - @pine/identity@0.3.1
+
 ## 0.4.1
 
 ### Patch Changes
