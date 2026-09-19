@@ -3,7 +3,7 @@
   "name": "@pine/ui",
   "version": "0.1.1",
   "private": true,
-  "description": "Shared React UI primitives for Pine web apps (forms, modals, buttons)",
+  "description": "Shared React UI primitives for Pine web apps (app bars, forms, modals, buttons)",
   "keywords": [
     "forms",
     "mui",
@@ -20,6 +20,10 @@
     ".": {
       "types": "./src/index.ts",
       "default": "./src/index.ts"
+    },
+    "./appBars": {
+      "types": "./src/appBars/index.ts",
+      "default": "./src/appBars/index.ts"
     },
     "./theme": {
       "types": "./src/theme/index.ts",

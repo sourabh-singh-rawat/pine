@@ -1,6 +1,9 @@
-import { Grid2, Stack, Typography, useTheme } from "@mui/material";
+import ArrowBack from "@mui/icons-material/ArrowBack";
+import { Grid2, IconButton, Stack, Typography, useTheme } from "@mui/material";
+import { useNavigate } from "@tanstack/react-router";
 import { useFindIssueQuery, useUpdateIssueMutation } from "@generated/gql";
 import type { UpdateIssueInput } from "@generated/gql/graphql";
+import { AppBar } from "@pine/ui";
 import { useIssueParams, useSnackbar } from "@shared";
 import {
   IssueAttachments,
@@ -13,13 +16,13 @@ import {
 
 export const IssuePage = () => {
   const theme = useTheme();
+  const navigate = useNavigate();
   const snackbar = useSnackbar();
   const { issueId } = useIssueParams();
   const issueQuery = useFindIssueQuery(
-    { findIssueId: issueId! },
+    { findIssueId: issueId },
     {
       select: (data) => data.findIssue ?? null,
-      enabled: Boolean(issueId),
     },
   );
   const updateIssueMutation = useUpdateIssueMutation();
@@ -37,16 +40,34 @@ export const IssuePage = () => {
 
   const issue = issueQuery.data;
   const projectId = issue?.project?.id ?? undefined;
+  const projectName = issue?.project?.name ?? undefined;
   const issueName = issue?.name ?? undefined;
   const issueDescription = issue?.description ?? undefined;
   const statusId = issue?.statusId ?? undefined;
   const priority = issue?.priority ?? undefined;
   const resolvedIssueId = issue?.id ?? undefined;
 
+  const handleBackToList = () => {
+    if (!projectId) return;
+    void navigate({ to: "/v/l/$viewId", params: { viewId: projectId } });
+  };
+
   return (
     <Grid2 container rowGap={4} sx={{ px: theme.spacing(4) }}>
       <Grid2 size={12}>
-        <IssueName issueId={issueId} initialValue={issueName} />
+        <AppBar
+          leading={
+            <IconButton
+              aria-label="Back to list"
+              onClick={handleBackToList}
+              disabled={!projectId}
+            >
+              <ArrowBack />
+            </IconButton>
+          }
+          title={<IssueName issueId={issueId} initialValue={issueName} />}
+          subtitle={projectName}
+        />
       </Grid2>
       {issue && issueId && projectId && statusId && priority && (
         <Grid2 size={12}>
