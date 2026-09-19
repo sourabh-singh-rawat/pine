@@ -1,5 +1,14 @@
 # @pine/data-gateway
 
+## 0.1.2
+
+### Patch Changes
+
+- 522b0cd: chore(deps): upgrade fastify to 5.12.4
+- Updated dependencies [522b0cd]
+  - @pine/common@0.1.2
+  - @pine/server@1.1.2
+
 ## 0.1.1
 
 ### Patch Changes

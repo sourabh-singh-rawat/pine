@@ -1,5 +1,13 @@
 # @pine/outbox
 
+## 0.1.3
+
+### Patch Changes
+
+- 14fb863: chore(vitest): upgrade to 5.0.0
+- Updated dependencies [522b0cd]
+  - @pine/common@0.1.2
+
 ## 0.1.2
 
 ### Patch Changes

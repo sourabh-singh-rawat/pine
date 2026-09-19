@@ -1,5 +1,12 @@
 # @pine/identity-web
 
+## 0.6.1
+
+### Patch Changes
+
+- 961e77f: chore(deps): pin @graphql-codegen/cli to 7.4.1
+- c0fa509: chore(deps): remove deprecated @hey-api/client-axios
+
 ## 0.6.0
 
 ### Minor Changes

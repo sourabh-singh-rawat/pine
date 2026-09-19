@@ -1,5 +1,23 @@
 # @pine/authorization-service
 
+## 0.6.0
+
+### Minor Changes
+
+- 908358f: feat(authz): space/project/item graph + IssueCreated outbox
+
+### Patch Changes
+
+- 14fb863: chore(vitest): upgrade to 5.0.0
+- Updated dependencies [908358f]
+- Updated dependencies [522b0cd]
+- Updated dependencies [14fb863]
+  - @pine/authorization@0.6.0
+  - @pine/common@0.1.2
+  - @pine/server@1.1.2
+  - @pine/events@0.5.1
+  - @pine/identity@0.3.1
+
 ## 0.5.0
 
 ### Minor Changes

@@ -1,5 +1,14 @@
 # @pine/events
 
+## 0.5.1
+
+### Patch Changes
+
+- 14fb863: chore(vitest): upgrade to 5.0.0
+- Updated dependencies [522b0cd]
+  - @pine/common@0.1.2
+  - @pine/server@1.1.2
+
 ## 0.5.0
 
 ### Minor Changes
