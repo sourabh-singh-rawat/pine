@@ -2,12 +2,15 @@ import { ITEM_PRIORITY } from "@pine/common";
 import { IssueCreatedEvent } from "@pine/events";
 import type { IOutboxService } from "@pine/outbox";
 import { describe, expect, it, vi } from "vitest";
-import type { Issue } from "@/db";
+import type { DbClient, Issue } from "@/db";
 import type {
   IIssueAssigneeRepository,
   IIssueRepository,
 } from "@/features/issue/repositories";
-import { IssueService } from "@/features/issue/services/IssueService";
+import {
+  type IssueDatabase,
+  IssueService,
+} from "@/features/issue/services/IssueService";
 
 const issue: Issue = {
   id: "issue-1",
@@ -24,6 +27,7 @@ const issue: Issue = {
   parentIssueId: null,
   estimate: null,
   component: null,
+  version: 1,
   createdAt: new Date("2026-01-01T00:00:00.000Z"),
   updatedAt: null,
   deletedAt: null,
@@ -61,8 +65,17 @@ const createOutboxService = (
   ...overrides,
 });
 
-const createDb = () => ({
-  transaction: vi.fn(async (fn: (tx: Record<string, never>) => Promise<unknown>) => fn({})),
+const isDbClient = (_value: unknown): _value is DbClient => true;
+const mockTxValue: unknown = {};
+const mockTx = isDbClient(mockTxValue) ? mockTxValue : undefined;
+
+const createDb = (): IssueDatabase => ({
+  transaction: vi.fn(async (callback) => {
+    if (!mockTx) {
+      throw new Error("mockTx not defined");
+    }
+    return callback(mockTx);
+  }),
 });
 
 describe("IssueService", () => {
