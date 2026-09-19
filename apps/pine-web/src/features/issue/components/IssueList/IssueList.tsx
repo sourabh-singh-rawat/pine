@@ -1,6 +1,7 @@
 import ArchiveOutlined from "@mui/icons-material/ArchiveOutlined";
 import DeleteOutlineOutlined from "@mui/icons-material/DeleteOutlineOutlined";
 import EditOutlined from "@mui/icons-material/EditOutlined";
+import { Box } from "@mui/material";
 import {
   GridActionsCellItem,
   GridColDef,
@@ -9,12 +10,15 @@ import {
   GridValidRowModel,
 } from "@mui/x-data-grid";
 import { useQueryClient } from "@tanstack/react-query";
+import { useState } from "react";
 import {
   useDeleteIssueMutation,
+  useFindIssueQuery,
   useFindProjectIssuesQuery,
   useFindSubIssuesQuery,
+  useUpdateIssueMutation,
 } from "@generated/gql";
-import { DataGrid, Link, useSnackbar } from "@shared";
+import { DataGrid, Link, Select, useSnackbar } from "@shared";
 
 interface IssueListProps {
   issueId?: string;
@@ -29,10 +33,19 @@ interface IssueListStyles {
   showBorder?: boolean;
 }
 
+const PRIORITY_OPTIONS = ["Urgent", "High", "Normal", "Low"];
+
+const prioritySelectOptions = PRIORITY_OPTIONS.map((option) => ({
+  id: option,
+  name: option,
+}));
+
 export const IssueList = ({ issueId, projectId, style }: IssueListProps) => {
   const queryClient = useQueryClient();
   const snackbar = useSnackbar();
   const deleteIssueMutation = useDeleteIssueMutation();
+  const updateIssueMutation = useUpdateIssueMutation();
+  const [priorityOverrides, setPriorityOverrides] = useState<Record<string, string>>({});
   const projectIssues = useFindProjectIssuesQuery(
     { projectId: projectId! },
     {
@@ -49,22 +62,53 @@ export const IssueList = ({ issueId, projectId, style }: IssueListProps) => {
   );
   const rows: GridValidRowModel[] = issueId ? (subIssues.data ?? []) : (projectIssues.data ?? []);
 
+  const invalidateIssueLists = async () => {
+    if (projectId) {
+      await queryClient.invalidateQueries({
+        queryKey: useFindProjectIssuesQuery.getKey({ projectId }),
+      });
+    }
+    if (issueId) {
+      await queryClient.invalidateQueries({
+        queryKey: useFindSubIssuesQuery.getKey({ input: { parentIssueId: issueId } }),
+      });
+    }
+  };
+
   const handleDelete = async (id: GridRowId) => {
     try {
       const response = await deleteIssueMutation.mutateAsync({ id: String(id) });
-      if (projectId) {
-        await queryClient.invalidateQueries({
-          queryKey: useFindProjectIssuesQuery.getKey({ projectId }),
-        });
-      }
-      if (issueId) {
-        await queryClient.invalidateQueries({
-          queryKey: useFindSubIssuesQuery.getKey({ input: { parentIssueId: issueId } }),
-        });
-      }
+      await invalidateIssueLists();
       snackbar.success(response.deleteIssue ?? "Issue deleted");
     } catch (error) {
       snackbar.error(error instanceof Error ? error.message : "Failed to delete issue");
+    }
+  };
+
+  const handlePriorityChange = async (id: GridRowId, priority: string) => {
+    const issueKey = String(id);
+    setPriorityOverrides((current) => ({ ...current, [issueKey]: priority }));
+    try {
+      const response = await updateIssueMutation.mutateAsync({
+        input: { issueId: issueKey, priority },
+      });
+      await invalidateIssueLists();
+      await queryClient.invalidateQueries({
+        queryKey: useFindIssueQuery.getKey({ findIssueId: issueKey }),
+      });
+      setPriorityOverrides((current) => {
+        const next = { ...current };
+        delete next[issueKey];
+        return next;
+      });
+      snackbar.success(response.updateIssue ?? "Issue updated");
+    } catch (error) {
+      setPriorityOverrides((current) => {
+        const next = { ...current };
+        delete next[issueKey];
+        return next;
+      });
+      snackbar.error(error instanceof Error ? error.message : "Failed to update issue");
     }
   };
 
@@ -79,7 +123,43 @@ export const IssueList = ({ issueId, projectId, style }: IssueListProps) => {
       },
     },
     { field: "dueDate", headerName: "Due Date" },
-    { field: "priority", headerName: "Priority" },
+    {
+      field: "priority",
+      headerName: "Priority",
+      width: 140,
+      sortable: false,
+      renderCell({ id, value }: GridRenderCellParams) {
+        const issueKey = String(id);
+        const current =
+          priorityOverrides[issueKey] ?? (typeof value === "string" ? value : "");
+        return (
+          <Box
+            onClick={(event) => {
+              event.stopPropagation();
+            }}
+            sx={{
+              width: "100%",
+              display: "flex",
+              alignItems: "center",
+              height: "100%",
+            }}
+          >
+            <Select
+              name={`priority-${issueKey}`}
+              value={current}
+              variant="small"
+              options={prioritySelectOptions}
+              isDisabled={updateIssueMutation.isPending}
+              onChange={(event) => {
+                const next = event.target.value;
+                if (typeof next !== "string" || !next || next === current) return;
+                void handlePriorityChange(id, next);
+              }}
+            />
+          </Box>
+        );
+      },
+    },
     {
       field: "actions",
       headerName: "Actions",
