@@ -1,7 +1,7 @@
 {
   "$schema": "https://json.schemastore.org/package.json",
   "name": "@pine/issues-service",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "description": "Issues, projects, workspaces, and statuses",
   "keywords": [],
   "license": "ISC",
@@ -46,6 +46,6 @@
     "pino-pretty": "^13.1.3",
     "tsx": "4.23.1",
     "typescript": "7.0.2",
-    "vitest": "^4.1.10"
+    "vitest": "5.0.0"
   }
 }

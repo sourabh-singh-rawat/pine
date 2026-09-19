@@ -1,7 +1,9 @@
 import { IssueStatus, ITEM_PRIORITY, ServiceResponse } from "@pine/common";
+import { createCloudEvent, IssueCreatedEvent } from "@pine/events";
+import type { IOutboxService } from "@pine/outbox";
 import { inject, injectable } from "inversify";
 import { TYPES } from "@/bootstrap/container-types";
-import type { Database } from "@/db";
+import type { DbClient, Issue } from "@/db";
 import type { IIssueAssigneeRepository, IIssueRepository } from "@/features/issue/repositories";
 import type {
   CreateIssueOptions,
@@ -13,20 +15,22 @@ import type {
   UpdateIssueOptions,
 } from "./IIssueService";
 
+export type IssueDatabase = {
+  transaction: <T>(callback: (tx: DbClient) => Promise<T>) => Promise<T>;
+};
+
 @injectable()
 export class IssueService implements IIssueService {
   constructor(
     @inject(TYPES.Database)
-    private readonly db: Database,
+    private readonly db: IssueDatabase,
     @inject(TYPES.IssueRepository)
     private readonly issueRepository: IIssueRepository,
     @inject(TYPES.IssueAssigneeRepository)
     private readonly issueAssigneeRepository: IIssueAssigneeRepository,
+    @inject(TYPES.OutboxService)
+    private readonly outboxService: IOutboxService,
   ) {}
-
-  private getStatuses = () => Object.values(IssueStatus);
-
-  private getPriorities = () => Object.values(ITEM_PRIORITY);
 
   async createIssue(options: CreateIssueOptions) {
     const {
@@ -70,6 +74,27 @@ export class IssueService implements IIssueService {
           { tx },
         );
       }
+
+      const event = createCloudEvent({
+        type: IssueCreatedEvent.type,
+        version: IssueCreatedEvent.version,
+        schema: IssueCreatedEvent.schema,
+        source: "pine/issues-service",
+        subject: issue.id,
+        data: this.toIssueCreatedEventData(issue),
+      });
+
+      await this.outboxService.schedule(
+        {
+          eventId: event.id,
+          eventType: event.type,
+          eventVersion: IssueCreatedEvent.version,
+          aggregateType: "issue",
+          aggregateId: issue.id,
+          payload: event,
+        },
+        { tx },
+      );
 
       return issue.id;
     });
@@ -139,5 +164,21 @@ export class IssueService implements IIssueService {
 
   async deleteIssue(options: DeleteIssueOptions) {
     await this.issueRepository.hardDelete(options.id);
+  }
+
+  private getStatuses = () => Object.values(IssueStatus);
+
+  private getPriorities = () => Object.values(ITEM_PRIORITY);
+
+  private toIssueCreatedEventData(issue: Issue) {
+    return {
+      id: issue.id,
+      name: issue.name,
+      ownerId: issue.createdById,
+      reporterId: issue.createdById,
+      projectId: issue.projectId,
+      createdAt: issue.createdAt.toISOString(),
+      ...(issue.description != null ? { description: issue.description } : {}),
+    };
   }
 }

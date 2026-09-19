@@ -1,15 +1,15 @@
 ---
 name: service
 description: >
-  Feature application services: I*Service, create/getById/list, authz, transactions,
-  outbox events. Triggers: IFooService, injectable service, requirePermission, outbox.
+  Feature application services: I*Service, create/getById/list, authz,
+  transactions, outbox. Use when adding domain logic or scheduling outbox events.
+when-to-use: >
+  IFooService, injectable service, requirePermission, outbox, ApplicationError
 ---
 
 # Service
 
-Domain / application layer. Canonical: `platform-service` `features/workspaces/services`.
-
-Persistence: `repository`. Transport: `graphql` / `http-route`. Slice wiring: `service-feature`. Events: `events`. Naming: `AGENTS.md`.
+Domain layer. Canonical: `platform-service` `features/workspaces/services`. Related: `repository`, `graphql`, `http-route`, `service-feature`, `events`, `outbox`, `authorization`, `testing`.
 
 ## Layout
 
@@ -24,13 +24,13 @@ features/<feature>/
     FooNotFoundError.ts
 ```
 
-## Interface + naming
+## Interface
 
 Drop the noun already on the type. Domain verbs — not repository `save` / `findById`.
 
 | Method | Meaning |
 | ------ | ------- |
-| `create` | business create (may authz + validate + tx + outbox) |
+| `create` | business create (authz + validate + tx + outbox as needed) |
 | `getById` | one; **throws** not-found |
 | `list` / `listMine` | many |
 | `update` / `delete` | mutate |
@@ -46,25 +46,11 @@ export interface IWorkspaceService {
 }
 ```
 
-- Callable properties on interfaces, not method syntax
-- Type is not the resource → keep the resource: `IAdminService.createIdentity`
-- When editing a long-form service (`createIssue`, `getTenantById`), rename **that** service + internal callers. Do not rename GraphQL fields / HTTP `operationId`s as part of that cleanup
+If the type is not the resource, keep the resource: `IAdminService.createIdentity`. When editing a long-form service (`createIssue`, `getTenantById`), rename **that** service + internal callers only — never GraphQL fields / HTTP `operationId`s in the same cleanup.
 
-## Responsibilities
+## Recipe
 
-**Do in the service**
-
-- Authz (`requirePermission` / `@pine/authorization`)
-- Validation and conflict checks (slug/name exists → feature `*ConflictError`)
-- `db.transaction` when multiple writes or outbox must be atomic
-- Map rows → event DTOs; `createCloudEvent` + `outboxService.schedule(..., { tx })`
-- Throw feature `ApplicationError` subclasses (`FooNotFoundError`, expose `true` when client-safe)
-
-**Do not**
-
-- Leak `save` / `findById` as the public API
-- Put GraphQL / HTTP parsing here
-- Publish raw DB rows as event payloads (`events`)
+Do here: authz (`requirePermission`), conflict checks (`*ConflictError`), `db.transaction` when writes + outbox must be atomic, map rows → event DTOs, `createCloudEvent` + `outboxService.schedule(..., { tx })`, throw feature `ApplicationError` subclasses (`expose: true` when client-safe).
 
 ```ts
 @injectable()
@@ -91,10 +77,6 @@ export class WorkspaceService implements IWorkspaceService {
 }
 ```
 
-Public members first (constructor + public methods above private helpers). Class methods are normal methods, not arrow properties.
-
-## Errors
-
 ```ts
 export class WorkspaceNotFoundError extends ApplicationError {
   constructor(message = "Workspace not found") {
@@ -103,16 +85,12 @@ export class WorkspaceNotFoundError extends ApplicationError {
 }
 ```
 
-Keep the noun on error class names (flat namespace).
-
-## DI
+Keep the noun on error class names. TYPES + bind:
 
 ```ts
 TYPES.WorkspaceService = Symbol.for("IWorkspaceService");
 container.bind<IWorkspaceService>(TYPES.WorkspaceService).to(WorkspaceService);
 ```
-
-## Call sites
 
 | Transport | Call |
 | --------- | ---- |
@@ -120,11 +98,18 @@ container.bind<IWorkspaceService>(TYPES.WorkspaceService).to(WorkspaceService);
 | GraphQL `getWorkspace` | `workspaceService.getById(...)` |
 | HTTP handler | same short verbs |
 
-Resolvers and routes stay thin — one service call after mapping args.
+Resolvers and routes: one service call after mapping args.
+
+## Anti-patterns
+
+- Repository verbs on the service public API
+- Authz only in the resolver / route
+- GraphQL / HTTP parsing here
+- Publishing unmapped DB rows as CloudEvent data
+- Skipping colocated tests for non-trivial tx/outbox paths
 
 ## Done when
 
 - `I*Service` + `@injectable()` impl + TYPES + bind
 - Authz / tx / outbox live here when needed
 - Colocated `*.test.ts` for non-trivial logic
-- Repository methods stay persistence verbs

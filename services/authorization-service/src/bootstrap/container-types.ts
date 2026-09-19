@@ -16,6 +16,8 @@ export const TYPES = {
     "AuthorizationPlatformRelationSyncConsumer",
   ),
   AuthorizationProfileSyncConsumer: Symbol.for("AuthorizationProfileSyncConsumer"),
-
+  AuthorizationSpaceSyncConsumer: Symbol.for("AuthorizationSpaceSyncConsumer"),
+  AuthorizationProjectSyncConsumer: Symbol.for("AuthorizationProjectSyncConsumer"),
+  AuthorizationItemSyncConsumer: Symbol.for("AuthorizationItemSyncConsumer"),
 } as const;
 

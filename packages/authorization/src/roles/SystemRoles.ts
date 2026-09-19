@@ -1,9 +1,12 @@
 import {
-  WORKSPACE_PERMISSIONS,
+  ITEM_PERMISSIONS,
   PERMISSION_GRANT_PERMISSIONS,
   PLATFORM_PERMISSIONS,
+  PROJECT_PERMISSIONS,
   ROLE_PERMISSIONS,
+  SPACE_PERMISSIONS,
   TENANT_PERMISSIONS,
+  WORKSPACE_PERMISSIONS,
 } from "../permissions";
 import { permissionKeys, withoutActions } from "../utils";
 import type { RoleDefinition } from "./RoleDefinition";
@@ -45,6 +48,9 @@ export const TENANT_ROLES: Record<string, RoleDefinition> = {
     permissionKeys: [
       ...permissionKeys("tenant", TENANT_PERMISSIONS),
       ...permissionKeys("workspace", WORKSPACE_PERMISSIONS),
+      ...permissionKeys("space", SPACE_PERMISSIONS),
+      ...permissionKeys("project", PROJECT_PERMISSIONS),
+      ...permissionKeys("item", ITEM_PERMISSIONS),
       ...permissionKeys("role", ROLE_PERMISSIONS),
       ...permissionKeys("permission", PERMISSION_GRANT_PERMISSIONS),
     ],
@@ -62,6 +68,9 @@ export const TENANT_ROLES: Record<string, RoleDefinition> = {
         withoutActions(TENANT_PERMISSIONS, "suspend", "delete", "assign_owner"),
       ),
       ...permissionKeys("workspace", withoutActions(WORKSPACE_PERMISSIONS, "delete")),
+      ...permissionKeys("space", withoutActions(SPACE_PERMISSIONS, "delete")),
+      ...permissionKeys("project", withoutActions(PROJECT_PERMISSIONS, "delete")),
+      ...permissionKeys("item", withoutActions(ITEM_PERMISSIONS, "delete")),
       ...permissionKeys("role", ["read"]),
       ...permissionKeys("permission", PERMISSION_GRANT_PERMISSIONS),
     ],
@@ -75,6 +84,9 @@ export const TENANT_ROLES: Record<string, RoleDefinition> = {
     permissionKeys: [
       ...permissionKeys("tenant", ["read", "read_list"]),
       ...permissionKeys("workspace", ["read"]),
+      ...permissionKeys("space", ["read"]),
+      ...permissionKeys("project", ["read"]),
+      ...permissionKeys("item", ["read"]),
       ...permissionKeys("role", ["read"]),
     ],
   },
@@ -89,6 +101,9 @@ export const WORKSPACE_ROLES: Record<string, RoleDefinition> = {
     relation: "owner",
     permissionKeys: [
       ...permissionKeys("workspace", WORKSPACE_PERMISSIONS),
+      ...permissionKeys("space", SPACE_PERMISSIONS),
+      ...permissionKeys("project", PROJECT_PERMISSIONS),
+      ...permissionKeys("item", ITEM_PERMISSIONS),
       ...permissionKeys("role", ROLE_PERMISSIONS),
       ...permissionKeys("permission", PERMISSION_GRANT_PERMISSIONS),
     ],
@@ -105,6 +120,9 @@ export const WORKSPACE_ROLES: Record<string, RoleDefinition> = {
         "workspace",
         withoutActions(WORKSPACE_PERMISSIONS, "delete"),
       ),
+      ...permissionKeys("space", withoutActions(SPACE_PERMISSIONS, "delete")),
+      ...permissionKeys("project", withoutActions(PROJECT_PERMISSIONS, "delete")),
+      ...permissionKeys("item", withoutActions(ITEM_PERMISSIONS, "delete")),
       ...permissionKeys("role", ["read"]),
       ...permissionKeys("permission", PERMISSION_GRANT_PERMISSIONS),
     ],
@@ -117,6 +135,9 @@ export const WORKSPACE_ROLES: Record<string, RoleDefinition> = {
     relation: "member",
     permissionKeys: [
       ...permissionKeys("workspace", ["read", "create_space", "create_project"]),
+      ...permissionKeys("space", ["read", "create_project"]),
+      ...permissionKeys("project", ["read", "create_item"]),
+      ...permissionKeys("item", ["read", "update"]),
       ...permissionKeys("role", ["read"]),
     ],
   },

@@ -2,27 +2,32 @@
 name: changeset-release
 description: >
   Changesets for development PRs; calver release/* branches and GitHub Release on
-  main. Triggers: changeset, skip-changeset, release/YYYY, calver, version.
+  main. Use when adding a changeset, opening a release branch, or shipping calver.
+when-to-use: >
+  changeset, skip-changeset, release/YYYY, calver, pnpm changeset,
+  changeset:version
 ---
 
 # Changesets & release
 
-| Concept        | Value                                         |
-| -------------- | --------------------------------------------- |
-| PR notes       | `.changeset/*.md` via `pnpm changeset`        |
-| Product tag    | `vYYYY.MM.DD.N`                               |
-| Release branch | `release/YYYY.MM.DD.N`                        |
-| Config         | `.changeset/config.json` (`baseBranch: main`) |
+PR/commit policy: `AGENTS.md`. This skill is the file shape and release flow.
+
+| Concept | Value |
+| ------- | ----- |
+| PR notes | `.changeset/*.md` via `pnpm changeset` |
+| Product tag | `vYYYY.MM.DD.N` |
+| Release branch | `release/YYYY.MM.DD.N` |
+| Config | `.changeset/config.json` (`baseBranch: main`) |
 
 Scripts: `tools/scripts/branches/create-release-branch.ts`, `clean-local-branches.ts`; `tools/scripts/release/changeset-required.ts`, `release-branch-check.ts`, `release.ts`; `tools/scripts/changelog/main.ts`.
 
-## PR → `dev`
+## Recipe — PR → `dev`
 
-Non-draft PRs may include **at most one** new changeset file (CI: `changeset-required.yml`). Zero is allowed.
+Non-draft PRs: **0 or 1** new changeset (`changeset-required.yml`). Base: `origin/dev`. `release/*`: **zero**. Escape: label `skip-changeset`. Drafts skip until ready. Docs/tooling with no package bump: empty frontmatter.
 
 ```bash
 pnpm changeset
-pnpm changeset-required   # base: origin/dev
+pnpm changeset-required
 ```
 
 ```md
@@ -33,26 +38,17 @@ pnpm changeset-required   # base: origin/dev
 feat(pine-web): one-line summary
 ```
 
-- More than one new `.changeset/*.md` → fail
-- `release/*` PRs must have **zero** new changesets
-- Optional escape hatch: label **`skip-changeset`**
-- Draft PRs skip check until ready
+Summary line = git commit subject.
 
-## Product release flow
+## Recipe — product release
 
-1. **Create the release branch** from current `dev`:
+1. From `dev`: `pnpm branch:release --push` → `release/YYYY.MM.DD.N`
+2. CI (`release-version.yml`): pending changesets → `pnpm changeset:version` (`changeset version` + `pnpm changelog:root`); else if `CHANGELOG.md` lacks `## vYYYY.MM.DD.N` → `pnpm changelog:root` only. Commits `chore(release): vYYYY.MM.DD.N` and pushes.
+3. PR `release/YYYY.MM.DD.N` → `main` (`release-branch-check.yml`: calver name, zero leftover changesets)
+4. Merge to `main` → annotated tag `vYYYY.MM.DD.N` + GitHub Release from the matching `CHANGELOG.md` section
+5. Sync `main` back to `dev`. Optional: `pnpm branch:clean`
 
-```bash
-pnpm branch:release --push
-# → release/YYYY.MM.DD.N (pushed)
-```
-
-2. **CI versions + root changelog** on that branch (`release-version.yml`):
-   - If `.changeset/*.md` pending → `pnpm changeset:version` (`changeset version` + `pnpm changelog:root`)
-   - Else if `CHANGELOG.md` lacks `## vYYYY.MM.DD.N` → `pnpm changelog:root` only
-   - Commits `chore(release): vYYYY.MM.DD.N` and pushes back to `release/*`
-
-   You can still run the same locally before push if you prefer:
+Local version bump if needed:
 
 ```bash
 pnpm changeset:version
@@ -61,19 +57,16 @@ git commit -m "chore(release): vYYYY.MM.DD.N"
 git push
 ```
 
-3. **Open PR** `release/YYYY.MM.DD.N` → `main`. `release-branch-check.yml` requires a calver branch name and **zero** leftover changesets.
+Ops backfill: `pnpm release --sync-notes`. Package helpers: `pnpm changeset` · `changeset:version` · `changeset:release` (package semver; product ship is calver).
 
-4. **Merge to `main`**. `release.yml` creates annotated tag `vYYYY.MM.DD.N` and a GitHub Release whose notes come from the matching `CHANGELOG.md` section (`### Minor` / `### Patch` + `### Packages`).
+## Anti-patterns
 
-5. Sync `main` back to `dev` as usual. Optional local cleanup: `pnpm branch:clean`.
+- More than one new changeset on a non-draft PR into `dev`
+- Summary that does not match the commit subject
+- New changesets on `release/*`
+- Non-calver product tags (`release-2026...`, hand-tagged semver)
 
-```bash
-# rewrite existing GitHub Release bodies from CHANGELOG.md (ops / backfill)
-pnpm release --sync-notes
-```
+## Done when
 
-Do not hand-tag with non-calver semver. Do not invent `release-2026...` branch names.
-
-## Package publish helpers
-
-`pnpm changeset` · `changeset:version` · `changeset:release` — package semver; product ship is calver via release branch merge.
+- 0 or 1 new changeset (or `skip-changeset`) for a `dev` PR; summary matches commit
+- Release branches are `release/YYYY.MM.DD.N` with zero leftover changesets

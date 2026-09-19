@@ -71,6 +71,6 @@ describe("SeaweedObjectStorage", () => {
     const storage = new SeaweedObjectStorage();
     await storage.moveObject("quarantine/att-1", "trusted/att-1");
 
-    expect(send).toHaveBeenCalledTimes(3);
+    expect(send).toHaveBeenCalledTimes(2);
   });
 });

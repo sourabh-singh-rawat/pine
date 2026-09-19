@@ -1,7 +1,7 @@
 {
   "$schema": "https://json.schemastore.org/package.json",
   "name": "@pine/platform-web",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "private": true,
   "type": "module",
   "scripts": {
@@ -17,7 +17,6 @@
   "dependencies": {
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",
-    "@hey-api/client-axios": "0.9.1",
     "@hey-api/vite-plugin": "^0.3.2",
     "@mui/icons-material": "6.1.9",
     "@mui/material": "9.2.0",
@@ -36,7 +35,7 @@
   },
   "devDependencies": {
     "@graphql-codegen/add": "^7.1.0",
-    "@graphql-codegen/cli": "^7.2.0",
+    "@graphql-codegen/cli": "7.4.1",
     "@graphql-codegen/typescript": "^6.1.0",
     "@graphql-codegen/typescript-operations": "^6.1.2",
     "@graphql-codegen/typescript-react-query": "^7.0.5",

@@ -1,7 +1,7 @@
 {
   "$schema": "https://json.schemastore.org/package.json",
   "name": "@pine/events",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "description": "",
   "keywords": [],
   "license": "ISC",
@@ -29,6 +29,6 @@
   },
   "devDependencies": {
     "typescript": "7.0.2",
-    "vitest": "^4.1.10"
+    "vitest": "5.0.0"
   }
 }

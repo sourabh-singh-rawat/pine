@@ -1,7 +1,7 @@
 {
   "$schema": "https://json.schemastore.org/package.json",
   "name": "@pine/authorization",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "private": true,
   "description": "Shared authorization catalog and service-to-service client for relationship checks",
   "keywords": [

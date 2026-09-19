@@ -1,7 +1,7 @@
 {
   "$schema": "https://json.schemastore.org/package.json",
   "name": "@pine/common",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "private": "true",
   "description": "",
   "keywords": [],
@@ -24,7 +24,7 @@
     "build": "pnpm clean && tsc"
   },
   "dependencies": {
-    "fastify": "^5.10.0",
+    "fastify": "^5.12.4",
     "http-status-codes": "^2.3.0",
     "undici": "^8.10.0",
     "uuid": "14.0.1"

@@ -1,35 +1,33 @@
 ---
 name: k8s
 description: >
-  Helm/K8s under infra/k8s: microservice chart, PGO Postgres, NATS streams/consumers.
-  Triggers: helm, deploy, nats-consumer, GKE, infra/k8s.
+  Helm/K8s under infra/k8s: microservice chart, PGO Postgres, NATS streams and
+  consumers. Use when changing cluster deploy values or JetStream resources.
+when-to-use: >
+  helm, deploy, nats-consumer, nats-stream, GKE, infra/k8s, microservice values
 ---
 
 # Kubernetes
 
-Playbook: `docs/commands/install-k8s.md`. GKE: `docs/commands/gcloud.md`.  
-Local dev uses Compose (`docker-infra`), not these charts.
+Playbook: `docs/commands/install-k8s.md`. GKE: `docs/commands/gcloud.md`. Local dev: `docker-infra`, not these charts. Related: `events`, `workers`.
 
 ## Layout
 
 ```text
 infra/k8s/
-  microservice/   # Deployment+Service + *.values.yaml per service
-  postgres/  pgo/ # cluster chart + operator/CRDs
+  microservice/
+  postgres/  pgo/
   nats/  nats-stream/  nats-consumer/
   ingress/  secrets/  dashboard/
 ```
 
-## Install order
+## Recipe
 
-1. Dashboard (optional) → 2. Ingress → 3. Secrets → 4. PGO
-2. Per-service Postgres → 6. NATS + nack → 7. Streams → 8. Consumers → 9. Microservices
+Install order: Dashboard (optional) → Ingress → Secrets → PGO → per-service Postgres → NATS + nack → Streams → Consumers → Microservices.
 
-Stream/consumer names must match `@pine/events` (`events`).
+Stream/consumer names must match `@pine/events` `Streams` (`identity`, `issues`, `attachment`, `platform`, `authorization`). CloudEvent `type` examples: `issues.issue.created`, `identity.user.registered`.
 
-## Microservice values
-
-Edit values, don’t fork the chart:
+Edit values; do not fork the chart:
 
 ```yaml
 replicaCount: 1
@@ -39,18 +37,26 @@ container:
 jwtSecretRef: jwt-secret
 ```
 
-Env secrets come from PGO user secret naming `{release}-postgres-pguser-{release}-postgres` (+ optional JWT/SMTP refs). Values files still use some legacy names (`issue-tracker`) — map to current package names carefully (`notification-service` for notifications).
+Env secrets from PGO user secret `{release}-postgres-pguser-{release}-postgres` (+ optional JWT/SMTP refs). Values files still use some legacy names (`issue-tracker`) — map to current packages (`notification-service` for notifications).
 
-## New event on cluster
+New event on cluster:
 
-1. Code: `@pine/events` subject + payload (`events`)
+1. Code: `@pine/events` (`events`)
 2. `nats-stream` if new stream
 3. `nats-consumer/values/*.yaml` durable
-4. Names consistent with subjects (`user.registered`, `issue.created`, …)
+4. Names match CloudEvent `type` and consumer durable conventions
 
-## Rules
+Image/tag changes in values only. Committed secrets are templates. Destructive ops (delete release, scale cluster to 0) → confirm with the user.
 
-- Image/tag changes in values only
-- No hand-applied Deployments that duplicate the chart
-- Committed secrets are templates — never real prod secrets
-- Destructive ops (delete release, scale cluster to 0) → confirm with user
+## Anti-patterns
+
+- Forking the microservice chart per service
+- Hand-applied Deployments that duplicate the chart
+- Durable / stream names that diverge from `@pine/events`
+- Committing real production secrets
+
+## Done when
+
+- Values/charts match current package and event names
+- Stream + consumer resources exist when the code path needs them
+- No hand-applied duplicate Deployments

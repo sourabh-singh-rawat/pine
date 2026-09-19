@@ -2,19 +2,18 @@
 name: material-design-3
 description: >
   Material Design 3 playbook for Pine web UI (expressive color, type, shape,
-  motion, layout, a11y) mapped to MUI/@pine/ui. Triggers: M3, Material Design 3,
-  expressive UI, theme tokens, redesign UI. Use when /material-design-3.
+  motion, layout, a11y) mapped to MUI/@pine/ui. Use when redesigning UI, theme
+  tokens, or /material-design-3.
+when-to-use: >
+  M3, Material Design 3, expressive UI, theme tokens, redesign UI, pineShape,
+  pinePalette, accessibility
 ---
 
 # Material Design 3
 
-Canonical source: [m3.material.io](https://m3.material.io/). Prefer **M3 Expressive** for Pine product UI unless the user asks for a utilitarian/standard feel.
+Visual system only — not feature wiring. Prefer **M3 Expressive** unless the user asks for a utilitarian feel. Canonical source: [m3.material.io](https://m3.material.io/). Related: `web-feature`.
 
-Stack today: React + MUI (`@mui/material`) + Emotion + `@pine/ui`. Foundation tokens live in `packages/ui/src/theme/` (`pineShape`, `pinePaletteLight`/`Dark`, `pineTypography`, `pineMotion`). Apps assemble `createTheme` in `apps/*/src/bootstrap/theme.tsx`.
-
-Load with [web-feature](../web-feature/SKILL.md) for routes/codegen. This skill owns **visual system and component expression**, not feature wiring.
-
-Deeper tables: [references/tokens.md](./references/tokens.md), [references/mui-mapping.md](./references/mui-mapping.md).
+Stack: React + MUI + Emotion + `@pine/ui`. Tokens: `packages/ui/src/theme/` (`pineShape`, `pinePaletteLight`/`Dark`, `pineTypography`, `pineMotion`). Apps assemble `createTheme` in `apps/*/src/bootstrap/theme.tsx`. Tables: [references/tokens.md](./references/tokens.md), [references/mui-mapping.md](./references/mui-mapping.md).
 
 ## Goal for Pine
 
@@ -170,24 +169,7 @@ When evolving `theme.tsx` / `@pine/ui` toward fuller M3:
 3. Add typography variants for M3 roles used in product (at least title/body/label + emphasized pair for CTA/hero).
 4. Set `components` defaultProps/`styleOverrides` once (Button, ListItemButton, Dialog, Chip, Fab, TextField) so features inherit expression.
 5. Light + dark schemes stay role-parallel (same roles, different values).
-6. No `as` / `any` when typing theme augmentations — use proper module augmentation (already started for `Shape`).
-
-## Do / Don't
-
-**Do**
-
-- Steer new UI toward expressive hierarchy and M3 roles.
-- Extend the shared theme; reuse `@pine/ui` + MUI.
-- Use containment and one clear primary action per region.
-- Verify in browser (behavior + desktop/mobile), not only screenshots.
-
-**Don't**
-
-- Hardcode hex/rgb in feature components when a theme role exists or should exist.
-- Emphasize every label, animate every list row, or apply decorative shapes to data tables.
-- Add another component library or copy Material Web components wholesale into React.
-- Ignore reduced motion or focus visibility.
-- Hand-edit `__generated__` or invent GraphQL while doing UI polish.
+6. Theme augmentations: module augmentation (already started for `Shape`), not type assertions.
 
 ## Canonical links
 
@@ -200,3 +182,18 @@ When evolving `theme.tsx` / `@pine/ui` toward fuller M3:
 - [Components](https://m3.material.io/components)
 - [Usability](https://m3.material.io/foundations/usability)
 - [Accessibility](https://m3.material.io/foundations/accessible-design)
+
+## Anti-patterns
+
+- Hardcoded hex/rgb in feature components when a theme role exists or should exist
+- Emphasizing every label, animating every list row, or decorative shapes on data tables
+- A second component library, or copying Material Web components wholesale into React
+- Ignoring reduced motion or focus visibility
+- Screenshot-only verification when UI behavior changed
+
+## Done when
+
+- Tokens/roles come from theme / `@pine/ui`, not one-off hex in features
+- Expression level matches surface density (baseline vs hero)
+- Focus, contrast, and reduced-motion paths checked
+- Desktop + mobile verified in browser when UI changed (`web-feature` for wiring)
