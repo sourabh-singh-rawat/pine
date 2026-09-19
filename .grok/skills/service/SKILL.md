@@ -16,9 +16,10 @@ Domain layer. Canonical: `platform-service` `features/workspaces/services`. Rela
 ```text
 features/<feature>/
   services/
+    __tests__/
+      FooService.test.ts
     IFooService.ts
     FooService.ts
-    FooService.test.ts
     index.ts
   errors/
     FooNotFoundError.ts
