@@ -15,6 +15,11 @@ import { ketoClient } from "@/bootstrap/keto-client";
 import { logger } from "@/bootstrap/logger";
 import { AuthorizationService, type IAuthorizationService } from "@/features/authorization";
 import { AuthorizationProfileSyncConsumer } from "@/features/identity";
+import {
+  AuthorizationItemSyncConsumer,
+  AuthorizationProjectSyncConsumer,
+  AuthorizationSpaceSyncConsumer,
+} from "@/features/issues";
 
 import {
   AuthorizationWorkspaceRelationSyncConsumer,
@@ -44,6 +49,9 @@ container
 container.bind<AuthorizationTenantRelationSyncConsumer>(TYPES.AuthorizationTenantRelationSyncConsumer).to(AuthorizationTenantRelationSyncConsumer);
 container.bind<AuthorizationPlatformRelationSyncConsumer>(TYPES.AuthorizationPlatformRelationSyncConsumer).to(AuthorizationPlatformRelationSyncConsumer);
 container.bind<AuthorizationProfileSyncConsumer>(TYPES.AuthorizationProfileSyncConsumer).to(AuthorizationProfileSyncConsumer);
+container.bind<AuthorizationSpaceSyncConsumer>(TYPES.AuthorizationSpaceSyncConsumer).to(AuthorizationSpaceSyncConsumer);
+container.bind<AuthorizationProjectSyncConsumer>(TYPES.AuthorizationProjectSyncConsumer).to(AuthorizationProjectSyncConsumer);
+container.bind<AuthorizationItemSyncConsumer>(TYPES.AuthorizationItemSyncConsumer).to(AuthorizationItemSyncConsumer);
 
 container.bind<IHttpServer>(TYPES.HttpServer).toConstantValue(
   createHttpServer({

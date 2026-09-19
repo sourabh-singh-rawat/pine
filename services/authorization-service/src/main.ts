@@ -14,6 +14,11 @@ import { broker, container, TYPES } from "@/bootstrap";
 import { openApiOutputPath } from "@/bootstrap/container";
 import { logger } from "@/bootstrap/logger";
 import { AuthorizationProfileSyncConsumer } from "@/features/identity";
+import {
+  AuthorizationItemSyncConsumer,
+  AuthorizationProjectSyncConsumer,
+  AuthorizationSpaceSyncConsumer,
+} from "@/features/issues";
 
 import {
   AuthorizationWorkspaceRelationSyncConsumer,
@@ -62,6 +67,15 @@ const main = async () => {
     .start();
   void container
     .get<AuthorizationProfileSyncConsumer>(TYPES.AuthorizationProfileSyncConsumer)
+    .start();
+  void container
+    .get<AuthorizationSpaceSyncConsumer>(TYPES.AuthorizationSpaceSyncConsumer)
+    .start();
+  void container
+    .get<AuthorizationProjectSyncConsumer>(TYPES.AuthorizationProjectSyncConsumer)
+    .start();
+  void container
+    .get<AuthorizationItemSyncConsumer>(TYPES.AuthorizationItemSyncConsumer)
     .start();
 };
 
