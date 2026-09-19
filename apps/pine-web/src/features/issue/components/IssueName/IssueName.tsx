@@ -1,58 +1,30 @@
 import { ClickAwayListener } from "@mui/base";
 import CloseIcon from "@mui/icons-material/Close";
 import DoneIcon from "@mui/icons-material/Done";
-import { IconButton, Typography } from "@mui/material";
-import Grid2 from "@mui/material/Grid2";
-import { alpha, styled, useTheme } from "@mui/material/styles";
-import MuiTextField from "@mui/material/TextField";
+import { IconButton, Stack, TextField, Typography } from "@mui/material";
+import { alpha, useTheme } from "@mui/material/styles";
 import { useEffect, useState } from "react";
-import { SubmitHandler, useForm } from "react-hook-form";
-import type { UpdateIssueInput } from "@generated/gql/graphql";
+import { Controller, type SubmitHandler, useForm } from "react-hook-form";
 import { useUpdateIssueMutation } from "@generated/gql";
-import { TextField, useSnackbar } from "@shared";
+import { md3TypeRoles } from "@pine/ui";
+import { useSnackbar } from "@shared";
 
-const TitleTextField = styled(MuiTextField)(({ theme }) => ({
-  "& .MuiInputBase-input": {
-    overflow: "hidden",
-    paddingTop: theme.spacing(0.35),
-    paddingBottom: theme.spacing(0.35),
-    textOverflow: "ellipsis",
-    borderRadius: theme.shape.borderRadiusMedium,
-    paddingLeft: theme.spacing(1),
-  },
-  "& .MuiOutlinedInput-root": {
-    fontSize: theme.typography.h4.fontSize,
-    fontWeight: "bold",
-    backgroundColor: "transparent",
-    borderRadius: theme.shape.borderRadiusMedium,
-    "& fieldset": { border: "2px solid transparent" },
-    "&:hover": {
-      backgroundColor: theme.palette.action.hover,
-      "& fieldset": { border: `2px solid ${theme.palette.grey[200]}` },
-    },
-    "&.Mui-focused": {
-      "& fieldset": { borderColor: theme.palette.primary.main },
-      borderColor: theme.palette.primary.main,
-      boxShadow: `${alpha(theme.palette.primary.main, 0.25)} 0 0 0 0.2rem`,
-    },
-    transition: theme.transitions.create(["border-color", "background-color", "box-shadow"]),
-  },
-}));
+type IssueNameFormValues = {
+  name: string;
+};
 
 interface IssueNameProps {
   issueId: string;
   initialValue?: string;
 }
 
-/**
- * Update the item name
- * @param props.issueId The id of the item to update
- */
 export const IssueName = ({ issueId, initialValue = "" }: IssueNameProps) => {
   const theme = useTheme();
   const snackbar = useSnackbar();
-  const form = useForm();
-  const [defaultValue, setDefaultValue] = useState("");
+  const form = useForm<IssueNameFormValues>({
+    defaultValues: { name: initialValue },
+  });
+  const [defaultValue, setDefaultValue] = useState(initialValue);
   const [isFocused, setIsFocused] = useState(false);
   const updateIssueMutation = useUpdateIssueMutation();
 
@@ -67,91 +39,124 @@ export const IssueName = ({ issueId, initialValue = "" }: IssueNameProps) => {
     form.setValue("name", defaultValue);
   };
 
-  const onSubmit: SubmitHandler<Pick<UpdateIssueInput, "name">> = async ({ name }) => {
+  const onSubmit: SubmitHandler<IssueNameFormValues> = async ({ name }) => {
     if (updateIssueMutation.isPending) return;
 
-    await updateIssueMutation.mutateAsync({ input: { issueId, name } });
-    snackbar.success("Name updated successfully");
-
-    if (name) setDefaultValue(name);
-
-    setIsFocused(false);
+    try {
+      await updateIssueMutation.mutateAsync({ input: { issueId, name } });
+      snackbar.success("Name updated successfully");
+      setDefaultValue(name);
+      setIsFocused(false);
+    } catch (error) {
+      snackbar.error(error instanceof Error ? error.message : "Failed to update name");
+    }
   };
 
   useEffect(() => {
-    if (initialValue) {
-      form.setValue("name", initialValue);
-      setDefaultValue(initialValue);
-    }
-  }, [initialValue]);
+    form.setValue("name", initialValue);
+    setDefaultValue(initialValue);
+  }, [form, initialValue]);
 
   return (
     <ClickAwayListener onClickAway={handleCancel}>
-      <Grid2
-        container
-        sx={{ mt: theme.spacing(1), ml: theme.spacing(-2) }}
+      <Stack
         component="form"
+        direction="row"
+        alignItems="center"
+        spacing={0.5}
         onSubmit={form.handleSubmit(onSubmit)}
+        sx={{ width: "100%", minWidth: 0 }}
       >
-        <Grid2 flexGrow={1}>
-          {isFocused ? (
-            <TextField
-              form={form}
-              name="name"
-              sx={{
-                fontSize: theme.typography.h4,
-                ".MuiInputBase-input": {
-                  fontWeight: theme.typography.fontWeightBold,
-                  px: theme.spacing(2),
-                  py: theme.spacing(0.25),
-                },
-              }}
-              autoFocus
-            />
-          ) : (
-            <Typography
-              sx={{
-                px: theme.spacing(2),
-                py: theme.spacing(0.5),
-                fontWeight: "bold",
-                borderRadius: theme.shape.borderRadiusSmall,
-                color: theme.palette.text.secondary,
-                "&:hover": { backgroundColor: theme.palette.action.hover },
-              }}
-              variant="h4"
-              onClick={handleClick}
-            >
-              {form.watch("name") || "Untitled"}
-            </Typography>
-          )}
-        </Grid2>
-
-        {isFocused && (
-          <Grid2 size={12}>
-            <Grid2 spacing={1} container>
-              <Grid2 flexGrow={1}></Grid2>
-              <Grid2>
-                <IconButton
-                  size="small"
-                  type="submit"
-                  sx={{ borderRadius: theme.shape.borderRadiusMedium }}
-                >
-                  <DoneIcon />
-                </IconButton>
-              </Grid2>
-              <Grid2>
-                <IconButton
-                  size="small"
-                  onClick={handleCancel}
-                  sx={{ borderRadius: theme.shape.borderRadiusMedium }}
-                >
-                  <CloseIcon />
-                </IconButton>
-              </Grid2>
-            </Grid2>
-          </Grid2>
+        {isFocused ? (
+          <Controller
+            name="name"
+            control={form.control}
+            render={({ field }) => (
+              <TextField
+                {...field}
+                autoFocus
+                size="small"
+                fullWidth
+                variant="outlined"
+                sx={{
+                  flex: 1,
+                  minWidth: 0,
+                  "& .MuiInputBase-root": {
+                    backgroundColor: "transparent",
+                    ...md3TypeRoles.titleLarge,
+                    lineHeight: 1.5,
+                  },
+                  "& .MuiInputBase-input": {
+                    px: theme.spacing(1),
+                    py: theme.spacing(0.5),
+                    ...md3TypeRoles.titleLarge,
+                    lineHeight: 1.5,
+                  },
+                  "& .MuiOutlinedInput-root": {
+                    borderRadius: theme.shape.borderRadiusSmall,
+                    "& fieldset": { borderColor: "transparent" },
+                    "&:hover": {
+                      backgroundColor: theme.palette.action.hover,
+                      "& fieldset": { borderColor: theme.palette.grey[200] },
+                    },
+                    "&.Mui-focused": {
+                      boxShadow: `${alpha(theme.palette.primary.main, 0.25)} 0 0 0 0.2rem`,
+                      "& fieldset": { borderColor: theme.palette.primary.main },
+                    },
+                  },
+                }}
+              />
+            )}
+          />
+        ) : (
+          <Typography
+            component="h1"
+            variant="titleLarge"
+            onClick={handleClick}
+            sx={{
+              ...md3TypeRoles.titleLarge,
+              lineHeight: 1.5,
+              flex: 1,
+              minWidth: 0,
+              px: theme.spacing(1),
+              py: theme.spacing(0.5),
+              borderRadius: theme.shape.borderRadiusSmall,
+              color: "text.primary",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              whiteSpace: "nowrap",
+              cursor: "text",
+              "&:hover": { backgroundColor: theme.palette.action.hover },
+            }}
+          >
+            {form.watch("name") || "Untitled"}
+          </Typography>
         )}
-      </Grid2>
+
+        {isFocused ? (
+          <>
+            <IconButton
+              size="small"
+              type="submit"
+              aria-label="Save title"
+              disabled={updateIssueMutation.isPending}
+              sx={{ borderRadius: theme.shape.borderRadiusMedium, flexShrink: 0 }}
+            >
+              <DoneIcon fontSize="small" />
+            </IconButton>
+            <IconButton
+              size="small"
+              type="button"
+              aria-label="Cancel title edit"
+              onClick={handleCancel}
+              disabled={updateIssueMutation.isPending}
+              sx={{ borderRadius: theme.shape.borderRadiusMedium, flexShrink: 0 }}
+            >
+              <CloseIcon fontSize="small" />
+            </IconButton>
+          </>
+        ) : null}
+      </Stack>
     </ClickAwayListener>
   );
 };
