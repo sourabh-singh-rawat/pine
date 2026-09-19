@@ -73,9 +73,21 @@ export class IssueRepository implements IIssueRepository {
       .where(and(eq(Issues.id, id), eq(Issues.createdById, userId), isNull(Issues.deletedAt)));
   }
 
-  async hardDelete(id: string, options?: IssueRepositoryOptions): Promise<void> {
+  async softDelete(id: string, options?: IssueRepositoryOptions): Promise<boolean> {
     const client = this.client(options);
-    await client.delete(Issues).where(eq(Issues.id, id));
+    const now = new Date();
+
+    const deleted = await client
+      .update(Issues)
+      .set({
+        deletedAt: now,
+        updatedAt: now,
+        version: sql`${Issues.version} + 1`,
+      })
+      .where(and(eq(Issues.id, id), isNull(Issues.deletedAt)))
+      .returning({ id: Issues.id });
+
+    return deleted.length > 0;
   }
 
   async findById(id: string, options?: IssueRepositoryOptions): Promise<Issue | null> {

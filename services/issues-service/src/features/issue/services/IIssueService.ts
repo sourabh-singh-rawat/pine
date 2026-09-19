@@ -48,6 +48,7 @@ export interface FindProjectIssuesOptions {
 
 export interface DeleteIssueOptions {
   id: string;
+  userId: string;
 }
 
 export interface IIssueService {

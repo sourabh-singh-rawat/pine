@@ -42,7 +42,7 @@ export interface IIssueRepository {
     entity: UpdateIssueEntity,
     options?: IssueRepositoryOptions,
   ): Promise<void>;
-  hardDelete(id: string, options?: IssueRepositoryOptions): Promise<void>;
+  softDelete(id: string, options?: IssueRepositoryOptions): Promise<boolean>;
   findById(id: string, options?: IssueRepositoryOptions): Promise<Issue | null>;
   findByIdForUser(
     id: string,

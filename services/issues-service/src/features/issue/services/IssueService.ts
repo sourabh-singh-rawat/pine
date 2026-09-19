@@ -1,9 +1,14 @@
+import {
+  requirePermission,
+  type IAuthorizationClient,
+} from "@pine/authorization";
 import { IssueStatus, ITEM_PRIORITY, ServiceResponse } from "@pine/common";
 import { createCloudEvent, IssueCreatedEvent } from "@pine/events";
 import type { IOutboxService } from "@pine/outbox";
 import { inject, injectable } from "inversify";
 import { TYPES } from "@/bootstrap/container-types";
 import type { DbClient, Issue } from "@/db";
+import { IssueNotFoundError } from "@/features/issue/errors";
 import type { IIssueAssigneeRepository, IIssueRepository } from "@/features/issue/repositories";
 import type {
   CreateIssueOptions,
@@ -30,6 +35,8 @@ export class IssueService implements IIssueService {
     private readonly issueAssigneeRepository: IIssueAssigneeRepository,
     @inject(TYPES.OutboxService)
     private readonly outboxService: IOutboxService,
+    @inject(TYPES.AuthorizationClient)
+    private readonly authorizationClient: IAuthorizationClient,
   ) {}
 
   async createIssue(options: CreateIssueOptions) {
@@ -163,7 +170,24 @@ export class IssueService implements IIssueService {
   }
 
   async deleteIssue(options: DeleteIssueOptions) {
-    await this.issueRepository.hardDelete(options.id);
+    const { id, userId } = options;
+
+    const issue = await this.issueRepository.findById(id);
+    if (!issue) {
+      throw new IssueNotFoundError(`Issue not found: ${id}`);
+    }
+
+    await requirePermission(
+      this.authorizationClient,
+      userId,
+      "delete",
+      `project:${issue.projectId}`,
+    );
+
+    const deleted = await this.issueRepository.softDelete(id);
+    if (!deleted) {
+      throw new IssueNotFoundError(`Issue not found: ${id}`);
+    }
   }
 
   private getStatuses = () => Object.values(IssueStatus);

@@ -1,0 +1,1 @@
+export { IssueNotFoundError } from "./IssueNotFoundError";
