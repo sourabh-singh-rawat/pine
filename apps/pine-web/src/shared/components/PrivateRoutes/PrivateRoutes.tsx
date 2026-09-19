@@ -5,7 +5,6 @@ import { useAuthStore } from "@features/auth";
 import { appShowsSidebar, getActiveApp } from "../../apps";
 import { redirectToOidcSignIn } from "../../../lib/auth";
 import { AppLoader } from "../AppLoader";
-import { AppRail } from "../navigation/AppRail";
 import { Navbar } from "../navigation/Navbar";
 import { Sidebar } from "../navigation/Sidebar";
 
@@ -32,7 +31,6 @@ export const PrivateRoutes = ({ children }: PrivateRoutesProps) => {
   return (
     <Box display="flex" height="100vh">
       <Navbar />
-      <AppRail />
       {showSidebar ? <Sidebar /> : null}
       <Container
         sx={{
