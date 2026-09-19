@@ -6,6 +6,9 @@ export const GraphNamespaceSchema = Type.Union([
   Type.Literal("platform"),
   Type.Literal("tenant"),
   Type.Literal("workspace"),
+  Type.Literal("space"),
+  Type.Literal("project"),
+  Type.Literal("item"),
   Type.Literal("role"),
   Type.Literal("permission"),
 ]);

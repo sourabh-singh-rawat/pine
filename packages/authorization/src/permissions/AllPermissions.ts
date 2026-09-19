@@ -23,6 +23,22 @@ export type WorkspacePermission =
   | "create_project"
   | "delete";
 
+export type SpacePermission =
+  | "read"
+  | "update"
+  | "manage_members"
+  | "create_project"
+  | "delete";
+
+export type ProjectPermission =
+  | "read"
+  | "update"
+  | "manage_members"
+  | "create_item"
+  | "delete";
+
+export type ItemPermission = "read" | "update" | "manage_members" | "delete";
+
 export type RolePermission = "read" | "create" | "update" | "delete";
 
 export type PermissionGrantPermission = "read" | "create" | "update" | "delete";
@@ -32,6 +48,9 @@ export type Permission =
   | PlatformPermission
   | TenantPermission
   | WorkspacePermission
+  | SpacePermission
+  | ProjectPermission
+  | ItemPermission
   | RolePermission
   | PermissionGrantPermission;
 
@@ -40,6 +59,9 @@ export type PermissionKey =
   | `platform:${PlatformPermission}`
   | `tenant:${TenantPermission}`
   | `workspace:${WorkspacePermission}`
+  | `space:${SpacePermission}`
+  | `project:${ProjectPermission}`
+  | `item:${ItemPermission}`
   | `role:${RolePermission}`
   | `permission:${PermissionGrantPermission}`;
 
@@ -72,6 +94,29 @@ export const WORKSPACE_PERMISSIONS: readonly WorkspacePermission[] = [
   "delete",
 ];
 
+export const SPACE_PERMISSIONS: readonly SpacePermission[] = [
+  "read",
+  "update",
+  "manage_members",
+  "create_project",
+  "delete",
+];
+
+export const PROJECT_PERMISSIONS: readonly ProjectPermission[] = [
+  "read",
+  "update",
+  "manage_members",
+  "create_item",
+  "delete",
+];
+
+export const ITEM_PERMISSIONS: readonly ItemPermission[] = [
+  "read",
+  "update",
+  "manage_members",
+  "delete",
+];
+
 export const ROLE_PERMISSIONS: readonly RolePermission[] = ["read", "create", "update", "delete"];
 
 export const PERMISSION_GRANT_PERMISSIONS: readonly PermissionGrantPermission[] = [
@@ -92,6 +137,9 @@ export const ALL_PERMISSIONS = [
   ...catalog("platform", PLATFORM_PERMISSIONS),
   ...catalog("tenant", TENANT_PERMISSIONS),
   ...catalog("workspace", WORKSPACE_PERMISSIONS),
+  ...catalog("space", SPACE_PERMISSIONS),
+  ...catalog("project", PROJECT_PERMISSIONS),
+  ...catalog("item", ITEM_PERMISSIONS),
   ...catalog("role", ROLE_PERMISSIONS),
   ...catalog("permission", PERMISSION_GRANT_PERMISSIONS),
 ];
