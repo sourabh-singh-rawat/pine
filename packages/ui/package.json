@@ -20,6 +20,10 @@
     ".": {
       "types": "./src/index.ts",
       "default": "./src/index.ts"
+    },
+    "./theme": {
+      "types": "./src/theme/index.ts",
+      "default": "./src/theme/index.ts"
     }
   },
   "scripts": {

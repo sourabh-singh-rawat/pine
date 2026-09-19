@@ -1,38 +1,6 @@
 import type { CSSProperties } from "react";
-import type {} from "@mui/material/styles";
-import type {} from "@mui/material/styles/createTheme";
-import type {} from "@mui/material/Typography";
-import type {} from "@mui/system";
-
-declare module "@mui/system" {
-  interface Shape {
-    borderRadiusNone: string;
-    borderRadiusExtraSmall: string;
-    borderRadiusSmall: string;
-    borderRadiusMedium: string;
-    borderRadiusLarge: string;
-    borderRadiusLargeIncreased: string;
-    borderRadiusExtraLarge: string;
-    borderRadiusExtraLargeIncreased: string;
-    borderRadiusExtraExtraLarge: string;
-    borderRadiusRounded: string;
-  }
-}
 
 declare module "@mui/material/styles" {
-  interface Shape {
-    borderRadiusNone: string;
-    borderRadiusExtraSmall: string;
-    borderRadiusSmall: string;
-    borderRadiusMedium: string;
-    borderRadiusLarge: string;
-    borderRadiusLargeIncreased: string;
-    borderRadiusExtraLarge: string;
-    borderRadiusExtraLargeIncreased: string;
-    borderRadiusExtraExtraLarge: string;
-    borderRadiusRounded: string;
-  }
-
   interface TypographyVariants {
     displayLarge: CSSProperties;
     displayMedium: CSSProperties;
@@ -90,18 +58,6 @@ declare module "@mui/material/styles" {
   }
 }
 
-declare module "@mui/material/styles/createTheme" {
-  interface ThemeOptions {
-    md3?: {
-      space?: {
-        dense?: number;
-        stack?: number;
-        section?: number;
-      };
-    };
-  }
-}
-
 declare module "@mui/material/Typography" {
   interface TypographyPropsVariantOverrides {
     displayLarge: true;
@@ -121,5 +77,3 @@ declare module "@mui/material/Typography" {
     labelSmall: true;
   }
 }
-
-export type MuiAugmentation = true;

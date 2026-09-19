@@ -2,7 +2,7 @@ import type { PropsWithChildren } from "react";
 import { ThemeProvider as EmotionThemeProvider } from "@emotion/react";
 import { CssBaseline, type ThemeOptions } from "@mui/material";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import { pineShape } from "@pine/ui";
+import { md3Space, md3TypeRoles, pineShape } from "@pine/ui";
 import { SnackbarProvider } from "notistack";
 
 import { SnackbarContent } from "@shared/components/Snackbar";
@@ -58,6 +58,7 @@ const typography: ThemeOptions["typography"] = {
   h6: { fontSize: "1rem" },
   body1: { fontSize: "0.875rem" },
   body2: { fontSize: "0.8125rem" },
+  ...md3TypeRoles,
 };
 
 const lightPalette = {
@@ -109,6 +110,9 @@ const paletteByMode: Record<ThemeMode, typeof lightPalette | typeof darkPalette>
 
 const theme = createTheme({
   spacing: 8,
+  md3: {
+    space: md3Space,
+  },
   palette: {
     mode,
     ...paletteByMode[mode],
