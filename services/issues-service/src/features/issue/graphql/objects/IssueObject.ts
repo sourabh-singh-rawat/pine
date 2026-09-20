@@ -6,6 +6,7 @@ type IssueObjectShape = Issue & {
   project?: Project;
   parentIssue?: Issue | null;
   subIssues?: Issue[] | null;
+  hasChildren?: boolean;
 };
 
 export const IssueObject = builder.objectRef<IssueObjectShape>("IssueObject");
@@ -35,6 +36,9 @@ IssueObject.implement({
       type: [IssueObject],
       nullable: true,
       resolve: (parent) => parent.subIssues ?? null,
+    }),
+    hasChildren: t.boolean({
+      resolve: (parent) => parent.hasChildren ?? false,
     }),
     estimate: t.exposeInt("estimate", { nullable: true }),
     component: t.exposeString("component", { nullable: true }),

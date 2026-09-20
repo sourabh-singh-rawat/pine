@@ -6,5 +6,6 @@ query FindProjectIssues($projectId: String!) {
     statusId
     priority
     dueDate
+    hasChildren
   }
 }

@@ -41,7 +41,7 @@ export type FindProjectIssuesQueryVariables = Exact<{
 }>;
 
 
-export type FindProjectIssuesQuery = { findProjectIssues: Array<{ description: string | null, id: string | null, name: string | null, statusId: string | null, priority: string | null, dueDate: unknown }> | null };
+export type FindProjectIssuesQuery = { findProjectIssues: Array<{ description: string | null, id: string | null, name: string | null, statusId: string | null, priority: string | null, dueDate: unknown, hasChildren: boolean | null }> | null };
 
 export type FindSubIssuesQueryVariables = Exact<{
   input: Types.FindIssuesInput;
@@ -249,6 +249,7 @@ export const FindProjectIssuesDocument = new TypedDocumentString(`
     statusId
     priority
     dueDate
+    hasChildren
   }
 }
     `);

@@ -35,21 +35,37 @@ export const IssueStatusTableCell = ({
 export const IssueNameTableCell = ({
   issueId,
   name,
+  depth,
+  hasChildren,
+  isExpanded,
 }: {
   issueId: string;
   name: string;
+  depth: number;
+  hasChildren: boolean;
+  isExpanded: boolean;
 }) => {
   const ui = useContext(IssueListUiContext);
   if (!ui) return name;
+
   return (
     <IssueNameCell
       issueId={issueId}
       name={name}
+      depth={depth}
+      hasChildren={hasChildren}
+      showExpandGutter={ui.showExpandGutter}
+      isExpanded={isExpanded}
+      isExpanding={ui.expandingIssueIds.has(issueId)}
       isEditing={ui.editingIssueId === issueId}
       isSaving={ui.isSaving}
       onStartEditing={() => ui.onStartEditing(issueId)}
       onFinishEditing={() => ui.onFinishEditing(issueId)}
       onSave={async (nextName) => ui.onSaveName(issueId, nextName)}
+      onToggleExpand={() => {
+        if (!hasChildren) return;
+        ui.onToggleNestedIssue(issueId);
+      }}
     />
   );
 };

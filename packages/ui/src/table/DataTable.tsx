@@ -1,6 +1,7 @@
 import {
   type ColumnDef,
   type ExpandedState,
+  type Row,
   type RowData,
   type TableState,
   type Updater,
@@ -17,6 +18,8 @@ export type DataTableProps<TData extends RowData> = {
   ariaLabel?: string;
   onRowClick?: (row: TData) => void;
   getRowId?: (originalRow: TData, index: number) => string;
+  getSubRows?: (originalRow: TData, index: number) => TData[] | undefined;
+  getRowCanExpand?: (row: Row<typeof pineTableFeatures, TData>) => boolean;
   initialState?: Partial<TableState<typeof pineTableFeatures>>;
   grouping?: string[];
   showBorder?: boolean;
@@ -29,6 +32,8 @@ export const DataTable = <TData extends RowData>({
   ariaLabel,
   onRowClick,
   getRowId,
+  getSubRows,
+  getRowCanExpand,
   initialState,
   grouping,
   showBorder = false,
@@ -52,6 +57,8 @@ export const DataTable = <TData extends RowData>({
       data,
       columns,
       getRowId,
+      getSubRows,
+      getRowCanExpand,
       initialState,
       groupedColumnMode,
       autoResetAll: false,

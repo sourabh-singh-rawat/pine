@@ -13,6 +13,8 @@ export type IssueListUiContextValue = {
   dueDateOverrides: Record<string, string | null>;
   statuses: StatusOption[];
   isSaving: boolean;
+  showExpandGutter: boolean;
+  expandingIssueIds: ReadonlySet<string>;
   onStartEditing: (issueId: string) => void;
   onFinishEditing: (issueId: string) => void;
   onSaveName: (issueId: string, name: string) => Promise<boolean>;
@@ -20,6 +22,7 @@ export type IssueListUiContextValue = {
   onDueDateChange: (issueId: string, dueDate: string | null) => void;
   onStatusChange: (issueId: string, statusId: string) => void;
   onOpenMenu: (issueId: string, position: MenuAnchorPosition) => void;
+  onToggleNestedIssue: (issueId: string) => void;
 };
 
 export const IssueListUiContext = createContext<IssueListUiContextValue | null>(

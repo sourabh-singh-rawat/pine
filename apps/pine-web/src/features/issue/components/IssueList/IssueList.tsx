@@ -23,8 +23,10 @@ import {
   IssueListUiContext,
   type IssueListUiContextValue,
 } from "./IssueListUiContext";
-import { type IssueListProps, type IssueRow, statusOrderIndex } from "./types";
+import { sortIssueRows, toIssueRow } from "./mapIssueRow";
+import { type IssueListProps, type IssueRow } from "./types";
 import { useIssueListActions } from "./useIssueListActions";
+import { useIssueListNesting } from "./useIssueListNesting";
 
 const EMPTY_ROWS: IssueRow[] = [];
 
@@ -32,15 +34,25 @@ type IssueListTableProps = {
   rows: IssueRow[];
   columns: ColumnDef<PineTableFeatures, IssueRow, unknown>[];
   shouldGroup: boolean;
+  enableNestedRows: boolean;
   showBorder?: boolean;
 };
 
+const getIssueSubRows = (row: IssueRow) => row.children;
+
 const IssueListTable = memo(
-  ({ rows, columns, shouldGroup, showBorder }: IssueListTableProps) => (
+  ({
+    rows,
+    columns,
+    shouldGroup,
+    enableNestedRows,
+    showBorder,
+  }: IssueListTableProps) => (
     <DataTable
       data={rows.length > 0 ? rows : EMPTY_ROWS}
       columns={columns}
       getRowId={getIssueRowId}
+      getSubRows={enableNestedRows ? getIssueSubRows : undefined}
       ariaLabel="Issues"
       showBorder={showBorder}
       grouping={shouldGroup ? STATUS_GROUPING : undefined}
@@ -63,6 +75,8 @@ export const IssueList = ({ issueId, projectId, style }: IssueListProps) => {
     position: MenuAnchorPosition;
     issueId: string;
   } | null>(null);
+
+  const enableNestedRows = Boolean(projectId) && !issueId;
 
   const projectIssues = useFindProjectIssuesQuery(
     { projectId: projectId! },
@@ -103,39 +117,52 @@ export const IssueList = ({ issueId, projectId, style }: IssueListProps) => {
     handleStatusChange,
   } = useIssueListActions({ issueId, projectId, statusById });
 
+  const {
+    childrenByParentId,
+    expandedParentIds,
+    expandingIssueIds,
+    onToggleNestedIssue,
+  } = useIssueListNesting({
+    enabled: enableNestedRows,
+    projectDataUpdatedAt: projectIssues.dataUpdatedAt,
+  });
+
   const rows = useMemo((): IssueRow[] => {
     const source = issueId ? (subIssues.data ?? []) : (projectIssues.data ?? []);
     const mapped = source.flatMap((issue) => {
-      if (!issue?.id || !issue.name) return [];
-      const baseStatusId =
-        "statusId" in issue && typeof issue.statusId === "string" ? issue.statusId : "";
-      const statusOverride = statusOverrides[issue.id];
-      const statusId = statusOverride?.statusId ?? baseStatusId;
-      const statusName =
-        statusOverride?.statusName ?? statusById.get(statusId) ?? "No status";
-      const priority =
-        "priority" in issue && typeof issue.priority === "string" ? issue.priority : "";
-      const name = nameOverrides[issue.id] ?? issue.name;
-      const dueDate =
-        "dueDate" in issue && typeof issue.dueDate === "string" ? issue.dueDate : null;
-      return [
-        {
-          id: issue.id,
-          name,
-          statusId,
-          statusName,
-          statusOrder: statusOrderIndex(statusName),
-          priority,
-          dueDate,
-        },
-      ];
+      if (!issue) return [];
+      const isOpen =
+        enableNestedRows && issue.id ? expandedParentIds.has(issue.id) : false;
+      const childSources =
+        isOpen && issue.id ? childrenByParentId[issue.id] : undefined;
+      const children =
+        childSources === undefined
+          ? undefined
+          : sortIssueRows(
+              childSources.flatMap((child) => {
+                const childRow = toIssueRow(child, {
+                  statusById,
+                  statusOverrides,
+                  nameOverrides,
+                });
+                return childRow ? [childRow] : [];
+              }),
+            );
+      const row = toIssueRow(issue, {
+        statusById,
+        statusOverrides,
+        nameOverrides,
+        isNestedExpanded: isOpen,
+        children,
+      });
+      return row ? [row] : [];
     });
 
-    return mapped.slice().sort((a, b) => {
-      if (a.statusOrder !== b.statusOrder) return a.statusOrder - b.statusOrder;
-      return a.name.localeCompare(b.name);
-    });
+    return sortIssueRows(mapped);
   }, [
+    childrenByParentId,
+    enableNestedRows,
+    expandedParentIds,
     issueId,
     nameOverrides,
     projectIssues.data,
@@ -177,6 +204,9 @@ export const IssueList = ({ issueId, projectId, style }: IssueListProps) => {
     [handleStatusChange],
   );
 
+  const shouldGroup = Boolean(projectId);
+  const columns = shouldGroup ? GROUPED_COLUMNS : FLAT_COLUMNS;
+
   const uiValue = useMemo(
     (): IssueListUiContextValue => ({
       editingIssueId,
@@ -184,6 +214,8 @@ export const IssueList = ({ issueId, projectId, style }: IssueListProps) => {
       dueDateOverrides,
       statuses,
       isSaving,
+      showExpandGutter: enableNestedRows,
+      expandingIssueIds,
       onStartEditing,
       onFinishEditing,
       onSaveName: handleNameChange,
@@ -191,10 +223,13 @@ export const IssueList = ({ issueId, projectId, style }: IssueListProps) => {
       onDueDateChange,
       onStatusChange,
       onOpenMenu,
+      onToggleNestedIssue,
     }),
     [
       dueDateOverrides,
       editingIssueId,
+      enableNestedRows,
+      expandingIssueIds,
       handleNameChange,
       isSaving,
       onDueDateChange,
@@ -203,13 +238,11 @@ export const IssueList = ({ issueId, projectId, style }: IssueListProps) => {
       onPriorityChange,
       onStartEditing,
       onStatusChange,
+      onToggleNestedIssue,
       priorityOverrides,
       statuses,
     ],
   );
-
-  const shouldGroup = Boolean(projectId);
-  const columns = shouldGroup ? GROUPED_COLUMNS : FLAT_COLUMNS;
 
   if (isIssuesLoading) {
     return <IssueListLoader />;
@@ -223,6 +256,7 @@ export const IssueList = ({ issueId, projectId, style }: IssueListProps) => {
           rows={rows}
           columns={columns}
           shouldGroup={shouldGroup}
+          enableNestedRows={enableNestedRows}
           showBorder={style?.showBorder}
         />
       </Box>

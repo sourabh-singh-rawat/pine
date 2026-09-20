@@ -34,6 +34,10 @@ export type IssueWithProject = Issue & {
   project: Project;
 };
 
+export type IssueWithHasChildren = Issue & {
+  hasChildren: boolean;
+};
+
 export interface IIssueRepository {
   save(entity: CreateIssueEntity, options?: IssueRepositoryOptions): Promise<Issue>;
   update(
@@ -53,7 +57,7 @@ export interface IIssueRepository {
     projectId: string,
     userId: string,
     options?: IssueRepositoryOptions,
-  ): Promise<Issue[]>;
+  ): Promise<IssueWithHasChildren[]>;
   findChildren(
     parentIssueId: string,
     userId: string,

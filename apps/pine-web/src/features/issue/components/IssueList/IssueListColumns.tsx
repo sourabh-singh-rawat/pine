@@ -27,9 +27,19 @@ const buildColumns = (shouldGroup: boolean) => {
     columnHelper.accessor("name", {
       header: "Name",
       enableGrouping: false,
-      cell: ({ row, getValue }) => (
-        <IssueNameTableCell issueId={row.original.id} name={getValue()} />
-      ),
+      cell: ({ row, getValue }) => {
+        const parentRow = row.getParentRow();
+        const isNestedChild = Boolean(parentRow && !parentRow.getIsGrouped());
+        return (
+          <IssueNameTableCell
+            issueId={row.original.id}
+            name={getValue()}
+            depth={isNestedChild ? 1 : 0}
+            hasChildren={row.original.hasChildren}
+            isExpanded={row.original.isNestedExpanded}
+          />
+        );
+      },
     }),
     columnHelper.accessor("dueDate", {
       header: "Due Date",

@@ -39,6 +39,9 @@ export const useIssueListActions = ({
       await queryClient.invalidateQueries({
         queryKey: useFindProjectIssuesQuery.getKey({ projectId }),
       });
+      await queryClient.invalidateQueries({
+        queryKey: ["FindSubIssues"],
+      });
     }
     if (issueId) {
       await queryClient.invalidateQueries({
