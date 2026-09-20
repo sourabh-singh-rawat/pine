@@ -13,5 +13,6 @@ query FindIssue($findIssueId: String!) {
     name
     statusId
     priority
+    dueDate
   }
 }

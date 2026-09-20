@@ -34,21 +34,21 @@ export type FindIssueQueryVariables = Exact<{
 }>;
 
 
-export type FindIssueQuery = { findIssue: { id: string | null, description: string | null, name: string | null, statusId: string | null, priority: string | null, project: { id: string | null, name: string | null } | null, parentIssue: { id: string | null, name: string | null } | null } | null };
+export type FindIssueQuery = { findIssue: { id: string | null, description: string | null, name: string | null, statusId: string | null, priority: string | null, dueDate: unknown, project: { id: string | null, name: string | null } | null, parentIssue: { id: string | null, name: string | null } | null } | null };
 
 export type FindProjectIssuesQueryVariables = Exact<{
   projectId: string;
 }>;
 
 
-export type FindProjectIssuesQuery = { findProjectIssues: Array<{ description: string | null, id: string | null, name: string | null, statusId: string | null, priority: string | null }> | null };
+export type FindProjectIssuesQuery = { findProjectIssues: Array<{ description: string | null, id: string | null, name: string | null, statusId: string | null, priority: string | null, dueDate: unknown }> | null };
 
 export type FindSubIssuesQueryVariables = Exact<{
   input: Types.FindIssuesInput;
 }>;
 
 
-export type FindSubIssuesQuery = { findSubIssues: Array<{ description: string | null, id: string | null, name: string | null }> | null };
+export type FindSubIssuesQuery = { findSubIssues: Array<{ description: string | null, id: string | null, name: string | null, dueDate: unknown, statusId: string | null, priority: string | null }> | null };
 
 export type UpdateIssueMutationVariables = Exact<{
   input: Types.UpdateIssueInput;
@@ -215,6 +215,7 @@ export const FindIssueDocument = new TypedDocumentString(`
     name
     statusId
     priority
+    dueDate
   }
 }
     `);
@@ -247,6 +248,7 @@ export const FindProjectIssuesDocument = new TypedDocumentString(`
     name
     statusId
     priority
+    dueDate
   }
 }
     `);
@@ -277,6 +279,9 @@ export const FindSubIssuesDocument = new TypedDocumentString(`
     description
     id
     name
+    dueDate
+    statusId
+    priority
   }
 }
     `);

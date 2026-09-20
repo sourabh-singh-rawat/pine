@@ -67,6 +67,9 @@ export const IssueList = ({ issueId, projectId, style }: IssueListProps) => {
   const deleteIssueMutation = useDeleteIssueMutation();
   const updateIssueMutation = useUpdateIssueMutation();
   const [priorityOverrides, setPriorityOverrides] = useState<Record<string, string>>({});
+  const [dueDateOverrides, setDueDateOverrides] = useState<
+    Record<string, string | null>
+  >({});
   const [nameOverrides, setNameOverrides] = useState<Record<string, string>>({});
   const [editingIssueId, setEditingIssueId] = useState<string | null>(null);
   const [menuAnchor, setMenuAnchor] = useState<{
@@ -110,6 +113,8 @@ export const IssueList = ({ issueId, projectId, style }: IssueListProps) => {
       const priority =
         "priority" in issue && typeof issue.priority === "string" ? issue.priority : "";
       const name = nameOverrides[issue.id] ?? issue.name;
+      const dueDate =
+        "dueDate" in issue && typeof issue.dueDate === "string" ? issue.dueDate : null;
       return [
         {
           id: issue.id,
@@ -118,7 +123,7 @@ export const IssueList = ({ issueId, projectId, style }: IssueListProps) => {
           statusName,
           statusOrder: statusOrderIndex(statusName),
           priority,
-          dueDate: null,
+          dueDate,
         },
       ];
     });
@@ -212,6 +217,35 @@ export const IssueList = ({ issueId, projectId, style }: IssueListProps) => {
     [invalidateIssueLists, queryClient, snackbar, updateIssueMutation],
   );
 
+  const handleDueDateChange = useCallback(
+    async (id: string, dueDate: string | null) => {
+      setDueDateOverrides((current) => ({ ...current, [id]: dueDate }));
+      try {
+        const response = await updateIssueMutation.mutateAsync({
+          input: { issueId: id, dueDate },
+        });
+        await invalidateIssueLists();
+        await queryClient.invalidateQueries({
+          queryKey: useFindIssueQuery.getKey({ findIssueId: id }),
+        });
+        setDueDateOverrides((current) => {
+          const next = { ...current };
+          delete next[id];
+          return next;
+        });
+        snackbar.success(response.updateIssue ?? "Issue updated");
+      } catch (error) {
+        setDueDateOverrides((current) => {
+          const next = { ...current };
+          delete next[id];
+          return next;
+        });
+        snackbar.error(error instanceof Error ? error.message : "Failed to update issue");
+      }
+    },
+    [invalidateIssueLists, queryClient, snackbar, updateIssueMutation],
+  );
+
   const onStartEditing = useCallback((id: string) => {
     setEditingIssueId(id);
   }, []);
@@ -231,20 +265,31 @@ export const IssueList = ({ issueId, projectId, style }: IssueListProps) => {
     [handlePriorityChange],
   );
 
+  const onDueDateChange = useCallback(
+    (id: string, dueDate: string | null) => {
+      void handleDueDateChange(id, dueDate);
+    },
+    [handleDueDateChange],
+  );
+
   const uiValue = useMemo(
     (): IssueListUiContextValue => ({
       editingIssueId,
       priorityOverrides,
+      dueDateOverrides,
       isSaving: updateIssueMutation.isPending,
       onStartEditing,
       onFinishEditing,
       onSaveName: handleNameChange,
       onPriorityChange,
+      onDueDateChange,
       onOpenMenu,
     }),
     [
+      dueDateOverrides,
       editingIssueId,
       handleNameChange,
+      onDueDateChange,
       onFinishEditing,
       onOpenMenu,
       onPriorityChange,

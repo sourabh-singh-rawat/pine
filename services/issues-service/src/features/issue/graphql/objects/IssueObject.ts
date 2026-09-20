@@ -38,5 +38,6 @@ IssueObject.implement({
     }),
     estimate: t.exposeInt("estimate", { nullable: true }),
     component: t.exposeString("component", { nullable: true }),
+    dueDate: t.expose("dueDate", { type: "DateTimeISO", nullable: true }),
   }),
 });

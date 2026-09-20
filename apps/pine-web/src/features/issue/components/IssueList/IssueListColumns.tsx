@@ -1,6 +1,7 @@
 import { createPineColumnHelper } from "@pine/ui";
 import {
   IssueActionsTableCell,
+  IssueDueDateTableCell,
   IssueNameTableCell,
   IssuePriorityTableCell,
 } from "./IssueListTableCells";
@@ -20,7 +21,9 @@ const buildColumns = (shouldGroup: boolean) => {
     columnHelper.accessor("dueDate", {
       header: "Due Date",
       enableGrouping: false,
-      cell: ({ getValue }) => getValue() ?? "",
+      cell: ({ row, getValue }) => (
+        <IssueDueDateTableCell issueId={row.original.id} value={getValue()} />
+      ),
     }),
     columnHelper.accessor("priority", {
       header: "Priority",

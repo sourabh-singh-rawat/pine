@@ -36,7 +36,7 @@ export interface UpdateIssueOptions {
   priority?: ItemPriority;
   assigneeIds?: string[];
   description?: string;
-  dueDate?: Date;
+  dueDate?: Date | null;
   estimate?: number;
   component?: string;
 }

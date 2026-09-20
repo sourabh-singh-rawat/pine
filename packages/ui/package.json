@@ -36,6 +36,10 @@
     "./progress": {
       "types": "./src/progress/index.ts",
       "default": "./src/progress/index.ts"
+    },
+    "./calendar": {
+      "types": "./src/calendar/index.ts",
+      "default": "./src/calendar/index.ts"
     }
   },
   "scripts": {
