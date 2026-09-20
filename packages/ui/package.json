@@ -28,6 +28,14 @@
     "./theme": {
       "types": "./src/theme/index.ts",
       "default": "./src/theme/index.ts"
+    },
+    "./loading": {
+      "types": "./src/loading/index.ts",
+      "default": "./src/loading/index.ts"
+    },
+    "./progress": {
+      "types": "./src/progress/index.ts",
+      "default": "./src/progress/index.ts"
     }
   },
   "scripts": {
