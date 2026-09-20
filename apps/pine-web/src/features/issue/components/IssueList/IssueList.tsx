@@ -1,8 +1,12 @@
-import MoreVert from "@mui/icons-material/MoreVert";
-import { IconButton } from "@mui/material";
+import { Box } from "@mui/material";
 import { useQueryClient } from "@tanstack/react-query";
-import { createPineColumnHelper, DataTable } from "@pine/ui";
-import { useCallback, useContext, useMemo, useState } from "react";
+import {
+  DataTable,
+  type ColumnDef,
+  type MenuAnchorPosition,
+  type PineTableFeatures,
+} from "@pine/ui";
+import { memo, useCallback, useContext, useMemo, useState } from "react";
 import {
   useDeleteIssueMutation,
   useFindIssueQuery,
@@ -12,14 +16,49 @@ import {
 } from "@generated/gql";
 import { useSnackbar } from "@shared";
 import { StatusesContext } from "@shared/contexts/StatusesContext";
-import { IssueNameCell } from "./IssueNameCell";
-import { IssuePriorityCell } from "./IssuePriorityCell";
 import { IssueRowActionsMenu } from "./IssueRowActionsMenu";
+import {
+  FLAT_COLUMNS,
+  getIssueRowId,
+  GROUPED_COLUMNS,
+  STATUS_GROUPING,
+} from "./IssueListColumns";
+import { IssueListLoader } from "./IssueListLoader";
+import {
+  IssueListUiContext,
+  type IssueListUiContextValue,
+} from "./IssueListUiContext";
 import { type IssueListProps, type IssueRow, statusOrderIndex } from "./types";
 
 const EMPTY_ROWS: IssueRow[] = [];
 
-const columnHelper = createPineColumnHelper<IssueRow>();
+type IssueListTableProps = {
+  rows: IssueRow[];
+  columns: ColumnDef<PineTableFeatures, IssueRow, unknown>[];
+  shouldGroup: boolean;
+  showBorder?: boolean;
+};
+
+const IssueListTable = memo(
+  ({ rows, columns, shouldGroup, showBorder }: IssueListTableProps) => (
+    <DataTable
+      data={rows.length > 0 ? rows : EMPTY_ROWS}
+      columns={columns}
+      getRowId={getIssueRowId}
+      ariaLabel="Issues"
+      showBorder={showBorder}
+      grouping={shouldGroup ? STATUS_GROUPING : undefined}
+      initialState={
+        shouldGroup
+          ? {
+              grouping: STATUS_GROUPING,
+              expanded: true,
+            }
+          : undefined
+      }
+    />
+  ),
+);
 
 export const IssueList = ({ issueId, projectId, style }: IssueListProps) => {
   const queryClient = useQueryClient();
@@ -31,7 +70,7 @@ export const IssueList = ({ issueId, projectId, style }: IssueListProps) => {
   const [nameOverrides, setNameOverrides] = useState<Record<string, string>>({});
   const [editingIssueId, setEditingIssueId] = useState<string | null>(null);
   const [menuAnchor, setMenuAnchor] = useState<{
-    element: HTMLElement;
+    position: MenuAnchorPosition;
     issueId: string;
   } | null>(null);
 
@@ -49,6 +88,9 @@ export const IssueList = ({ issueId, projectId, style }: IssueListProps) => {
       enabled: Boolean(issueId),
     },
   );
+
+  const issuesQuery = issueId ? subIssues : projectIssues;
+  const isIssuesLoading = issuesQuery.isPending;
 
   const statusById = useMemo(() => {
     const map = new Map<string, string>();
@@ -170,111 +212,68 @@ export const IssueList = ({ issueId, projectId, style }: IssueListProps) => {
     [invalidateIssueLists, queryClient, snackbar, updateIssueMutation],
   );
 
-  const shouldGroup = Boolean(projectId) && statuses.length > 0;
+  const onStartEditing = useCallback((id: string) => {
+    setEditingIssueId(id);
+  }, []);
 
-  const columns = useMemo(() => {
-    const baseColumns = [
-      columnHelper.accessor("name", {
-        header: "Name",
-        enableGrouping: false,
-        cell: ({ row, getValue }) => {
-          const issueKey = row.original.id;
-          const current = getValue();
-          return (
-            <IssueNameCell
-              issueId={issueKey}
-              name={current}
-              isEditing={editingIssueId === issueKey}
-              isSaving={updateIssueMutation.isPending}
-              onStartEditing={() => setEditingIssueId(issueKey)}
-              onFinishEditing={() => {
-                setEditingIssueId((currentId) => (currentId === issueKey ? null : currentId));
-              }}
-              onSave={async (nextName) => handleNameChange(issueKey, nextName)}
-            />
-          );
-        },
-      }),
-      columnHelper.accessor("dueDate", {
-        header: "Due Date",
-        enableGrouping: false,
-        cell: ({ getValue }) => getValue() ?? "",
-      }),
-      columnHelper.accessor("priority", {
-        header: "Priority",
-        enableGrouping: false,
-        cell: ({ row, getValue }) => {
-          const issueKey = row.original.id;
-          const current = priorityOverrides[issueKey] ?? getValue();
-          return (
-            <IssuePriorityCell
-              issueId={issueKey}
-              value={current}
-              disabled={updateIssueMutation.isPending}
-              onChange={(nextPriority) => {
-                void handlePriorityChange(issueKey, nextPriority);
-              }}
-            />
-          );
-        },
-      }),
-      columnHelper.display({
-        id: "actions",
-        header: "",
-        cell: ({ row }) => (
-          <IconButton
-            size="small"
-            aria-label="Issue actions"
-            onClick={(event) => {
-              event.stopPropagation();
-              setMenuAnchor({ element: event.currentTarget, issueId: row.original.id });
-            }}
-          >
-            <MoreVert fontSize="small" />
-          </IconButton>
-        ),
-      }),
-    ];
+  const onFinishEditing = useCallback((id: string) => {
+    setEditingIssueId((currentId) => (currentId === id ? null : currentId));
+  }, []);
 
-    if (!shouldGroup) {
-      return columnHelper.columns(baseColumns);
-    }
+  const onOpenMenu = useCallback((id: string, position: MenuAnchorPosition) => {
+    setMenuAnchor({ position, issueId: id });
+  }, []);
 
-    return columnHelper.columns([
-      columnHelper.accessor("statusName", {
-        header: "Status",
-        enableGrouping: true,
-      }),
-      ...baseColumns,
-    ]);
-  }, [
-    editingIssueId,
-    handleNameChange,
-    handlePriorityChange,
-    priorityOverrides,
-    shouldGroup,
-    updateIssueMutation.isPending,
-  ]);
+  const onPriorityChange = useCallback(
+    (id: string, priority: string) => {
+      void handlePriorityChange(id, priority);
+    },
+    [handlePriorityChange],
+  );
+
+  const uiValue = useMemo(
+    (): IssueListUiContextValue => ({
+      editingIssueId,
+      priorityOverrides,
+      isSaving: updateIssueMutation.isPending,
+      onStartEditing,
+      onFinishEditing,
+      onSaveName: handleNameChange,
+      onPriorityChange,
+      onOpenMenu,
+    }),
+    [
+      editingIssueId,
+      handleNameChange,
+      onFinishEditing,
+      onOpenMenu,
+      onPriorityChange,
+      onStartEditing,
+      priorityOverrides,
+      updateIssueMutation.isPending,
+    ],
+  );
+
+  const shouldGroup = Boolean(projectId);
+  const columns = shouldGroup ? GROUPED_COLUMNS : FLAT_COLUMNS;
+
+  if (isIssuesLoading) {
+    return <IssueListLoader />;
+  }
 
   return (
-    <>
-      <DataTable
-        data={rows.length > 0 ? rows : EMPTY_ROWS}
-        columns={columns}
-        getRowId={(row) => row.id}
-        ariaLabel="Issues"
-        showBorder={style?.showBorder}
-        initialState={
-          shouldGroup
-            ? {
-                grouping: ["statusName"],
-                expanded: true,
-              }
-            : undefined
-        }
-      />
+    <IssueListUiContext.Provider value={uiValue}>
+      <Box sx={{ scrollbarGutter: "stable" }}>
+        <IssueListTable
+          key={shouldGroup ? "grouped" : "flat"}
+          rows={rows}
+          columns={columns}
+          shouldGroup={shouldGroup}
+          showBorder={style?.showBorder}
+        />
+      </Box>
       <IssueRowActionsMenu
-        anchorEl={menuAnchor?.element ?? null}
+        anchorPosition={menuAnchor?.position ?? null}
         open={Boolean(menuAnchor)}
         onClose={() => setMenuAnchor(null)}
         onRename={() => {
@@ -288,6 +287,6 @@ export const IssueList = ({ issueId, projectId, style }: IssueListProps) => {
           if (id) void handleDelete(id);
         }}
       />
-    </>
+    </IssueListUiContext.Provider>
   );
 };

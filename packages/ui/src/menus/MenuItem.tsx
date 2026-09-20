@@ -1,4 +1,3 @@
-import Box from "@mui/material/Box";
 import MuiMenuItem from "@mui/material/MenuItem";
 import { alpha, styled } from "@mui/material/styles";
 import type { SxProps, Theme } from "@mui/material/styles";
@@ -9,7 +8,6 @@ import { themeBorderRadiusExtraSmall } from "../theme/shape";
 
 export type MenuItemProps = {
   children: ReactNode;
-  leadingIcon?: ReactNode;
   onClick?: (event: MouseEvent<HTMLLIElement>) => void;
   isDisabled?: boolean;
   selected?: boolean;
@@ -67,7 +65,6 @@ const StyledMenuItem = styled(MuiMenuItem)(({ theme }) => {
 
 export const MenuItem = ({
   children,
-  leadingIcon,
   onClick,
   isDisabled,
   selected,
@@ -82,25 +79,6 @@ export const MenuItem = ({
     disableRipple
     sx={sx}
   >
-    {leadingIcon != null ? (
-      <Box
-        component="span"
-        sx={{
-          display: "inline-flex",
-          alignItems: "center",
-          justifyContent: "center",
-          flexShrink: 0,
-          width: 24,
-          height: 24,
-          color: "inherit",
-          "& .MuiSvgIcon-root": {
-            fontSize: 20,
-          },
-        }}
-      >
-        {leadingIcon}
-      </Box>
-    ) : null}
     {children}
   </StyledMenuItem>
 );
