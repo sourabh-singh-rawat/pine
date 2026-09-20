@@ -1,6 +1,9 @@
 import { IssueStatus, ItemPriority, PagingOptions, ServiceResponse } from "@pine/common";
 import type { Issue } from "@/db";
-import type { IssueWithProject } from "@/features/issue/repositories";
+import type {
+  IssueWithHasChildren,
+  IssueWithProject,
+} from "@/features/issue/repositories";
 
 export interface CreateIssueOptions {
   userId: string;
@@ -54,7 +57,7 @@ export interface DeleteIssueOptions {
 export interface IIssueService {
   createIssue(options: CreateIssueOptions): Promise<string>;
   findIssue(options: FindIssueOptions): Promise<IssueWithProject | null>;
-  findProjectIssues(options: FindProjectIssuesOptions): Promise<Issue[]>;
+  findProjectIssues(options: FindProjectIssuesOptions): Promise<IssueWithHasChildren[]>;
   findSubIssues(options: FindSubIssuesOptions): Promise<Issue[]>;
   getIssue(issueId: string): Promise<Issue | null>;
   getIssueStatusList(): Promise<ServiceResponse<IssueStatus[]>>;

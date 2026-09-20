@@ -153,6 +153,7 @@ export type IssueObject = {
   description?: Maybe<Scalars['String']['output']>;
   dueDate?: Maybe<Scalars['DateTimeISO']['output']>;
   estimate?: Maybe<Scalars['Int']['output']>;
+  hasChildren?: Maybe<Scalars['Boolean']['output']>;
   id?: Maybe<Scalars['String']['output']>;
   name?: Maybe<Scalars['String']['output']>;
   parentIssue?: Maybe<IssueObject>;

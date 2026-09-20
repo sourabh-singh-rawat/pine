@@ -19,6 +19,9 @@ export type IssueRow = {
   statusOrder: number;
   priority: string;
   dueDate?: string | null;
+  hasChildren: boolean;
+  isNestedExpanded: boolean;
+  children?: IssueRow[];
 };
 
 export const STATUS_NAME_ORDER = ["To Do", "In Progress", "Done", "Cancelled"];

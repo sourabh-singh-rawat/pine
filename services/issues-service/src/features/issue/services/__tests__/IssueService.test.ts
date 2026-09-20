@@ -254,4 +254,24 @@ describe("IssueService", () => {
     expect(authorizationClient.checkRelationship).not.toHaveBeenCalled();
     expect(issueRepository.softDelete).not.toHaveBeenCalled();
   });
+
+  it("returns project issues with hasChildren from the repository", async () => {
+    const roots = [
+      { ...issue, id: "root-with-children", hasChildren: true },
+      { ...issue, id: "root-without-children", hasChildren: false },
+    ];
+    const issueRepository = createIssueRepository({
+      findRootsByProject: vi.fn().mockResolvedValue(roots),
+    });
+    const service = createService({ issueRepository });
+
+    await expect(
+      service.findProjectIssues({ projectId: "project-1", userId: "user-1" }),
+    ).resolves.toEqual(roots);
+
+    expect(issueRepository.findRootsByProject).toHaveBeenCalledWith(
+      "project-1",
+      "user-1",
+    );
+  });
 });

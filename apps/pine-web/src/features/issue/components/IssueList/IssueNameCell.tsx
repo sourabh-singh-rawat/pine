@@ -1,7 +1,16 @@
 import { ClickAwayListener } from "@mui/base";
 import CloseIcon from "@mui/icons-material/Close";
 import DoneIcon from "@mui/icons-material/Done";
-import { Box, IconButton, Link as MuiLink, TextField, useTheme } from "@mui/material";
+import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
+import {
+  Box,
+  CircularProgress,
+  IconButton,
+  Link as MuiLink,
+  TextField,
+  useTheme,
+} from "@mui/material";
 import { useNavigate } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import type { ChangeEvent, FormEvent, KeyboardEvent, MouseEvent } from "react";
@@ -12,9 +21,15 @@ export interface IssueNameCellProps {
   name: string;
   isEditing: boolean;
   isSaving: boolean;
+  depth?: number;
+  hasChildren?: boolean;
+  showExpandGutter?: boolean;
+  isExpanded?: boolean;
+  isExpanding?: boolean;
   onStartEditing: () => void;
   onFinishEditing: () => void;
   onSave: (nextName: string) => Promise<boolean>;
+  onToggleExpand?: () => void;
 }
 
 export const IssueNameCell = ({
@@ -22,9 +37,15 @@ export const IssueNameCell = ({
   name,
   isEditing,
   isSaving,
+  depth = 0,
+  hasChildren = false,
+  showExpandGutter = false,
+  isExpanded = false,
+  isExpanding = false,
   onStartEditing,
   onFinishEditing,
   onSave,
+  onToggleExpand,
 }: IssueNameCellProps) => {
   const theme = useTheme();
   const navigate = useNavigate();
@@ -202,6 +223,12 @@ export const IssueNameCell = ({
     );
   }
 
+  const handleExpandClick = (event: MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+    event.stopPropagation();
+    onToggleExpand?.();
+  };
+
   return (
     <Box
       onDoubleClick={handleContainerDoubleClick}
@@ -210,8 +237,29 @@ export const IssueNameCell = ({
         alignItems: "center",
         width: "100%",
         py: 0.5,
+        pl: depth > 0 ? 2 : 0,
+        gap: 0.25,
       }}
     >
+      {hasChildren ? (
+        <IconButton
+          size="small"
+          aria-label={isExpanded ? "Collapse sub-issues" : "Expand sub-issues"}
+          onClick={handleExpandClick}
+          disabled={isExpanding}
+          sx={{ p: 0.25, flexShrink: 0 }}
+        >
+          {isExpanding ? (
+            <CircularProgress size={14} />
+          ) : isExpanded ? (
+            <KeyboardArrowDownIcon fontSize="small" />
+          ) : (
+            <KeyboardArrowRightIcon fontSize="small" />
+          )}
+        </IconButton>
+      ) : showExpandGutter || depth > 0 ? (
+        <Box sx={{ width: 28, flexShrink: 0 }} />
+      ) : null}
       <MuiLink
         href={`/i/${issueId}`}
         underline="none"

@@ -1,5 +1,5 @@
 import { uuidv7 } from "@pine/common";
-import { and, eq, isNull, sql } from "drizzle-orm";
+import { and, eq, inArray, isNull, sql } from "drizzle-orm";
 import { inject, injectable } from "inversify";
 import { TYPES } from "@/bootstrap/container-types";
 import { type Database, type Issue, Issues, Projects } from "@/db";
@@ -7,6 +7,7 @@ import type {
   CreateIssueEntity,
   IIssueRepository,
   IssueRepositoryOptions,
+  IssueWithHasChildren,
   IssueWithProject,
   UpdateIssueEntity,
 } from "@/features/issue/repositories/IIssueRepository";
@@ -133,9 +134,9 @@ export class IssueRepository implements IIssueRepository {
     projectId: string,
     userId: string,
     options?: IssueRepositoryOptions,
-  ): Promise<Issue[]> {
+  ): Promise<IssueWithHasChildren[]> {
     const client = this.client(options);
-    return client
+    const roots = await client
       .select()
       .from(Issues)
       .where(
@@ -146,6 +147,31 @@ export class IssueRepository implements IIssueRepository {
           isNull(Issues.deletedAt),
         ),
       );
+
+    if (roots.length === 0) {
+      return [];
+    }
+
+    const rootIds = roots.map((root) => root.id);
+    const childParents = await client
+      .selectDistinct({ parentIssueId: Issues.parentIssueId })
+      .from(Issues)
+      .where(
+        and(
+          inArray(Issues.parentIssueId, rootIds),
+          eq(Issues.createdById, userId),
+          isNull(Issues.deletedAt),
+        ),
+      );
+
+    const parentsWithChildren = new Set(
+      childParents.flatMap((row) => (row.parentIssueId ? [row.parentIssueId] : [])),
+    );
+
+    return roots.map((root) => ({
+      ...root,
+      hasChildren: parentsWithChildren.has(root.id),
+    }));
   }
 
   async findChildren(
