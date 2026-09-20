@@ -5,6 +5,7 @@ import {
   createTableHook,
   rowExpandingFeature,
   tableFeatures,
+  type RowData,
 } from "@tanstack/react-table";
 
 export const pineTableFeatures = tableFeatures({
@@ -23,3 +24,5 @@ export const {
 } = createTableHook({
   features: pineTableFeatures,
 });
+
+export type PineTableInstance<TData extends RowData = RowData> = ReturnType<typeof usePineTableContext<TData>>;
