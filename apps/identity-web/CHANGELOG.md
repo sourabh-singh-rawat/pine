@@ -1,5 +1,14 @@
 # @pine/identity-web
 
+## 0.6.2
+
+### Patch Changes
+
+- Updated dependencies [c29925a]
+- Updated dependencies [595f7f5]
+- Updated dependencies [a4ffbd4]
+  - @pine/ui@0.2.0
+
 ## 0.6.1
 
 ### Patch Changes

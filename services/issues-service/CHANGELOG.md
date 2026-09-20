@@ -1,5 +1,11 @@
 # @pine/issues-service
 
+## 0.6.1
+
+### Patch Changes
+
+- 6b83fce: feat(issues): soft-delete with project delete authz
+
 ## 0.6.0
 
 ### Minor Changes

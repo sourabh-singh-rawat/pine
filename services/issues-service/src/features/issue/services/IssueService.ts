@@ -190,9 +190,13 @@ export class IssueService implements IIssueService {
     }
   }
 
-  private getStatuses = () => Object.values(IssueStatus);
+  private getStatuses() {
+    return Object.values(IssueStatus);
+  }
 
-  private getPriorities = () => Object.values(ITEM_PRIORITY);
+  private getPriorities() {
+    return Object.values(ITEM_PRIORITY);
+  }
 
   private toIssueCreatedEventData(issue: Issue) {
     return {
