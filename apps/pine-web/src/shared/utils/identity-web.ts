@@ -7,6 +7,10 @@ export const getIdentityWebSignInUrl = (): string => {
   return `${getIdentityWebBaseUrl()}/signin`;
 };
 
+export const redirectToIdentityWeb = (): void => {
+  window.location.assign(getIdentityWebBaseUrl());
+};
+
 export const redirectToIdentitySignIn = (): void => {
   window.location.assign(getIdentityWebSignInUrl());
 };

@@ -1,6 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { ProfilePage } from "@features/profile";
+import { redirectToIdentityWeb } from "@shared/utils/identity-web";
 
 export const Route = createFileRoute("/_authenticated/me")({
-  component: ProfilePage,
+  beforeLoad: () => {
+    redirectToIdentityWeb();
+  },
+  component: () => null,
 });
