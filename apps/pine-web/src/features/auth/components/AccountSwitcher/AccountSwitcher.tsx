@@ -37,11 +37,12 @@ export const AccountSwitcher = () => {
   };
 
   const label = current?.displayName || current?.email;
+  const photoUrl = current?.photoUrl ?? undefined;
 
   return (
     <>
       <IconButton size="small" onClick={handleClick} disableRipple>
-        <Avatar label={label} isLoading={isLoading} />
+        <Avatar label={label} photoUrl={photoUrl} isLoading={isLoading} />
       </IconButton>
       {current && (
         <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleClose}>
@@ -53,7 +54,7 @@ export const AccountSwitcher = () => {
             dense
           >
             <ListItemIcon>
-              <Avatar label={label} />
+              <Avatar label={label} photoUrl={photoUrl} />
             </ListItemIcon>
             <Stack>
               <Typography sx={{ color: theme.palette.text.primary, fontWeight: "bold" }}>
