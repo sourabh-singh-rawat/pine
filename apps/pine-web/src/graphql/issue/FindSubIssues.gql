@@ -3,5 +3,8 @@ query FindSubIssues($input: FindIssuesInput!) {
     description
     id
     name
+    dueDate
+    statusId
+    priority
   }
 }

@@ -151,6 +151,7 @@ export type IssueObject = {
   __typename?: 'IssueObject';
   component?: Maybe<Scalars['String']['output']>;
   description?: Maybe<Scalars['String']['output']>;
+  dueDate?: Maybe<Scalars['DateTimeISO']['output']>;
   estimate?: Maybe<Scalars['Int']['output']>;
   id?: Maybe<Scalars['String']['output']>;
   name?: Maybe<Scalars['String']['output']>;

@@ -22,7 +22,7 @@ builder.mutationFields((t) => ({
         type: input.type ?? undefined,
         statusId: input.statusId ?? undefined,
         priority: (input.priority as ItemPriority | null) ?? undefined,
-        dueDate: input.dueDate ?? undefined,
+        dueDate: input.dueDate === undefined ? undefined : input.dueDate,
         description: input.description ?? undefined,
         estimate: input.estimate ?? undefined,
         component: input.component ?? undefined,

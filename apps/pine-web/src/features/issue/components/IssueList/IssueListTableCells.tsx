@@ -1,6 +1,7 @@
 import MoreVert from "@mui/icons-material/MoreVert";
 import { IconButton } from "@mui/material";
 import { useContext } from "react";
+import { IssueDueDateCell } from "./IssueDueDateCell";
 import { IssueNameCell } from "./IssueNameCell";
 import { IssuePriorityCell } from "./IssuePriorityCell";
 import { IssueListUiContext } from "./IssueListUiContext";
@@ -44,6 +45,30 @@ export const IssuePriorityTableCell = ({
       disabled={ui.isSaving}
       onChange={(nextPriority) => {
         ui.onPriorityChange(issueId, nextPriority);
+      }}
+    />
+  );
+};
+
+export const IssueDueDateTableCell = ({
+  issueId,
+  value,
+}: {
+  issueId: string;
+  value: string | null | undefined;
+}) => {
+  const ui = useContext(IssueListUiContext);
+  const fallback = value ?? null;
+  if (!ui) return fallback ?? "";
+  const override = ui.dueDateOverrides[issueId];
+  const current = override === undefined ? fallback : override;
+  return (
+    <IssueDueDateCell
+      issueId={issueId}
+      value={current}
+      disabled={ui.isSaving}
+      onChange={(nextDueDate) => {
+        ui.onDueDateChange(issueId, nextDueDate);
       }}
     />
   );
