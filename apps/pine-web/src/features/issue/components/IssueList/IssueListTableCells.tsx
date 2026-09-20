@@ -4,7 +4,33 @@ import { useContext } from "react";
 import { IssueDueDateCell } from "./IssueDueDateCell";
 import { IssueNameCell } from "./IssueNameCell";
 import { IssuePriorityCell } from "./IssuePriorityCell";
+import { IssueStatusCell } from "./IssueStatusCell";
 import { IssueListUiContext } from "./IssueListUiContext";
+
+export const IssueStatusTableCell = ({
+  issueId,
+  statusId,
+  statusName,
+}: {
+  issueId: string;
+  statusId: string;
+  statusName: string;
+}) => {
+  const ui = useContext(IssueListUiContext);
+  if (!ui) return null;
+  return (
+    <IssueStatusCell
+      issueId={issueId}
+      statusId={statusId}
+      statusName={statusName}
+      statuses={ui.statuses}
+      disabled={ui.isSaving}
+      onChange={(nextStatusId) => {
+        ui.onStatusChange(issueId, nextStatusId);
+      }}
+    />
+  );
+};
 
 export const IssueNameTableCell = ({
   issueId,
