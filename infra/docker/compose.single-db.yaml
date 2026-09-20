@@ -15,6 +15,7 @@ services:
       - POSTGRES_NOTIFICATION_PASSWORD=${POSTGRES_NOTIFICATION_PASSWORD}
       - POSTGRES_PLATFORM_PASSWORD=${POSTGRES_PLATFORM_PASSWORD}
       - POSTGRES_AUTHZ_PASSWORD=${POSTGRES_AUTHZ_PASSWORD}
+      - POSTGRES_AUDIT_PASSWORD=${POSTGRES_AUDIT_PASSWORD}
     volumes:
       - ../data/docker/pg-single-db-data:/var/lib/postgresql
       - ./init-db/single-db:/docker-entrypoint-initdb.d:ro
