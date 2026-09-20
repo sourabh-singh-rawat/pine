@@ -4,6 +4,7 @@ import {
   IssueDueDateTableCell,
   IssueNameTableCell,
   IssuePriorityTableCell,
+  IssueStatusTableCell,
 } from "./IssueListTableCells";
 import { type IssueRow } from "./types";
 
@@ -11,6 +12,18 @@ const columnHelper = createPineColumnHelper<IssueRow>();
 
 const buildColumns = (shouldGroup: boolean) => {
   const baseColumns = [
+    columnHelper.display({
+      id: "status",
+      header: "",
+      enableGrouping: false,
+      cell: ({ row }) => (
+        <IssueStatusTableCell
+          issueId={row.original.id}
+          statusId={row.original.statusId}
+          statusName={row.original.statusName}
+        />
+      ),
+    }),
     columnHelper.accessor("name", {
       header: "Name",
       enableGrouping: false,

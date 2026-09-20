@@ -1,5 +1,4 @@
 import { Box } from "@mui/material";
-import { useQueryClient } from "@tanstack/react-query";
 import {
   DataTable,
   type ColumnDef,
@@ -8,13 +7,9 @@ import {
 } from "@pine/ui";
 import { memo, useCallback, useContext, useMemo, useState } from "react";
 import {
-  useDeleteIssueMutation,
-  useFindIssueQuery,
   useFindProjectIssuesQuery,
   useFindSubIssuesQuery,
-  useUpdateIssueMutation,
 } from "@generated/gql";
-import { useSnackbar } from "@shared";
 import { StatusesContext } from "@shared/contexts/StatusesContext";
 import { IssueRowActionsMenu } from "./IssueRowActionsMenu";
 import {
@@ -29,6 +24,7 @@ import {
   type IssueListUiContextValue,
 } from "./IssueListUiContext";
 import { type IssueListProps, type IssueRow, statusOrderIndex } from "./types";
+import { useIssueListActions } from "./useIssueListActions";
 
 const EMPTY_ROWS: IssueRow[] = [];
 
@@ -61,16 +57,7 @@ const IssueListTable = memo(
 );
 
 export const IssueList = ({ issueId, projectId, style }: IssueListProps) => {
-  const queryClient = useQueryClient();
-  const snackbar = useSnackbar();
   const { statuses } = useContext(StatusesContext);
-  const deleteIssueMutation = useDeleteIssueMutation();
-  const updateIssueMutation = useUpdateIssueMutation();
-  const [priorityOverrides, setPriorityOverrides] = useState<Record<string, string>>({});
-  const [dueDateOverrides, setDueDateOverrides] = useState<
-    Record<string, string | null>
-  >({});
-  const [nameOverrides, setNameOverrides] = useState<Record<string, string>>({});
   const [editingIssueId, setEditingIssueId] = useState<string | null>(null);
   const [menuAnchor, setMenuAnchor] = useState<{
     position: MenuAnchorPosition;
@@ -103,13 +90,29 @@ export const IssueList = ({ issueId, projectId, style }: IssueListProps) => {
     return map;
   }, [statuses]);
 
+  const {
+    priorityOverrides,
+    dueDateOverrides,
+    statusOverrides,
+    nameOverrides,
+    isSaving,
+    handleDelete,
+    handlePriorityChange,
+    handleNameChange,
+    handleDueDateChange,
+    handleStatusChange,
+  } = useIssueListActions({ issueId, projectId, statusById });
+
   const rows = useMemo((): IssueRow[] => {
     const source = issueId ? (subIssues.data ?? []) : (projectIssues.data ?? []);
     const mapped = source.flatMap((issue) => {
       if (!issue?.id || !issue.name) return [];
-      const statusId =
+      const baseStatusId =
         "statusId" in issue && typeof issue.statusId === "string" ? issue.statusId : "";
-      const statusName = statusById.get(statusId) ?? "No status";
+      const statusOverride = statusOverrides[issue.id];
+      const statusId = statusOverride?.statusId ?? baseStatusId;
+      const statusName =
+        statusOverride?.statusName ?? statusById.get(statusId) ?? "No status";
       const priority =
         "priority" in issue && typeof issue.priority === "string" ? issue.priority : "";
       const name = nameOverrides[issue.id] ?? issue.name;
@@ -132,119 +135,14 @@ export const IssueList = ({ issueId, projectId, style }: IssueListProps) => {
       if (a.statusOrder !== b.statusOrder) return a.statusOrder - b.statusOrder;
       return a.name.localeCompare(b.name);
     });
-  }, [issueId, nameOverrides, projectIssues.data, subIssues.data, statusById]);
-
-  const invalidateIssueLists = useCallback(async () => {
-    if (projectId) {
-      await queryClient.invalidateQueries({
-        queryKey: useFindProjectIssuesQuery.getKey({ projectId }),
-      });
-    }
-    if (issueId) {
-      await queryClient.invalidateQueries({
-        queryKey: useFindSubIssuesQuery.getKey({ input: { parentIssueId: issueId } }),
-      });
-    }
-  }, [issueId, projectId, queryClient]);
-
-  const handleDelete = async (id: string) => {
-    try {
-      const response = await deleteIssueMutation.mutateAsync({ id });
-      await invalidateIssueLists();
-      snackbar.success(response.deleteIssue ?? "Issue deleted");
-    } catch (error) {
-      snackbar.error(error instanceof Error ? error.message : "Failed to delete issue");
-    }
-  };
-
-  const handlePriorityChange = useCallback(
-    async (id: string, priority: string) => {
-      setPriorityOverrides((current) => ({ ...current, [id]: priority }));
-      try {
-        const response = await updateIssueMutation.mutateAsync({
-          input: { issueId: id, priority },
-        });
-        await invalidateIssueLists();
-        await queryClient.invalidateQueries({
-          queryKey: useFindIssueQuery.getKey({ findIssueId: id }),
-        });
-        setPriorityOverrides((current) => {
-          const next = { ...current };
-          delete next[id];
-          return next;
-        });
-        snackbar.success(response.updateIssue ?? "Issue updated");
-      } catch (error) {
-        setPriorityOverrides((current) => {
-          const next = { ...current };
-          delete next[id];
-          return next;
-        });
-        snackbar.error(error instanceof Error ? error.message : "Failed to update issue");
-      }
-    },
-    [invalidateIssueLists, queryClient, snackbar, updateIssueMutation],
-  );
-
-  const handleNameChange = useCallback(
-    async (id: string, name: string): Promise<boolean> => {
-      setNameOverrides((current) => ({ ...current, [id]: name }));
-      try {
-        const response = await updateIssueMutation.mutateAsync({
-          input: { issueId: id, name },
-        });
-        await invalidateIssueLists();
-        await queryClient.invalidateQueries({
-          queryKey: useFindIssueQuery.getKey({ findIssueId: id }),
-        });
-        setNameOverrides((current) => {
-          const next = { ...current };
-          delete next[id];
-          return next;
-        });
-        snackbar.success(response.updateIssue ?? "Issue updated");
-        return true;
-      } catch (error) {
-        setNameOverrides((current) => {
-          const next = { ...current };
-          delete next[id];
-          return next;
-        });
-        snackbar.error(error instanceof Error ? error.message : "Failed to update issue");
-        return false;
-      }
-    },
-    [invalidateIssueLists, queryClient, snackbar, updateIssueMutation],
-  );
-
-  const handleDueDateChange = useCallback(
-    async (id: string, dueDate: string | null) => {
-      setDueDateOverrides((current) => ({ ...current, [id]: dueDate }));
-      try {
-        const response = await updateIssueMutation.mutateAsync({
-          input: { issueId: id, dueDate },
-        });
-        await invalidateIssueLists();
-        await queryClient.invalidateQueries({
-          queryKey: useFindIssueQuery.getKey({ findIssueId: id }),
-        });
-        setDueDateOverrides((current) => {
-          const next = { ...current };
-          delete next[id];
-          return next;
-        });
-        snackbar.success(response.updateIssue ?? "Issue updated");
-      } catch (error) {
-        setDueDateOverrides((current) => {
-          const next = { ...current };
-          delete next[id];
-          return next;
-        });
-        snackbar.error(error instanceof Error ? error.message : "Failed to update issue");
-      }
-    },
-    [invalidateIssueLists, queryClient, snackbar, updateIssueMutation],
-  );
+  }, [
+    issueId,
+    nameOverrides,
+    projectIssues.data,
+    statusById,
+    statusOverrides,
+    subIssues.data,
+  ]);
 
   const onStartEditing = useCallback((id: string) => {
     setEditingIssueId(id);
@@ -272,30 +170,41 @@ export const IssueList = ({ issueId, projectId, style }: IssueListProps) => {
     [handleDueDateChange],
   );
 
+  const onStatusChange = useCallback(
+    (id: string, nextStatusId: string) => {
+      void handleStatusChange(id, nextStatusId);
+    },
+    [handleStatusChange],
+  );
+
   const uiValue = useMemo(
     (): IssueListUiContextValue => ({
       editingIssueId,
       priorityOverrides,
       dueDateOverrides,
-      isSaving: updateIssueMutation.isPending,
+      statuses,
+      isSaving,
       onStartEditing,
       onFinishEditing,
       onSaveName: handleNameChange,
       onPriorityChange,
       onDueDateChange,
+      onStatusChange,
       onOpenMenu,
     }),
     [
       dueDateOverrides,
       editingIssueId,
       handleNameChange,
+      isSaving,
       onDueDateChange,
       onFinishEditing,
       onOpenMenu,
       onPriorityChange,
       onStartEditing,
+      onStatusChange,
       priorityOverrides,
-      updateIssueMutation.isPending,
+      statuses,
     ],
   );
 
