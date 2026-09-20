@@ -7,7 +7,7 @@ import {
   useGetMyWorkspacesQuery,
 } from "@generated/gql";
 import { useGetCurrentUserQuery } from "@generated/api/@tanstack/react-query.gen";
-import { useAuthStore } from "@features/auth";
+import { toAuthUserFromMeResponse, useAuthStore } from "@features/auth";
 import { useWorkspaceStore } from "@features/workspace";
 import { redirectToOidcSignIn } from "../../../lib/auth";
 import { AppLoader } from "../AppLoader";
@@ -18,31 +18,6 @@ interface MainProps {
 
 const isPublicPath = (pathname: string) =>
   pathname === "/email-verification" || pathname === "/callback";
-
-function getIdentityFromMeResponse(data: unknown): {
-  id: string;
-  email: string;
-  emailVerified?: boolean;
-} | null {
-  if (typeof data !== "object" || data === null || !("identity" in data)) {
-    return null;
-  }
-  const identity = data.identity;
-  if (typeof identity !== "object" || identity === null) {
-    return null;
-  }
-  if (!("id" in identity) || !("email" in identity)) {
-    return null;
-  }
-  if (typeof identity.id !== "string" || typeof identity.email !== "string") {
-    return null;
-  }
-  const emailVerified =
-    "emailVerified" in identity && typeof identity.emailVerified === "boolean"
-      ? identity.emailVerified
-      : undefined;
-  return { id: identity.id, email: identity.email, emailVerified };
-}
 
 export function Main({ children }: MainProps) {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
@@ -60,15 +35,10 @@ export function Main({ children }: MainProps) {
   });
 
   useEffect(() => {
-    const identity = getIdentityFromMeResponse(userQuery.data);
-    if (identity) {
+    const current = toAuthUserFromMeResponse(userQuery.data);
+    if (current) {
       setCurrentUser({
-        current: {
-          userId: identity.id,
-          email: identity.email,
-          emailVerified: identity.emailVerified,
-          displayName: identity.email,
-        },
+        current,
         isLoading: false,
       });
       return;
