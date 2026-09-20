@@ -46,6 +46,7 @@
     "@pine/ui": "workspace:*",
     "@tanstack/react-query": "^5.101.2",
     "@tanstack/react-router": "1.170.17",
+    "@tanstack/react-table": "^9.2.4",
     "axios": "^1.18.1",
     "date-fns": "^2.30.0",
     "dayjs": "^1.11.11",
