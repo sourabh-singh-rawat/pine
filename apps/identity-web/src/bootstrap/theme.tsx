@@ -1,6 +1,7 @@
 import CssBaseline from "@mui/material/CssBaseline";
 import GlobalStyles from "@mui/material/GlobalStyles";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
+import { md3FontFamily, md3Space, md3TypeRoles, pineShape } from "@pine/ui";
 import { SnackbarProvider } from "notistack";
 import type { PropsWithChildren } from "react";
 import { SnackbarContent } from "@shared/ui/snackbar";
@@ -11,6 +12,10 @@ const NOTO_SANS_URL = "/noto-sans-regular.ttf";
 const APP_FONT_SIZE = "14px";
 
 const theme = createTheme({
+  spacing: 8,
+  md3: {
+    space: md3Space,
+  },
   palette: {
     mode: "light",
     background: {
@@ -29,8 +34,12 @@ const theme = createTheme({
       700: "#8b8b96",
     },
   },
+  shape: {
+    borderRadius: 4,
+    ...pineShape,
+  },
   typography: {
-    fontFamily: '"Noto Sans", "Helvetica", "Arial", sans-serif',
+    fontFamily: md3FontFamily,
     // MUI rem scale base (px number). App UI text is locked to 14px below.
     fontSize: 14,
     htmlFontSize: 16,
@@ -39,6 +48,7 @@ const theme = createTheme({
     button: { fontSize: APP_FONT_SIZE },
     subtitle1: { fontSize: APP_FONT_SIZE },
     subtitle2: { fontSize: APP_FONT_SIZE },
+    ...md3TypeRoles,
   },
   components: {
     MuiCssBaseline: {

@@ -1,5 +1,19 @@
 # @pine/pine-web
 
+## 0.7.2
+
+### Patch Changes
+
+- c29925a: feat(ui): add AppBar with editable issue title on issue page
+- 6b83fce: feat(issues): soft-delete with project delete authz
+- a5fe0e9: feat(pine-web): edit issue priority from list view
+- c645562: refactor(pine-web): remove unused AppRail
+- 595f7f5: feat(ui): TanStack Table v9 DataTable with status-grouped issue list
+- Updated dependencies [c29925a]
+- Updated dependencies [595f7f5]
+- Updated dependencies [a4ffbd4]
+  - @pine/ui@0.2.0
+
 ## 0.7.1
 
 ### Patch Changes

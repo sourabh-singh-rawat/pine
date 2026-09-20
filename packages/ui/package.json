@@ -1,9 +1,9 @@
 {
   "$schema": "https://json.schemastore.org/package.json",
   "name": "@pine/ui",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "private": true,
-  "description": "Shared React UI primitives for Pine web apps (forms, modals, buttons)",
+  "description": "Shared React UI primitives for Pine web apps (app bars, forms, modals, buttons)",
   "keywords": [
     "forms",
     "mui",
@@ -20,6 +20,14 @@
     ".": {
       "types": "./src/index.ts",
       "default": "./src/index.ts"
+    },
+    "./appBars": {
+      "types": "./src/appBars/index.ts",
+      "default": "./src/appBars/index.ts"
+    },
+    "./theme": {
+      "types": "./src/theme/index.ts",
+      "default": "./src/theme/index.ts"
     }
   },
   "scripts": {
@@ -33,7 +41,7 @@
     "@mui/material": "6.1.9",
     "@mui/system": "6.1.9",
     "@tanstack/react-form": "^1.33.2",
-    "@tanstack/react-table": "^8.21.3",
+    "@tanstack/react-table": "^9.2.4",
     "@types/react": "^19.2.17",
     "@types/react-dom": "^19.2.3",
     "react": "^19.2.7",
@@ -47,7 +55,7 @@
     "@mui/material": ">=6.0.0",
     "@mui/system": ">=6.0.0",
     "@tanstack/react-form": "^1.0.0",
-    "@tanstack/react-table": "^8.0.0",
+    "@tanstack/react-table": "^9.0.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
   }

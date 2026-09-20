@@ -1,5 +1,27 @@
 # Changelog
 
+## v2026.09.20.1
+
+### Minor
+
+- c29925a7: feat(ui): add AppBar with editable issue title on issue page — Sourabh Singh Rawat (`@pine/pine-web`, `@pine/ui`)
+- 595f7f5f: feat(ui): TanStack Table v9 DataTable with status-grouped issue list — Sourabh Singh Rawat (`@pine/pine-web`, `@pine/ui`)
+
+### Patch
+
+- 6b83fcef: feat(issues): soft-delete with project delete authz — Sourabh Singh Rawat (`@pine/issues-service`, `@pine/pine-web`)
+- a5fe0e94: feat(pine-web): edit issue priority from list view — Sourabh Singh Rawat (`@pine/pine-web`)
+- c6455626: refactor(pine-web): remove unused AppRail — Sourabh Singh Rawat (`@pine/pine-web`)
+- a4ffbd40: feat(ui): align md3 theme tokens and typings with shared m3 specification — Sourabh Singh Rawat (`@pine/ui`)
+
+### Packages
+
+- `@pine/identity-web@0.6.2`
+- `@pine/issues-service@0.6.1`
+- `@pine/pine-web@0.7.2`
+- `@pine/platform-web@0.5.2`
+- `@pine/ui@0.2.0`
+
 ## v2026.09.19.1
 
 ### Minor

@@ -11,7 +11,7 @@ when-to-use: >
 
 # Testing
 
-Colocated unit tests next to the impl (`FooService.test.ts`). Canonical: `platform-service` `features/workspaces/services/WorkspaceService.test.ts`. Related: `service`, `repository`, `http-route`, `events`, `outbox`. Run: `pnpm exec turbo run test --filter=@pine/<package>`.
+Colocated unit tests under `__tests__/` next to the impl (`__tests__/FooService.test.ts`). Canonical: `platform-service` `features/workspaces/services/__tests__/WorkspaceService.test.ts`. Related: `service`, `repository`, `http-route`, `events`, `outbox`. Run: `pnpm exec turbo run test --filter=@pine/<package>`.
 
 Do not boot compose, Kratos, or NATS for these tests. Construct the class with fakes; do not resolve the real Inversify container.
 
