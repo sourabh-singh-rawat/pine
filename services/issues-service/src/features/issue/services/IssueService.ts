@@ -205,4 +205,20 @@ export class IssueService implements IIssueService {
       ...(issue.description != null ? { description: issue.description } : {}),
     };
   }
+
+  private getStatuses = () => Object.values(IssueStatus);
+
+  private getPriorities = () => Object.values(ITEM_PRIORITY);
+
+  private toIssueCreatedEventData(issue: Issue) {
+    return {
+      id: issue.id,
+      name: issue.name,
+      ownerId: issue.createdById,
+      reporterId: issue.createdById,
+      projectId: issue.projectId,
+      createdAt: issue.createdAt.toISOString(),
+      ...(issue.description != null ? { description: issue.description } : {}),
+    };
+  }
 }
