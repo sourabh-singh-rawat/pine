@@ -5,11 +5,18 @@ import type { ReactNode } from "react";
 import { pinePaletteDark, pinePaletteLight } from "../theme/color";
 import { themeBorderRadiusMedium } from "../theme/shape";
 
+export type MenuAnchorPosition = {
+  top: number;
+  left: number;
+};
+
 export type MenuProps = {
-  anchorEl: HTMLElement | null;
   open: boolean;
   onClose: () => void;
   children: ReactNode;
+  anchorEl?: HTMLElement | null;
+  anchorPosition?: MenuAnchorPosition | null;
+  disableScrollLock?: boolean;
   sx?: SxProps<Theme>;
   MenuListProps?: MuiMenuProps["MenuListProps"];
   anchorOrigin?: MuiMenuProps["anchorOrigin"];
@@ -17,10 +24,12 @@ export type MenuProps = {
 };
 
 export const Menu = ({
-  anchorEl,
+  anchorEl = null,
+  anchorPosition = null,
   open,
   onClose,
   children,
+  disableScrollLock = true,
   sx,
   MenuListProps,
   anchorOrigin,
@@ -31,18 +40,43 @@ export const Menu = ({
   const paperBorderRadius = themeBorderRadiusMedium(theme);
   const paperShadow = theme.shadows[3] ?? theme.shadows[1];
 
+  const positionAnchorProps: Pick<MuiMenuProps, "anchorReference" | "anchorPosition"> | null =
+    anchorPosition != null
+      ? {
+          anchorReference: "anchorPosition",
+          anchorPosition,
+        }
+      : null;
+
   return (
     <MuiMenu
-      anchorEl={anchorEl}
+      {...(positionAnchorProps != null
+        ? positionAnchorProps
+        : {
+            anchorEl,
+          })}
       open={open}
       onClose={() => {
         onClose();
       }}
-      anchorOrigin={anchorOrigin}
-      transformOrigin={transformOrigin}
+      disableScrollLock={disableScrollLock}
+      hideBackdrop
+      disableAutoFocus
+      disableEnforceFocus
+      disableRestoreFocus
+      transitionDuration={0}
+      slotProps={{
+        root: {
+          disableScrollLock,
+          hideBackdrop: true,
+        },
+      }}
+      {...(anchorOrigin != null ? { anchorOrigin } : {})}
+      {...(transformOrigin != null ? { transformOrigin } : {})}
       variant="menu"
       MenuListProps={{
         disablePadding: true,
+        autoFocusItem: false,
         ...MenuListProps,
       }}
       PaperProps={{

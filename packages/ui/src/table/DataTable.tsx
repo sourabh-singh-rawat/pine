@@ -1,8 +1,11 @@
 import {
   type ColumnDef,
+  type ExpandedState,
   type RowData,
   type TableState,
+  type Updater,
 } from "@tanstack/react-table";
+import { useCallback, useState } from "react";
 import { DataTableBody } from "./DataTableBody";
 import { DataTableHeader } from "./DataTableHeader";
 import { DataTableRoot } from "./DataTableRoot";
@@ -15,6 +18,7 @@ export type DataTableProps<TData extends RowData> = {
   onRowClick?: (row: TData) => void;
   getRowId?: (originalRow: TData, index: number) => string;
   initialState?: Partial<TableState<typeof pineTableFeatures>>;
+  grouping?: string[];
   showBorder?: boolean;
   groupedColumnMode?: "reorder" | "remove" | false;
 };
@@ -26,9 +30,23 @@ export const DataTable = <TData extends RowData>({
   onRowClick,
   getRowId,
   initialState,
+  grouping,
   showBorder = false,
   groupedColumnMode = "remove",
 }: DataTableProps<TData>) => {
+  const [expanded, setExpanded] = useState<ExpandedState>(
+    () => initialState?.expanded ?? true,
+  );
+
+  const handleExpandedChange = useCallback((updater: Updater<ExpandedState>) => {
+    setExpanded((previous) => {
+      if (typeof updater === "function") {
+        return updater(previous);
+      }
+      return updater;
+    });
+  }, []);
+
   const table = usePineTable(
     {
       data,
@@ -36,6 +54,18 @@ export const DataTable = <TData extends RowData>({
       getRowId,
       initialState,
       groupedColumnMode,
+      autoResetAll: false,
+      autoResetExpanded: false,
+      state: {
+        expanded,
+        ...(grouping != null ? { grouping } : {}),
+      },
+      onExpandedChange: handleExpandedChange,
+      ...(grouping != null
+        ? {
+            onGroupingChange: () => {},
+          }
+        : {}),
     },
     (state) => ({
       grouping: state.grouping,
