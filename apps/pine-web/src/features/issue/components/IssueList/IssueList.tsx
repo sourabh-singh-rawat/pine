@@ -1,5 +1,5 @@
 import MoreVert from "@mui/icons-material/MoreVert";
-import { Box, IconButton } from "@mui/material";
+import { IconButton } from "@mui/material";
 import { useQueryClient } from "@tanstack/react-query";
 import { createPineColumnHelper, DataTable } from "@pine/ui";
 import { useCallback, useContext, useMemo, useState } from "react";
@@ -10,46 +10,12 @@ import {
   useFindSubIssuesQuery,
   useUpdateIssueMutation,
 } from "@generated/gql";
-import { Link, Select, useSnackbar } from "@shared";
+import { useSnackbar } from "@shared";
 import { StatusesContext } from "@shared/contexts/StatusesContext";
+import { IssueNameCell } from "./IssueNameCell";
+import { IssuePriorityCell } from "./IssuePriorityCell";
 import { IssueRowActionsMenu } from "./IssueRowActionsMenu";
-
-interface IssueListProps {
-  issueId?: string;
-  projectId?: string;
-  filters?: IssueListFilters;
-  style?: IssueListStyles;
-}
-
-interface IssueListFilters {}
-
-interface IssueListStyles {
-  showBorder?: boolean;
-}
-
-type IssueRow = {
-  id: string;
-  name: string;
-  statusId: string;
-  statusName: string;
-  statusOrder: number;
-  priority: string;
-  dueDate?: string | null;
-};
-
-const PRIORITY_OPTIONS = ["Urgent", "High", "Normal", "Low"];
-
-const prioritySelectOptions = PRIORITY_OPTIONS.map((option) => ({
-  id: option,
-  name: option,
-}));
-
-const STATUS_NAME_ORDER = ["To Do", "In Progress", "Done", "Cancelled"];
-
-const statusOrderIndex = (name: string) => {
-  const index = STATUS_NAME_ORDER.indexOf(name);
-  return index === -1 ? STATUS_NAME_ORDER.length : index;
-};
+import { type IssueListProps, type IssueRow, statusOrderIndex } from "./types";
 
 const EMPTY_ROWS: IssueRow[] = [];
 
@@ -62,6 +28,8 @@ export const IssueList = ({ issueId, projectId, style }: IssueListProps) => {
   const deleteIssueMutation = useDeleteIssueMutation();
   const updateIssueMutation = useUpdateIssueMutation();
   const [priorityOverrides, setPriorityOverrides] = useState<Record<string, string>>({});
+  const [nameOverrides, setNameOverrides] = useState<Record<string, string>>({});
+  const [editingIssueId, setEditingIssueId] = useState<string | null>(null);
   const [menuAnchor, setMenuAnchor] = useState<{
     element: HTMLElement;
     issueId: string;
@@ -94,14 +62,16 @@ export const IssueList = ({ issueId, projectId, style }: IssueListProps) => {
     const source = issueId ? (subIssues.data ?? []) : (projectIssues.data ?? []);
     const mapped = source.flatMap((issue) => {
       if (!issue?.id || !issue.name) return [];
-      const statusId = "statusId" in issue && typeof issue.statusId === "string" ? issue.statusId : "";
+      const statusId =
+        "statusId" in issue && typeof issue.statusId === "string" ? issue.statusId : "";
       const statusName = statusById.get(statusId) ?? "No status";
       const priority =
         "priority" in issue && typeof issue.priority === "string" ? issue.priority : "";
+      const name = nameOverrides[issue.id] ?? issue.name;
       return [
         {
           id: issue.id,
-          name: issue.name,
+          name,
           statusId,
           statusName,
           statusOrder: statusOrderIndex(statusName),
@@ -115,7 +85,7 @@ export const IssueList = ({ issueId, projectId, style }: IssueListProps) => {
       if (a.statusOrder !== b.statusOrder) return a.statusOrder - b.statusOrder;
       return a.name.localeCompare(b.name);
     });
-  }, [issueId, projectIssues.data, subIssues.data, statusById]);
+  }, [issueId, nameOverrides, projectIssues.data, subIssues.data, statusById]);
 
   const invalidateIssueLists = useCallback(async () => {
     if (projectId) {
@@ -169,6 +139,37 @@ export const IssueList = ({ issueId, projectId, style }: IssueListProps) => {
     [invalidateIssueLists, queryClient, snackbar, updateIssueMutation],
   );
 
+  const handleNameChange = useCallback(
+    async (id: string, name: string): Promise<boolean> => {
+      setNameOverrides((current) => ({ ...current, [id]: name }));
+      try {
+        const response = await updateIssueMutation.mutateAsync({
+          input: { issueId: id, name },
+        });
+        await invalidateIssueLists();
+        await queryClient.invalidateQueries({
+          queryKey: useFindIssueQuery.getKey({ findIssueId: id }),
+        });
+        setNameOverrides((current) => {
+          const next = { ...current };
+          delete next[id];
+          return next;
+        });
+        snackbar.success(response.updateIssue ?? "Issue updated");
+        return true;
+      } catch (error) {
+        setNameOverrides((current) => {
+          const next = { ...current };
+          delete next[id];
+          return next;
+        });
+        snackbar.error(error instanceof Error ? error.message : "Failed to update issue");
+        return false;
+      }
+    },
+    [invalidateIssueLists, queryClient, snackbar, updateIssueMutation],
+  );
+
   const shouldGroup = Boolean(projectId) && statuses.length > 0;
 
   const columns = useMemo(() => {
@@ -176,7 +177,23 @@ export const IssueList = ({ issueId, projectId, style }: IssueListProps) => {
       columnHelper.accessor("name", {
         header: "Name",
         enableGrouping: false,
-        cell: ({ row, getValue }) => <Link to={`/i/${row.original.id}`}>{getValue()}</Link>,
+        cell: ({ row, getValue }) => {
+          const issueKey = row.original.id;
+          const current = getValue();
+          return (
+            <IssueNameCell
+              issueId={issueKey}
+              name={current}
+              isEditing={editingIssueId === issueKey}
+              isSaving={updateIssueMutation.isPending}
+              onStartEditing={() => setEditingIssueId(issueKey)}
+              onFinishEditing={() => {
+                setEditingIssueId((currentId) => (currentId === issueKey ? null : currentId));
+              }}
+              onSave={async (nextName) => handleNameChange(issueKey, nextName)}
+            />
+          );
+        },
       }),
       columnHelper.accessor("dueDate", {
         header: "Due Date",
@@ -190,30 +207,14 @@ export const IssueList = ({ issueId, projectId, style }: IssueListProps) => {
           const issueKey = row.original.id;
           const current = priorityOverrides[issueKey] ?? getValue();
           return (
-            <Box
-              onClick={(event) => {
-                event.stopPropagation();
+            <IssuePriorityCell
+              issueId={issueKey}
+              value={current}
+              disabled={updateIssueMutation.isPending}
+              onChange={(nextPriority) => {
+                void handlePriorityChange(issueKey, nextPriority);
               }}
-              sx={{
-                width: "100%",
-                display: "flex",
-                alignItems: "center",
-                minWidth: 120,
-              }}
-            >
-              <Select
-                name={`priority-${issueKey}`}
-                value={current}
-                variant="small"
-                options={prioritySelectOptions}
-                isDisabled={updateIssueMutation.isPending}
-                onChange={(event) => {
-                  const next = event.target.value;
-                  if (typeof next !== "string" || !next || next === current) return;
-                  void handlePriorityChange(issueKey, next);
-                }}
-              />
-            </Box>
+            />
           );
         },
       }),
@@ -246,7 +247,14 @@ export const IssueList = ({ issueId, projectId, style }: IssueListProps) => {
       }),
       ...baseColumns,
     ]);
-  }, [handlePriorityChange, priorityOverrides, shouldGroup, updateIssueMutation.isPending]);
+  }, [
+    editingIssueId,
+    handleNameChange,
+    handlePriorityChange,
+    priorityOverrides,
+    shouldGroup,
+    updateIssueMutation.isPending,
+  ]);
 
   return (
     <>
@@ -269,6 +277,11 @@ export const IssueList = ({ issueId, projectId, style }: IssueListProps) => {
         anchorEl={menuAnchor?.element ?? null}
         open={Boolean(menuAnchor)}
         onClose={() => setMenuAnchor(null)}
+        onRename={() => {
+          const id = menuAnchor?.issueId;
+          setMenuAnchor(null);
+          if (id) setEditingIssueId(id);
+        }}
         onDelete={() => {
           const id = menuAnchor?.issueId;
           setMenuAnchor(null);
