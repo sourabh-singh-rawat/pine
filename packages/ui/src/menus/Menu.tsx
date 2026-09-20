@@ -60,7 +60,6 @@ export const Menu = ({
         onClose();
       }}
       disableScrollLock={disableScrollLock}
-      hideBackdrop
       disableAutoFocus
       disableEnforceFocus
       disableRestoreFocus
@@ -68,7 +67,11 @@ export const Menu = ({
       slotProps={{
         root: {
           disableScrollLock,
-          hideBackdrop: true,
+          slotProps: {
+            backdrop: {
+              invisible: true,
+            },
+          },
         },
       }}
       {...(anchorOrigin != null ? { anchorOrigin } : {})}
