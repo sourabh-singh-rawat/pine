@@ -1,7 +1,7 @@
 import ArchiveOutlined from "@mui/icons-material/ArchiveOutlined";
 import DeleteOutlineOutlined from "@mui/icons-material/DeleteOutlineOutlined";
 import EditOutlined from "@mui/icons-material/EditOutlined";
-import { ListItemIcon, ListItemText, Menu, MenuItem } from "@mui/material";
+import { Menu, MenuItem } from "@pine/ui";
 
 type IssueRowActionsMenuProps = {
   anchorEl: HTMLElement | null;
@@ -19,23 +19,18 @@ export const IssueRowActionsMenu = ({
   onRename,
 }: IssueRowActionsMenuProps) => (
   <Menu anchorEl={anchorEl} open={open} onClose={onClose}>
-    <MenuItem onClick={onRename} disabled={!onRename}>
-      <ListItemIcon>
-        <EditOutlined fontSize="small" />
-      </ListItemIcon>
-      <ListItemText>Rename</ListItemText>
+    <MenuItem
+      leadingIcon={<EditOutlined fontSize="small" />}
+      onClick={onRename}
+      isDisabled={!onRename}
+    >
+      Rename
     </MenuItem>
-    <MenuItem disabled>
-      <ListItemIcon>
-        <ArchiveOutlined fontSize="small" />
-      </ListItemIcon>
-      <ListItemText>Archive</ListItemText>
+    <MenuItem leadingIcon={<ArchiveOutlined fontSize="small" />} isDisabled>
+      Archive
     </MenuItem>
-    <MenuItem onClick={onDelete}>
-      <ListItemIcon>
-        <DeleteOutlineOutlined fontSize="small" />
-      </ListItemIcon>
-      <ListItemText>Delete</ListItemText>
+    <MenuItem leadingIcon={<DeleteOutlineOutlined fontSize="small" />} onClick={onDelete}>
+      Delete
     </MenuItem>
   </Menu>
 );
