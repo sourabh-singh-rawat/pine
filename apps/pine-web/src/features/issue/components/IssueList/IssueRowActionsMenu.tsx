@@ -8,6 +8,7 @@ type IssueRowActionsMenuProps = {
   open: boolean;
   onClose: () => void;
   onDelete: () => void;
+  onRename?: () => void;
 };
 
 export const IssueRowActionsMenu = ({
@@ -15,9 +16,10 @@ export const IssueRowActionsMenu = ({
   open,
   onClose,
   onDelete,
+  onRename,
 }: IssueRowActionsMenuProps) => (
   <Menu anchorEl={anchorEl} open={open} onClose={onClose}>
-    <MenuItem disabled>
+    <MenuItem onClick={onRename} disabled={!onRename}>
       <ListItemIcon>
         <EditOutlined fontSize="small" />
       </ListItemIcon>
