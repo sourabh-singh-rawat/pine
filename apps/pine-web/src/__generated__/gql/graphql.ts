@@ -17,6 +17,19 @@ export type Scalars = {
   link__Import: { input: unknown; output: unknown; }
 };
 
+export type AuditLogObject = {
+  __typename?: 'AuditLogObject';
+  action?: Maybe<Scalars['String']['output']>;
+  actorId?: Maybe<Scalars['String']['output']>;
+  createdAt?: Maybe<Scalars['DateTimeISO']['output']>;
+  entityId?: Maybe<Scalars['String']['output']>;
+  entityType?: Maybe<Scalars['String']['output']>;
+  id?: Maybe<Scalars['String']['output']>;
+  tenantId?: Maybe<Scalars['String']['output']>;
+  updatedAt?: Maybe<Scalars['DateTimeISO']['output']>;
+  workspaceId?: Maybe<Scalars['String']['output']>;
+};
+
 export type ClientObject = {
   __typename?: 'ClientObject';
   grantTypes?: Maybe<Array<Scalars['String']['output']>>;
@@ -398,6 +411,7 @@ export type Query = {
   findProjects?: Maybe<PaginatedProjectObject>;
   findStatuses?: Maybe<Array<StatusObject>>;
   findSubIssues?: Maybe<Array<IssueObject>>;
+  getAuditLogs?: Maybe<Array<AuditLogObject>>;
   getClient?: Maybe<ClientObject>;
   getIdentities?: Maybe<Array<PlatformIdentityObject>>;
   getIdentityRelations?: Maybe<IdentityRelationsObject>;
@@ -448,6 +462,13 @@ export type QueryFindStatusesArgs = {
 
 export type QueryFindSubIssuesArgs = {
   input: FindIssuesInput;
+};
+
+
+export type QueryGetAuditLogsArgs = {
+  entityId: Scalars['String']['input'];
+  entityType: Scalars['String']['input'];
+  workspaceId: Scalars['String']['input'];
 };
 
 
@@ -623,6 +644,7 @@ export type WorkspaceRelationObject = {
 
 export type Join__Graph =
   | 'ATTACHMENT'
+  | 'AUDIT_SERVICE'
   | 'IDENTITY_SERVICE'
   | 'ISSUES_SERVICE'
   | 'PLATFORM_SERVICE';

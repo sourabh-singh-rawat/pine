@@ -2,6 +2,8 @@ export const TYPES = {
   Database: Symbol.for("Database"),
   Logger: Symbol.for("Logger"),
   Broker: Symbol.for("Broker"),
+  HttpServer: Symbol.for("IHttpServer"),
+  AuthorizationClient: Symbol.for("IAuthorizationClient"),
 
   IdentityRepository: Symbol.for("IdentityRepository"),
   SpaceRepository: Symbol.for("SpaceRepository"),
@@ -9,6 +11,7 @@ export const TYPES = {
   WorkspaceRepository: Symbol.for("WorkspaceRepository"),
   AttachmentRepository: Symbol.for("AttachmentRepository"),
   AuditLogRepository: Symbol.for("AuditLogRepository"),
+  AuditLogService: Symbol.for("IAuditLogService"),
 
   AuditIdentitySyncConsumer: Symbol.for("AuditIdentitySyncConsumer"),
   AuditIssuesSyncConsumer: Symbol.for("AuditIssuesSyncConsumer"),

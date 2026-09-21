@@ -13,6 +13,15 @@ export type CreateAuditLogEntity = {
   payload?: Record<string, unknown> | null;
 };
 
+export type ListAuditLogsFilter = {
+  entityType: string;
+  entityId: string;
+};
+
 export interface IAuditLogRepository {
   save: (entity: CreateAuditLogEntity, options?: AuditLogRepositoryOptions) => Promise<AuditLog>;
+  findMany: (
+    filter: ListAuditLogsFilter,
+    options?: AuditLogRepositoryOptions,
+  ) => Promise<AuditLog[]>;
 }

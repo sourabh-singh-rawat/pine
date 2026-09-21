@@ -11,20 +11,20 @@ export const EnvSchema = Type.Object({
     ],
     { default: ENVIRONMENT.DEVELOPMENT },
   ),
-  AUDIT_DATABASE_URL: Type.String({ default: "postgres://postgres:postgres@localhost:5432/audit" }),
+  AUDIT_SERVICE_URL: Type.String({ default: "https://127.0.0.1:5007" }),
+  AUDIT_SERVICE_TLS_KEY_PATH: Type.String({ minLength: 1 }),
+  AUDIT_SERVICE_TLS_CERT_PATH: Type.String({ minLength: 1 }),
+  CA_CERT_PATH: Type.String({ minLength: 1 }),
+  AUDIT_DATABASE_URL: Type.String({ minLength: 1 }),
+  AUTHORIZATION_SERVICE_URL: Type.String({ default: "https://127.0.0.1:5006" }),
   NATS_URL: Type.String({ default: "nats://localhost:4222" }),
+  JWT_SECRET: Type.String({ minLength: 1 }),
 });
 
 export type Env = Type.Static<typeof EnvSchema>;
 
 const parseEnv = (): Env => {
-  const withDefaults = Value.Default(EnvSchema, {
-    AUDIT_DATABASE_URL:
-      process.env.AUDIT_DATABASE_URL ??
-      process.env.PLATFORM_DATABASE_URL ??
-      "postgres://postgres:postgres@localhost:5432/audit",
-    ...process.env,
-  });
+  const withDefaults = Value.Default(EnvSchema, { ...process.env });
   const cleaned = Value.Clean(EnvSchema, withDefaults);
   return Value.Parse(EnvSchema, cleaned);
 };
