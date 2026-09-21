@@ -34,11 +34,11 @@ pnpm dev:apps
 Compose overlays and ports: `docker-infra`. Env: single root `.env` (from `.env.example`).
 
 ```bash
-pnpm exec turbo run dev --filter=@pine/issues-service
+pnpm exec turbo run dev --filter=@pine/items-service
 pnpm exec turbo run build test --filter=@pine/<name>...
 ```
 
-`...` includes dependents. Shortcuts: `pnpm pine-web`, `identity-service`, `issues-service`, `api-gateway`, …
+`...` includes dependents. Shortcuts: `pnpm pine-web`, `identity-service`, `items-service`, `api-gateway`, …
 
 | Touched | Command |
 | ------- | ------- |

@@ -1,0 +1,11 @@
+query GetProjectItems($projectId: String!) {
+  getProjectItems(projectId: $projectId) {
+    description
+    id
+    name
+    statusId
+    priority
+    dueDate
+    hasChildren
+  }
+}

@@ -2,7 +2,7 @@ import { Grid2 } from "@mui/material";
 import { useState } from "react";
 import { CustomTab } from "../../../../shared/components/CustomTab";
 import { CustomTabs } from "../../../../shared/components/CustomTabs";
-import { AddIssueButton } from "../../../issue/components/AddIssueButton";
+import { AddItemButton } from "../../../item/components/AddItemButton";
 
 interface ViewProps {
   projectId: string;
@@ -25,7 +25,7 @@ export const ViewSwitcher = ({ projectId }: ViewProps) => {
       </Grid2>
       <Grid2 flexGrow={1}></Grid2>
       <Grid2>
-        <AddIssueButton projectId={projectId} />
+        <AddItemButton projectId={projectId} />
       </Grid2>
     </Grid2>
   );

@@ -28,7 +28,7 @@ describe("AuthorizationSpaceSyncConsumer", () => {
       type: SpaceCreatedEvent.type,
       version: SpaceCreatedEvent.version,
       schema: SpaceCreatedEvent.schema,
-      source: "pine/issues-service",
+      source: "pine/items-service",
       subject: "space-1",
       data: {
         id: "space-1",

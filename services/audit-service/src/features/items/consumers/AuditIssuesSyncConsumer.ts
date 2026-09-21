@@ -1,11 +1,11 @@
 import {
   type CloudEvent,
   type IBroker,
-  type IssueCreatedData,
+  type ItemCreatedData,
   type SpaceData,
   Streams,
   Consumer,
-  IssueCreatedEvent,
+  ItemCreatedEvent,
   SpaceCreatedEvent,
   validateEvent,
 } from "@pine/events";
@@ -18,10 +18,10 @@ import type { IItemRepository } from "@/features/items/repositories";
 import type { ISpaceRepository } from "@/features/spaces/repositories";
 
 @injectable()
-export class AuditIssuesSyncConsumer extends Consumer<CloudEvent<IssueCreatedData | SpaceData>> {
-  readonly stream = Streams.ISSUES;
+export class AuditIssuesSyncConsumer extends Consumer<CloudEvent<ItemCreatedData | SpaceData>> {
+  readonly stream = Streams.ITEMS;
   readonly consumer = "audit-issues-sync";
-  readonly subjects = [IssueCreatedEvent.type, SpaceCreatedEvent.type];
+  readonly subjects = [ItemCreatedEvent.type, SpaceCreatedEvent.type];
 
   constructor(
     @inject(TYPES.Broker)
@@ -40,10 +40,10 @@ export class AuditIssuesSyncConsumer extends Consumer<CloudEvent<IssueCreatedDat
 
   onMessage = async (
     message: JsMsg,
-    payload: CloudEvent<IssueCreatedData | SpaceData>,
+    payload: CloudEvent<ItemCreatedData | SpaceData>,
   ): Promise<void> => {
-    if (payload.type === IssueCreatedEvent.type) {
-      const event = validateEvent(IssueCreatedEvent, payload);
+    if (payload.type === ItemCreatedEvent.type) {
+      const event = validateEvent(ItemCreatedEvent, payload);
       const data = event.data;
       if (!data) {
         message.ack();
@@ -55,7 +55,7 @@ export class AuditIssuesSyncConsumer extends Consumer<CloudEvent<IssueCreatedDat
           {
             id: data.id,
             name: data.name,
-            type: "issue",
+            type: "item",
             projectId: data.projectId,
             createdById: data.ownerId,
           },

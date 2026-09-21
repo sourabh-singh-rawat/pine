@@ -36,7 +36,7 @@ New namespace or permit: edit OPL + `@pine/authorization` resource/permission un
 ## Anti-patterns
 
 - Authz only in GraphQL/HTTP
-- Writing Keto tuples from `platform-service` / `issues-service` via `ensureRelationship`
+- Writing Keto tuples from `platform-service` / `items-service` via `ensureRelationship`
 - Inventing a resource string that is not `namespace:id`
 - Parallel `id`/`name` namespace lists beside OPL
 - Calling Keto from a feature folder in a non-authorization service

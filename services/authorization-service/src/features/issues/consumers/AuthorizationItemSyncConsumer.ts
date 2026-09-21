@@ -6,9 +6,9 @@ import {
 import {
   type CloudEvent,
   type IBroker,
-  type IssueCreatedData,
+  type ItemCreatedData,
   Consumer,
-  IssueCreatedEvent,
+  ItemCreatedEvent,
   Streams,
   validateEvent,
 } from "@pine/events";
@@ -19,10 +19,10 @@ import { ensureRelationship } from "@/features/platform/consumers/syncRelationsh
 import type { IAuthorizationGraphProvider } from "@/integrations/authorization";
 
 @injectable()
-export class AuthorizationItemSyncConsumer extends Consumer<CloudEvent<IssueCreatedData>> {
-  readonly stream = Streams.ISSUES;
+export class AuthorizationItemSyncConsumer extends Consumer<CloudEvent<ItemCreatedData>> {
+  readonly stream = Streams.ITEMS;
   readonly consumer = "authorization-item-sync";
-  readonly subjects = [IssueCreatedEvent.type];
+  readonly subjects = [ItemCreatedEvent.type];
 
   constructor(
     @inject(TYPES.Broker)
@@ -33,13 +33,13 @@ export class AuthorizationItemSyncConsumer extends Consumer<CloudEvent<IssueCrea
     super(broker.client);
   }
 
-  async onMessage(message: JsMsg, payload: CloudEvent<IssueCreatedData>): Promise<void> {
-    if (payload.type !== IssueCreatedEvent.type) {
+  async onMessage(message: JsMsg, payload: CloudEvent<ItemCreatedData>): Promise<void> {
+    if (payload.type !== ItemCreatedEvent.type) {
       message.ack();
       return;
     }
 
-    const event = validateEvent(IssueCreatedEvent, payload);
+    const event = validateEvent(ItemCreatedEvent, payload);
     const data = event.data;
     if (!data) {
       message.ack();
@@ -53,7 +53,7 @@ export class AuthorizationItemSyncConsumer extends Consumer<CloudEvent<IssueCrea
     message.ack();
   }
 
-  private itemGraph(data: IssueCreatedData): GraphRelationship[] {
+  private itemGraph(data: ItemCreatedData): GraphRelationship[] {
     return [
       itemProjectRelationship(data.id, data.projectId),
       itemOwnerRelationship(data.id, data.ownerId),

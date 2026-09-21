@@ -34,9 +34,9 @@ spec:
                 port:
                   number: 4000
           - pathType: ImplementationSpecific
-            path: /api/v1/issue-tracker/?(.*)
+            path: /api/v1/items/?(.*)
             backend:
               service:
-                name: issue-tracker-service
+                name: items-service
                 port:
                   number: 4000

@@ -10,9 +10,9 @@ when-to-use: >
 
 # Events
 
-CloudEvent envelopes on NATS. Subject = CloudEvent `type` (e.g. `issues.issue.created`). Related: `service`, `service-feature`, `outbox`, `workers`, `k8s`.
+CloudEvent envelopes on NATS. Subject = CloudEvent `type` (e.g. `items.item.created`). Related: `service`, `service-feature`, `outbox`, `workers`, `k8s`.
 
-`Streams` enum: `identity`, `issues`, `attachment`, `platform`, `authorization`. Stream name = first token of `type`. There is **no** `notification` stream — notification-service consumes `Streams.IDENTITY`.
+`Streams` enum: `identity`, `items`, `attachment`, `platform`, `authorization`. Stream name = first token of `type`. There is **no** `notification` stream — notification-service consumes `Streams.IDENTITY`.
 
 Prefer `outbox.schedule` for events that must commit with a DB write (`outbox`). Direct `publisher.send` only when there is no aggregate transaction.
 
@@ -29,12 +29,12 @@ Broker `streams` is the streams **this process creates**. Consumers can listen t
 
 ```ts
 const event = createCloudEvent({
-  type: IssueCreatedEvent.type,
-  version: IssueCreatedEvent.version,
-  schema: IssueCreatedEvent.schema,
-  source: "pine/issues-service",
-  subject: issue.id,
-  data: mappedIssueCreatedDto,
+  type: ItemCreatedEvent.type,
+  version: ItemCreatedEvent.version,
+  schema: ItemCreatedEvent.schema,
+  source: "pine/items-service",
+  subject: item.id,
+  data: mappedItemCreatedDto,
 });
 await this.publisher.send(event);
 ```
@@ -101,7 +101,7 @@ All JetStream consumers are durable. Names are **service-local** — never in `@
 | Service token | Example |
 | ------------- | ------- |
 | `platform` | `platform-identity-sync` |
-| `issues` | `issues-identity-sync` |
+| `items` | `items-identity-sync` |
 | `attachment` | `attachment-identity-sync` |
 | `notification` | `notification-identity-sync` |
 | `authorization` | `authorization-workspace-sync` |

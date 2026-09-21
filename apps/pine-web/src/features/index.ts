@@ -1,6 +1,6 @@
 export * from "./auth";
 export * from "./home";
-export * from "./issue";
+export * from "./item";
 export * from "./workspace";
 export * from "./space";
 export * from "./project";

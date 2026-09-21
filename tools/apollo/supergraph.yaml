@@ -12,10 +12,10 @@ subgraphs:
     routing_url: https://127.0.0.1:5000/graphql
     schema:
       file: ../../services/identity-service/dist/schema.graphql
-  issues-service:
+  items-service:
     routing_url: https://127.0.0.1:5001/graphql
     schema:
-      file: ../../services/issues-service/dist/schema.graphql
+      file: ../../services/items-service/dist/schema.graphql
   platform-service:
     routing_url: https://127.0.0.1:5005/graphql
     schema:
