@@ -6,6 +6,7 @@ import type { UpdateIssueInput } from "@generated/gql/graphql";
 import { AppBar } from "@pine/ui";
 import { useIssueParams, useSnackbar } from "@shared";
 import {
+  IssueActivity,
   IssueAttachments,
   IssueDescription,
   IssueFields,
@@ -118,6 +119,12 @@ export const IssuePage = () => {
           </Typography>
 
           <IssueAttachments issueId={issueId} />
+        </Grid2>
+      )}
+
+      {issueId && (
+        <Grid2 size={12}>
+          <IssueActivity issueId={issueId} />
         </Grid2>
       )}
     </Grid2>

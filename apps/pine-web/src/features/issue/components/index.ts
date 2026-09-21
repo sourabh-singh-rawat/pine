@@ -1,3 +1,4 @@
+export * from "./IssueActivity";
 export * from "./IssueAttachments";
 export * from "./IssueDescription";
 export * from "./IssueFields";

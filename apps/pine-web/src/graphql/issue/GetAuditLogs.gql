@@ -1,0 +1,11 @@
+query GetAuditLogs($entityType: String!, $entityId: String!, $workspaceId: String!) {
+  getAuditLogs(entityType: $entityType, entityId: $entityId, workspaceId: $workspaceId) {
+    id
+    entityType
+    entityId
+    action
+    actorId
+    workspaceId
+    createdAt
+  }
+}

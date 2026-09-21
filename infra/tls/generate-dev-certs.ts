@@ -17,6 +17,7 @@ const services = [
   "attachment-service",
   "attachment-processing-service",
   "attachment-scanner-service",
+  "audit-service",
   "notification-service",
   "platform-service",
   "authorization-service",

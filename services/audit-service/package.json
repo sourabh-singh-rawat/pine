@@ -30,10 +30,16 @@
     "db:studio": "drizzle-kit studio"
   },
   "dependencies": {
+    "@pine/authorization": "workspace:*",
     "@pine/common": "workspace:^",
+    "@pine/errors": "workspace:*",
     "@pine/events": "workspace:^",
+    "@pine/identity": "workspace:*",
     "@pine/server": "workspace:^",
+    "@pothos/core": "^4.13.1",
     "drizzle-orm": "0.45.2",
+    "graphql": "16.14.2",
+    "graphql-scalars": "^1.25.0",
     "inversify": "8.2.2",
     "nats": "^2.29.3",
     "pg": "^8.22.0",

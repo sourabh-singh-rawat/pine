@@ -50,6 +50,15 @@ export type FindSubIssuesQueryVariables = Exact<{
 
 export type FindSubIssuesQuery = { findSubIssues: Array<{ description: string | null, id: string | null, name: string | null, dueDate: unknown, statusId: string | null, priority: string | null }> | null };
 
+export type GetAuditLogsQueryVariables = Exact<{
+  entityType: string;
+  entityId: string;
+  workspaceId: string;
+}>;
+
+
+export type GetAuditLogsQuery = { getAuditLogs: Array<{ id: string | null, entityType: string | null, entityId: string | null, action: string | null, actorId: string | null, workspaceId: string | null, createdAt: unknown }> | null };
+
 export type UpdateIssueMutationVariables = Exact<{
   input: Types.UpdateIssueInput;
 }>;
@@ -306,6 +315,44 @@ export const useFindSubIssuesQuery = <
 useFindSubIssuesQuery.document = FindSubIssuesDocument;
 
 useFindSubIssuesQuery.getKey = (variables: FindSubIssuesQueryVariables) => ['FindSubIssues', variables];
+
+export const GetAuditLogsDocument = new TypedDocumentString(`
+    query GetAuditLogs($entityType: String!, $entityId: String!, $workspaceId: String!) {
+  getAuditLogs(
+    entityType: $entityType
+    entityId: $entityId
+    workspaceId: $workspaceId
+  ) {
+    id
+    entityType
+    entityId
+    action
+    actorId
+    workspaceId
+    createdAt
+  }
+}
+    `);
+
+export const useGetAuditLogsQuery = <
+      TData = GetAuditLogsQuery,
+      TError = unknown
+    >(
+      variables: GetAuditLogsQueryVariables,
+      options?: Omit<UseQueryOptions<GetAuditLogsQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<GetAuditLogsQuery, TError, TData>['queryKey'] }
+    ) => {
+    
+    return useQuery<GetAuditLogsQuery, TError, TData>(
+      {
+    queryKey: ['GetAuditLogs', variables],
+    queryFn: graphQLFetcher<GetAuditLogsQuery, GetAuditLogsQueryVariables>(GetAuditLogsDocument, variables),
+    ...options
+  }
+    )};
+
+useGetAuditLogsQuery.document = GetAuditLogsDocument;
+
+useGetAuditLogsQuery.getKey = (variables: GetAuditLogsQueryVariables) => ['GetAuditLogs', variables];
 
 export const UpdateIssueDocument = new TypedDocumentString(`
     mutation UpdateIssue($input: UpdateIssueInput!) {
