@@ -2,10 +2,12 @@ import {
   type CloudEvent,
   type IBroker,
   type ItemCreatedData,
+  type ItemUpdatedData,
   type SpaceData,
   Streams,
   Consumer,
   ItemCreatedEvent,
+  ItemUpdatedEvent,
   SpaceCreatedEvent,
   validateEvent,
 } from "@pine/events";
@@ -18,10 +20,16 @@ import type { IItemRepository } from "@/features/items/repositories";
 import type { ISpaceRepository } from "@/features/spaces/repositories";
 
 @injectable()
-export class AuditIssuesSyncConsumer extends Consumer<CloudEvent<ItemCreatedData | SpaceData>> {
+export class AuditItemsSyncConsumer extends Consumer<
+  CloudEvent<ItemCreatedData | ItemUpdatedData | SpaceData>
+> {
   readonly stream = Streams.ITEMS;
   readonly consumer = "audit-issues-sync";
-  readonly subjects = [ItemCreatedEvent.type, SpaceCreatedEvent.type];
+  readonly subjects = [
+    ItemCreatedEvent.type,
+    ItemUpdatedEvent.type,
+    SpaceCreatedEvent.type,
+  ];
 
   constructor(
     @inject(TYPES.Broker)
@@ -40,7 +48,7 @@ export class AuditIssuesSyncConsumer extends Consumer<CloudEvent<ItemCreatedData
 
   onMessage = async (
     message: JsMsg,
-    payload: CloudEvent<ItemCreatedData | SpaceData>,
+    payload: CloudEvent<ItemCreatedData | ItemUpdatedData | SpaceData>,
   ): Promise<void> => {
     if (payload.type === ItemCreatedEvent.type) {
       const event = validateEvent(ItemCreatedEvent, payload);
@@ -67,6 +75,43 @@ export class AuditIssuesSyncConsumer extends Consumer<CloudEvent<ItemCreatedData
             entityId: data.id,
             action: "created",
             actorId: data.ownerId,
+            payload: { ...data },
+          },
+          { tx },
+        );
+      });
+
+      message.ack();
+      return;
+    }
+
+    if (payload.type === ItemUpdatedEvent.type) {
+      const event = validateEvent(ItemUpdatedEvent, payload);
+      const data = event.data;
+      if (!data) {
+        message.ack();
+        return;
+      }
+
+      await this.db.transaction(async (tx) => {
+        await this.itemRepository.upsert(
+          {
+            id: data.id,
+            name: data.name,
+            type: data.type ?? "item",
+            projectId: data.projectId,
+            createdById: data.ownerId,
+            ...(data.priority !== undefined ? { priority: data.priority } : {}),
+            updatedById: data.updatedById,
+          },
+          { tx },
+        );
+        await this.auditLogRepository.save(
+          {
+            entityType: "item",
+            entityId: data.id,
+            action: "updated",
+            actorId: data.updatedById,
             payload: { ...data },
           },
           { tx },
