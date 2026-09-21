@@ -23,7 +23,7 @@ import {
   IdentityRepository,
   AuditIdentitySyncConsumer,
 } from "@/features/identities";
-import { type IItemRepository, ItemRepository, AuditIssuesSyncConsumer } from "@/features/items";
+import { type IItemRepository, ItemRepository, AuditItemsSyncConsumer } from "@/features/items";
 import { type ISpaceRepository, SpaceRepository } from "@/features/spaces";
 import {
   type IWorkspaceRepository,
@@ -55,7 +55,7 @@ container
   .toConstantValue(new HttpAuthorizationClient({ baseUrl: env.AUTHORIZATION_SERVICE_URL }));
 
 container.bind(TYPES.AuditIdentitySyncConsumer).to(AuditIdentitySyncConsumer);
-container.bind(TYPES.AuditIssuesSyncConsumer).to(AuditIssuesSyncConsumer);
+container.bind(TYPES.AuditItemsSyncConsumer).to(AuditItemsSyncConsumer);
 container.bind(TYPES.AuditPlatformSyncConsumer).to(AuditPlatformSyncConsumer);
 container.bind(TYPES.AuditAttachmentSyncConsumer).to(AuditAttachmentSyncConsumer);
 

@@ -14,7 +14,7 @@ export const TYPES = {
   AuditLogService: Symbol.for("IAuditLogService"),
 
   AuditIdentitySyncConsumer: Symbol.for("AuditIdentitySyncConsumer"),
-  AuditIssuesSyncConsumer: Symbol.for("AuditIssuesSyncConsumer"),
+  AuditItemsSyncConsumer: Symbol.for("AuditItemsSyncConsumer"),
   AuditPlatformSyncConsumer: Symbol.for("AuditPlatformSyncConsumer"),
   AuditAttachmentSyncConsumer: Symbol.for("AuditAttachmentSyncConsumer"),
 };

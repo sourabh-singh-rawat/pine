@@ -1,1 +1,1 @@
-export { AuditIssuesSyncConsumer } from "@/features/items/consumers/AuditIssuesSyncConsumer";
+export { AuditItemsSyncConsumer } from "@/features/items/consumers/AuditItemsSyncConsumer";
