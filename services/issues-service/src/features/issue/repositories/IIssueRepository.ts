@@ -45,7 +45,7 @@ export interface IIssueRepository {
     userId: string,
     entity: UpdateIssueEntity,
     options?: IssueRepositoryOptions,
-  ): Promise<void>;
+  ): Promise<Issue>;
   softDelete(id: string, options?: IssueRepositoryOptions): Promise<boolean>;
   findById(id: string, options?: IssueRepositoryOptions): Promise<Issue | null>;
   findByIdForUser(
