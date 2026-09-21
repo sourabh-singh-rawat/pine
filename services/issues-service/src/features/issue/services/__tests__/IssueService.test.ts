@@ -3,7 +3,7 @@ import {
   type IAuthorizationClient,
 } from "@pine/authorization";
 import { ITEM_PRIORITY } from "@pine/common";
-import { IssueCreatedEvent } from "@pine/events";
+import { IssueCreatedEvent, IssueUpdatedEvent } from "@pine/events";
 import type { IOutboxService } from "@pine/outbox";
 import { describe, expect, it, vi } from "vitest";
 import type { DbClient, Issue } from "@/db";
@@ -42,7 +42,7 @@ const createIssueRepository = (
   overrides: Partial<IIssueRepository> = {},
 ): IIssueRepository => ({
   save: vi.fn().mockResolvedValue(issue),
-  update: vi.fn().mockResolvedValue(undefined),
+  update: vi.fn().mockResolvedValue(issue),
   softDelete: vi.fn().mockResolvedValue(true),
   findById: vi.fn().mockResolvedValue(null),
   findByIdForUser: vi.fn().mockResolvedValue(null),
@@ -165,6 +165,77 @@ describe("IssueService", () => {
             projectId: "project-1",
             createdAt: "2026-01-01T00:00:00.000Z",
             description: "Users cannot sign in",
+          },
+        }),
+      }),
+      { tx: {} },
+    );
+  });
+
+  it("schedules IssueUpdatedEvent when an issue is updated", async () => {
+    const updatedIssue: Issue = {
+      ...issue,
+      name: "Fix login again",
+      updatedById: "user-1",
+      updatedAt: new Date("2026-01-02T00:00:00.000Z"),
+      version: 2,
+    };
+    const issueRepository = createIssueRepository({
+      update: vi.fn().mockResolvedValue(updatedIssue),
+    });
+    const outboxService = createOutboxService();
+
+    const service = createService({
+      issueRepository,
+      outboxService,
+    });
+
+    await expect(
+      service.updateIssue({
+        issueId: "issue-1",
+        userId: "user-1",
+        name: "Fix login again",
+      }),
+    ).resolves.toBeUndefined();
+
+    expect(issueRepository.update).toHaveBeenCalledWith(
+      "issue-1",
+      "user-1",
+      {
+        name: "Fix login again",
+        description: undefined,
+        dueDate: undefined,
+        statusId: undefined,
+        priority: undefined,
+        estimate: undefined,
+        component: undefined,
+        type: undefined,
+        updatedById: "user-1",
+      },
+      { tx: {} },
+    );
+    expect(outboxService.schedule).toHaveBeenCalledWith(
+      expect.objectContaining({
+        eventType: IssueUpdatedEvent.type,
+        eventVersion: IssueUpdatedEvent.version,
+        aggregateType: "issue",
+        aggregateId: "issue-1",
+        payload: expect.objectContaining({
+          type: IssueUpdatedEvent.type,
+          subject: "issue-1",
+          data: {
+            id: "issue-1",
+            name: "Fix login again",
+            ownerId: "user-1",
+            reporterId: "user-1",
+            projectId: "project-1",
+            createdAt: "2026-01-01T00:00:00.000Z",
+            updatedAt: "2026-01-02T00:00:00.000Z",
+            updatedById: "user-1",
+            description: "Users cannot sign in",
+            statusId: "status-1",
+            priority: ITEM_PRIORITY.NORMAL,
+            type: "task",
           },
         }),
       }),

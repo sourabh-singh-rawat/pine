@@ -3,7 +3,7 @@ import {
   type IAuthorizationClient,
 } from "@pine/authorization";
 import { IssueStatus, ITEM_PRIORITY, ServiceResponse } from "@pine/common";
-import { createCloudEvent, IssueCreatedEvent } from "@pine/events";
+import { createCloudEvent, IssueCreatedEvent, IssueUpdatedEvent } from "@pine/events";
 import type { IOutboxService } from "@pine/outbox";
 import { inject, injectable } from "inversify";
 import { TYPES } from "@/bootstrap/container-types";
@@ -156,16 +156,44 @@ export class IssueService implements IIssueService {
       type,
     } = options;
 
-    await this.issueRepository.update(issueId, userId, {
-      name,
-      description,
-      dueDate,
-      statusId,
-      priority,
-      estimate,
-      component,
-      type,
-      updatedById: userId,
+    await this.db.transaction(async (tx) => {
+      const updatedIssue = await this.issueRepository.update(
+        issueId,
+        userId,
+        {
+          name,
+          description,
+          dueDate,
+          statusId,
+          priority,
+          estimate,
+          component,
+          type,
+          updatedById: userId,
+        },
+        { tx },
+      );
+
+      const event = createCloudEvent({
+        type: IssueUpdatedEvent.type,
+        version: IssueUpdatedEvent.version,
+        schema: IssueUpdatedEvent.schema,
+        source: "pine/issues-service",
+        subject: updatedIssue.id,
+        data: this.toIssueUpdatedEventData(updatedIssue),
+      });
+
+      await this.outboxService.schedule(
+        {
+          eventId: event.id,
+          eventType: event.type,
+          eventVersion: IssueUpdatedEvent.version,
+          aggregateType: "issue",
+          aggregateId: updatedIssue.id,
+          payload: event,
+        },
+        { tx },
+      );
     });
   }
 
@@ -207,6 +235,26 @@ export class IssueService implements IIssueService {
       projectId: issue.projectId,
       createdAt: issue.createdAt.toISOString(),
       ...(issue.description != null ? { description: issue.description } : {}),
+    };
+  }
+
+  private toIssueUpdatedEventData(issue: Issue) {
+    return {
+      id: issue.id,
+      name: issue.name,
+      ownerId: issue.createdById,
+      reporterId: issue.createdById,
+      projectId: issue.projectId,
+      createdAt: issue.createdAt.toISOString(),
+      updatedAt: (issue.updatedAt ?? issue.createdAt).toISOString(),
+      updatedById: issue.updatedById ?? issue.createdById,
+      ...(issue.description != null ? { description: issue.description } : {}),
+      ...(issue.statusId ? { statusId: issue.statusId } : {}),
+      ...(issue.priority ? { priority: issue.priority } : {}),
+      ...(issue.type ? { type: issue.type } : {}),
+      ...(issue.dueDate != null ? { dueDate: issue.dueDate.toISOString() } : {}),
+      ...(issue.estimate != null ? { estimate: issue.estimate } : {}),
+      ...(issue.component != null ? { component: issue.component } : {}),
     };
   }
 }

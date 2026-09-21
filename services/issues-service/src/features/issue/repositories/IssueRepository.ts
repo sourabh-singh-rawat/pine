@@ -52,11 +52,11 @@ export class IssueRepository implements IIssueRepository {
     userId: string,
     entity: UpdateIssueEntity,
     options?: IssueRepositoryOptions,
-  ): Promise<void> {
+  ): Promise<Issue> {
     const client = this.client(options);
     const now = new Date();
 
-    await client
+    const [updated] = await client
       .update(Issues)
       .set({
         ...(entity.name !== undefined ? { name: entity.name } : {}),
@@ -71,7 +71,14 @@ export class IssueRepository implements IIssueRepository {
         updatedAt: now,
         version: sql`${Issues.version} + 1`,
       })
-      .where(and(eq(Issues.id, id), eq(Issues.createdById, userId), isNull(Issues.deletedAt)));
+      .where(and(eq(Issues.id, id), eq(Issues.createdById, userId), isNull(Issues.deletedAt)))
+      .returning();
+
+    if (!updated) {
+      throw new Error(`Issue not found for update: ${id}`);
+    }
+
+    return updated;
   }
 
   async softDelete(id: string, options?: IssueRepositoryOptions): Promise<boolean> {
