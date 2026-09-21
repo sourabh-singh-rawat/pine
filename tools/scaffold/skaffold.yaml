@@ -22,11 +22,11 @@ build:
         dockerfile: Dockerfile
         target: identity-service
 
-    - image: sourabhrawatcc/issue-tracker
+    - image: sourabhrawatcc/items-service
       context: ../..
       docker:
         dockerfile: Dockerfile
-        target: issue-tracker
+        target: items-service
 
   local:
     concurrency: 0
@@ -48,7 +48,7 @@ deploy:
         valuesFiles:
           - ../../infra/k8s/microservice/identity-service.values.yaml
 
-      - name: issue-tracker
+      - name: items-service
         chartPath: ../../infra/k8s/microservice
         valuesFiles:
-          - ../../infra/k8s/microservice/issue-tracker.values.yaml
+          - ../../infra/k8s/microservice/items-service.values.yaml

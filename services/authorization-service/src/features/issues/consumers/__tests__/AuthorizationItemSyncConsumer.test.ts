@@ -1,5 +1,5 @@
 import { ITEM_PROJECT, OWNER } from "@pine/authorization";
-import { createCloudEvent, IssueCreatedEvent } from "@pine/events";
+import { createCloudEvent, ItemCreatedEvent } from "@pine/events";
 import { describe, expect, it, vi } from "vitest";
 import { AuthorizationItemSyncConsumer } from "@/features/issues/consumers/AuthorizationItemSyncConsumer";
 
@@ -25,10 +25,10 @@ describe("AuthorizationItemSyncConsumer", () => {
     );
     const message = { ack: vi.fn() };
     const event = createCloudEvent({
-      type: IssueCreatedEvent.type,
-      version: IssueCreatedEvent.version,
-      schema: IssueCreatedEvent.schema,
-      source: "pine/issues-service",
+      type: ItemCreatedEvent.type,
+      version: ItemCreatedEvent.version,
+      schema: ItemCreatedEvent.schema,
+      source: "pine/items-service",
       subject: "issue-1",
       data: {
         id: "issue-1",

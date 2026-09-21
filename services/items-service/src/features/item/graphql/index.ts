@@ -1,0 +1,11 @@
+import "@/features/project/graphql/objects/ProjectObject";
+import "./objects/ItemObject";
+import "./inputs/CreateItemInput";
+import "./inputs/UpdateItemInput";
+import "./inputs/GetSubItemsInput";
+import "./queries/getItem";
+import "./queries/getProjectItems";
+import "./queries/getSubItems";
+import "./mutations/createItem";
+import "./mutations/updateItem";
+import "./mutations/deleteItem";

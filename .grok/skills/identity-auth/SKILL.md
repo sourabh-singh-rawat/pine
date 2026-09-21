@@ -47,7 +47,7 @@ Cookies/session tokens stay in identity-service + identity-web. Other apps rely 
 ## Anti-patterns
 
 - Importing `@ory/kratos-client` / `@ory/hydra-client` from a feature service
-- Calling Kratos from `platform-service`, `issues-service`, or a web app
+- Calling Kratos from `platform-service`, `items-service`, or a web app
 - Re-implementing cookie/Bearer parsing in a downstream service (use headers)
 - New sign-in/OAuth logic in GraphQL when the existing feature is HTTP
 - Secrets in `kratos.yaml` (root `.env` only — `docker-infra`)

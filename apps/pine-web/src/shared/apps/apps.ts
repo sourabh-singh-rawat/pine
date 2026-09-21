@@ -1,4 +1,4 @@
-export type PineAppId = "issues";
+export type PineAppId = "items";
 
 export type PineApp = {
   id: PineAppId;
@@ -8,8 +8,8 @@ export type PineApp = {
 
 export const PINE_APPS: readonly PineApp[] = [
   {
-    id: "issues",
-    label: "Issue Tracker",
+    id: "items",
+    label: "Item Tracker",
     isActive: (pathname) =>
       pathname === "/home" || pathname.startsWith("/i/") || pathname.startsWith("/v/"),
   },
@@ -18,4 +18,4 @@ export const PINE_APPS: readonly PineApp[] = [
 export const getActiveApp = (pathname: string): PineApp | undefined =>
   PINE_APPS.find((app) => app.isActive(pathname));
 
-export const appShowsSidebar = (app: PineApp | undefined): boolean => app?.id === "issues";
+export const appShowsSidebar = (app: PineApp | undefined): boolean => app?.id === "items";

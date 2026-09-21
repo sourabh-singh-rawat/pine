@@ -1,0 +1,10 @@
+query GetSubItems($input: GetSubItemsInput!) {
+  getSubItems(input: $input) {
+    description
+    id
+    name
+    dueDate
+    statusId
+    priority
+  }
+}

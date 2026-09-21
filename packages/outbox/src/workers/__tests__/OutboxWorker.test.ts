@@ -8,14 +8,14 @@ import { OutboxWorker } from "../OutboxWorker";
 const createMessage = (overrides: Partial<OutboxMessage> = {}): OutboxMessage => ({
   id: "msg-1",
   eventId: "evt-1",
-  eventType: "issues.issue.created",
+  eventType: "items.item.created",
   eventVersion: 1,
-  aggregateType: "issue",
+  aggregateType: "item",
   aggregateId: "agg-1",
   payload: {
     id: "evt-1",
-    type: "issues.issue.created",
-    source: "pine/issues-service",
+    type: "items.item.created",
+    source: "pine/items-service",
     specversion: "1.0",
   },
   status: OutboxStatus.Processing,
@@ -91,7 +91,7 @@ describe("OutboxWorker", () => {
       const first = createMessage({ id: "msg-1" });
       const second = createMessage({
         id: "msg-2",
-        payload: { type: "issues.issue.updated", id: "evt-2" },
+        payload: { type: "items.item.updated", id: "evt-2" },
       });
       outboxService.claimBatch.mockResolvedValue([first, second]);
       outboxService.complete.mockImplementation(async (id: string) => createMessage({ id }));
@@ -224,7 +224,7 @@ describe("OutboxWorker", () => {
       const first = createMessage({ id: "msg-1" });
       const second = createMessage({
         id: "msg-2",
-        payload: { type: "issues.issue.created", id: "evt-2" },
+        payload: { type: "items.item.created", id: "evt-2" },
       });
       outboxService.claimBatch.mockResolvedValue([first, second]);
       publisher.send

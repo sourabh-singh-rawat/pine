@@ -15,40 +15,19 @@ export type DeleteAttachmentMutationVariables = Exact<{
 
 export type DeleteAttachmentMutation = { deleteAttachment: string | null };
 
-export type CreateIssueMutationVariables = Exact<{
-  input: Types.CreateIssueInput;
+export type CreateItemMutationVariables = Exact<{
+  input: Types.CreateItemInput;
 }>;
 
 
-export type CreateIssueMutation = { createIssue: string | null };
+export type CreateItemMutation = { createItem: string | null };
 
-export type DeleteIssueMutationVariables = Exact<{
+export type DeleteItemMutationVariables = Exact<{
   id: string;
 }>;
 
 
-export type DeleteIssueMutation = { deleteIssue: string | null };
-
-export type FindIssueQueryVariables = Exact<{
-  findIssueId: string;
-}>;
-
-
-export type FindIssueQuery = { findIssue: { id: string | null, description: string | null, name: string | null, statusId: string | null, priority: string | null, dueDate: unknown, project: { id: string | null, name: string | null } | null, parentIssue: { id: string | null, name: string | null } | null } | null };
-
-export type FindProjectIssuesQueryVariables = Exact<{
-  projectId: string;
-}>;
-
-
-export type FindProjectIssuesQuery = { findProjectIssues: Array<{ description: string | null, id: string | null, name: string | null, statusId: string | null, priority: string | null, dueDate: unknown, hasChildren: boolean | null }> | null };
-
-export type FindSubIssuesQueryVariables = Exact<{
-  input: Types.FindIssuesInput;
-}>;
-
-
-export type FindSubIssuesQuery = { findSubIssues: Array<{ description: string | null, id: string | null, name: string | null, dueDate: unknown, statusId: string | null, priority: string | null }> | null };
+export type DeleteItemMutation = { deleteItem: string | null };
 
 export type GetAuditLogsQueryVariables = Exact<{
   entityType: string;
@@ -59,12 +38,33 @@ export type GetAuditLogsQueryVariables = Exact<{
 
 export type GetAuditLogsQuery = { getAuditLogs: Array<{ id: string | null, entityType: string | null, entityId: string | null, action: string | null, actorId: string | null, workspaceId: string | null, createdAt: unknown }> | null };
 
-export type UpdateIssueMutationVariables = Exact<{
-  input: Types.UpdateIssueInput;
+export type GetItemQueryVariables = Exact<{
+  id: string;
 }>;
 
 
-export type UpdateIssueMutation = { updateIssue: string | null };
+export type GetItemQuery = { getItem: { id: string | null, description: string | null, name: string | null, statusId: string | null, priority: string | null, dueDate: unknown, project: { id: string | null, name: string | null } | null, parentItem: { id: string | null, name: string | null } | null } | null };
+
+export type GetProjectItemsQueryVariables = Exact<{
+  projectId: string;
+}>;
+
+
+export type GetProjectItemsQuery = { getProjectItems: Array<{ description: string | null, id: string | null, name: string | null, statusId: string | null, priority: string | null, dueDate: unknown, hasChildren: boolean | null }> | null };
+
+export type GetSubItemsQueryVariables = Exact<{
+  input: Types.GetSubItemsInput;
+}>;
+
+
+export type GetSubItemsQuery = { getSubItems: Array<{ description: string | null, id: string | null, name: string | null, dueDate: unknown, statusId: string | null, priority: string | null }> | null };
+
+export type UpdateItemMutationVariables = Exact<{
+  input: Types.UpdateItemInput;
+}>;
+
+
+export type UpdateItemMutation = { updateItem: string | null };
 
 export type CreateProjectMutationVariables = Exact<{
   input: Types.CreateProjectInput;
@@ -166,155 +166,47 @@ export const useDeleteAttachmentMutation = <
 
 useDeleteAttachmentMutation.getKey = () => ['DeleteAttachment'];
 
-export const CreateIssueDocument = new TypedDocumentString(`
-    mutation CreateIssue($input: CreateIssueInput!) {
-  createIssue(input: $input)
+export const CreateItemDocument = new TypedDocumentString(`
+    mutation CreateItem($input: CreateItemInput!) {
+  createItem(input: $input)
 }
     `);
 
-export const useCreateIssueMutation = <
+export const useCreateItemMutation = <
       TError = unknown,
       TContext = unknown
-    >(options?: UseMutationOptions<CreateIssueMutation, TError, CreateIssueMutationVariables, TContext>) => {
+    >(options?: UseMutationOptions<CreateItemMutation, TError, CreateItemMutationVariables, TContext>) => {
     
-    return useMutation<CreateIssueMutation, TError, CreateIssueMutationVariables, TContext>(
+    return useMutation<CreateItemMutation, TError, CreateItemMutationVariables, TContext>(
       {
-    mutationKey: ['CreateIssue'],
-    mutationFn: (variables?: CreateIssueMutationVariables) => graphQLFetcher<CreateIssueMutation, CreateIssueMutationVariables>(CreateIssueDocument, variables)(),
+    mutationKey: ['CreateItem'],
+    mutationFn: (variables?: CreateItemMutationVariables) => graphQLFetcher<CreateItemMutation, CreateItemMutationVariables>(CreateItemDocument, variables)(),
     ...options
   }
     )};
 
-useCreateIssueMutation.getKey = () => ['CreateIssue'];
+useCreateItemMutation.getKey = () => ['CreateItem'];
 
-export const DeleteIssueDocument = new TypedDocumentString(`
-    mutation DeleteIssue($id: String!) {
-  deleteIssue(id: $id)
+export const DeleteItemDocument = new TypedDocumentString(`
+    mutation DeleteItem($id: String!) {
+  deleteItem(id: $id)
 }
     `);
 
-export const useDeleteIssueMutation = <
+export const useDeleteItemMutation = <
       TError = unknown,
       TContext = unknown
-    >(options?: UseMutationOptions<DeleteIssueMutation, TError, DeleteIssueMutationVariables, TContext>) => {
+    >(options?: UseMutationOptions<DeleteItemMutation, TError, DeleteItemMutationVariables, TContext>) => {
     
-    return useMutation<DeleteIssueMutation, TError, DeleteIssueMutationVariables, TContext>(
+    return useMutation<DeleteItemMutation, TError, DeleteItemMutationVariables, TContext>(
       {
-    mutationKey: ['DeleteIssue'],
-    mutationFn: (variables?: DeleteIssueMutationVariables) => graphQLFetcher<DeleteIssueMutation, DeleteIssueMutationVariables>(DeleteIssueDocument, variables)(),
+    mutationKey: ['DeleteItem'],
+    mutationFn: (variables?: DeleteItemMutationVariables) => graphQLFetcher<DeleteItemMutation, DeleteItemMutationVariables>(DeleteItemDocument, variables)(),
     ...options
   }
     )};
 
-useDeleteIssueMutation.getKey = () => ['DeleteIssue'];
-
-export const FindIssueDocument = new TypedDocumentString(`
-    query FindIssue($findIssueId: String!) {
-  findIssue(id: $findIssueId) {
-    id
-    description
-    project {
-      id
-      name
-    }
-    parentIssue {
-      id
-      name
-    }
-    name
-    statusId
-    priority
-    dueDate
-  }
-}
-    `);
-
-export const useFindIssueQuery = <
-      TData = FindIssueQuery,
-      TError = unknown
-    >(
-      variables: FindIssueQueryVariables,
-      options?: Omit<UseQueryOptions<FindIssueQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<FindIssueQuery, TError, TData>['queryKey'] }
-    ) => {
-    
-    return useQuery<FindIssueQuery, TError, TData>(
-      {
-    queryKey: ['FindIssue', variables],
-    queryFn: graphQLFetcher<FindIssueQuery, FindIssueQueryVariables>(FindIssueDocument, variables),
-    ...options
-  }
-    )};
-
-useFindIssueQuery.document = FindIssueDocument;
-
-useFindIssueQuery.getKey = (variables: FindIssueQueryVariables) => ['FindIssue', variables];
-
-export const FindProjectIssuesDocument = new TypedDocumentString(`
-    query FindProjectIssues($projectId: String!) {
-  findProjectIssues(projectId: $projectId) {
-    description
-    id
-    name
-    statusId
-    priority
-    dueDate
-    hasChildren
-  }
-}
-    `);
-
-export const useFindProjectIssuesQuery = <
-      TData = FindProjectIssuesQuery,
-      TError = unknown
-    >(
-      variables: FindProjectIssuesQueryVariables,
-      options?: Omit<UseQueryOptions<FindProjectIssuesQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<FindProjectIssuesQuery, TError, TData>['queryKey'] }
-    ) => {
-    
-    return useQuery<FindProjectIssuesQuery, TError, TData>(
-      {
-    queryKey: ['FindProjectIssues', variables],
-    queryFn: graphQLFetcher<FindProjectIssuesQuery, FindProjectIssuesQueryVariables>(FindProjectIssuesDocument, variables),
-    ...options
-  }
-    )};
-
-useFindProjectIssuesQuery.document = FindProjectIssuesDocument;
-
-useFindProjectIssuesQuery.getKey = (variables: FindProjectIssuesQueryVariables) => ['FindProjectIssues', variables];
-
-export const FindSubIssuesDocument = new TypedDocumentString(`
-    query FindSubIssues($input: FindIssuesInput!) {
-  findSubIssues(input: $input) {
-    description
-    id
-    name
-    dueDate
-    statusId
-    priority
-  }
-}
-    `);
-
-export const useFindSubIssuesQuery = <
-      TData = FindSubIssuesQuery,
-      TError = unknown
-    >(
-      variables: FindSubIssuesQueryVariables,
-      options?: Omit<UseQueryOptions<FindSubIssuesQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<FindSubIssuesQuery, TError, TData>['queryKey'] }
-    ) => {
-    
-    return useQuery<FindSubIssuesQuery, TError, TData>(
-      {
-    queryKey: ['FindSubIssues', variables],
-    queryFn: graphQLFetcher<FindSubIssuesQuery, FindSubIssuesQueryVariables>(FindSubIssuesDocument, variables),
-    ...options
-  }
-    )};
-
-useFindSubIssuesQuery.document = FindSubIssuesDocument;
-
-useFindSubIssuesQuery.getKey = (variables: FindSubIssuesQueryVariables) => ['FindSubIssues', variables];
+useDeleteItemMutation.getKey = () => ['DeleteItem'];
 
 export const GetAuditLogsDocument = new TypedDocumentString(`
     query GetAuditLogs($entityType: String!, $entityId: String!, $workspaceId: String!) {
@@ -354,26 +246,134 @@ useGetAuditLogsQuery.document = GetAuditLogsDocument;
 
 useGetAuditLogsQuery.getKey = (variables: GetAuditLogsQueryVariables) => ['GetAuditLogs', variables];
 
-export const UpdateIssueDocument = new TypedDocumentString(`
-    mutation UpdateIssue($input: UpdateIssueInput!) {
-  updateIssue(input: $input)
+export const GetItemDocument = new TypedDocumentString(`
+    query GetItem($id: String!) {
+  getItem(id: $id) {
+    id
+    description
+    project {
+      id
+      name
+    }
+    parentItem {
+      id
+      name
+    }
+    name
+    statusId
+    priority
+    dueDate
+  }
 }
     `);
 
-export const useUpdateIssueMutation = <
-      TError = unknown,
-      TContext = unknown
-    >(options?: UseMutationOptions<UpdateIssueMutation, TError, UpdateIssueMutationVariables, TContext>) => {
+export const useGetItemQuery = <
+      TData = GetItemQuery,
+      TError = unknown
+    >(
+      variables: GetItemQueryVariables,
+      options?: Omit<UseQueryOptions<GetItemQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<GetItemQuery, TError, TData>['queryKey'] }
+    ) => {
     
-    return useMutation<UpdateIssueMutation, TError, UpdateIssueMutationVariables, TContext>(
+    return useQuery<GetItemQuery, TError, TData>(
       {
-    mutationKey: ['UpdateIssue'],
-    mutationFn: (variables?: UpdateIssueMutationVariables) => graphQLFetcher<UpdateIssueMutation, UpdateIssueMutationVariables>(UpdateIssueDocument, variables)(),
+    queryKey: ['GetItem', variables],
+    queryFn: graphQLFetcher<GetItemQuery, GetItemQueryVariables>(GetItemDocument, variables),
     ...options
   }
     )};
 
-useUpdateIssueMutation.getKey = () => ['UpdateIssue'];
+useGetItemQuery.document = GetItemDocument;
+
+useGetItemQuery.getKey = (variables: GetItemQueryVariables) => ['GetItem', variables];
+
+export const GetProjectItemsDocument = new TypedDocumentString(`
+    query GetProjectItems($projectId: String!) {
+  getProjectItems(projectId: $projectId) {
+    description
+    id
+    name
+    statusId
+    priority
+    dueDate
+    hasChildren
+  }
+}
+    `);
+
+export const useGetProjectItemsQuery = <
+      TData = GetProjectItemsQuery,
+      TError = unknown
+    >(
+      variables: GetProjectItemsQueryVariables,
+      options?: Omit<UseQueryOptions<GetProjectItemsQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<GetProjectItemsQuery, TError, TData>['queryKey'] }
+    ) => {
+    
+    return useQuery<GetProjectItemsQuery, TError, TData>(
+      {
+    queryKey: ['GetProjectItems', variables],
+    queryFn: graphQLFetcher<GetProjectItemsQuery, GetProjectItemsQueryVariables>(GetProjectItemsDocument, variables),
+    ...options
+  }
+    )};
+
+useGetProjectItemsQuery.document = GetProjectItemsDocument;
+
+useGetProjectItemsQuery.getKey = (variables: GetProjectItemsQueryVariables) => ['GetProjectItems', variables];
+
+export const GetSubItemsDocument = new TypedDocumentString(`
+    query GetSubItems($input: GetSubItemsInput!) {
+  getSubItems(input: $input) {
+    description
+    id
+    name
+    dueDate
+    statusId
+    priority
+  }
+}
+    `);
+
+export const useGetSubItemsQuery = <
+      TData = GetSubItemsQuery,
+      TError = unknown
+    >(
+      variables: GetSubItemsQueryVariables,
+      options?: Omit<UseQueryOptions<GetSubItemsQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<GetSubItemsQuery, TError, TData>['queryKey'] }
+    ) => {
+    
+    return useQuery<GetSubItemsQuery, TError, TData>(
+      {
+    queryKey: ['GetSubItems', variables],
+    queryFn: graphQLFetcher<GetSubItemsQuery, GetSubItemsQueryVariables>(GetSubItemsDocument, variables),
+    ...options
+  }
+    )};
+
+useGetSubItemsQuery.document = GetSubItemsDocument;
+
+useGetSubItemsQuery.getKey = (variables: GetSubItemsQueryVariables) => ['GetSubItems', variables];
+
+export const UpdateItemDocument = new TypedDocumentString(`
+    mutation UpdateItem($input: UpdateItemInput!) {
+  updateItem(input: $input)
+}
+    `);
+
+export const useUpdateItemMutation = <
+      TError = unknown,
+      TContext = unknown
+    >(options?: UseMutationOptions<UpdateItemMutation, TError, UpdateItemMutationVariables, TContext>) => {
+    
+    return useMutation<UpdateItemMutation, TError, UpdateItemMutationVariables, TContext>(
+      {
+    mutationKey: ['UpdateItem'],
+    mutationFn: (variables?: UpdateItemMutationVariables) => graphQLFetcher<UpdateItemMutation, UpdateItemMutationVariables>(UpdateItemDocument, variables)(),
+    ...options
+  }
+    )};
+
+useUpdateItemMutation.getKey = () => ['UpdateItem'];
 
 export const CreateProjectDocument = new TypedDocumentString(`
     mutation CreateProject($input: CreateProjectInput!) {

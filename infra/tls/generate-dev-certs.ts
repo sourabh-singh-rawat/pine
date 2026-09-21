@@ -13,7 +13,7 @@ const services = [
   "api-gateway",
   "data-gateway",
   "identity-service",
-  "issues-service",
+  "items-service",
   "attachment-service",
   "attachment-processing-service",
   "attachment-scanner-service",

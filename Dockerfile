@@ -30,7 +30,7 @@ RUN pnpm exec turbo run build \
     --filter=@pine/identity-service \
     --filter=@pine/platform-service \
     --filter=@pine/authorization-service \
-    --filter=@pine/issues-service \
+    --filter=@pine/items-service \
     --filter=@pine/common \
     --filter=@pine/events \
     --filter=@pine/security \
@@ -78,9 +78,9 @@ EXPOSE 4000
 CMD pnpm -F @pine/authorization-service start
 
 
-# Stage 3: Issue Tracker Service
-FROM base AS issue-tracker
+# Stage 3: Items Service
+FROM base AS items-service
 COPY --from=build /usr/src/app /usr/src/app
 USER node
 EXPOSE 4000
-CMD pnpm -F @pine/issues-service start
+CMD pnpm -F @pine/items-service start

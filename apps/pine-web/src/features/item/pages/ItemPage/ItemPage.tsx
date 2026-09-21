@@ -1,0 +1,132 @@
+import ArrowBack from "@mui/icons-material/ArrowBack";
+import { Grid2, IconButton, Stack, Typography, useTheme } from "@mui/material";
+import { useNavigate } from "@tanstack/react-router";
+import { useGetItemQuery, useUpdateItemMutation } from "@generated/gql";
+import type { UpdateItemInput } from "@generated/gql/graphql";
+import { AppBar } from "@pine/ui";
+import { useItemParams, useSnackbar } from "@shared";
+import {
+  ItemActivity,
+  ItemAttachments,
+  ItemDescription,
+  ItemFields,
+  ItemList,
+  ItemModal,
+  ItemName,
+} from "../../components";
+
+export const ItemPage = () => {
+  const theme = useTheme();
+  const navigate = useNavigate();
+  const snackbar = useSnackbar();
+  const { itemId } = useItemParams();
+  const itemQuery = useGetItemQuery(
+    { id: itemId },
+    {
+      select: (data) => data.getItem ?? null,
+    },
+  );
+  const updateItemMutation = useUpdateItemMutation();
+
+  const updateItem = async (input: UpdateItemInput) => {
+    try {
+      const response = await updateItemMutation.mutateAsync({ input });
+      snackbar.success(response.updateItem ?? "Item updated");
+      return response;
+    } catch (error) {
+      snackbar.error(error instanceof Error ? error.message : "Failed to update item");
+      throw error;
+    }
+  };
+
+  const item = itemQuery.data;
+  const projectId = item?.project?.id ?? undefined;
+  const projectName = item?.project?.name ?? undefined;
+  const itemName = item?.name ?? undefined;
+  const itemDescription = item?.description ?? undefined;
+  const statusId = item?.statusId ?? undefined;
+  const priority = item?.priority ?? undefined;
+  const resolvedItemId = item?.id ?? undefined;
+
+  const handleBackToList = () => {
+    if (!projectId) return;
+    void navigate({ to: "/v/l/$viewId", params: { viewId: projectId } });
+  };
+
+  return (
+    <Grid2 container rowGap={4} sx={{ px: theme.spacing(4) }}>
+      <Grid2 size={12}>
+        <AppBar
+          leading={
+            <IconButton
+              aria-label="Back to list"
+              onClick={handleBackToList}
+              disabled={!projectId}
+            >
+              <ArrowBack />
+            </IconButton>
+          }
+          title={<ItemName itemId={itemId} initialValue={itemName} />}
+          subtitle={projectName}
+        />
+      </Grid2>
+      {item && itemId && projectId && statusId && priority && (
+        <Grid2 size={12}>
+          <ItemFields
+            itemId={itemId}
+            projectId={projectId}
+            statusId={statusId}
+            priority={priority}
+            updateItem={updateItem}
+          />
+        </Grid2>
+      )}
+
+      <Grid2 size={12}>
+        <ItemDescription itemId={itemId} initialValue={itemDescription} />
+      </Grid2>
+
+      <Grid2 size={12}>
+        <Typography variant="body1" fontWeight="600">
+          Custom Fields
+        </Typography>
+      </Grid2>
+
+      {projectId && resolvedItemId && (
+        <Grid2 size={12}>
+          <Stack spacing={1}>
+            <Stack direction="row" spacing={1} alignItems="center">
+              <Typography variant="body1" fontWeight="600">
+                Sub Items
+              </Typography>
+              <ItemModal projectId={projectId} />
+            </Stack>
+            <ItemList itemId={resolvedItemId} style={{ showBorder: true }} />
+          </Stack>
+        </Grid2>
+      )}
+
+      <Grid2 size={12}>
+        <Typography variant="body1" fontWeight="600">
+          Checklists
+        </Typography>
+      </Grid2>
+
+      {itemId && (
+        <Grid2 size={12}>
+          <Typography variant="body1" fontWeight="600">
+            Attachments
+          </Typography>
+
+          <ItemAttachments itemId={itemId} />
+        </Grid2>
+      )}
+
+      {itemId && (
+        <Grid2 size={12}>
+          <ItemActivity itemId={itemId} />
+        </Grid2>
+      )}
+    </Grid2>
+  );
+};

@@ -6,7 +6,7 @@ import {
   StatusesContext,
   type StatusOption,
 } from "@shared/contexts/StatusesContext";
-import { IssueList, IssueListLoader } from "@features/issue/components/IssueList";
+import { ItemList, ItemListLoader } from "@features/item/components/ItemList";
 import { ViewLocation, ViewSwitcher } from "../../components";
 
 const EMPTY_STATUSES: StatusOption[] = [];
@@ -47,10 +47,10 @@ export const ListView = () => {
 
   const isBootstrapping =
     Boolean(projectId) && (projectQuery.isPending || statusesQuery.isPending);
-  const canRenderIssues = Boolean(projectView) && !statusesQuery.isPending;
+  const canRenderItems = Boolean(projectView) && !statusesQuery.isPending;
 
   if (isBootstrapping && !projectView) {
-    return <IssueListLoader />;
+    return <ItemListLoader />;
   }
 
   return (
@@ -78,10 +78,10 @@ export const ListView = () => {
               <ViewSwitcher projectId={projectView.id} />
             </Grid2>
             <Grid2 size={12} sx={{ p: theme.spacing(2) }}>
-              {canRenderIssues ? (
-                <IssueList projectId={projectView.id} />
+              {canRenderItems ? (
+                <ItemList projectId={projectView.id} />
               ) : (
-                <IssueListLoader />
+                <ItemListLoader />
               )}
             </Grid2>
           </>

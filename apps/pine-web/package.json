@@ -3,7 +3,7 @@
   "name": "@pine/pine-web",
   "version": "0.7.2",
   "private": true,
-  "description": "Pine web — projects, issues, and related product UI",
+  "description": "Pine web — projects, items, and related product UI",
   "keywords": [
     "client",
     "react"
