@@ -1,35 +1,11 @@
 import type { HttpResponseCookie, HttpRoute } from "@pine/server";
 import { json } from "@pine/server";
+import Value from "typebox/value";
 import { container } from "@/bootstrap";
 import { TYPES } from "@/bootstrap/container-types";
-import type { IOAuthService } from "@/features/oauth/services";
 import { TokenBodySchema, TokenResponseSchema, type TokenResponse } from "@/features/oauth/schemas";
-
-const isTokenBody = (
-  body: unknown,
-): body is {
-  grant_type: "authorization_code";
-  code: string;
-  client_id: string;
-  redirect_uri: string;
-  code_verifier: string;
-} => {
-  if (body === null || typeof body !== "object") {
-    return false;
-  }
-  return (
-    "grant_type" in body &&
-    body.grant_type === "authorization_code" &&
-    "code" in body &&
-    typeof body.code === "string" &&
-    "client_id" in body &&
-    typeof body.client_id === "string" &&
-    "redirect_uri" in body &&
-    typeof body.redirect_uri === "string" &&
-    "code_verifier" in body &&
-    typeof body.code_verifier === "string"
-  );
-};
+import type { IOAuthService } from "@/features/oauth/services";
+import { InvalidOAuthRequestError } from "@/integrations/oauth/errors";
 
 export const token: HttpRoute = {
   url: "/identity/oauth/token",
@@ -46,8 +22,8 @@ export const token: HttpRoute = {
     },
   },
   handler: async (request) => {
-    if (!isTokenBody(request.body)) {
-      throw new Error("Invalid token body");
+    if (!Value.Check(TokenBodySchema, request.body)) {
+      throw new InvalidOAuthRequestError("Invalid token body");
     }
 
     const service = container.get<IOAuthService>(TYPES.OAuthService);
