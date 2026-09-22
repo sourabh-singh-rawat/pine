@@ -1,23 +1,11 @@
 import type { HttpRoute } from "@pine/server";
 import { redirect } from "@pine/server";
+import Value from "typebox/value";
 import { container } from "@/bootstrap";
 import { TYPES } from "@/bootstrap/container-types";
-import type { IOAuthService } from "@/features/oauth/services";
 import { AuthorizeQuerySchema } from "@/features/oauth/schemas";
-
-function readQueryString(
-  query: Record<string, string | string[] | undefined>,
-  key: string,
-): string | undefined {
-  const value = query[key];
-  if (typeof value === "string") {
-    return value;
-  }
-  if (Array.isArray(value) && typeof value[0] === "string") {
-    return value[0];
-  }
-  return undefined;
-}
+import type { IOAuthService } from "@/features/oauth/services";
+import { InvalidOAuthRequestError } from "@/integrations/oauth/errors";
 
 export const authorize: HttpRoute = {
   url: "/identity/oauth/authorize",
@@ -37,48 +25,21 @@ export const authorize: HttpRoute = {
     },
   },
   handler: async (request) => {
-    const clientId = readQueryString(request.query, "client_id");
-    const redirectUri = readQueryString(request.query, "redirect_uri");
-    const responseType = readQueryString(request.query, "response_type");
-    const scope = readQueryString(request.query, "scope");
-    const state = readQueryString(request.query, "state");
-    const codeChallenge = readQueryString(request.query, "code_challenge");
-    const codeChallengeMethod = readQueryString(request.query, "code_challenge_method");
-    const nonce = readQueryString(request.query, "nonce");
-
-    if (
-      clientId === undefined ||
-      redirectUri === undefined ||
-      responseType === undefined ||
-      scope === undefined ||
-      state === undefined
-    ) {
-      throw new Error("Missing required OAuth authorize query parameters");
-    }
-
-    if (responseType !== "code") {
-      throw new Error("Unsupported OAuth response_type");
-    }
-
-    if (
-      codeChallengeMethod !== undefined &&
-      codeChallengeMethod !== "S256" &&
-      codeChallengeMethod !== "plain"
-    ) {
-      throw new Error("Unsupported OAuth code_challenge_method");
+    if (!Value.Check(AuthorizeQuerySchema, request.query)) {
+      throw new InvalidOAuthRequestError("Invalid OAuth authorize query parameters");
     }
 
     const service = container.get<IOAuthService>(TYPES.OAuthService);
 
     const result = await service.authorize({
-      clientId,
-      redirectUri,
-      responseType,
-      scope,
-      state,
-      codeChallenge,
-      codeChallengeMethod,
-      nonce,
+      clientId: request.query.client_id,
+      redirectUri: request.query.redirect_uri,
+      responseType: request.query.response_type,
+      scope: request.query.scope,
+      state: request.query.state,
+      codeChallenge: request.query.code_challenge,
+      codeChallengeMethod: request.query.code_challenge_method,
+      nonce: request.query.nonce,
     });
 
     return redirect(result.redirectTo);
