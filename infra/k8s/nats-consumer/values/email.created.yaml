@@ -1,3 +1,0 @@
-name: email-created-consumer
-stream: email
-subject: email.created

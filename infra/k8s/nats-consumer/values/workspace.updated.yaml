@@ -1,3 +1,0 @@
-name: workspace-updated-consumer
-stream: workspace
-subject: workspace.updated

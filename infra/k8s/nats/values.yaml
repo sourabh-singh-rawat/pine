@@ -1,7 +1,0 @@
-config:
-  jetstream:
-    enabled: true
-    fileStore:
-      pvc:
-        name: nats-pvc
-        size: 2Gi

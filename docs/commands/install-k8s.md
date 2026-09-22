@@ -10,13 +10,6 @@ kubectl -n kubernetes-dashboard create token admin-user
 kubectl -n kubernetes-dashboard port-forward svc/kubernetes-dashboard-kong-proxy 8443:443
 ```
 
-## Ingress
-
-```powershell
-kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.8.2/deploy/static/provider/cloud/deploy.yaml
-kubectl apply -f ./k8s/ingress
-```
-
 ## Secrets
 
 ```powershell
