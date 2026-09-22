@@ -15,16 +15,18 @@ Playbook: `docs/commands/install-k8s.md`. GKE: `docs/commands/gcloud.md`. Local 
 
 ```text
 infra/k8s/
+  envoy-gateway/
   microservice/
   postgres/  pgo/
   nats/  nats-stream/  nats-consumer/
-  ingress/  secrets/  dashboard/
+  secrets/  dashboard/
 ```
 
 ## Recipe
 
-Install order: Dashboard (optional) → Ingress → Secrets → PGO → per-service Postgres → NATS + nack → Streams → Consumers → Microservices.
+Install order: Dashboard (optional) → Envoy Gateway → Secrets → PGO → per-service Postgres → NATS + nack → Streams → Consumers → Microservices.
 
+Envoy Gateway: install commands in `infra/k8s/envoy-gateway/README.md`. Helm `oci://docker.io/envoyproxy/gateway-helm` v1.9.1 release `eg` in `envoy-gateway-system`, then apply `gateway.yaml` and `httproutes.yaml` (`/api` → api-gateway:4000, `/data` → data-gateway:4001, prefixes stripped).
 Stream/consumer names must match `@pine/events` `Streams` (`identity`, `issues`, `attachment`, `platform`, `authorization`). CloudEvent `type` examples: `issues.issue.created`, `identity.user.registered`.
 
 Edit values; do not fork the chart:
