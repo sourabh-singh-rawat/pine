@@ -29,7 +29,7 @@ Schema/type changes without touching `drizzle/` artifacts are fine. Shipping inc
 
 When finishing work that should land as a PR:
 
-1. **Base off `development`** (or the branch the user names). Create a **new branch** for the work; do not commit on `development` / `main` unless asked.
+1. **Base off `dev`** (or the branch the user names). Create a **new branch** for the work; do not commit on `dev` / `main` unless asked.
 2. **One logical commit** on that branch for the change set (prefer a single clean commit over a noisy trail of fixups).
 3. **Add a Changeset** under `.changeset/` in the **same commit** when the change should bump a package or need release notes. CI allows **0 or 1** new changeset on non-draft PRs into `dev` (fail if more than one). `release/*` branches must have **zero**. Skip the check entirely with label `skip-changeset`.
 4. **Commit message and Changeset summary must match** and stay **concise** (same short line in both places). When there is no changeset, the commit subject alone is enough.
@@ -44,14 +44,14 @@ Changeset file shape:
 chore(scope): short summary matching the git commit subject
 ```
 
-- Bump only packages whose published version should change. For docs-only / `.vscode` / tooling with no package version impact, use an empty frontmatter block (`---` / `---` with no package lines), same as existing repo examples.
+- Bump only packages whose published version should change. For non-deployables (docs, `.grok` skills, `.vscode`, tooling with no package bump), omit the changeset entirely (0 is allowed).
 - Filename: short kebab-case slug, e.g. `.changeset/vscode-remove-json-comments.md`.
 - Do **not** commit unrelated dirt (e.g. accidental `**/__generated__/**` or local env). Stage only files for this change.
 
 Example flow:
 
 ```bash
-git switch development
+git switch dev
 git pull
 git switch -c chore/vscode-remove-json-comments
 # …edit…
@@ -63,13 +63,15 @@ EOF
 )"
 ```
 
+Saying **publish** runs `git-publish` end to end: new branch → changeset → commit → push → `open-pr` (create + squash-merge + back on `dev`).
+
 ## Other guardrails
 
 - Prefer filtered turbo builds/tests; full monorepo only when needed.
 - Never hand-edit `**/__generated__/**` or `api-gateway/dist/*`.
 - Do not search or edit `infra/data/` or `node_modules/` for product work.
 - Use current packages only: `@pine/server`, `@pine/events` — not `server-core` / `event-bus`.
-- Load the matching skill under `.grok/skills/` (`orientation`, `service-feature`, `repository`, `drizzle`, `service`, `graphql`, `http-route`, `events`, `outbox`, `workers`, `authorization`, `identity-auth`, `testing`, `web-feature`, `schema-codegen`, `shared-packages`, `material-design-3`, `changeset-release`, `docker-infra`, `k8s`, `observability`, `dev-loop`). Skill folders have no `pine-` prefix.
+- Load the matching skill under `.grok/skills/` (`orientation`, `service-feature`, `repository`, `drizzle`, `service`, `graphql`, `http-route`, `events`, `outbox`, `workers`, `authorization`, `identity-auth`, `testing`, `web-feature`, `schema-codegen`, `shared-packages`, `material-design-3`, `changeset-release`, `git-publish`, `open-pr`, `docker-infra`, `k8s`, `observability`, `dev-loop`). Skill folders have no `pine-` prefix.
 - **No comments in code.** Do not add `//`, `/* */`, or JSDoc unless the user explicitly asks. Prefer clear names and structure over explanatory comments.
 - **Standalone functions are arrows; class methods are not.** Module-level and other standalone functions use `const name = (…) => { … }` / `const name = async (…) => { … }` — never `function` declarations. Inside classes, use normal methods (`method(…) { … }` / `async method(…) { … }`), not arrow property methods. Constructors stay as `constructor`. Interfaces/types express callables as properties (`name: (arg: T) => R`), not method syntax.
 - **Public members first.** In classes and modules, put the constructor and public methods/functions above private/protected helpers. Keep the public surface at the top of the type or file.

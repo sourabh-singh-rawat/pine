@@ -23,7 +23,7 @@ Scripts: `tools/scripts/branches/create-release-branch.ts`, `clean-local-branche
 
 ## Recipe — PR → `dev`
 
-Non-draft PRs: **0 or 1** new changeset (`changeset-required.yml`). Base: `origin/dev`. `release/*`: **zero**. Escape: label `skip-changeset`. Drafts skip until ready. Docs/tooling with no package bump: empty frontmatter.
+Non-draft PRs: **0 or 1** new changeset (`changeset-required.yml`). Base: `origin/dev`. `release/*`: **zero**. Escape: label `skip-changeset`. Drafts skip until ready. Non-deployables (docs, skills, tooling): omit changeset (0 is fine). Full ship (`publish`): `git-publish` (changeset only for package bumps; then `open-pr` squash-merge).
 
 ```bash
 pnpm changeset
