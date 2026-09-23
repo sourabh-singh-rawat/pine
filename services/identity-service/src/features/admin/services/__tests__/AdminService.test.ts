@@ -1,5 +1,5 @@
 import { UserNotFoundError } from "@pine/common";
-import { UserRegisteredEvent } from "@pine/events";
+import { IdentityEmailVerifiedEvent, UserRegisteredEvent } from "@pine/events";
 import { describe, it, expect, vi } from "vitest";
 import { IdentityProviderType } from "@/features/identities/constants";
 import { IdentityNotFoundError, IdentityProviderUnavailableError } from "@/integrations/identity";
@@ -25,7 +25,7 @@ const createProfileService = () => ({
 });
 
 describe("AdminService.createIdentity", () => {
-  it("creates via IdP admin API, saves identity and profile, and schedules UserRegistered", async () => {
+  it("creates via IdP admin API, saves identity and profile, and schedules registered plus verified", async () => {
     const tx = { tx: true };
     const db = {
       transaction: vi.fn(async (cb: (tx: unknown) => Promise<unknown>) => cb(tx)),
@@ -89,14 +89,79 @@ describe("AdminService.createIdentity", () => {
       middleName: undefined,
       lastName: "Rawat",
     });
-    expect(outboxService.schedule).toHaveBeenCalledWith(
+    expect(outboxService.schedule).toHaveBeenCalledTimes(2);
+    expect(outboxService.schedule).toHaveBeenNthCalledWith(
+      1,
       expect.objectContaining({
         eventType: UserRegisteredEvent.type,
         aggregateId: "identity-1",
       }),
       { tx },
     );
+    expect(outboxService.schedule).toHaveBeenNthCalledWith(
+      2,
+      expect.objectContaining({
+        eventType: IdentityEmailVerifiedEvent.type,
+        aggregateId: "identity-1",
+        payload: expect.objectContaining({
+          data: expect.objectContaining({
+            userId: "identity-1",
+            displayName: "Sourabh Rawat",
+          }),
+        }),
+      }),
+      { tx },
+    );
     expect(identityAdminProvider.deleteIdentity).not.toHaveBeenCalled();
+  });
+
+  it("schedules only UserRegistered when email is not verified", async () => {
+    const tx = { tx: true };
+    const db = {
+      transaction: vi.fn(async (cb: (tx: unknown) => Promise<unknown>) => cb(tx)),
+    };
+    const identityRepository = {
+      save: vi.fn().mockResolvedValue({
+        id: "identity-2",
+        idpId: "idp-2",
+        idpProvider: IdentityProviderType.KRATOS,
+      }),
+    };
+    const profileService = {
+      create: vi.fn().mockResolvedValue(undefined),
+      delete: vi.fn().mockResolvedValue(undefined),
+    };
+    const identityAdminProvider = {
+      createIdentity: vi.fn().mockResolvedValue({ id: "idp-2", email: "user@pine.local" }),
+      deleteIdentity: vi.fn(),
+    };
+    const outboxService = createOutboxMock();
+
+    const service = new AdminService(
+      identityRepository as never,
+      profileService as never,
+      identityAdminProvider as never,
+      outboxService as never,
+      db as never,
+    );
+
+    await service.createIdentity({
+      email: "user@pine.local",
+      username: "user",
+      password: "secret",
+      emailVerified: false,
+      firstName: "Ada",
+      lastName: "Lovelace",
+    });
+
+    expect(outboxService.schedule).toHaveBeenCalledTimes(1);
+    expect(outboxService.schedule).toHaveBeenCalledWith(
+      expect.objectContaining({
+        eventType: UserRegisteredEvent.type,
+        aggregateId: "identity-2",
+      }),
+      { tx },
+    );
   });
 
   it("rolls back the IdP identity when local persistence fails", async () => {
