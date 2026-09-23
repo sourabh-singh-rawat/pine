@@ -50,7 +50,6 @@ export class AuditIdentitySyncConsumer extends Consumer<
       }
 
       await this.db.transaction(async (tx) => {
-        await this.identityRepository.upsert({ id: data.userId }, { tx });
         await this.auditLogRepository.save(
           {
             entityType: "identity",

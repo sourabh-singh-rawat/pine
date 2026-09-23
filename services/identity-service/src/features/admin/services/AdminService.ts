@@ -1,5 +1,9 @@
-import { UserNotFoundError } from "@pine/common";
-import { createCloudEvent, UserRegisteredEvent } from "@pine/events";
+import { EMAIL_VERIFICATION_STATUS, UserNotFoundError } from "@pine/common";
+import {
+  createCloudEvent,
+  IdentityEmailVerifiedEvent,
+  UserRegisteredEvent,
+} from "@pine/events";
 import type { IOutboxService } from "@pine/outbox";
 import { inject, injectable } from "inversify";
 import { TYPES } from "@/bootstrap/container-types";
@@ -55,7 +59,7 @@ export class AdminService implements IAdminService {
           lastName: options.lastName,
         });
 
-        const event = createCloudEvent({
+        const registeredEvent = createCloudEvent({
           type: UserRegisteredEvent.type,
           version: UserRegisteredEvent.version,
           schema: UserRegisteredEvent.schema,
@@ -68,15 +72,46 @@ export class AdminService implements IAdminService {
 
         await this.outboxService.schedule(
           {
-            eventId: event.id,
-            eventType: event.type,
+            eventId: registeredEvent.id,
+            eventType: registeredEvent.type,
             eventVersion: UserRegisteredEvent.version,
             aggregateType: "identity",
             aggregateId: identity.id,
-            payload: event,
+            payload: registeredEvent,
           },
           { tx },
         );
+
+        if (options.emailVerified) {
+          const displayName = [options.firstName, options.middleName, options.lastName]
+            .filter(Boolean)
+            .join(" ");
+
+          const verifiedEvent = createCloudEvent({
+            type: IdentityEmailVerifiedEvent.type,
+            version: IdentityEmailVerifiedEvent.version,
+            schema: IdentityEmailVerifiedEvent.schema,
+            source: "pine/identity-service",
+            subject: identity.id,
+            data: {
+              emailVerificationStatus: EMAIL_VERIFICATION_STATUS.VERIFIED,
+              userId: identity.id,
+              ...(displayName ? { displayName } : {}),
+            },
+          });
+
+          await this.outboxService.schedule(
+            {
+              eventId: verifiedEvent.id,
+              eventType: verifiedEvent.type,
+              eventVersion: IdentityEmailVerifiedEvent.version,
+              aggregateType: "identity",
+              aggregateId: identity.id,
+              payload: verifiedEvent,
+            },
+            { tx },
+          );
+        }
 
         return toPublicIdentity(identity);
       });
