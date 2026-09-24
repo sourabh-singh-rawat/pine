@@ -14,7 +14,8 @@ export interface ListListsOptions extends PagingOptions {
 
 export interface UpdateListOptions {
   id: string;
-  name?: string;
+  userId: string;
+  name: string;
 }
 
 export interface GetListOptions {

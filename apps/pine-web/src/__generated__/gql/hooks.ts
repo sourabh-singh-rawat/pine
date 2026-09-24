@@ -164,6 +164,13 @@ export type GetListsQueryVariables = Exact<{
 
 export type GetListsQuery = { getLists: { rowCount: number | null, rows: Array<{ id: string | null, spaceId: string | null, name: string | null }> | null } | null };
 
+export type UpdateListMutationVariables = Exact<{
+  input: Types.UpdateListInput;
+}>;
+
+
+export type UpdateListMutation = { updateList: string | null };
+
 export type CreateSpaceMutationVariables = Exact<{
   input: Types.CreateSpaceInput;
 }>;
@@ -862,6 +869,27 @@ export const useGetListsQuery = <
 useGetListsQuery.document = GetListsDocument;
 
 useGetListsQuery.getKey = (variables: GetListsQueryVariables) => ['GetLists', variables];
+
+export const UpdateListDocument = new TypedDocumentString(`
+    mutation UpdateList($input: UpdateListInput!) {
+  updateList(input: $input)
+}
+    `);
+
+export const useUpdateListMutation = <
+      TError = unknown,
+      TContext = unknown
+    >(options?: UseMutationOptions<UpdateListMutation, TError, UpdateListMutationVariables, TContext>) => {
+    
+    return useMutation<UpdateListMutation, TError, UpdateListMutationVariables, TContext>(
+      {
+    mutationKey: ['UpdateList'],
+    mutationFn: (variables?: UpdateListMutationVariables) => graphQLFetcher<UpdateListMutation, UpdateListMutationVariables>(UpdateListDocument, variables)(),
+    ...options
+  }
+    )};
+
+useUpdateListMutation.getKey = () => ['UpdateList'];
 
 export const CreateSpaceDocument = new TypedDocumentString(`
     mutation CreateSpace($input: CreateSpaceInput!) {
