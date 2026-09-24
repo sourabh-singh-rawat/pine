@@ -381,7 +381,7 @@ function startWatchers(mode: Mode): void {
   process.on("SIGTERM", shutdown);
 
   log(
-    "Watch mode active. Start (or restart) api-gateway after a successful compose to load the new supergraph.",
+    "Watch mode active. Writes api-gateway dist artifacts; the gateway reloads the supergraph on change.",
   );
 }
 
