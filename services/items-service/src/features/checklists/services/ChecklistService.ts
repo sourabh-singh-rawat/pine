@@ -14,7 +14,7 @@ import type {
 } from "@/features/checklists/repositories";
 import { ItemNotFoundError } from "@/features/item/errors";
 import type { IItemRepository } from "@/features/item/repositories";
-import type { IProjectRepository } from "@/features/project/repositories";
+import type { IListRepository } from "@/features/lists/repositories";
 import { SpaceNotFoundError } from "@/features/spaces/errors";
 import type { ISpaceRepository } from "@/features/spaces/repositories";
 import type {
@@ -106,8 +106,8 @@ export class ChecklistService implements IChecklistService {
     private readonly checklistEntryRepository: IChecklistEntryRepository,
     @inject(TYPES.ItemRepository)
     private readonly itemRepository: IItemRepository,
-    @inject(TYPES.ProjectRepository)
-    private readonly projectRepository: IProjectRepository,
+    @inject(TYPES.ListRepository)
+    private readonly listRepository: IListRepository,
     @inject(TYPES.SpaceRepository)
     private readonly spaceRepository: ISpaceRepository,
     @inject(TYPES.AuthorizationClient)
@@ -154,7 +154,7 @@ export class ChecklistService implements IChecklistService {
     await requirePermission(
       this.authorizationClient,
       identityId,
-      "create_project",
+      "create_list",
       `workspace:${workspaceId}`,
     );
 
@@ -176,7 +176,7 @@ export class ChecklistService implements IChecklistService {
     await requirePermission(
       this.authorizationClient,
       identityId,
-      "create_project",
+      "create_list",
       `workspace:${workspaceId}`,
     );
 
@@ -200,7 +200,7 @@ export class ChecklistService implements IChecklistService {
     await requirePermission(
       this.authorizationClient,
       identityId,
-      "create_project",
+      "create_list",
       `workspace:${workspaceId}`,
     );
 
@@ -222,7 +222,7 @@ export class ChecklistService implements IChecklistService {
     await requirePermission(
       this.authorizationClient,
       identityId,
-      "create_project",
+      "create_list",
       `workspace:${workspaceId}`,
     );
 
@@ -247,7 +247,7 @@ export class ChecklistService implements IChecklistService {
     await requirePermission(
       this.authorizationClient,
       identityId,
-      "create_project",
+      "create_list",
       `workspace:${workspaceId}`,
     );
 
@@ -280,7 +280,7 @@ export class ChecklistService implements IChecklistService {
     await requirePermission(
       this.authorizationClient,
       identityId,
-      "create_project",
+      "create_list",
       `workspace:${workspaceId}`,
     );
 
@@ -299,7 +299,7 @@ export class ChecklistService implements IChecklistService {
     await requirePermission(
       this.authorizationClient,
       identityId,
-      "create_project",
+      "create_list",
       `workspace:${workspaceId}`,
     );
 
@@ -340,14 +340,14 @@ export class ChecklistService implements IChecklistService {
   }
 
   private async resolveWorkspaceId(item: Item): Promise<string> {
-    const project = await this.projectRepository.findById(item.projectId);
-    if (!project) {
-      throw new ItemNotFoundError(`Project not found for item: ${item.id}`);
+    const list = await this.listRepository.findById(item.listId);
+    if (!list) {
+      throw new ItemNotFoundError(`List not found for item: ${item.id}`);
     }
 
-    const space = await this.spaceRepository.findById(project.spaceId);
+    const space = await this.spaceRepository.findById(list.spaceId);
     if (!space) {
-      throw new SpaceNotFoundError(`Space not found: ${project.spaceId}`);
+      throw new SpaceNotFoundError(`Space not found: ${list.spaceId}`);
     }
 
     return space.workspaceId;

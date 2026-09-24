@@ -12,7 +12,7 @@ const parentItem: Item = {
   type: "task",
   statusId: "status-1",
   priority: ITEM_PRIORITY.NORMAL,
-  projectId: "project-1",
+  listId: "list-1",
   startDate: null,
   dueDate: null,
   createdById: "user-1",
@@ -41,7 +41,7 @@ const createItemRepository = (
   softDelete: vi.fn(),
   findById: vi.fn().mockResolvedValue(parentItem),
   findByIdForUser: vi.fn(),
-  findRootsByProject: vi.fn(),
+  findRootsByList: vi.fn(),
   findChildren: vi.fn().mockResolvedValue([childItem]),
   ...overrides,
 });

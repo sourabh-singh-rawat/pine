@@ -1,13 +1,13 @@
-import { ProjectMember } from "../dtos";
+import { ListMember } from "../dtos";
 import { ItemPriority, ItemStatus } from "../enums";
 
 export interface ItemFormData {
   name: string;
-  projectId: string;
+  listId: string;
   status: ItemStatus;
   priority: ItemPriority;
-  reporter: ProjectMember;
-  assignees: ProjectMember[];
+  reporter: ListMember;
+  assignees: ListMember[];
   resolution: boolean;
   dueDate?: Date;
   id?: string;

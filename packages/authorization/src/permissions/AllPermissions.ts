@@ -20,17 +20,17 @@ export type WorkspacePermission =
   | "update"
   | "manage_members"
   | "create_space"
-  | "create_project"
+  | "create_list"
   | "delete";
 
 export type SpacePermission =
   | "read"
   | "update"
   | "manage_members"
-  | "create_project"
+  | "create_list"
   | "delete";
 
-export type ProjectPermission =
+export type ListPermission =
   | "read"
   | "update"
   | "manage_members"
@@ -49,7 +49,7 @@ export type Permission =
   | TenantPermission
   | WorkspacePermission
   | SpacePermission
-  | ProjectPermission
+  | ListPermission
   | ItemPermission
   | RolePermission
   | PermissionGrantPermission;
@@ -60,7 +60,7 @@ export type PermissionKey =
   | `tenant:${TenantPermission}`
   | `workspace:${WorkspacePermission}`
   | `space:${SpacePermission}`
-  | `project:${ProjectPermission}`
+  | `list:${ListPermission}`
   | `item:${ItemPermission}`
   | `role:${RolePermission}`
   | `permission:${PermissionGrantPermission}`;
@@ -90,7 +90,7 @@ export const WORKSPACE_PERMISSIONS: readonly WorkspacePermission[] = [
   "update",
   "manage_members",
   "create_space",
-  "create_project",
+  "create_list",
   "delete",
 ];
 
@@ -98,11 +98,11 @@ export const SPACE_PERMISSIONS: readonly SpacePermission[] = [
   "read",
   "update",
   "manage_members",
-  "create_project",
+  "create_list",
   "delete",
 ];
 
-export const PROJECT_PERMISSIONS: readonly ProjectPermission[] = [
+export const LIST_PERMISSIONS: readonly ListPermission[] = [
   "read",
   "update",
   "manage_members",
@@ -138,7 +138,7 @@ export const ALL_PERMISSIONS = [
   ...catalog("tenant", TENANT_PERMISSIONS),
   ...catalog("workspace", WORKSPACE_PERMISSIONS),
   ...catalog("space", SPACE_PERMISSIONS),
-  ...catalog("project", PROJECT_PERMISSIONS),
+  ...catalog("list", LIST_PERMISSIONS),
   ...catalog("item", ITEM_PERMISSIONS),
   ...catalog("role", ROLE_PERMISSIONS),
   ...catalog("permission", PERMISSION_GRANT_PERMISSIONS),

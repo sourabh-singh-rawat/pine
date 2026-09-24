@@ -4,7 +4,7 @@ import {
 } from "@pine/authorization";
 import { ITEM_PRIORITY } from "@pine/common";
 import { describe, expect, it, vi } from "vitest";
-import type { Checklist, ChecklistEntry, DbClient, Item, Project, Space } from "@/db";
+import type { Checklist, ChecklistEntry, DbClient, Item, List, Space } from "@/db";
 import {
   ChecklistEntryNotFoundError,
   ChecklistNotFoundError,
@@ -21,7 +21,7 @@ import {
 } from "@/features/checklists/services/ChecklistService";
 import { ItemNotFoundError } from "@/features/item/errors";
 import type { IItemRepository } from "@/features/item/repositories";
-import type { IProjectRepository } from "@/features/project/repositories";
+import type { IListRepository } from "@/features/lists/repositories";
 import type { ISpaceRepository } from "@/features/spaces/repositories";
 
 const item: Item = {
@@ -31,7 +31,7 @@ const item: Item = {
   type: "task",
   statusId: "status-1",
   priority: ITEM_PRIORITY.NORMAL,
-  projectId: "project-1",
+  listId: "list-1",
   startDate: null,
   dueDate: null,
   createdById: "user-1",
@@ -45,10 +45,10 @@ const item: Item = {
   deletedAt: null,
 };
 
-const project: Project = {
-  id: "project-1",
+const list: List = {
+  id: "list-1",
   spaceId: "space-1",
-  name: "Project",
+  name: "List",
   createdById: "user-1",
   version: 1,
   createdAt: new Date("2026-01-01T00:00:00.000Z"),
@@ -125,7 +125,7 @@ const createItemRepository = (
   softDelete: vi.fn(),
   findById: vi.fn().mockResolvedValue(item),
   findByIdForUser: vi.fn(),
-  findRootsByProject: vi.fn(),
+  findRootsByList: vi.fn(),
   findChildren: vi.fn(),
   ...overrides,
 });
@@ -156,12 +156,12 @@ const createChecklistEntryRepository = (
   ...overrides,
 });
 
-const createProjectRepository = (
-  overrides: Partial<IProjectRepository> = {},
-): IProjectRepository => ({
+const createListRepository = (
+  overrides: Partial<IListRepository> = {},
+): IListRepository => ({
   save: vi.fn(),
   update: vi.fn(),
-  findById: vi.fn().mockResolvedValue(project),
+  findById: vi.fn().mockResolvedValue(list),
   findBySpaceId: vi.fn(),
   ...overrides,
 });
@@ -190,7 +190,7 @@ const createService = (deps: {
   checklistRepository?: IChecklistRepository;
   checklistEntryRepository?: IChecklistEntryRepository;
   itemRepository?: IItemRepository;
-  projectRepository?: IProjectRepository;
+  listRepository?: IListRepository;
   spaceRepository?: ISpaceRepository;
   authorizationClient?: IAuthorizationClient;
 } = {}) =>
@@ -199,7 +199,7 @@ const createService = (deps: {
     deps.checklistRepository ?? createChecklistRepository(),
     deps.checklistEntryRepository ?? createChecklistEntryRepository(),
     deps.itemRepository ?? createItemRepository(),
-    deps.projectRepository ?? createProjectRepository(),
+    deps.listRepository ?? createListRepository(),
     deps.spaceRepository ?? createSpaceRepository(),
     deps.authorizationClient ?? createAuthorizationClient(),
   );
@@ -237,7 +237,7 @@ describe("ChecklistService", () => {
     ]);
   });
 
-  it("creates a checklist after authorizing create_project on the workspace", async () => {
+  it("creates a checklist after authorizing create_list on the workspace", async () => {
     const authorizationClient = createAuthorizationClient();
     const checklistRepository = createChecklistRepository();
     const service = createService({ authorizationClient, checklistRepository });
@@ -251,7 +251,7 @@ describe("ChecklistService", () => {
     expect(authorizationClient.checkRelationship).toHaveBeenCalledWith({
       namespace: "workspace",
       object: "workspace-1",
-      relation: "create_project",
+      relation: "create_list",
       subject: "identity:user-1",
     });
     expect(checklistRepository.save).toHaveBeenCalledWith({
@@ -385,7 +385,7 @@ describe("ChecklistService", () => {
     ).rejects.toBeInstanceOf(ChecklistValidationError);
   });
 
-  it("toggles entry completed after authorizing create_project", async () => {
+  it("toggles entry completed after authorizing create_list", async () => {
     const authorizationClient = createAuthorizationClient();
     const checklistEntryRepository = createChecklistEntryRepository({
       update: vi.fn().mockResolvedValue({ ...entryA, completed: true }),
@@ -401,7 +401,7 @@ describe("ChecklistService", () => {
     expect(authorizationClient.checkRelationship).toHaveBeenCalledWith({
       namespace: "workspace",
       object: "workspace-1",
-      relation: "create_project",
+      relation: "create_list",
       subject: "identity:user-1",
     });
     expect(checklistEntryRepository.update).toHaveBeenCalledWith("entry-a", {

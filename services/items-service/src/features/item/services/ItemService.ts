@@ -107,8 +107,8 @@ export class ItemService implements IItemService {
   }
 
   async list(options: ListItemsOptions) {
-    const { projectId, userId } = options;
-    return this.itemRepository.findRootsByProject(projectId, userId);
+    const { listId, userId } = options;
+    return this.itemRepository.findRootsByList(listId, userId);
   }
 
   async getById(options: GetItemOptions) {
@@ -193,7 +193,7 @@ export class ItemService implements IItemService {
       this.authorizationClient,
       userId,
       "delete",
-      `project:${item.projectId}`,
+      `list:${item.listId}`,
     );
 
     const deleted = await this.itemRepository.softDelete(id);
@@ -216,7 +216,7 @@ export class ItemService implements IItemService {
       name: item.name,
       ownerId: item.createdById,
       reporterId: item.createdById,
-      projectId: item.projectId,
+      listId: item.listId,
       createdAt: item.createdAt.toISOString(),
       ...(item.description != null ? { description: item.description } : {}),
     };
@@ -228,7 +228,7 @@ export class ItemService implements IItemService {
       name: item.name,
       ownerId: item.createdById,
       reporterId: item.createdById,
-      projectId: item.projectId,
+      listId: item.listId,
       createdAt: item.createdAt.toISOString(),
       updatedAt: (item.updatedAt ?? item.createdAt).toISOString(),
       updatedById: item.updatedById ?? item.createdById,

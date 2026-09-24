@@ -2,13 +2,13 @@ import { StatusType } from "@pine/common";
 import type { DbClient, StatusOption } from "@/db";
 
 export interface CreateOptionsOptions {
-  projectId: string;
+  listId: string;
   statuses: { name: string; type: StatusType; orderIndex: number }[];
   tx?: DbClient;
 }
 
 export interface FindStatusesOptions {
-  projectId: string;
+  listId: string;
 }
 
 export interface IStatusService {

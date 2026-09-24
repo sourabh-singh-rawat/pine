@@ -9,17 +9,17 @@ import { ItemPrioritySelector } from "../ItemPrioritySelector";
 import { ItemStatusSelector } from "../ItemStatusSelector";
 
 interface ItemFormProps {
-  projectId: string;
+  listId: string;
   parentItemId?: string;
 }
 
-export const ItemForm = ({ projectId, parentItemId }: ItemFormProps) => {
+export const ItemForm = ({ listId, parentItemId }: ItemFormProps) => {
   const messageBar = useSnackbar();
   const createItemMutation = useCreateItemMutation();
 
   const form = useForm<CreateItemInput>({
     defaultValues: {
-      projectId,
+      listId,
       parentItemId,
       description: "",
       statusId: "",
@@ -34,7 +34,7 @@ export const ItemForm = ({ projectId, parentItemId }: ItemFormProps) => {
   const onSubmit: SubmitHandler<CreateItemInput> = async ({
     name,
     description,
-    projectId: formProjectId,
+    listId: formListId,
     parentItemId: formParentItemId,
     assigneeIds,
     priority,
@@ -47,7 +47,7 @@ export const ItemForm = ({ projectId, parentItemId }: ItemFormProps) => {
       await createItemMutation.mutateAsync({
         input: {
           parentItemId: formParentItemId,
-          projectId: formProjectId,
+          listId: formListId,
           name,
           description,
           type: "item",
@@ -83,7 +83,7 @@ export const ItemForm = ({ projectId, parentItemId }: ItemFormProps) => {
         </Grid2>
 
         <Grid2 size={6}>
-          <ItemStatusSelector form={form} name="statusId" title="Status" projectId={projectId} />
+          <ItemStatusSelector form={form} name="statusId" title="Status" listId={listId} />
         </Grid2>
 
         <Grid2 size={6}>

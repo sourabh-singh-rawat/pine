@@ -1,6 +1,6 @@
 export * from "./auth-credentials";
-export * from "./project-details";
-export * from "./project-form-data";
+export * from "./list-details";
+export * from "./list-form-data";
 export * from "./user-registration-data";
 export * from "./tokens";
 export * from "./user-details";
@@ -8,7 +8,7 @@ export * from "./tokens";
 export * from "./user";
 export * from "./service-response";
 export * from "./workspace-registration-data";
-export * from "./project-member";
+export * from "./list-member";
 export * from "./item";
 export * from "./task-form-data";
 export * from "./task-group-form-data";

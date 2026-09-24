@@ -1,6 +1,6 @@
 export interface ItemListProps {
   itemId?: string;
-  projectId?: string;
+  listId?: string;
   filters?: ItemListFilters;
   style?: ItemListStyles;
 }

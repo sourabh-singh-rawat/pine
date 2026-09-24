@@ -6,7 +6,7 @@ export const ItemUpdatedDataSchema = Type.Object(
     name: Type.String(),
     ownerId: Type.String(),
     reporterId: Type.String(),
-    projectId: Type.String(),
+    listId: Type.String(),
     createdAt: Type.String(),
     updatedAt: Type.String(),
     updatedById: Type.String(),

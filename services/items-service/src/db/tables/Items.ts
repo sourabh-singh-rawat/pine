@@ -1,7 +1,7 @@
 import { relations } from "drizzle-orm";
 import { integer, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
 import { auditColumns, idColumn } from "@/db/columns";
-import { Projects } from "@/db/tables/Projects";
+import { Lists } from "@/db/tables/Lists";
 
 export const Items = pgTable("items", {
   ...idColumn,
@@ -10,7 +10,7 @@ export const Items = pgTable("items", {
   type: text("type").notNull(),
   statusId: uuid("status_id").notNull(),
   priority: text("priority").notNull(),
-  projectId: uuid("list_id").notNull(),
+  listId: uuid("list_id").notNull(),
   startDate: timestamp("start_date", { withTimezone: true }),
   dueDate: timestamp("due_date", { withTimezone: true }),
   createdById: uuid("created_by_id").notNull(),
@@ -22,9 +22,9 @@ export const Items = pgTable("items", {
 });
 
 export const ItemsRelations = relations(Items, ({ one }) => ({
-  project: one(Projects, {
-    fields: [Items.projectId],
-    references: [Projects.id],
+  list: one(Lists, {
+    fields: [Items.listId],
+    references: [Lists.id],
   }),
   parentItem: one(Items, {
     fields: [Items.parentItemId],

@@ -8,7 +8,7 @@ import { useFindStatusesQuery } from "@generated/gql";
 import { Label, Select } from "@shared";
 
 interface ItemStatusSelectorProps<T extends FieldValues> {
-  projectId: string;
+  listId: string;
   name: Path<T>;
   form: UseFormReturn<T>;
   onSubmit?: (value: string) => void;
@@ -17,11 +17,8 @@ interface ItemStatusSelectorProps<T extends FieldValues> {
   rules?: UseControllerProps<T>["rules"];
 }
 
-/**
- * Reusable item status selector component.
- */
 export const ItemStatusSelector = <T extends FieldValues>({
-  projectId,
+  listId,
   name,
   form,
   rules,
@@ -31,10 +28,10 @@ export const ItemStatusSelector = <T extends FieldValues>({
 }: ItemStatusSelectorProps<T>) => {
   const isLoading = false;
   const statusesQuery = useFindStatusesQuery(
-    { input: { projectId } },
+    { input: { listId } },
     {
       select: (data) => data.findStatuses,
-      enabled: Boolean(projectId),
+      enabled: Boolean(listId),
     },
   );
   const statuses = statusesQuery.data;
@@ -64,9 +61,10 @@ export const ItemStatusSelector = <T extends FieldValues>({
                       Boolean(status.id) && Boolean(status.name),
                   )}
                   onChange={(e) => {
-                    if (!e.target.value) return;
-                    if (onSubmit) onSubmit(e.target.value as string);
-                    field.onChange(e.target.value);
+                    const nextValue = e.target.value;
+                    if (typeof nextValue !== "string" || !nextValue) return;
+                    if (onSubmit) onSubmit(nextValue);
+                    field.onChange(nextValue);
                   }}
                 />
               );

@@ -7,10 +7,10 @@ import PrimaryButton from "../../../../shared/components/buttons/PrimaryButton";
 import { ItemForm } from "../ItemForm";
 
 interface ItemModalProps {
-  projectId: string;
+  listId: string;
 }
 
-export const ItemModal = ({ projectId }: ItemModalProps) => {
+export const ItemModal = ({ listId }: ItemModalProps) => {
   const [open, setOpen] = useState(false);
   const handleClose = () => setOpen(false);
   const handleOpen = () => setOpen(true);
@@ -22,7 +22,7 @@ export const ItemModal = ({ projectId }: ItemModalProps) => {
       <Modal open={open} handleClose={handleClose}>
         <ModalHeader title="New Item" handleClose={handleClose} subtitle="" />
         <ModalBody>
-          <ItemForm projectId={projectId} parentItemId={itemId} />
+          <ItemForm listId={listId} parentItemId={itemId} />
         </ModalBody>
       </Modal>
     </>

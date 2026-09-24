@@ -11,20 +11,20 @@ export class StatusService implements IStatusService {
   ) {}
 
   async createOptions(options: CreateOptionsOptions) {
-    const { statuses, projectId, tx } = options;
+    const { statuses, listId, tx } = options;
 
     await this.statusRepository.saveMany(
       statuses.map((status) => ({
         name: status.name,
         type: status.type,
         orderIndex: status.orderIndex,
-        projectId,
+        listId,
       })),
       tx ? { tx } : undefined,
     );
   }
 
   async findStatuses(options: FindStatusesOptions) {
-    return this.statusRepository.findByProjectId(options.projectId);
+    return this.statusRepository.findByListId(options.listId);
   }
 }

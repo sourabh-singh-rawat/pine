@@ -1,0 +1,10 @@
+query GetLists($spaceId: String!) {
+  getLists(spaceId: $spaceId) {
+    rows {
+      id
+      spaceId
+      name
+    }
+    rowCount
+  }
+}

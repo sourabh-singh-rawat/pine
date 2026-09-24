@@ -55,7 +55,7 @@ import {
   ItemRepository,
   ItemService,
 } from "@/features/item";
-import { IProjectRepository, IProjectService, ProjectRepository, ProjectService } from "@/features/project";
+import { IListRepository, IListService, ListRepository, ListService } from "@/features/lists";
 import { ISpaceRepository, ISpaceService, SpaceRepository, SpaceService } from "@/features/spaces";
 import { IStatusRepository, IStatusService, StatusRepository, StatusService } from "@/features/status";
 import { ISubItemService, SubItemService } from "@/features/sub-items";
@@ -98,8 +98,8 @@ container
 container.bind<IChecklistService>(TYPES.ChecklistService).to(ChecklistService);
 container.bind<IStatusRepository>(TYPES.StatusRepository).to(StatusRepository);
 container.bind<IStatusService>(TYPES.StatusService).to(StatusService);
-container.bind<IProjectRepository>(TYPES.ProjectRepository).to(ProjectRepository);
-container.bind<IProjectService>(TYPES.ProjectService).to(ProjectService);
+container.bind<IListRepository>(TYPES.ListRepository).to(ListRepository);
+container.bind<IListService>(TYPES.ListService).to(ListService);
 container.bind<ISpaceRepository>(TYPES.SpaceRepository).to(SpaceRepository);
 container.bind<ISpaceService>(TYPES.SpaceService).to(SpaceService);
 container
