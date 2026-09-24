@@ -1,5 +1,4 @@
-import { ItemStatus, ItemPriority, PagingOptions, ServiceResponse } from "@pine/common";
-import type { Item } from "@/db";
+import { ItemStatus, ItemPriority, ServiceResponse } from "@pine/common";
 import type {
   ItemWithHasChildren,
   ItemWithProject,
@@ -23,11 +22,6 @@ export interface CreateItemOptions {
 export interface GetItemOptions {
   userId: string;
   itemId: string;
-}
-
-export interface ListChildrenOptions extends PagingOptions {
-  userId: string;
-  parentItemId: string;
 }
 
 export interface UpdateItemOptions {
@@ -58,7 +52,6 @@ export interface IItemService {
   create(options: CreateItemOptions): Promise<string>;
   getById(options: GetItemOptions): Promise<ItemWithProject | null>;
   list(options: ListItemsOptions): Promise<ItemWithHasChildren[]>;
-  listChildren(options: ListChildrenOptions): Promise<Item[]>;
   update(options: UpdateItemOptions): Promise<void>;
   delete(options: DeleteItemOptions): Promise<void>;
   getStatusList(): Promise<ServiceResponse<ItemStatus[]>>;

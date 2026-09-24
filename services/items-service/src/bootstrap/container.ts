@@ -58,6 +58,7 @@ import {
 import { IProjectRepository, IProjectService, ProjectRepository, ProjectService } from "@/features/project";
 import { ISpaceRepository, ISpaceService, SpaceRepository, SpaceService } from "@/features/spaces";
 import { IStatusRepository, IStatusService, StatusRepository, StatusService } from "@/features/status";
+import { ISubItemService, SubItemService } from "@/features/sub-items";
 
 export const container = new Container({ defaultScope: "Singleton" });
 
@@ -88,6 +89,7 @@ container
   .bind<IItemAttachmentUploadRequestRepository>(TYPES.ItemAttachmentUploadRequestRepository)
   .to(ItemAttachmentUploadRequestRepository);
 container.bind<IItemService>(TYPES.ItemService).to(ItemService);
+container.bind<ISubItemService>(TYPES.SubItemService).to(SubItemService);
 container.bind<IItemAttachmentService>(TYPES.ItemAttachmentService).to(ItemAttachmentService);
 container.bind<IChecklistRepository>(TYPES.ChecklistRepository).to(ChecklistRepository);
 container

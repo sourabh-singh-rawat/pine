@@ -18,6 +18,7 @@ export const TYPES = {
     "IItemAttachmentUploadRequestRepository",
   ),
   ItemService: Symbol.for("IItemService"),
+  SubItemService: Symbol.for("ISubItemService"),
   ItemAttachmentService: Symbol.for("IItemAttachmentService"),
   ChecklistRepository: Symbol.for("IChecklistRepository"),
   ChecklistEntryRepository: Symbol.for("IChecklistEntryRepository"),
