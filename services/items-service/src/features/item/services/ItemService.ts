@@ -15,7 +15,6 @@ import type {
   DeleteItemOptions,
   GetItemOptions,
   IItemService,
-  ListChildrenOptions,
   ListItemsOptions,
   UpdateItemOptions,
 } from "./IItemService";
@@ -110,17 +109,6 @@ export class ItemService implements IItemService {
   async list(options: ListItemsOptions) {
     const { projectId, userId } = options;
     return this.itemRepository.findRootsByProject(projectId, userId);
-  }
-
-  async listChildren(options: ListChildrenOptions) {
-    const { userId, parentItemId } = options;
-
-    const parentItem = await this.itemRepository.findById(parentItemId);
-    if (!parentItem || parentItem.createdById !== userId) {
-      throw new Error("Parent not found");
-    }
-
-    return this.itemRepository.findChildren(parentItemId, userId);
   }
 
   async getById(options: GetItemOptions) {
