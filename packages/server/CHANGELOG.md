@@ -1,5 +1,12 @@
 # @pine/server
 
+## 1.1.4
+
+### Patch Changes
+
+- Updated dependencies [36d1802]
+  - @pine/common@1.1.0
+
 ## 1.1.3
 
 ### Patch Changes
