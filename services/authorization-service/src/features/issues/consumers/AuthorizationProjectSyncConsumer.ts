@@ -20,7 +20,7 @@ import type { IAuthorizationGraphProvider } from "@/integrations/authorization";
 
 @injectable()
 export class AuthorizationProjectSyncConsumer extends Consumer<CloudEvent<ProjectData>> {
-  readonly stream = Streams.ISSUES;
+  readonly stream = Streams.ITEMS;
   readonly consumer = "authorization-project-sync";
   readonly subjects = [ProjectCreatedEvent.type];
 

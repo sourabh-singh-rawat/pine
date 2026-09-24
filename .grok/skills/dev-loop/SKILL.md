@@ -18,11 +18,12 @@ Root cwd. Node ≥20.13.1; pnpm from root `packageManager`. Related: `docker-inf
 pnpm dev:infra
 pnpm setup
 pnpm setup:skip-docker
-pnpm schemas:compose
 pnpm dev:apps
 ```
 
 `pnpm setup` / `pnpm setup:restart` → `tools/scripts/setup/setup.ts --restart` (compose down, wipe `infra/data`, compose up). `setup:skip-docker` skips docker. Seed needs infra + `BOOTSTRAP_ADMIN_*` in root `.env`. Down: `pnpm dev:infra:down`.
+
+`dev:apps` includes `@pine/schemas` (compose watch). Services rewrite `dist/schema.graphql` / `openapi.json` on boot; the watcher recomposes the gateway supergraph/OpenAPI; api-gateway hot-reloads. One-shot: `pnpm schemas:compose`. Standalone watch: `pnpm schemas:watch`.
 
 | Infra variant | Script |
 | ------------- | ------ |
@@ -34,16 +35,16 @@ pnpm dev:apps
 Compose overlays and ports: `docker-infra`. Env: single root `.env` (from `.env.example`).
 
 ```bash
-pnpm exec turbo run dev --filter=@pine/issues-service
+pnpm exec turbo run dev --filter=@pine/items-service
 pnpm exec turbo run build test --filter=@pine/<name>...
 ```
 
-`...` includes dependents. Shortcuts: `pnpm pine-web`, `identity-service`, `issues-service`, `api-gateway`, …
+`...` includes dependents. Shortcuts: `pnpm pine-web`, `identity-service`, `items-service`, `api-gateway`, …
 
 | Touched | Command |
 | ------- | ------- |
 | Package/service | `turbo run build test --filter=@pine/<name>...` |
-| GraphQL schema | service `dist/schema.graphql` → `schemas:compose` → web `gen` |
+| GraphQL schema | service `dist/schema.graphql` → `@pine/schemas` watch (or `schemas:compose`) → web `gen` |
 | Shared lib | `build:server` or affected filters |
 | Style | `pnpm lint` / `fmt:check` |
 

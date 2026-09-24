@@ -1,5 +1,5 @@
 export * from "./useAppParams";
 export * from "./useAppStore";
-export * from "./useIssueParams";
+export * from "./useItemParams";
 export * from "./useLargeScreen";
 export * from "./useSelectedTab";

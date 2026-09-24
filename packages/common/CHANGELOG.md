@@ -1,5 +1,11 @@
 # @pine/common
 
+## 1.0.0
+
+### Major Changes
+
+- 2c3a46a: feat(items): rename issue domain to item across service, events, and web
+
 ## 0.1.2
 
 ### Patch Changes

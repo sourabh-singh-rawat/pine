@@ -49,7 +49,7 @@ export const CreateProjectModal = ({
       <Modal open={open} handleClose={handleClose}>
         <ModalHeader
           title="Create Project"
-          subtitle="A Project is a container for issues."
+          subtitle="A Project is a container for items."
           handleClose={handleClose}
         />
         <ModalBody>

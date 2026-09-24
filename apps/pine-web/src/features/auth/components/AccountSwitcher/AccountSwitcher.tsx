@@ -9,16 +9,15 @@ import {
   useTheme,
 } from "@mui/material";
 import React, { useState } from "react";
-import { useNavigate } from "@tanstack/react-router";
 import Logout from "@mui/icons-material/Logout";
 import { useLogoutMutation } from "@generated/api/@tanstack/react-query.gen";
 import Avatar from "../../../../shared/components/Avatar";
 import { clearAuthenticated, redirectToOidcSignIn } from "../../../../lib/auth";
+import { redirectToIdentityWeb } from "@shared/utils/identity-web";
 import { useAuthStore } from "../../store";
 
 export const AccountSwitcher = () => {
   const theme = useTheme();
-  const navigate = useNavigate();
   const current = useAuthStore((s) => s.current);
   const isLoading = useAuthStore((s) => s.isLoading);
   const setCurrentUser = useAuthStore((s) => s.setCurrentUser);
@@ -38,23 +37,24 @@ export const AccountSwitcher = () => {
   };
 
   const label = current?.displayName || current?.email;
+  const photoUrl = current?.photoUrl ?? undefined;
 
   return (
     <>
       <IconButton size="small" onClick={handleClick} disableRipple>
-        <Avatar label={label} isLoading={isLoading} />
+        <Avatar label={label} photoUrl={photoUrl} isLoading={isLoading} />
       </IconButton>
       {current && (
         <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleClose}>
           <MenuItem
             onClick={() => {
-              void navigate({ to: "/me" });
               handleClose();
+              redirectToIdentityWeb();
             }}
             dense
           >
             <ListItemIcon>
-              <Avatar label={label} />
+              <Avatar label={label} photoUrl={photoUrl} />
             </ListItemIcon>
             <Stack>
               <Typography sx={{ color: theme.palette.text.primary, fontWeight: "bold" }}>

@@ -1,7 +1,0 @@
-query FindSubIssues($input: FindIssuesInput!) {
-  findSubIssues(input: $input) {
-    description
-    id
-    name
-  }
-}

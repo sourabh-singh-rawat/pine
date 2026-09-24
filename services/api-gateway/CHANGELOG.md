@@ -1,5 +1,14 @@
 # @pine/api-gateway
 
+## 0.4.3
+
+### Patch Changes
+
+- Updated dependencies [2c3a46a]
+  - @pine/common@1.0.0
+  - @pine/identity@0.3.2
+  - @pine/server@1.1.3
+
 ## 0.4.2
 
 ### Patch Changes

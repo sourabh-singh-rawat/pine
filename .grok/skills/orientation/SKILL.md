@@ -39,7 +39,7 @@ Extract to `packages/*` only when **two** services need the same logic. Feature 
 | Auth / IdP / OAuth | `identity-service` + Ory (Kratos/Hydra) + `identity-web` |
 | Platform / tenants / workspaces | `platform-service` + `platform-web` |
 | Graph authorization (Keto) | `authorization-service` |
-| Workspaces / projects / issues / statuses | `issues-service` + `pine-web` |
+| Workspaces / projects / items / statuses | `items-service` + `pine-web` |
 | Attachments | `attachment-service` |
 | Transactional email / notifications | `notification-service` (`integrations/email`) |
 | Federated GraphQL supergraph | `api-gateway` (`dist/supergraph.graphql`) — no feature fields here |
@@ -48,7 +48,7 @@ Extract to `packages/*` only when **two** services need the same logic. Feature 
 
 **Apps:** `pine-web` (issues product UI), `identity-web` (sign-in/registration/consent), `platform-web` (platform admin).
 
-**Services:** `identity-service`, `platform-service`, `authorization-service`, `issues-service`, `attachment-service`, `attachment-scanner-service`, `notification-service`, `api-gateway`, `data-gateway`.
+**Services:** `identity-service`, `platform-service`, `authorization-service`, `items-service`, `attachment-service`, `attachment-scanner-service`, `notification-service`, `api-gateway`, `data-gateway`.
 
 | Package | Import for |
 | ------- | ---------- |

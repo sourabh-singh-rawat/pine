@@ -1,7 +1,7 @@
 {
   "$schema": "https://json.schemastore.org/package.json",
   "name": "@pine/identity",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "private": true,
   "description": "HTTP client for the identity service",
   "license": "ISC",

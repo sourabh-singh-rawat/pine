@@ -1,10 +1,10 @@
 import {
   type CloudEvent,
   type IBroker,
-  type UserRegisteredData,
+  type IdentityEmailVerifiedData,
   Streams,
   Consumer,
-  UserRegisteredEvent,
+  IdentityEmailVerifiedEvent,
   validateEvent,
 } from "@pine/events";
 import { inject, injectable } from "inversify";
@@ -13,10 +13,12 @@ import { TYPES } from "@/bootstrap/container-types";
 import type { IOnboardingService } from "@/features/onboarding/services";
 
 @injectable()
-export class PlatformUserOnboardingConsumer extends Consumer<CloudEvent<UserRegisteredData>> {
+export class PlatformUserOnboardingConsumer extends Consumer<
+  CloudEvent<IdentityEmailVerifiedData>
+> {
   readonly stream = Streams.IDENTITY;
   readonly consumer = "platform-user-onboarding";
-  readonly subjects = [UserRegisteredEvent.type];
+  readonly subjects = [IdentityEmailVerifiedEvent.type];
 
   constructor(
     @inject(TYPES.Broker)
@@ -29,14 +31,9 @@ export class PlatformUserOnboardingConsumer extends Consumer<CloudEvent<UserRegi
 
   onMessage = async (
     message: JsMsg,
-    payload: CloudEvent<UserRegisteredData>,
+    payload: CloudEvent<IdentityEmailVerifiedData>,
   ): Promise<void> => {
-    if (payload.type !== UserRegisteredEvent.type) {
-      message.ack();
-      return;
-    }
-
-    const event = validateEvent(UserRegisteredEvent, payload);
+    const event = validateEvent(IdentityEmailVerifiedEvent, payload);
     const data = event.data;
     if (!data) {
       message.ack();

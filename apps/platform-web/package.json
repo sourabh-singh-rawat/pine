@@ -1,7 +1,7 @@
 {
   "$schema": "https://json.schemastore.org/package.json",
   "name": "@pine/platform-web",
-  "version": "0.5.2",
+  "version": "0.5.3",
   "private": true,
   "type": "module",
   "scripts": {
@@ -20,6 +20,7 @@
     "@hey-api/vite-plugin": "^0.3.2",
     "@mui/icons-material": "6.1.9",
     "@mui/material": "9.2.0",
+    "@pine/auth": "workspace:*",
     "@pine/authorization": "workspace:^",
     "@pine/ui": "workspace:*",
     "@tanstack/react-form": "^1.33.2",

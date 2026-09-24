@@ -1,9 +1,15 @@
-import { Box, useTheme } from "@mui/material";
 import {
   type ColumnDef,
+  type ExpandedState,
+  type Row,
   type RowData,
   type TableState,
+  type Updater,
 } from "@tanstack/react-table";
+import { useCallback, useState } from "react";
+import { DataTableBody } from "./DataTableBody";
+import { DataTableHeader } from "./DataTableHeader";
+import { DataTableRoot } from "./DataTableRoot";
 import { pineTableFeatures, usePineTable } from "./pineTableFeatures";
 
 export type DataTableProps<TData extends RowData> = {
@@ -12,7 +18,10 @@ export type DataTableProps<TData extends RowData> = {
   ariaLabel?: string;
   onRowClick?: (row: TData) => void;
   getRowId?: (originalRow: TData, index: number) => string;
+  getSubRows?: (originalRow: TData, index: number) => TData[] | undefined;
+  getRowCanExpand?: (row: Row<typeof pineTableFeatures, TData>) => boolean;
   initialState?: Partial<TableState<typeof pineTableFeatures>>;
+  grouping?: string[];
   showBorder?: boolean;
   groupedColumnMode?: "reorder" | "remove" | false;
 };
@@ -23,18 +32,47 @@ export const DataTable = <TData extends RowData>({
   ariaLabel,
   onRowClick,
   getRowId,
+  getSubRows,
+  getRowCanExpand,
   initialState,
+  grouping,
   showBorder = false,
   groupedColumnMode = "remove",
 }: DataTableProps<TData>) => {
-  const theme = useTheme();
+  const [expanded, setExpanded] = useState<ExpandedState>(
+    () => initialState?.expanded ?? true,
+  );
+
+  const handleExpandedChange = useCallback((updater: Updater<ExpandedState>) => {
+    setExpanded((previous) => {
+      if (typeof updater === "function") {
+        return updater(previous);
+      }
+      return updater;
+    });
+  }, []);
+
   const table = usePineTable(
     {
       data,
       columns,
       getRowId,
+      getSubRows,
+      getRowCanExpand,
       initialState,
       groupedColumnMode,
+      autoResetAll: false,
+      autoResetExpanded: false,
+      state: {
+        expanded,
+        ...(grouping != null ? { grouping } : {}),
+      },
+      onExpandedChange: handleExpandedChange,
+      ...(grouping != null
+        ? {
+            onGroupingChange: () => {},
+          }
+        : {}),
     },
     (state) => ({
       grouping: state.grouping,
@@ -45,103 +83,14 @@ export const DataTable = <TData extends RowData>({
   const leafColumnCount = table.getAllLeafColumns().length;
 
   return (
-    <Box
-      component="table"
-      aria-label={ariaLabel}
-      sx={{
-        width: "100%",
-        borderCollapse: "collapse",
-        border: showBorder ? `1px solid ${theme.palette.divider}` : "none",
-        "& th, & td": {
-          borderBottom: `1px solid ${theme.palette.divider}`,
-          px: 1,
-          py: 0.5,
-          textAlign: "left",
-          verticalAlign: "middle",
-          fontSize: theme.typography.body2.fontSize,
-          color: theme.palette.text.primary,
-        },
-        "& th": {
-          fontWeight: theme.typography.fontWeightMedium,
-          color: theme.palette.text.secondary,
-        },
-        "& tbody tr[data-clickable='true']": {
-          cursor: "pointer",
-          "&:hover": {
-            backgroundColor: theme.palette.action.hover,
-          },
-        },
-        "& tbody tr[data-grouped='true'] td": {
-          backgroundColor: theme.palette.action.hover,
-          fontWeight: theme.typography.fontWeightMedium,
-        },
-      }}
+    <DataTableRoot
+      table={table}
+      leafColumnCount={leafColumnCount}
+      ariaLabel={ariaLabel}
+      showBorder={showBorder}
     >
-      <thead>
-        {table.getHeaderGroups().map((headerGroup) => (
-          <tr key={headerGroup.id}>
-            {headerGroup.headers.map((header) => (
-              <th key={header.id} colSpan={header.colSpan}>
-                {header.isPlaceholder ? null : (
-                  <table.FlexRender header={header} />
-                )}
-              </th>
-            ))}
-          </tr>
-        ))}
-      </thead>
-      <table.Subscribe
-        selector={(state) => ({
-          grouping: state.grouping,
-          expanded: state.expanded,
-        })}
-      >
-        {() => (
-          <tbody>
-            {table.getRowModel().rows.map((row) => {
-              if (row.getIsGrouped()) {
-                return (
-                  <tr key={row.id} data-grouped="true">
-                    <td colSpan={leafColumnCount}>
-                      <Box
-                        component="button"
-                        type="button"
-                        onClick={row.getToggleExpandedHandler()}
-                        sx={{
-                          all: "unset",
-                          cursor: row.getCanExpand() ? "pointer" : "default",
-                          display: "inline-flex",
-                          alignItems: "center",
-                          gap: 1,
-                          py: 0.5,
-                        }}
-                      >
-                        <span aria-hidden>{row.getIsExpanded() ? "▾" : "▸"}</span>
-                        <span>{String(row.groupingValue ?? "")}</span>
-                        <span>({row.subRows.length})</span>
-                      </Box>
-                    </td>
-                  </tr>
-                );
-              }
-
-              return (
-                <tr
-                  key={row.id}
-                  data-clickable={onRowClick ? "true" : undefined}
-                  onClick={onRowClick ? () => onRowClick(row.original) : undefined}
-                >
-                  {row.getAllCells().map((cell) => (
-                    <td key={cell.id}>
-                      <table.FlexRender cell={cell} />
-                    </td>
-                  ))}
-                </tr>
-              );
-            })}
-          </tbody>
-        )}
-      </table.Subscribe>
-    </Box>
+      <DataTableHeader />
+      <DataTableBody<TData> onRowClick={onRowClick} />
+    </DataTableRoot>
   );
 };

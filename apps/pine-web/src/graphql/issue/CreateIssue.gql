@@ -1,3 +1,0 @@
-mutation CreateIssue($input: CreateIssueInput!) {
-  createIssue(input: $input)
-}

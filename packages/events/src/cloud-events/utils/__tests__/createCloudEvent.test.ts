@@ -42,32 +42,32 @@ describe("createCloudEvent", () => {
 
   it("requires schema and always sets dataschema on the envelope", () => {
     const event = createCloudEvent({
-      type: "issues.issue.created",
-      source: "pine/issues-service",
+      type: "items.item.created",
+      source: "pine/items-service",
       schema: Type.Object({ id: Type.String() }),
       data: { id: "p-1" },
     });
 
-    expect(event.dataschema).toBe("urn:pine:events:issues.issue.created");
+    expect(event.dataschema).toBe("urn:pine:events:items.item.created");
   });
 
   it("includes version in default dataschema when provided", () => {
     const event = createCloudEvent({
-      type: "issues.issue.created",
+      type: "items.item.created",
       version: 1,
-      source: "pine/issues-service",
+      source: "pine/items-service",
       schema: Type.Object({ id: Type.String() }),
       data: { id: "p-1" },
     });
 
-    expect(event.dataschema).toBe("urn:pine:events:issues.issue.created:v1");
+    expect(event.dataschema).toBe("urn:pine:events:items.item.created:v1");
   });
 
   it("respects explicit overrides", () => {
     const event = createCloudEvent({
       id: "fixed-id",
       type: "project.created",
-      source: "pine/issues-service",
+      source: "pine/items-service",
       schema: ProjectCreatedDataSchema,
       time: "2020-01-01T00:00:00.000Z",
       subject: "project/abc",
@@ -79,7 +79,7 @@ describe("createCloudEvent", () => {
     expect(event).toEqual({
       id: "fixed-id",
       type: "project.created",
-      source: "pine/issues-service",
+      source: "pine/items-service",
       specversion: "1.0",
       time: "2020-01-01T00:00:00.000Z",
       subject: "project/abc",
@@ -92,7 +92,7 @@ describe("createCloudEvent", () => {
   it("accepts Date for time and omits data defaults when data is absent", () => {
     const event = createCloudEvent({
       type: "project.created",
-      source: "pine/issues-service",
+      source: "pine/items-service",
       schema: Type.Object({}),
       time: new Date("2021-06-15T12:00:00.000Z"),
     });
@@ -117,7 +117,7 @@ describe("createCloudEvent", () => {
   it("round-trips create → validate", () => {
     const created = createCloudEvent({
       type: "project.member-invited",
-      source: "pine/issues-service",
+      source: "pine/items-service",
       schema: MemberInvitedDataSchema,
       data: {
         userId: "u-1",

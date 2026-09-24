@@ -15,7 +15,7 @@ import { Route as AuthenticatedIndexRouteImport } from './../routes/_authenticat
 import { Route as AuthenticatedMeRouteImport } from './../routes/_authenticated/me'
 import { Route as AuthenticatedHomeRouteImport } from './../routes/_authenticated/home'
 import { Route as noAuthEmailVerificationRouteImport } from './../routes/(no-auth)/email-verification'
-import { Route as AuthenticatedIIssueIdRouteImport } from './../routes/_authenticated/i.$issueId'
+import { Route as AuthenticatedIItemIdRouteImport } from './../routes/_authenticated/i.$itemId'
 import { Route as AuthenticatedVLViewIdRouteImport } from './../routes/_authenticated/v.l.$viewId'
 import { Route as AuthenticatedVBViewIdRouteImport } from './../routes/_authenticated/v.b.$viewId'
 
@@ -48,9 +48,9 @@ const noAuthEmailVerificationRoute = noAuthEmailVerificationRouteImport.update({
   path: '/email-verification',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AuthenticatedIIssueIdRoute = AuthenticatedIIssueIdRouteImport.update({
-  id: '/i/$issueId',
-  path: '/i/$issueId',
+const AuthenticatedIItemIdRoute = AuthenticatedIItemIdRouteImport.update({
+  id: '/i/$itemId',
+  path: '/i/$itemId',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
 const AuthenticatedVLViewIdRoute = AuthenticatedVLViewIdRouteImport.update({
@@ -70,7 +70,7 @@ export interface FileRoutesByFullPath {
   '/email-verification': typeof noAuthEmailVerificationRoute
   '/home': typeof AuthenticatedHomeRoute
   '/me': typeof AuthenticatedMeRoute
-  '/i/$issueId': typeof AuthenticatedIIssueIdRoute
+  '/i/$itemId': typeof AuthenticatedIItemIdRoute
   '/v/b/$viewId': typeof AuthenticatedVBViewIdRoute
   '/v/l/$viewId': typeof AuthenticatedVLViewIdRoute
 }
@@ -80,7 +80,7 @@ export interface FileRoutesByTo {
   '/home': typeof AuthenticatedHomeRoute
   '/me': typeof AuthenticatedMeRoute
   '/': typeof AuthenticatedIndexRoute
-  '/i/$issueId': typeof AuthenticatedIIssueIdRoute
+  '/i/$itemId': typeof AuthenticatedIItemIdRoute
   '/v/b/$viewId': typeof AuthenticatedVBViewIdRoute
   '/v/l/$viewId': typeof AuthenticatedVLViewIdRoute
 }
@@ -92,7 +92,7 @@ export interface FileRoutesById {
   '/_authenticated/home': typeof AuthenticatedHomeRoute
   '/_authenticated/me': typeof AuthenticatedMeRoute
   '/_authenticated/': typeof AuthenticatedIndexRoute
-  '/_authenticated/i/$issueId': typeof AuthenticatedIIssueIdRoute
+  '/_authenticated/i/$itemId': typeof AuthenticatedIItemIdRoute
   '/_authenticated/v/b/$viewId': typeof AuthenticatedVBViewIdRoute
   '/_authenticated/v/l/$viewId': typeof AuthenticatedVLViewIdRoute
 }
@@ -104,7 +104,7 @@ export interface FileRouteTypes {
     | '/email-verification'
     | '/home'
     | '/me'
-    | '/i/$issueId'
+    | '/i/$itemId'
     | '/v/b/$viewId'
     | '/v/l/$viewId'
   fileRoutesByTo: FileRoutesByTo
@@ -114,7 +114,7 @@ export interface FileRouteTypes {
     | '/home'
     | '/me'
     | '/'
-    | '/i/$issueId'
+    | '/i/$itemId'
     | '/v/b/$viewId'
     | '/v/l/$viewId'
   id:
@@ -125,7 +125,7 @@ export interface FileRouteTypes {
     | '/_authenticated/home'
     | '/_authenticated/me'
     | '/_authenticated/'
-    | '/_authenticated/i/$issueId'
+    | '/_authenticated/i/$itemId'
     | '/_authenticated/v/b/$viewId'
     | '/_authenticated/v/l/$viewId'
   fileRoutesById: FileRoutesById
@@ -180,11 +180,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof noAuthEmailVerificationRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/_authenticated/i/$issueId': {
-      id: '/_authenticated/i/$issueId'
-      path: '/i/$issueId'
-      fullPath: '/i/$issueId'
-      preLoaderRoute: typeof AuthenticatedIIssueIdRouteImport
+    '/_authenticated/i/$itemId': {
+      id: '/_authenticated/i/$itemId'
+      path: '/i/$itemId'
+      fullPath: '/i/$itemId'
+      preLoaderRoute: typeof AuthenticatedIItemIdRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/v/l/$viewId': {
@@ -208,7 +208,7 @@ interface AuthenticatedRouteChildren {
   AuthenticatedHomeRoute: typeof AuthenticatedHomeRoute
   AuthenticatedMeRoute: typeof AuthenticatedMeRoute
   AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
-  AuthenticatedIIssueIdRoute: typeof AuthenticatedIIssueIdRoute
+  AuthenticatedIItemIdRoute: typeof AuthenticatedIItemIdRoute
   AuthenticatedVBViewIdRoute: typeof AuthenticatedVBViewIdRoute
   AuthenticatedVLViewIdRoute: typeof AuthenticatedVLViewIdRoute
 }
@@ -217,7 +217,7 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedHomeRoute: AuthenticatedHomeRoute,
   AuthenticatedMeRoute: AuthenticatedMeRoute,
   AuthenticatedIndexRoute: AuthenticatedIndexRoute,
-  AuthenticatedIIssueIdRoute: AuthenticatedIIssueIdRoute,
+  AuthenticatedIItemIdRoute: AuthenticatedIItemIdRoute,
   AuthenticatedVBViewIdRoute: AuthenticatedVBViewIdRoute,
   AuthenticatedVLViewIdRoute: AuthenticatedVLViewIdRoute,
 }

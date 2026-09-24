@@ -1,3 +1,0 @@
-name: project-member-created-consumer
-stream: project
-subject: project.member-created

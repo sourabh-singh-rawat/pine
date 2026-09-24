@@ -84,6 +84,36 @@ describe("authorize route", () => {
     });
   });
 
+  it("rejects invalid authorize query parameters", async () => {
+    await expect(
+      authorize.handler(
+        httpRequest({
+          query: {
+            client_id: "issues-web",
+            redirect_uri: "http://localhost:3000/callback",
+            response_type: "token",
+            scope: "openid",
+            state: "state-1",
+          },
+        }),
+      ),
+    ).rejects.toBeInstanceOf(InvalidOAuthRequestError);
+    expect(get).not.toHaveBeenCalled();
+  });
+
+  it("rejects missing required authorize query parameters", async () => {
+    await expect(
+      authorize.handler(
+        httpRequest({
+          query: {
+            client_id: "issues-web",
+          },
+        }),
+      ),
+    ).rejects.toBeInstanceOf(InvalidOAuthRequestError);
+    expect(get).not.toHaveBeenCalled();
+  });
+
   it("propagates InvalidOAuthRequestError from the OAuth service", async () => {
     const authorizeFn = vi.fn().mockRejectedValue(new InvalidOAuthRequestError());
     get.mockReturnValue({ authorize: authorizeFn });
@@ -235,6 +265,39 @@ describe("OAuth consent challenge routes", () => {
     expect(rejectConsent.url).toBe("/identity/oauth/consent/reject");
   });
 
+  it("rejects missing consent_challenge query parameters", async () => {
+    await expect(consent.handler(httpRequest({ query: {} }))).rejects.toBeInstanceOf(
+      InvalidOAuthRequestError,
+    );
+    expect(get).not.toHaveBeenCalled();
+  });
+
+  it("rejects invalid accept consent body", async () => {
+    await expect(
+      acceptConsent.handler(
+        httpRequest({
+          method: "POST",
+          query: { consent_challenge: "consent-challenge-1" },
+          body: { grantScope: [] },
+        }),
+      ),
+    ).rejects.toBeInstanceOf(InvalidOAuthRequestError);
+    expect(get).not.toHaveBeenCalled();
+  });
+
+  it("rejects invalid reject consent body", async () => {
+    await expect(
+      rejectConsent.handler(
+        httpRequest({
+          method: "POST",
+          query: { consent_challenge: "consent-challenge-1" },
+          body: { error: "" },
+        }),
+      ),
+    ).rejects.toBeInstanceOf(InvalidOAuthRequestError);
+    expect(get).not.toHaveBeenCalled();
+  });
+
   it("returns not found when the consent_challenge is unknown", async () => {
     const getConsentChallenge = vi.fn().mockRejectedValue(new OAuthRequestNotFoundError());
     get.mockReturnValue({ getConsentChallenge });
@@ -260,6 +323,24 @@ describe("token route", () => {
     expect(token.schema).toMatchObject({
       body: expect.anything(),
     });
+  });
+
+  it("rejects invalid token body", async () => {
+    await expect(
+      token.handler(
+        httpRequest({
+          method: "POST",
+          body: {
+            grant_type: "refresh_token",
+            code: "auth-code-1",
+            client_id: "pine-web",
+            redirect_uri: "http://localhost:3001/callback",
+            code_verifier: "verifier-1",
+          },
+        }),
+      ),
+    ).rejects.toBeInstanceOf(InvalidOAuthRequestError);
+    expect(get).not.toHaveBeenCalled();
   });
 
   it("exchanges a code via the OAuth service and sets tokens as HTTP-only cookies", async () => {

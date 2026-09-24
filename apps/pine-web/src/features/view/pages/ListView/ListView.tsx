@@ -1,9 +1,15 @@
 import { Grid2, useTheme } from "@mui/material";
+import { useMemo } from "react";
 import { useFindStatusesQuery, useFindProjectQuery } from "@generated/gql";
 import { useViewParams } from "@shared";
-import { StatusesContext } from "@shared/contexts/StatusesContext";
-import { IssueList } from "@features/issue/components";
+import {
+  StatusesContext,
+  type StatusOption,
+} from "@shared/contexts/StatusesContext";
+import { ItemList, ItemListLoader } from "@features/item/components/ItemList";
 import { ViewLocation, ViewSwitcher } from "../../components";
+
+const EMPTY_STATUSES: StatusOption[] = [];
 
 export const ListView = () => {
   const theme = useTheme();
@@ -28,7 +34,8 @@ export const ListView = () => {
   );
 
   const project = projectQuery.data;
-  const statuses = statusesQuery.data ?? [];
+  const statuses = statusesQuery.data ?? EMPTY_STATUSES;
+  const statusesContextValue = useMemo(() => ({ statuses }), [statuses]);
 
   const projectView =
     project?.id && project.name
@@ -38,9 +45,17 @@ export const ListView = () => {
         }
       : null;
 
+  const isBootstrapping =
+    Boolean(projectId) && (projectQuery.isPending || statusesQuery.isPending);
+  const canRenderItems = Boolean(projectView) && !statusesQuery.isPending;
+
+  if (isBootstrapping && !projectView) {
+    return <ItemListLoader />;
+  }
+
   return (
-    <Grid2 container>
-      <StatusesContext.Provider value={{ statuses }}>
+    <Grid2 container sx={{ scrollbarGutter: "stable" }}>
+      <StatusesContext.Provider value={statusesContextValue}>
         {projectView && (
           <>
             <Grid2
@@ -63,7 +78,11 @@ export const ListView = () => {
               <ViewSwitcher projectId={projectView.id} />
             </Grid2>
             <Grid2 size={12} sx={{ p: theme.spacing(2) }}>
-              <IssueList projectId={projectView.id} />
+              {canRenderItems ? (
+                <ItemList projectId={projectView.id} />
+              ) : (
+                <ItemListLoader />
+              )}
             </Grid2>
           </>
         )}

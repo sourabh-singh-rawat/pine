@@ -20,6 +20,7 @@ attachment-postgres:5432:*:attachment:${POSTGRES_ATTACHMENT_PASSWORD}
 attachment-scanner-postgres:5432:*:attachment_scanner:${POSTGRES_ATTACHMENT_SCANNER_PASSWORD}
 notification-postgres:5432:*:notification:${POSTGRES_NOTIFICATION_PASSWORD}
 platform-postgres:5432:*:platform:${POSTGRES_PLATFORM_PASSWORD}
+audit-postgres:5432:*:audit:${POSTGRES_AUDIT_PASSWORD}
 ory-postgres:5432:*:postgres:${POSTGRES_ADMIN_PASSWORD}
 postgres:5432:*:postgres:${POSTGRES_ADMIN_PASSWORD}
 EOF
@@ -98,7 +99,17 @@ if [ "$PGADMIN_CONFIG_TYPE" = "multi-db" ]; then
       "SSLMode": "prefer",
       "PassFile": "$PGPASS_FILE"
     },
-$(ory_server_json 6)
+    "6": {
+      "Name": "Audit Service DB",
+      "Group": "Pine",
+      "Host": "audit-postgres",
+      "Port": 5432,
+      "MaintenanceDB": "audit",
+      "Username": "audit",
+      "SSLMode": "prefer",
+      "PassFile": "$PGPASS_FILE"
+    },
+$(ory_server_json 7)
   }
 }
 EOF

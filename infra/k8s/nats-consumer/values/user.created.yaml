@@ -1,3 +1,0 @@
-name: user-created-consumer
-stream: user
-subject: user.created

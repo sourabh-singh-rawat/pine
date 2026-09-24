@@ -1,3 +1,0 @@
-name: workspace-invite-created-consumer
-stream: workspace
-subject: workspace.invite-created

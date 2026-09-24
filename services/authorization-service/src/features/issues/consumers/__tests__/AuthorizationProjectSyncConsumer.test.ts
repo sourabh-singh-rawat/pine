@@ -28,7 +28,7 @@ describe("AuthorizationProjectSyncConsumer", () => {
       type: ProjectCreatedEvent.type,
       version: ProjectCreatedEvent.version,
       schema: ProjectCreatedEvent.schema,
-      source: "pine/issues-service",
+      source: "pine/items-service",
       subject: "project-1",
       data: {
         id: "project-1",

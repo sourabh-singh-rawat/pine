@@ -1,0 +1,61 @@
+{
+  "$schema": "https://json.schemastore.org/package.json",
+  "name": "@pine/audit-service",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Audit service",
+  "keywords": [
+    "audit",
+    "audit-service"
+  ],
+  "homepage": "https://github.com/sourabh-singh-rawat/pine#readme",
+  "bugs": {
+    "url": "https://github.com/sourabh-singh-rawat/pine/issues"
+  },
+  "license": "ISC",
+  "author": "Sourabh Singh Rawat",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sourabh-singh-rawat/pine.git"
+  },
+  "main": "./src/main.ts",
+  "scripts": {
+    "clean": "node ../../tools/scripts/setup/rm-rf.mjs dist",
+    "start": "tsx --env-file=../../.env src/main.ts",
+    "dev": "tsx watch --inspect=9239 --env-file=../../.env src/main.ts",
+    "build": "pnpm clean && tsc",
+    "test": "vitest run --config vitest.config.ts",
+    "test:watch": "vitest --config vitest.config.ts",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate",
+    "db:push": "drizzle-kit push",
+    "db:studio": "drizzle-kit studio"
+  },
+  "dependencies": {
+    "@pine/authorization": "workspace:*",
+    "@pine/common": "workspace:^",
+    "@pine/errors": "workspace:*",
+    "@pine/events": "workspace:^",
+    "@pine/identity": "workspace:*",
+    "@pine/server": "workspace:^",
+    "@pothos/core": "^4.13.1",
+    "drizzle-orm": "0.45.2",
+    "graphql": "16.14.2",
+    "graphql-scalars": "^1.25.0",
+    "inversify": "8.2.2",
+    "nats": "^2.29.3",
+    "pg": "^8.22.0",
+    "pino": "^10.3.1",
+    "reflect-metadata": "^0.2.2",
+    "typebox": "1.3.6"
+  },
+  "devDependencies": {
+    "@types/node": "^26.1.1",
+    "@types/pg": "^8.20.0",
+    "drizzle-kit": "0.31.8",
+    "pino-pretty": "^13.1.3",
+    "tsx": "4.23.1",
+    "typescript": "7.0.2",
+    "vitest": "5.0.0"
+  }
+}

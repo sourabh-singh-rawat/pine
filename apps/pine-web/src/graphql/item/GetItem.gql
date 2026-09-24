@@ -1,0 +1,18 @@
+query GetItem($id: String!) {
+  getItem(id: $id) {
+    id
+    description
+    project {
+      id
+      name
+    }
+    parentItem {
+      id
+      name
+    }
+    name
+    statusId
+    priority
+    dueDate
+  }
+}

@@ -8,9 +8,34 @@ const rootDir = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../.
 const isWindows = process.platform === "win32";
 const infraDataDir = path.join(rootDir, "infra", "data");
 const rmRfScript = path.join(rootDir, "tools", "scripts", "setup", "rm-rf.mjs");
+const dockerComposeArgs: readonly string[] = [
+  "--env-file",
+  ".env",
+  "-f",
+  "infra/docker/compose.yaml",
+  "-f",
+  "infra/docker/compose.single-db.yaml",
+  "-f",
+  "infra/docker/compose.ory-db.yaml",
+  "-f",
+  "infra/docker/compose.kratos.yaml",
+  "-f",
+  "infra/docker/compose.hydra.yaml",
+  "-f",
+  "infra/docker/compose.keto.yaml",
+  "-f",
+  "infra/docker/storage.compose.yaml",
+];
+const postgresReadyTimeoutMs = 180_000;
+const postgresReadyPollMs = 2_000;
+const postgresReadyStableChecks = 3;
 
 const UUID_PATTERN =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+const sleepSync = (ms: number): void => {
+  Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, ms);
+};
 
 const run = (
   command: string,
@@ -42,6 +67,56 @@ const runPnpm = (
   args: readonly string[],
   options: { captureStdout?: boolean; env?: NodeJS.ProcessEnv } = {},
 ): string => run("pnpm", args, options);
+
+const runPostgresCheck = (args: readonly string[]) =>
+  spawnSync("docker", ["compose", ...dockerComposeArgs, "exec", "-T", "postgres", ...args], {
+    cwd: rootDir,
+    encoding: "utf8",
+    shell: false,
+    windowsHide: true,
+    stdio: ["ignore", "pipe", "pipe"],
+  });
+
+const isPostgresReady = (): boolean => {
+  const ready = runPostgresCheck(["pg_isready", "-U", "postgres"]);
+  if (ready.status !== 0) {
+    return false;
+  }
+
+  const initDone = runPostgresCheck([
+    "psql",
+    "-U",
+    "postgres",
+    "-d",
+    "postgres",
+    "-tAc",
+    "SELECT 1 FROM pg_database WHERE datname = 'identity'",
+  ]);
+  return initDone.status === 0 && (initDone.stdout ?? "").trim() === "1";
+};
+
+const waitForPostgres = (): void => {
+  console.log("setup: waiting for postgres to accept connections");
+  const deadline = Date.now() + postgresReadyTimeoutMs;
+  let stableCount = 0;
+
+  while (Date.now() < deadline) {
+    if (isPostgresReady()) {
+      stableCount += 1;
+      if (stableCount >= postgresReadyStableChecks) {
+        console.log("setup: postgres is ready");
+        return;
+      }
+    } else {
+      stableCount = 0;
+    }
+    sleepSync(postgresReadyPollMs);
+  }
+
+  throw new Error(
+    `Postgres was not ready within ${postgresReadyTimeoutMs / 1000}s (init may still be running).`,
+  );
+};
 
 const parseIdentityId = (output: string): string => {
   const match = output.match(/^IDENTITY_ID=([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})\s*$/im);
@@ -94,6 +169,8 @@ const main = (): void => {
   } else {
     console.log("setup: skipping docker compose restart");
   }
+
+  waitForPostgres();
 
   console.log("setup: running database migrations");
   runPnpm(["db:migrate"]);

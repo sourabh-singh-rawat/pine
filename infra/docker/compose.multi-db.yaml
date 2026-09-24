@@ -119,6 +119,30 @@ services:
           cpus: "0.10"
           memory: 128M
 
+  audit-postgres:
+    image: postgres:18.4
+    restart: unless-stopped
+    environment:
+      - POSTGRES_USER=audit
+      - POSTGRES_PASSWORD=${POSTGRES_AUDIT_PASSWORD}
+      - POSTGRES_DB=audit
+    volumes:
+      - ../data/docker/pg-audit-data:/var/lib/postgresql
+    command:
+      - postgres
+      - -c
+      - max_connections=50
+    ports:
+      - 5438:5432
+    deploy:
+      resources:
+        limits:
+          cpus: "0.50"
+          memory: 256M
+        reservations:
+          cpus: "0.10"
+          memory: 128M
+
   # Register per-service Postgres servers (plus Ory) in pgAdmin
   pgadmin:
     environment:

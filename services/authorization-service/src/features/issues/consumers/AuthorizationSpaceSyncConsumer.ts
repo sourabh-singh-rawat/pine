@@ -20,7 +20,7 @@ import type { IAuthorizationGraphProvider } from "@/integrations/authorization";
 
 @injectable()
 export class AuthorizationSpaceSyncConsumer extends Consumer<CloudEvent<SpaceData>> {
-  readonly stream = Streams.ISSUES;
+  readonly stream = Streams.ITEMS;
   readonly consumer = "authorization-space-sync";
   readonly subjects = [SpaceCreatedEvent.type];
 

@@ -12,6 +12,7 @@
         "attach: notification-service",
         "attach: platform-service",
         "attach: authorization-service",
+        "attach: audit-service",
         "attach: api-gateway",
         "attach: data-gateway"
       ]
@@ -78,6 +79,14 @@
       "type": "node",
       "request": "attach",
       "port": 9236,
+      "restart": true,
+      "skipFiles": ["<node_internals>/**", "**/node_modules/**"]
+    },
+    {
+      "name": "attach: audit-service",
+      "type": "node",
+      "request": "attach",
+      "port": 9239,
       "restart": true,
       "skipFiles": ["<node_internals>/**", "**/node_modules/**"]
     },

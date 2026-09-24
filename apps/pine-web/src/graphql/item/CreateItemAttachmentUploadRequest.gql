@@ -1,0 +1,13 @@
+mutation CreateItemAttachmentUploadRequest(
+  $input: CreateItemAttachmentUploadRequestInput!
+) {
+  createItemAttachmentUploadRequest(input: $input) {
+    uploadRequestId
+    url
+    expiresAt
+    headers {
+      key
+      value
+    }
+  }
+}

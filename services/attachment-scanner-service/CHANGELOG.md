@@ -1,5 +1,16 @@
 # @pine/attachment-scanner-service
 
+## 0.1.3
+
+### Patch Changes
+
+- Updated dependencies [be87796]
+- Updated dependencies [2c3a46a]
+  - @pine/events@1.0.0
+  - @pine/common@1.0.0
+  - @pine/outbox@0.1.4
+  - @pine/server@1.1.3
+
 ## 0.1.2
 
 ### Patch Changes

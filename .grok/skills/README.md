@@ -32,6 +32,8 @@ Global guardrails (migrations, changesets, naming, no `as`/`any`, arrows vs clas
 | [shared-packages](./shared-packages/SKILL.md) | Extract `@pine/*` vs service-local |
 | [material-design-3](./material-design-3/SKILL.md) | M3 Expressive UI / theme / MUI |
 | [changeset-release](./changeset-release/SKILL.md) | Changeset / calver release |
+| [git-publish](./git-publish/SKILL.md) | Publish: branch → changeset → commit → PR → squash-merge |
+| [open-pr](./open-pr/SKILL.md) | Open / squash-merge GitHub PR (half of publish) |
 | [docker-infra](./docker-infra/SKILL.md) | Local compose / Ory |
 | [k8s](./k8s/SKILL.md) | Helm / cluster |
 | [observability](./observability/SKILL.md) | OTEL / Alloy |

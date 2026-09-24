@@ -1,33 +1,15 @@
 import type { HttpRoute } from "@pine/server";
 import { json } from "@pine/server";
+import Value from "typebox/value";
 import { container } from "@/bootstrap";
 import { TYPES } from "@/bootstrap/container-types";
-import type { IOAuthService } from "@/features/oauth/services";
 import {
   ConsentActionResponseSchema,
   ConsentQuerySchema,
   RejectConsentBodySchema,
 } from "@/features/oauth/schemas";
-
-function readQueryString(
-  query: Record<string, string | string[] | undefined>,
-  key: string,
-): string | undefined {
-  const value = query[key];
-  if (typeof value === "string") {
-    return value;
-  }
-  if (Array.isArray(value) && typeof value[0] === "string") {
-    return value[0];
-  }
-  return undefined;
-}
-
-function isRejectConsentBody(
-  body: unknown,
-): body is { error?: string; errorDescription?: string } {
-  return body !== null && typeof body === "object";
-}
+import type { IOAuthService } from "@/features/oauth/services";
+import { InvalidOAuthRequestError } from "@/integrations/oauth/errors";
 
 export const rejectConsent: HttpRoute = {
   url: "/identity/oauth/consent/reject",
@@ -44,25 +26,18 @@ export const rejectConsent: HttpRoute = {
     },
   },
   handler: async (request) => {
-    const challenge = readQueryString(request.query, "consent_challenge");
-    if (challenge === undefined) {
-      throw new Error("Missing consent_challenge query parameter");
+    if (!Value.Check(ConsentQuerySchema, request.query)) {
+      throw new InvalidOAuthRequestError("Invalid OAuth consent query parameters");
     }
-    if (!isRejectConsentBody(request.body)) {
-      throw new Error("Invalid reject consent body");
+    if (!Value.Check(RejectConsentBodySchema, request.body)) {
+      throw new InvalidOAuthRequestError("Invalid reject consent body");
     }
 
     const service = container.get<IOAuthService>(TYPES.OAuthService);
     const result = await service.rejectConsent({
-      challenge,
-      error:
-        "error" in request.body && typeof request.body.error === "string"
-          ? request.body.error
-          : undefined,
-      errorDescription:
-        "errorDescription" in request.body && typeof request.body.errorDescription === "string"
-          ? request.body.errorDescription
-          : undefined,
+      challenge: request.query.consent_challenge,
+      error: request.body.error,
+      errorDescription: request.body.errorDescription,
     });
 
     return json(result);
