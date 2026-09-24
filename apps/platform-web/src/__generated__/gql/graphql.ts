@@ -30,6 +30,29 @@ export type AuditLogObject = {
   workspaceId?: Maybe<Scalars['String']['output']>;
 };
 
+export type ChecklistEntryObject = {
+  __typename?: 'ChecklistEntryObject';
+  checklistId?: Maybe<Scalars['String']['output']>;
+  completed?: Maybe<Scalars['Boolean']['output']>;
+  createdAt?: Maybe<Scalars['DateTimeISO']['output']>;
+  createdById?: Maybe<Scalars['String']['output']>;
+  id?: Maybe<Scalars['String']['output']>;
+  orderIndex?: Maybe<Scalars['Int']['output']>;
+  title?: Maybe<Scalars['String']['output']>;
+};
+
+export type ChecklistObject = {
+  __typename?: 'ChecklistObject';
+  completedCount?: Maybe<Scalars['Int']['output']>;
+  createdAt?: Maybe<Scalars['DateTimeISO']['output']>;
+  createdById?: Maybe<Scalars['String']['output']>;
+  entries?: Maybe<Array<ChecklistEntryObject>>;
+  id?: Maybe<Scalars['String']['output']>;
+  itemId?: Maybe<Scalars['String']['output']>;
+  name?: Maybe<Scalars['String']['output']>;
+  totalCount?: Maybe<Scalars['Int']['output']>;
+};
+
 export type ClientObject = {
   __typename?: 'ClientObject';
   grantTypes?: Maybe<Array<Scalars['String']['output']>>;
@@ -37,6 +60,16 @@ export type ClientObject = {
   name?: Maybe<Scalars['String']['output']>;
   redirectUris?: Maybe<Array<Scalars['String']['output']>>;
   scopes?: Maybe<Array<Scalars['String']['output']>>;
+};
+
+export type CreateChecklistEntryInput = {
+  checklistId: Scalars['String']['input'];
+  title: Scalars['String']['input'];
+};
+
+export type CreateChecklistInput = {
+  itemId: Scalars['String']['input'];
+  name?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type CreateClientInput = {
@@ -56,18 +89,39 @@ export type CreateIdentityInput = {
   username: Scalars['String']['input'];
 };
 
+export type CreateItemAttachmentInput = {
+  attachmentId: Scalars['String']['input'];
+  itemId: Scalars['String']['input'];
+  mimeType: Scalars['String']['input'];
+  name: Scalars['String']['input'];
+  originalName: Scalars['String']['input'];
+  size?: InputMaybe<Scalars['Int']['input']>;
+};
+
+export type CreateItemAttachmentUploadRequestInput = {
+  contentType: Scalars['String']['input'];
+  filename: Scalars['String']['input'];
+  itemId: Scalars['String']['input'];
+  size: Scalars['Int']['input'];
+};
+
 export type CreateItemInput = {
   assigneeIds: Array<Scalars['String']['input']>;
   component?: InputMaybe<Scalars['String']['input']>;
   description?: InputMaybe<Scalars['String']['input']>;
   dueDate?: InputMaybe<Scalars['DateTimeISO']['input']>;
   estimate?: InputMaybe<Scalars['Int']['input']>;
+  listId: Scalars['String']['input'];
   name: Scalars['String']['input'];
   parentItemId?: InputMaybe<Scalars['String']['input']>;
   priority: Scalars['String']['input'];
-  projectId: Scalars['String']['input'];
   statusId: Scalars['ID']['input'];
   type: Scalars['String']['input'];
+};
+
+export type CreateListInput = {
+  name: Scalars['String']['input'];
+  spaceId: Scalars['String']['input'];
 };
 
 export type CreatePhotoUploadRequestInput = {
@@ -86,11 +140,6 @@ export type CreateProfileInput = {
   gender?: InputMaybe<ProfileGender>;
   lastName?: InputMaybe<Scalars['String']['input']>;
   middleName?: InputMaybe<Scalars['String']['input']>;
-};
-
-export type CreateProjectInput = {
-  name: Scalars['String']['input'];
-  spaceId: Scalars['String']['input'];
 };
 
 export type CreateSpaceInput = {
@@ -132,7 +181,7 @@ export type DeleteIdentityInput = {
 };
 
 export type FindStatusesOptions = {
-  projectId: Scalars['String']['input'];
+  listId: Scalars['String']['input'];
 };
 
 export type GetSubItemsInput = {
@@ -160,6 +209,33 @@ export type IdentityRelationsObject = {
   workspaces?: Maybe<Array<WorkspaceRelationObject>>;
 };
 
+export type ItemAttachmentObject = {
+  __typename?: 'ItemAttachmentObject';
+  attachmentId?: Maybe<Scalars['String']['output']>;
+  createdAt?: Maybe<Scalars['DateTimeISO']['output']>;
+  createdById?: Maybe<Scalars['String']['output']>;
+  id?: Maybe<Scalars['String']['output']>;
+  itemId?: Maybe<Scalars['String']['output']>;
+  mimeType?: Maybe<Scalars['String']['output']>;
+  name?: Maybe<Scalars['String']['output']>;
+  originalName?: Maybe<Scalars['String']['output']>;
+  size?: Maybe<Scalars['Int']['output']>;
+};
+
+export type ItemAttachmentUploadHeaderObject = {
+  __typename?: 'ItemAttachmentUploadHeaderObject';
+  key?: Maybe<Scalars['String']['output']>;
+  value?: Maybe<Scalars['String']['output']>;
+};
+
+export type ItemAttachmentUploadTargetObject = {
+  __typename?: 'ItemAttachmentUploadTargetObject';
+  expiresAt?: Maybe<Scalars['String']['output']>;
+  headers?: Maybe<Array<ItemAttachmentUploadHeaderObject>>;
+  uploadRequestId?: Maybe<Scalars['String']['output']>;
+  url?: Maybe<Scalars['String']['output']>;
+};
+
 export type ItemObject = {
   __typename?: 'ItemObject';
   component?: Maybe<Scalars['String']['output']>;
@@ -168,43 +244,70 @@ export type ItemObject = {
   estimate?: Maybe<Scalars['Int']['output']>;
   hasChildren?: Maybe<Scalars['Boolean']['output']>;
   id?: Maybe<Scalars['String']['output']>;
+  list?: Maybe<ListObject>;
   name?: Maybe<Scalars['String']['output']>;
   parentItem?: Maybe<ItemObject>;
   priority?: Maybe<Scalars['String']['output']>;
-  project?: Maybe<ProjectObject>;
   statusId?: Maybe<Scalars['String']['output']>;
   subItems?: Maybe<Array<ItemObject>>;
 };
 
+export type ListObject = {
+  __typename?: 'ListObject';
+  id?: Maybe<Scalars['String']['output']>;
+  name?: Maybe<Scalars['String']['output']>;
+  spaceId?: Maybe<Scalars['String']['output']>;
+};
+
 export type Mutation = {
   __typename?: 'Mutation';
+  createChecklist?: Maybe<ChecklistObject>;
+  createChecklistEntry?: Maybe<ChecklistEntryObject>;
   createClient?: Maybe<ClientObject>;
   createIdentity?: Maybe<IdentityObject>;
   createItem?: Maybe<Scalars['String']['output']>;
+  createItemAttachment?: Maybe<ItemAttachmentObject>;
+  createItemAttachmentUploadRequest?: Maybe<ItemAttachmentUploadTargetObject>;
+  createList?: Maybe<Scalars['String']['output']>;
   createPhotoUploadRequest?: Maybe<PhotoUploadTargetObject>;
   createPlatformRelation?: Maybe<PlatformRelationObject>;
   createProfile?: Maybe<ProfileObject>;
-  createProject?: Maybe<Scalars['String']['output']>;
   createSpace?: Maybe<SpaceObject>;
   createTenant?: Maybe<TenantObject>;
   createTenantRelation?: Maybe<TenantRelationObject>;
   createWorkspace?: Maybe<WorkspaceObject>;
   createWorkspaceRelation?: Maybe<WorkspaceRelationObject>;
   deleteAttachment?: Maybe<Scalars['String']['output']>;
+  deleteChecklist?: Maybe<Scalars['Boolean']['output']>;
+  deleteChecklistEntry?: Maybe<Scalars['Boolean']['output']>;
   deleteClient?: Maybe<Scalars['String']['output']>;
   deleteIdentity?: Maybe<Scalars['String']['output']>;
   deleteItem?: Maybe<Scalars['String']['output']>;
+  deleteItemAttachment?: Maybe<Scalars['Boolean']['output']>;
   deletePlatformRelation?: Maybe<Scalars['String']['output']>;
   deleteTenant?: Maybe<Scalars['String']['output']>;
   deleteTenantRelation?: Maybe<Scalars['Boolean']['output']>;
   deleteWorkspace?: Maybe<Scalars['String']['output']>;
   deleteWorkspaceRelation?: Maybe<Scalars['Boolean']['output']>;
   hello?: Maybe<Scalars['String']['output']>;
+  reorderChecklistEntries?: Maybe<Array<ChecklistEntryObject>>;
   setMyWorkspacePreference?: Maybe<WorkspacePreferenceObject>;
+  updateChecklist?: Maybe<ChecklistObject>;
+  updateChecklistEntry?: Maybe<ChecklistEntryObject>;
   updateItem?: Maybe<Scalars['String']['output']>;
   updateProfileGender?: Maybe<ProfileObject>;
   updateProfileName?: Maybe<ProfileObject>;
   updateWorkspace?: Maybe<WorkspaceObject>;
+};
+
+
+export type MutationCreateChecklistArgs = {
+  input: CreateChecklistInput;
+};
+
+
+export type MutationCreateChecklistEntryArgs = {
+  input: CreateChecklistEntryInput;
 };
 
 
@@ -223,6 +326,21 @@ export type MutationCreateItemArgs = {
 };
 
 
+export type MutationCreateItemAttachmentArgs = {
+  input: CreateItemAttachmentInput;
+};
+
+
+export type MutationCreateItemAttachmentUploadRequestArgs = {
+  input: CreateItemAttachmentUploadRequestInput;
+};
+
+
+export type MutationCreateListArgs = {
+  input: CreateListInput;
+};
+
+
 export type MutationCreatePhotoUploadRequestArgs = {
   input: CreatePhotoUploadRequestInput;
 };
@@ -235,11 +353,6 @@ export type MutationCreatePlatformRelationArgs = {
 
 export type MutationCreateProfileArgs = {
   input: CreateProfileInput;
-};
-
-
-export type MutationCreateProjectArgs = {
-  input: CreateProjectInput;
 };
 
 
@@ -273,6 +386,16 @@ export type MutationDeleteAttachmentArgs = {
 };
 
 
+export type MutationDeleteChecklistArgs = {
+  id: Scalars['String']['input'];
+};
+
+
+export type MutationDeleteChecklistEntryArgs = {
+  id: Scalars['String']['input'];
+};
+
+
 export type MutationDeleteClientArgs = {
   id: Scalars['String']['input'];
 };
@@ -284,6 +407,11 @@ export type MutationDeleteIdentityArgs = {
 
 
 export type MutationDeleteItemArgs = {
+  id: Scalars['String']['input'];
+};
+
+
+export type MutationDeleteItemAttachmentArgs = {
   id: Scalars['String']['input'];
 };
 
@@ -314,8 +442,23 @@ export type MutationDeleteWorkspaceRelationArgs = {
 };
 
 
+export type MutationReorderChecklistEntriesArgs = {
+  input: ReorderChecklistEntriesInput;
+};
+
+
 export type MutationSetMyWorkspacePreferenceArgs = {
   workspaceId: Scalars['String']['input'];
+};
+
+
+export type MutationUpdateChecklistArgs = {
+  input: UpdateChecklistInput;
+};
+
+
+export type MutationUpdateChecklistEntryArgs = {
+  input: UpdateChecklistEntryInput;
 };
 
 
@@ -339,10 +482,10 @@ export type MutationUpdateWorkspaceArgs = {
   input: UpdateWorkspaceInput;
 };
 
-export type PaginatedProjectObject = {
-  __typename?: 'PaginatedProjectObject';
+export type PaginatedListObject = {
+  __typename?: 'PaginatedListObject';
   rowCount?: Maybe<Scalars['Float']['output']>;
-  rows?: Maybe<Array<ProjectObject>>;
+  rows?: Maybe<Array<ListObject>>;
 };
 
 export type PhotoUploadHeaderObject = {
@@ -394,31 +537,26 @@ export type ProfileObject = {
   updatedAt?: Maybe<Scalars['DateTimeISO']['output']>;
 };
 
-export type ProjectObject = {
-  __typename?: 'ProjectObject';
-  id?: Maybe<Scalars['String']['output']>;
-  name?: Maybe<Scalars['String']['output']>;
-  spaceId?: Maybe<Scalars['String']['output']>;
-};
-
 export type Query = {
   __typename?: 'Query';
   attachmentServiceHealth?: Maybe<Scalars['String']['output']>;
   findIdentities?: Maybe<Array<IdentityObject>>;
-  findProject?: Maybe<ProjectObject>;
-  findProjects?: Maybe<PaginatedProjectObject>;
   findStatuses?: Maybe<Array<StatusObject>>;
   getAuditLogs?: Maybe<Array<AuditLogObject>>;
+  getChecklists?: Maybe<Array<ChecklistObject>>;
   getClient?: Maybe<ClientObject>;
   getIdentities?: Maybe<Array<PlatformIdentityObject>>;
   getIdentityRelations?: Maybe<IdentityRelationsObject>;
   getItem?: Maybe<ItemObject>;
+  getItemAttachments?: Maybe<Array<ItemAttachmentObject>>;
+  getList?: Maybe<ListObject>;
+  getListItems?: Maybe<Array<ItemObject>>;
+  getLists?: Maybe<PaginatedListObject>;
   getMyTenants?: Maybe<Array<TenantObject>>;
   getMyWorkspacePreference?: Maybe<WorkspacePreferenceObject>;
   getMyWorkspaces?: Maybe<Array<WorkspaceObject>>;
   getPlatformRelation?: Maybe<PlatformRelationObject>;
   getPlatformRelations?: Maybe<Array<PlatformRelationObject>>;
-  getProjectItems?: Maybe<Array<ItemObject>>;
   getSpace?: Maybe<SpaceObject>;
   getSpaces?: Maybe<Array<SpaceObject>>;
   getSubItems?: Maybe<Array<ItemObject>>;
@@ -435,16 +573,6 @@ export type Query = {
 };
 
 
-export type QueryFindProjectArgs = {
-  id: Scalars['String']['input'];
-};
-
-
-export type QueryFindProjectsArgs = {
-  spaceId: Scalars['String']['input'];
-};
-
-
 export type QueryFindStatusesArgs = {
   input: FindStatusesOptions;
 };
@@ -454,6 +582,11 @@ export type QueryGetAuditLogsArgs = {
   entityId: Scalars['String']['input'];
   entityType: Scalars['String']['input'];
   workspaceId: Scalars['String']['input'];
+};
+
+
+export type QueryGetChecklistsArgs = {
+  itemId: Scalars['String']['input'];
 };
 
 
@@ -477,6 +610,26 @@ export type QueryGetItemArgs = {
 };
 
 
+export type QueryGetItemAttachmentsArgs = {
+  itemId: Scalars['String']['input'];
+};
+
+
+export type QueryGetListArgs = {
+  id: Scalars['String']['input'];
+};
+
+
+export type QueryGetListItemsArgs = {
+  listId: Scalars['String']['input'];
+};
+
+
+export type QueryGetListsArgs = {
+  spaceId: Scalars['String']['input'];
+};
+
+
 export type QueryGetPlatformRelationArgs = {
   id: Scalars['String']['input'];
 };
@@ -485,11 +638,6 @@ export type QueryGetPlatformRelationArgs = {
 export type QueryGetPlatformRelationsArgs = {
   identityId?: InputMaybe<Scalars['String']['input']>;
   relation?: InputMaybe<Scalars['String']['input']>;
-};
-
-
-export type QueryGetProjectItemsArgs = {
-  projectId: Scalars['String']['input'];
 };
 
 
@@ -552,6 +700,11 @@ export type QueryGetWorkspacesArgs = {
   tenantId: Scalars['String']['input'];
 };
 
+export type ReorderChecklistEntriesInput = {
+  checklistId: Scalars['String']['input'];
+  ids: Array<Scalars['String']['input']>;
+};
+
 export type SpaceObject = {
   __typename?: 'SpaceObject';
   createdAt?: Maybe<Scalars['DateTimeISO']['output']>;
@@ -585,6 +738,17 @@ export type TenantRelationObject = {
   identityId?: Maybe<Scalars['String']['output']>;
   relation?: Maybe<Scalars['String']['output']>;
   tenantId?: Maybe<Scalars['String']['output']>;
+};
+
+export type UpdateChecklistEntryInput = {
+  completed?: InputMaybe<Scalars['Boolean']['input']>;
+  id: Scalars['String']['input'];
+  title?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type UpdateChecklistInput = {
+  id: Scalars['String']['input'];
+  name: Scalars['String']['input'];
 };
 
 export type UpdateItemInput = {

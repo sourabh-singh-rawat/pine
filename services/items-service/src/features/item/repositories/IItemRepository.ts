@@ -1,5 +1,5 @@
 import type { ItemPriority } from "@pine/common";
-import type { DbClient, Item, Project } from "@/db";
+import type { DbClient, Item, List } from "@/db";
 
 export type ItemRepositoryOptions = { tx?: DbClient };
 
@@ -10,7 +10,7 @@ export type CreateItemEntity = {
   type: string;
   statusId: string;
   priority: ItemPriority | string;
-  projectId: string;
+  listId: string;
   createdById: string;
   parentItemId?: string | null;
   dueDate?: Date | null;
@@ -30,8 +30,8 @@ export type UpdateItemEntity = {
   updatedById?: string | null;
 };
 
-export type ItemWithProject = Item & {
-  project: Project;
+export type ItemWithList = Item & {
+  list: List;
 };
 
 export type ItemWithHasChildren = Item & {
@@ -52,9 +52,9 @@ export interface IItemRepository {
     id: string,
     userId: string,
     options?: ItemRepositoryOptions,
-  ): Promise<ItemWithProject | null>;
-  findRootsByProject(
-    projectId: string,
+  ): Promise<ItemWithList | null>;
+  findRootsByList(
+    listId: string,
     userId: string,
     options?: ItemRepositoryOptions,
   ): Promise<ItemWithHasChildren[]>;

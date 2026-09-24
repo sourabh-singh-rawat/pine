@@ -1,3 +1,3 @@
 export { AuthorizationItemSyncConsumer } from "@/features/issues/consumers/AuthorizationItemSyncConsumer";
-export { AuthorizationProjectSyncConsumer } from "@/features/issues/consumers/AuthorizationProjectSyncConsumer";
+export { AuthorizationListSyncConsumer } from "@/features/issues/consumers/AuthorizationListSyncConsumer";
 export { AuthorizationSpaceSyncConsumer } from "@/features/issues/consumers/AuthorizationSpaceSyncConsumer";

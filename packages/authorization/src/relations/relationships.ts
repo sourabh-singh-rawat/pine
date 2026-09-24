@@ -2,12 +2,12 @@ import { IDENTITY } from "../identities";
 import type { GraphRelationship } from "../types/GraphRelationship";
 import {
   ADMIN,
-  ITEM_PROJECT,
+  ITEM_LIST,
+  LIST_SPACE,
   MEMBER,
   OWNER,
   PLATFORM_OBJECT_ID,
   PLATFORM_TENANT,
-  PROJECT_SPACE,
   SPACE_WORKSPACE,
   TENANT_PLATFORM,
   WORKSPACE_TENANT,
@@ -136,39 +136,39 @@ export const spaceWorkspaceRelationship = (
   subject: { namespace: "workspace", id: workspaceId },
 });
 
-export const projectOwnerRelationship = (
-  projectId: string,
+export const listOwnerRelationship = (
+  listId: string,
   identityId: string,
 ): GraphRelationship => ({
-  object: { namespace: "project", id: projectId },
+  object: { namespace: "list", id: listId },
   relation: OWNER,
   subject: { namespace: IDENTITY, id: identityId },
 });
 
-export const projectAdminRelationship = (
-  projectId: string,
+export const listAdminRelationship = (
+  listId: string,
   identityId: string,
 ): GraphRelationship => ({
-  object: { namespace: "project", id: projectId },
+  object: { namespace: "list", id: listId },
   relation: ADMIN,
   subject: { namespace: IDENTITY, id: identityId },
 });
 
-export const projectMemberRelationship = (
-  projectId: string,
+export const listMemberRelationship = (
+  listId: string,
   identityId: string,
 ): GraphRelationship => ({
-  object: { namespace: "project", id: projectId },
+  object: { namespace: "list", id: listId },
   relation: MEMBER,
   subject: { namespace: IDENTITY, id: identityId },
 });
 
-export const projectSpaceRelationship = (
-  projectId: string,
+export const listSpaceRelationship = (
+  listId: string,
   spaceId: string,
 ): GraphRelationship => ({
-  object: { namespace: "project", id: projectId },
-  relation: PROJECT_SPACE,
+  object: { namespace: "list", id: listId },
+  relation: LIST_SPACE,
   subject: { namespace: "space", id: spaceId },
 });
 
@@ -199,11 +199,11 @@ export const itemMemberRelationship = (
   subject: { namespace: IDENTITY, id: identityId },
 });
 
-export const itemProjectRelationship = (
+export const itemListRelationship = (
   itemId: string,
-  projectId: string,
+  listId: string,
 ): GraphRelationship => ({
   object: { namespace: "item", id: itemId },
-  relation: ITEM_PROJECT,
-  subject: { namespace: "project", id: projectId },
+  relation: ITEM_LIST,
+  subject: { namespace: "list", id: listId },
 });

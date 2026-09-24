@@ -57,6 +57,13 @@
       "when": 1790268953971,
       "tag": "0007_burly_darkstar",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1790274074110,
+      "tag": "0008_rename-project-id-to-list-id",
+      "breakpoints": true
     }
   ]
 }

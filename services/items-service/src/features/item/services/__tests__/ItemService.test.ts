@@ -24,7 +24,7 @@ const item: Item = {
   type: "task",
   statusId: "status-1",
   priority: ITEM_PRIORITY.NORMAL,
-  projectId: "project-1",
+  listId: "list-1",
   startDate: null,
   dueDate: null,
   createdById: "user-1",
@@ -46,7 +46,7 @@ const createItemRepository = (
   softDelete: vi.fn().mockResolvedValue(true),
   findById: vi.fn().mockResolvedValue(null),
   findByIdForUser: vi.fn().mockResolvedValue(null),
-  findRootsByProject: vi.fn().mockResolvedValue([]),
+  findRootsByList: vi.fn().mockResolvedValue([]),
   findChildren: vi.fn().mockResolvedValue([]),
   ...overrides,
 });
@@ -123,7 +123,7 @@ describe("ItemService", () => {
     await expect(
       service.create({
         userId: "user-1",
-        projectId: "project-1",
+        listId: "list-1",
         type: "task",
         name: "Fix login",
         assigneeIds: [],
@@ -134,7 +134,7 @@ describe("ItemService", () => {
 
     expect(itemRepository.save).toHaveBeenCalledWith(
       {
-        projectId: "project-1",
+        listId: "list-1",
         type: "task",
         name: "Fix login",
         description: "Users cannot sign in",
@@ -162,7 +162,7 @@ describe("ItemService", () => {
             name: "Fix login",
             ownerId: "user-1",
             reporterId: "user-1",
-            projectId: "project-1",
+            listId: "list-1",
             createdAt: "2026-01-01T00:00:00.000Z",
             description: "Users cannot sign in",
           },
@@ -228,7 +228,7 @@ describe("ItemService", () => {
             name: "Fix login again",
             ownerId: "user-1",
             reporterId: "user-1",
-            projectId: "project-1",
+            listId: "list-1",
             createdAt: "2026-01-01T00:00:00.000Z",
             updatedAt: "2026-01-02T00:00:00.000Z",
             updatedById: "user-1",
@@ -256,7 +256,7 @@ describe("ItemService", () => {
 
     await service.create({
       userId: "user-1",
-      projectId: "project-1",
+      listId: "list-1",
       type: "task",
       name: "Fix login",
       assigneeIds: ["user-2", "user-3"],
@@ -273,7 +273,7 @@ describe("ItemService", () => {
     expect(outboxService.schedule).toHaveBeenCalled();
   });
 
-  it("soft-deletes an item after authorizing delete on the project", async () => {
+  it("soft-deletes an item after authorizing delete on the list", async () => {
     const itemRepository = createItemRepository({
       findById: vi.fn().mockResolvedValue(item),
       softDelete: vi.fn().mockResolvedValue(true),
@@ -287,8 +287,8 @@ describe("ItemService", () => {
     ).resolves.toBeUndefined();
 
     expect(authorizationClient.checkRelationship).toHaveBeenCalledWith({
-      namespace: "project",
-      object: "project-1",
+      namespace: "list",
+      object: "list-1",
       relation: "delete",
       subject: "identity:user-1",
     });
@@ -326,22 +326,22 @@ describe("ItemService", () => {
     expect(itemRepository.softDelete).not.toHaveBeenCalled();
   });
 
-  it("returns project items with hasChildren from the repository", async () => {
+  it("returns list items with hasChildren from the repository", async () => {
     const roots = [
       { ...item, id: "root-with-children", hasChildren: true },
       { ...item, id: "root-without-children", hasChildren: false },
     ];
     const itemRepository = createItemRepository({
-      findRootsByProject: vi.fn().mockResolvedValue(roots),
+      findRootsByList: vi.fn().mockResolvedValue(roots),
     });
     const service = createService({ itemRepository });
 
     await expect(
-      service.list({ projectId: "project-1", userId: "user-1" }),
+      service.list({ listId: "list-1", userId: "user-1" }),
     ).resolves.toEqual(roots);
 
-    expect(itemRepository.findRootsByProject).toHaveBeenCalledWith(
-      "project-1",
+    expect(itemRepository.findRootsByList).toHaveBeenCalledWith(
+      "list-1",
       "user-1",
     );
   });

@@ -5,7 +5,7 @@ import {
 } from "@pine/authorization";
 import { ITEM_PRIORITY } from "@pine/common";
 import { describe, expect, it, vi } from "vitest";
-import type { Item, ItemAttachment, ItemAttachmentUploadRequest, Project, Space } from "@/db";
+import type { Item, ItemAttachment, ItemAttachmentUploadRequest, List, Space } from "@/db";
 import {
   ItemAttachmentAlreadyLinkedError,
   ItemAttachmentNotFoundError,
@@ -18,7 +18,7 @@ import type {
 import { ItemAttachmentService } from "@/features/attachments/services/ItemAttachmentService";
 import { ItemNotFoundError } from "@/features/item/errors";
 import type { IItemRepository } from "@/features/item/repositories";
-import type { IProjectRepository } from "@/features/project/repositories";
+import type { IListRepository } from "@/features/lists/repositories";
 import type { ISpaceRepository } from "@/features/spaces/repositories";
 
 const item: Item = {
@@ -28,7 +28,7 @@ const item: Item = {
   type: "task",
   statusId: "status-1",
   priority: ITEM_PRIORITY.NORMAL,
-  projectId: "project-1",
+  listId: "list-1",
   startDate: null,
   dueDate: null,
   createdById: "user-1",
@@ -42,10 +42,10 @@ const item: Item = {
   deletedAt: null,
 };
 
-const project: Project = {
-  id: "project-1",
+const list: List = {
+  id: "list-1",
   spaceId: "space-1",
-  name: "Project",
+  name: "List",
   createdById: "user-1",
   version: 1,
   createdAt: new Date("2026-01-01T00:00:00.000Z"),
@@ -101,7 +101,7 @@ const createItemRepository = (
   softDelete: vi.fn(),
   findById: vi.fn().mockResolvedValue(item),
   findByIdForUser: vi.fn(),
-  findRootsByProject: vi.fn(),
+  findRootsByList: vi.fn(),
   findChildren: vi.fn(),
   ...overrides,
 });
@@ -131,12 +131,12 @@ const createUploadRequestRepository = (
   ...overrides,
 });
 
-const createProjectRepository = (
-  overrides: Partial<IProjectRepository> = {},
-): IProjectRepository => ({
+const createListRepository = (
+  overrides: Partial<IListRepository> = {},
+): IListRepository => ({
   save: vi.fn(),
   update: vi.fn(),
-  findById: vi.fn().mockResolvedValue(project),
+  findById: vi.fn().mockResolvedValue(list),
   findBySpaceId: vi.fn(),
   ...overrides,
 });
@@ -177,7 +177,7 @@ const createService = (deps: {
   itemRepository?: IItemRepository;
   itemAttachmentRepository?: IItemAttachmentRepository;
   itemAttachmentUploadRequestRepository?: IItemAttachmentUploadRequestRepository;
-  projectRepository?: IProjectRepository;
+  listRepository?: IListRepository;
   spaceRepository?: ISpaceRepository;
   attachmentClient?: IAttachmentClient;
   authorizationClient?: IAuthorizationClient;
@@ -186,14 +186,14 @@ const createService = (deps: {
     deps.itemRepository ?? createItemRepository(),
     deps.itemAttachmentRepository ?? createItemAttachmentRepository(),
     deps.itemAttachmentUploadRequestRepository ?? createUploadRequestRepository(),
-    deps.projectRepository ?? createProjectRepository(),
+    deps.listRepository ?? createListRepository(),
     deps.spaceRepository ?? createSpaceRepository(),
     deps.attachmentClient ?? createAttachmentClient(),
     deps.authorizationClient ?? createAuthorizationClient(),
   );
 
 describe("ItemAttachmentService", () => {
-  it("creates a link after authorizing create_project on the workspace", async () => {
+  it("creates a link after authorizing create_list on the workspace", async () => {
     const itemAttachmentRepository = createItemAttachmentRepository();
     const authorizationClient = createAuthorizationClient();
     const service = createService({ itemAttachmentRepository, authorizationClient });
@@ -211,7 +211,7 @@ describe("ItemAttachmentService", () => {
     expect(authorizationClient.checkRelationship).toHaveBeenCalledWith({
       namespace: "workspace",
       object: "workspace-1",
-      relation: "create_project",
+      relation: "create_list",
       subject: "identity:user-1",
     });
     expect(itemAttachmentRepository.save).toHaveBeenCalledWith({
@@ -288,7 +288,7 @@ describe("ItemAttachmentService", () => {
     expect(result).toEqual([attachmentLink]);
   });
 
-  it("soft-deletes a link after authorizing create_project on the workspace", async () => {
+  it("soft-deletes a link after authorizing create_list on the workspace", async () => {
     const itemAttachmentRepository = createItemAttachmentRepository();
     const authorizationClient = createAuthorizationClient();
     const service = createService({ itemAttachmentRepository, authorizationClient });
@@ -300,7 +300,7 @@ describe("ItemAttachmentService", () => {
     expect(authorizationClient.checkRelationship).toHaveBeenCalledWith({
       namespace: "workspace",
       object: "workspace-1",
-      relation: "create_project",
+      relation: "create_list",
       subject: "identity:user-1",
     });
     expect(itemAttachmentRepository.softDelete).toHaveBeenCalledWith("link-1");
@@ -340,7 +340,7 @@ describe("ItemAttachmentService", () => {
     expect(itemAttachmentRepository.save).not.toHaveBeenCalled();
   });
 
-  it("creates an upload request scoped to the workspace after authorizing create_project", async () => {
+  it("creates an upload request scoped to the workspace after authorizing create_list", async () => {
     const uploadRequestRepository = createUploadRequestRepository();
     const attachmentClient = createAttachmentClient();
     const authorizationClient = createAuthorizationClient();
@@ -362,7 +362,7 @@ describe("ItemAttachmentService", () => {
     expect(authorizationClient.checkRelationship).toHaveBeenCalledWith({
       namespace: "workspace",
       object: "workspace-1",
-      relation: "create_project",
+      relation: "create_list",
       subject: "identity:user-1",
     });
     expect(uploadRequestRepository.save).toHaveBeenCalledWith({

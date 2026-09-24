@@ -1,9 +1,9 @@
 import { ItemModal } from "../ItemModal";
 
 interface AddItemButtonProps {
-  projectId: string;
+  listId: string;
 }
 
-export const AddItemButton = ({ projectId }: AddItemButtonProps) => {
-  return <ItemModal projectId={projectId} />;
+export const AddItemButton = ({ listId }: AddItemButtonProps) => {
+  return <ItemModal listId={listId} />;
 };

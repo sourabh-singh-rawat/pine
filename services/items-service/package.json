@@ -2,7 +2,7 @@
   "$schema": "https://json.schemastore.org/package.json",
   "name": "@pine/items-service",
   "version": "1.0.0",
-  "description": "Items, projects, spaces, and statuses",
+  "description": "Items, lists, spaces, and statuses",
   "keywords": [],
   "license": "ISC",
   "author": "",

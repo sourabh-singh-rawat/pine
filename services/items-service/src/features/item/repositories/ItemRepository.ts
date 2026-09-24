@@ -2,13 +2,13 @@ import { uuidv7 } from "@pine/common";
 import { and, eq, inArray, isNull, sql } from "drizzle-orm";
 import { inject, injectable } from "inversify";
 import { TYPES } from "@/bootstrap/container-types";
-import { type Database, type Item, Items, Projects } from "@/db";
+import { type Database, type Item, Items, Lists } from "@/db";
 import type {
   CreateItemEntity,
   IItemRepository,
   ItemRepositoryOptions,
   ItemWithHasChildren,
-  ItemWithProject,
+  ItemWithList,
   UpdateItemEntity,
 } from "@/features/item/repositories/IItemRepository";
 
@@ -29,7 +29,7 @@ export class ItemRepository implements IItemRepository {
         type: entity.type,
         statusId: entity.statusId,
         priority: entity.priority,
-        projectId: entity.projectId,
+        listId: entity.listId,
         createdById: entity.createdById,
         parentItemId: entity.parentItemId ?? null,
         dueDate: entity.dueDate ?? null,
@@ -109,32 +109,32 @@ export class ItemRepository implements IItemRepository {
     id: string,
     userId: string,
     options?: ItemRepositoryOptions,
-  ): Promise<ItemWithProject | null> {
+  ): Promise<ItemWithList | null> {
     const client = this.client(options);
     const [row] = await client
       .select({
         item: Items,
-        project: Projects,
+        list: Lists,
       })
       .from(Items)
-      .innerJoin(Projects, eq(Items.projectId, Projects.id))
+      .innerJoin(Lists, eq(Items.listId, Lists.id))
       .where(
         and(
           eq(Items.id, id),
           eq(Items.createdById, userId),
           isNull(Items.deletedAt),
-          isNull(Projects.deletedAt),
+          isNull(Lists.deletedAt),
         ),
       )
       .limit(1);
 
     if (!row) return null;
 
-    return { ...row.item, project: row.project };
+    return { ...row.item, list: row.list };
   }
 
-  async findRootsByProject(
-    projectId: string,
+  async findRootsByList(
+    listId: string,
     userId: string,
     options?: ItemRepositoryOptions,
   ): Promise<ItemWithHasChildren[]> {
@@ -144,7 +144,7 @@ export class ItemRepository implements IItemRepository {
       .from(Items)
       .where(
         and(
-          eq(Items.projectId, projectId),
+          eq(Items.listId, listId),
           eq(Items.createdById, userId),
           isNull(Items.parentItemId),
           isNull(Items.deletedAt),

@@ -10,7 +10,7 @@ describe("defineEvent + validateEvent / isEvent", () => {
     name: "Bug",
     ownerId: "user-1",
     reporterId: "user-2",
-    projectId: "project-1",
+    listId: "list-1",
     createdAt: "2020-01-01T00:00:00.000Z",
   };
 
@@ -53,7 +53,7 @@ describe("defineEvent + validateEvent / isEvent", () => {
       isEvent(
         ItemCreatedEvent,
         createCloudEvent({
-          type: "items.project.created",
+          type: "items.list.created",
           schema: ItemCreatedEvent.schema,
           source: "pine/items-service",
           data: validData,
@@ -77,7 +77,7 @@ describe("defineEvent + validateEvent / isEvent", () => {
       validateEvent(
         ItemCreatedEvent,
         createCloudEvent({
-          type: "items.project.created",
+          type: "items.list.created",
           schema: ItemCreatedEvent.schema,
           source: "pine/items-service",
           data: validData,

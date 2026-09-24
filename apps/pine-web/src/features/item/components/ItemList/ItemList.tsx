@@ -7,7 +7,7 @@ import {
 } from "@pine/ui";
 import { memo, useCallback, useContext, useMemo, useState } from "react";
 import {
-  useGetProjectItemsQuery,
+  useGetListItemsQuery,
   useGetSubItemsQuery,
 } from "@generated/gql";
 import { StatusesContext } from "@shared/contexts/StatusesContext";
@@ -68,7 +68,7 @@ const ItemListTable = memo(
   ),
 );
 
-export const ItemList = ({ itemId, projectId, style }: ItemListProps) => {
+export const ItemList = ({ itemId, listId, style }: ItemListProps) => {
   const { statuses } = useContext(StatusesContext);
   const [editingItemId, setEditingItemId] = useState<string | null>(null);
   const [menuAnchor, setMenuAnchor] = useState<{
@@ -76,13 +76,13 @@ export const ItemList = ({ itemId, projectId, style }: ItemListProps) => {
     itemId: string;
   } | null>(null);
 
-  const enableNestedRows = Boolean(projectId) && !itemId;
+  const enableNestedRows = Boolean(listId) && !itemId;
 
-  const projectItems = useGetProjectItemsQuery(
-    { projectId: projectId! },
+  const listItems = useGetListItemsQuery(
+    { listId: listId! },
     {
-      select: (data) => data.getProjectItems,
-      enabled: Boolean(projectId) && !itemId,
+      select: (data) => data.getListItems,
+      enabled: Boolean(listId) && !itemId,
     },
   );
   const subItems = useGetSubItemsQuery(
@@ -93,7 +93,7 @@ export const ItemList = ({ itemId, projectId, style }: ItemListProps) => {
     },
   );
 
-  const itemsQuery = itemId ? subItems : projectItems;
+  const itemsQuery = itemId ? subItems : listItems;
   const isItemsLoading = itemsQuery.isPending;
 
   const statusById = useMemo(() => {
@@ -115,7 +115,7 @@ export const ItemList = ({ itemId, projectId, style }: ItemListProps) => {
     handleNameChange,
     handleDueDateChange,
     handleStatusChange,
-  } = useItemListActions({ itemId, projectId, statusById });
+  } = useItemListActions({ itemId, listId, statusById });
 
   const {
     childrenByParentId,
@@ -124,11 +124,11 @@ export const ItemList = ({ itemId, projectId, style }: ItemListProps) => {
     onToggleNestedItem,
   } = useItemListNesting({
     enabled: enableNestedRows,
-    projectDataUpdatedAt: projectItems.dataUpdatedAt,
+    listDataUpdatedAt: listItems.dataUpdatedAt,
   });
 
   const rows = useMemo((): ItemRow[] => {
-    const source = itemId ? (subItems.data ?? []) : (projectItems.data ?? []);
+    const source = itemId ? (subItems.data ?? []) : (listItems.data ?? []);
     const mapped = source.flatMap((item) => {
       if (!item) return [];
       const isOpen =
@@ -165,7 +165,7 @@ export const ItemList = ({ itemId, projectId, style }: ItemListProps) => {
     expandedParentIds,
     itemId,
     nameOverrides,
-    projectItems.data,
+    listItems.data,
     statusById,
     statusOverrides,
     subItems.data,
@@ -204,7 +204,7 @@ export const ItemList = ({ itemId, projectId, style }: ItemListProps) => {
     [handleStatusChange],
   );
 
-  const shouldGroup = Boolean(projectId);
+  const shouldGroup = Boolean(listId);
   const columns = shouldGroup ? GROUPED_COLUMNS : FLAT_COLUMNS;
 
   const uiValue = useMemo(

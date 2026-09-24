@@ -11,8 +11,8 @@ import {
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useRouterState } from "@tanstack/react-router";
-import { useFindProjectsQuery } from "@generated/gql";
-import { CreateProjectModal, ProjectListItem } from "@features/project";
+import { useGetListsQuery } from "@generated/gql";
+import { CreateListModal, ListNavItem } from "@features/lists";
 import { useSpaceStore } from "../../store";
 
 type SpaceListItemProps = {
@@ -30,23 +30,21 @@ export const SpaceListItem = ({ spaceId, name, workspaceId }: SpaceListItemProps
     select: (s) => s.location.pathname.split("/").pop(),
   });
 
-  const projectsQuery = useFindProjectsQuery(
+  const listsQuery = useGetListsQuery(
     { spaceId },
     { enabled: expanded || Boolean(activeViewId) },
   );
 
-  const projectRows = projectsQuery.data?.findProjects?.rows;
-  const projects = projectRows ?? [];
-  const isLoading = expanded && projectsQuery.isPending;
+  const listRows = listsQuery.data?.getLists?.rows;
+  const lists = listRows ?? [];
+  const isLoading = expanded && listsQuery.isPending;
 
   useEffect(() => {
-    if (!activeViewId || projectsQuery.isPending || !projectRows) {
+    if (!activeViewId || listsQuery.isPending || !listRows) {
       return;
     }
-    const matchesActiveProject = projectRows.some(
-      (project) => project?.id === activeViewId,
-    );
-    if (!matchesActiveProject) {
+    const matchesActiveList = listRows.some((list) => list?.id === activeViewId);
+    if (!matchesActiveList) {
       return;
     }
     if (!expanded) {
@@ -64,8 +62,8 @@ export const SpaceListItem = ({ spaceId, name, workspaceId }: SpaceListItemProps
     currentSpace?.id,
     expanded,
     name,
-    projectRows,
-    projectsQuery.isPending,
+    listRows,
+    listsQuery.isPending,
     setCurrentSpace,
     spaceId,
     workspaceId,
@@ -107,7 +105,7 @@ export const SpaceListItem = ({ spaceId, name, workspaceId }: SpaceListItemProps
           </ListItemIcon>
           <ListItemText primary={name} />
         </ListItemButton>
-        <CreateProjectModal spaceId={spaceId} />
+        <CreateListModal spaceId={spaceId} />
       </Box>
       <Collapse in={expanded} timeout="auto" unmountOnExit>
         <List component="div" disablePadding>
@@ -118,25 +116,25 @@ export const SpaceListItem = ({ spaceId, name, workspaceId }: SpaceListItemProps
               </ListItemText>
             </ListItemButton>
           ) : (
-            projects
+            lists
               .filter(
                 (
-                  project,
-                ): project is typeof project & {
+                  list,
+                ): list is typeof list & {
                   id: string;
                   name: string;
                   spaceId: string;
                 } =>
-                  Boolean(project?.id) &&
-                  Boolean(project?.name) &&
-                  Boolean(project?.spaceId),
+                  Boolean(list?.id) &&
+                  Boolean(list?.name) &&
+                  Boolean(list?.spaceId),
               )
-              .map((project) => (
-                <ProjectListItem
-                  key={project.id}
-                  projectId={project.id}
-                  name={project.name}
-                  spaceId={project.spaceId}
+              .map((list) => (
+                <ListNavItem
+                  key={list.id}
+                  listId={list.id}
+                  name={list.name}
+                  spaceId={list.spaceId}
                   nested
                 />
               ))

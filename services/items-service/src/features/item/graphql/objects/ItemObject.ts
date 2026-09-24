@@ -1,9 +1,9 @@
 import { builder } from "@pine/server";
-import type { Item, Project } from "@/db";
-import { ProjectObject } from "@/features/project/graphql/objects/ProjectObject";
+import type { Item, List } from "@/db";
+import { ListObject } from "@/features/lists/graphql/objects/ListObject";
 
 type ItemObjectShape = Item & {
-  project?: Project;
+  list?: List;
   parentItem?: Item | null;
   subItems?: Item[] | null;
   hasChildren?: boolean;
@@ -18,13 +18,13 @@ ItemObject.implement({
     description: t.exposeString("description", { nullable: true }),
     statusId: t.exposeString("statusId"),
     priority: t.exposeString("priority"),
-    project: t.field({
-      type: ProjectObject,
+    list: t.field({
+      type: ListObject,
       resolve: (parent) => {
-        if (!parent.project) {
-          throw new Error("Item project relation not loaded");
+        if (!parent.list) {
+          throw new Error("Item list relation not loaded");
         }
-        return parent.project;
+        return parent.list;
       },
     }),
     parentItem: t.field({

@@ -34,7 +34,7 @@ export class StatusRepository implements IStatusRepository {
           name: entity.name,
           type: entity.type,
           orderIndex: entity.orderIndex,
-          projectId: entity.projectId,
+          listId: entity.listId,
           createdAt: now,
           version: 1,
         })),
@@ -42,14 +42,14 @@ export class StatusRepository implements IStatusRepository {
       .returning();
   }
 
-  async findByProjectId(
-    projectId: string,
+  async findByListId(
+    listId: string,
     options?: StatusRepositoryOptions,
   ): Promise<StatusOption[]> {
     const client = this.client(options);
     return client
       .select()
       .from(StatusOptions)
-      .where(and(eq(StatusOptions.projectId, projectId), isNull(StatusOptions.deletedAt)));
+      .where(and(eq(StatusOptions.listId, listId), isNull(StatusOptions.deletedAt)));
   }
 }

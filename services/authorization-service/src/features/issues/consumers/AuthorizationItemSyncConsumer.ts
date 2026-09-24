@@ -1,6 +1,6 @@
 import {
+  itemListRelationship,
   itemOwnerRelationship,
-  itemProjectRelationship,
   type GraphRelationship,
 } from "@pine/authorization";
 import {
@@ -55,7 +55,7 @@ export class AuthorizationItemSyncConsumer extends Consumer<CloudEvent<ItemCreat
 
   private itemGraph(data: ItemCreatedData): GraphRelationship[] {
     return [
-      itemProjectRelationship(data.id, data.projectId),
+      itemListRelationship(data.id, data.listId),
       itemOwnerRelationship(data.id, data.ownerId),
     ];
   }

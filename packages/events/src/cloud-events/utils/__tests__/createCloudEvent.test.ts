@@ -15,7 +15,7 @@ const ProjectCreatedDataSchema = Type.Object({
 
 const MemberInvitedDataSchema = Type.Object({
   userId: Type.String(),
-  projectId: Type.String(),
+  listId: Type.String(),
   email: Type.String(),
 });
 
@@ -121,7 +121,7 @@ describe("createCloudEvent", () => {
       schema: MemberInvitedDataSchema,
       data: {
         userId: "u-1",
-        projectId: "p-1",
+        listId: "p-1",
         email: "a@b.com",
       },
     });

@@ -2,7 +2,7 @@ query GetItem($id: String!) {
   getItem(id: $id) {
     id
     description
-    project {
+    list {
       id
       name
     }
