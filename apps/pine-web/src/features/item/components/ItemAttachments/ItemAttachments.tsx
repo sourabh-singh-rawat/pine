@@ -53,7 +53,27 @@ export const ItemAttachments = ({ itemId }: ItemAttachmentsProps) => {
     { itemId },
     {
       enabled: Boolean(itemId),
-      select: (data) => data.getItemAttachments ?? [],
+      select: (data) =>
+        (data.getItemAttachments ?? []).flatMap((attachment) => {
+          if (
+            !attachment ||
+            typeof attachment.id !== "string" ||
+            typeof attachment.attachmentId !== "string" ||
+            typeof attachment.name !== "string"
+          ) {
+            return [];
+          }
+          return [
+            {
+              id: attachment.id,
+              attachmentId: attachment.attachmentId,
+              name: attachment.name,
+              mimeType:
+                typeof attachment.mimeType === "string" ? attachment.mimeType : "",
+              size: typeof attachment.size === "number" ? attachment.size : null,
+            },
+          ];
+        }),
     },
   );
   const createUploadRequestMutation = useCreateItemAttachmentUploadRequestMutation();
@@ -224,7 +244,7 @@ export const ItemAttachments = ({ itemId }: ItemAttachmentsProps) => {
             </Typography>
             <Typography variant="caption" color="text.secondary">
               {[attachment.mimeType, formatFileSize(attachment.size)]
-                .filter((part) => part.length > 0)
+                .filter((part): part is string => part.length > 0)
                 .join(" · ")}
             </Typography>
           </Box>

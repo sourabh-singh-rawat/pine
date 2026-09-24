@@ -1,0 +1,3 @@
+mutation DeleteChecklist($id: String!) {
+  deleteChecklist(id: $id)
+}
