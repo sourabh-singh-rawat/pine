@@ -31,6 +31,14 @@ import { logger } from "@/bootstrap/logger";
 import { createContext } from "@/graphql";
 import { IIdentityRepository, IdentityRepository, ItemsIdentitySyncConsumer } from "@/features/identities";
 import {
+  ChecklistEntryRepository,
+  ChecklistRepository,
+  ChecklistService,
+  IChecklistEntryRepository,
+  IChecklistRepository,
+  IChecklistService,
+} from "@/features/checklists";
+import {
   IItemAssigneeRepository,
   IItemAttachmentRepository,
   IItemAttachmentService,
@@ -79,6 +87,11 @@ container
   .to(ItemAttachmentUploadRequestRepository);
 container.bind<IItemService>(TYPES.ItemService).to(ItemService);
 container.bind<IItemAttachmentService>(TYPES.ItemAttachmentService).to(ItemAttachmentService);
+container.bind<IChecklistRepository>(TYPES.ChecklistRepository).to(ChecklistRepository);
+container
+  .bind<IChecklistEntryRepository>(TYPES.ChecklistEntryRepository)
+  .to(ChecklistEntryRepository);
+container.bind<IChecklistService>(TYPES.ChecklistService).to(ChecklistService);
 container.bind<IStatusRepository>(TYPES.StatusRepository).to(StatusRepository);
 container.bind<IStatusService>(TYPES.StatusService).to(StatusService);
 container.bind<IProjectRepository>(TYPES.ProjectRepository).to(ProjectRepository);

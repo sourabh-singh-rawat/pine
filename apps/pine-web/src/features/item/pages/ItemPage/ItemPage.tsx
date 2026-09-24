@@ -8,6 +8,7 @@ import { useItemParams, useSnackbar } from "@shared";
 import {
   ItemActivity,
   ItemAttachments,
+  ItemChecklists,
   ItemDescription,
   ItemFields,
   ItemList,
@@ -106,11 +107,11 @@ export const ItemPage = () => {
         </Grid2>
       )}
 
-      <Grid2 size={12}>
-        <Typography variant="body1" fontWeight="600">
-          Checklists
-        </Typography>
-      </Grid2>
+      {itemId && (
+        <Grid2 size={12}>
+          <ItemChecklists itemId={itemId} />
+        </Grid2>
+      )}
 
       {itemId && (
         <Grid2 size={12}>

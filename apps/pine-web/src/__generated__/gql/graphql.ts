@@ -30,6 +30,29 @@ export type AuditLogObject = {
   workspaceId?: Maybe<Scalars['String']['output']>;
 };
 
+export type ChecklistEntryObject = {
+  __typename?: 'ChecklistEntryObject';
+  checklistId?: Maybe<Scalars['String']['output']>;
+  completed?: Maybe<Scalars['Boolean']['output']>;
+  createdAt?: Maybe<Scalars['DateTimeISO']['output']>;
+  createdById?: Maybe<Scalars['String']['output']>;
+  id?: Maybe<Scalars['String']['output']>;
+  orderIndex?: Maybe<Scalars['Int']['output']>;
+  title?: Maybe<Scalars['String']['output']>;
+};
+
+export type ChecklistObject = {
+  __typename?: 'ChecklistObject';
+  completedCount?: Maybe<Scalars['Int']['output']>;
+  createdAt?: Maybe<Scalars['DateTimeISO']['output']>;
+  createdById?: Maybe<Scalars['String']['output']>;
+  entries?: Maybe<Array<ChecklistEntryObject>>;
+  id?: Maybe<Scalars['String']['output']>;
+  itemId?: Maybe<Scalars['String']['output']>;
+  name?: Maybe<Scalars['String']['output']>;
+  totalCount?: Maybe<Scalars['Int']['output']>;
+};
+
 export type ClientObject = {
   __typename?: 'ClientObject';
   grantTypes?: Maybe<Array<Scalars['String']['output']>>;
@@ -37,6 +60,16 @@ export type ClientObject = {
   name?: Maybe<Scalars['String']['output']>;
   redirectUris?: Maybe<Array<Scalars['String']['output']>>;
   scopes?: Maybe<Array<Scalars['String']['output']>>;
+};
+
+export type CreateChecklistEntryInput = {
+  checklistId: Scalars['String']['input'];
+  title: Scalars['String']['input'];
+};
+
+export type CreateChecklistInput = {
+  itemId: Scalars['String']['input'];
+  name?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type CreateClientInput = {
@@ -221,6 +254,8 @@ export type ItemObject = {
 
 export type Mutation = {
   __typename?: 'Mutation';
+  createChecklist?: Maybe<ChecklistObject>;
+  createChecklistEntry?: Maybe<ChecklistEntryObject>;
   createClient?: Maybe<ClientObject>;
   createIdentity?: Maybe<IdentityObject>;
   createItem?: Maybe<Scalars['String']['output']>;
@@ -236,6 +271,8 @@ export type Mutation = {
   createWorkspace?: Maybe<WorkspaceObject>;
   createWorkspaceRelation?: Maybe<WorkspaceRelationObject>;
   deleteAttachment?: Maybe<Scalars['String']['output']>;
+  deleteChecklist?: Maybe<Scalars['Boolean']['output']>;
+  deleteChecklistEntry?: Maybe<Scalars['Boolean']['output']>;
   deleteClient?: Maybe<Scalars['String']['output']>;
   deleteIdentity?: Maybe<Scalars['String']['output']>;
   deleteItem?: Maybe<Scalars['String']['output']>;
@@ -246,11 +283,24 @@ export type Mutation = {
   deleteWorkspace?: Maybe<Scalars['String']['output']>;
   deleteWorkspaceRelation?: Maybe<Scalars['Boolean']['output']>;
   hello?: Maybe<Scalars['String']['output']>;
+  reorderChecklistEntries?: Maybe<Array<ChecklistEntryObject>>;
   setMyWorkspacePreference?: Maybe<WorkspacePreferenceObject>;
+  updateChecklist?: Maybe<ChecklistObject>;
+  updateChecklistEntry?: Maybe<ChecklistEntryObject>;
   updateItem?: Maybe<Scalars['String']['output']>;
   updateProfileGender?: Maybe<ProfileObject>;
   updateProfileName?: Maybe<ProfileObject>;
   updateWorkspace?: Maybe<WorkspaceObject>;
+};
+
+
+export type MutationCreateChecklistArgs = {
+  input: CreateChecklistInput;
+};
+
+
+export type MutationCreateChecklistEntryArgs = {
+  input: CreateChecklistEntryInput;
 };
 
 
@@ -329,6 +379,16 @@ export type MutationDeleteAttachmentArgs = {
 };
 
 
+export type MutationDeleteChecklistArgs = {
+  id: Scalars['String']['input'];
+};
+
+
+export type MutationDeleteChecklistEntryArgs = {
+  id: Scalars['String']['input'];
+};
+
+
 export type MutationDeleteClientArgs = {
   id: Scalars['String']['input'];
 };
@@ -375,8 +435,23 @@ export type MutationDeleteWorkspaceRelationArgs = {
 };
 
 
+export type MutationReorderChecklistEntriesArgs = {
+  input: ReorderChecklistEntriesInput;
+};
+
+
 export type MutationSetMyWorkspacePreferenceArgs = {
   workspaceId: Scalars['String']['input'];
+};
+
+
+export type MutationUpdateChecklistArgs = {
+  input: UpdateChecklistInput;
+};
+
+
+export type MutationUpdateChecklistEntryArgs = {
+  input: UpdateChecklistEntryInput;
 };
 
 
@@ -470,6 +545,7 @@ export type Query = {
   findProjects?: Maybe<PaginatedProjectObject>;
   findStatuses?: Maybe<Array<StatusObject>>;
   getAuditLogs?: Maybe<Array<AuditLogObject>>;
+  getChecklists?: Maybe<Array<ChecklistObject>>;
   getClient?: Maybe<ClientObject>;
   getIdentities?: Maybe<Array<PlatformIdentityObject>>;
   getIdentityRelations?: Maybe<IdentityRelationsObject>;
@@ -516,6 +592,11 @@ export type QueryGetAuditLogsArgs = {
   entityId: Scalars['String']['input'];
   entityType: Scalars['String']['input'];
   workspaceId: Scalars['String']['input'];
+};
+
+
+export type QueryGetChecklistsArgs = {
+  itemId: Scalars['String']['input'];
 };
 
 
@@ -619,6 +700,11 @@ export type QueryGetWorkspacesArgs = {
   tenantId: Scalars['String']['input'];
 };
 
+export type ReorderChecklistEntriesInput = {
+  checklistId: Scalars['String']['input'];
+  ids: Array<Scalars['String']['input']>;
+};
+
 export type SpaceObject = {
   __typename?: 'SpaceObject';
   createdAt?: Maybe<Scalars['DateTimeISO']['output']>;
@@ -652,6 +738,17 @@ export type TenantRelationObject = {
   identityId?: Maybe<Scalars['String']['output']>;
   relation?: Maybe<Scalars['String']['output']>;
   tenantId?: Maybe<Scalars['String']['output']>;
+};
+
+export type UpdateChecklistEntryInput = {
+  completed?: InputMaybe<Scalars['Boolean']['input']>;
+  id: Scalars['String']['input'];
+  title?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type UpdateChecklistInput = {
+  id: Scalars['String']['input'];
+  name: Scalars['String']['input'];
 };
 
 export type UpdateItemInput = {

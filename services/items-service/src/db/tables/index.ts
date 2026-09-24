@@ -4,6 +4,16 @@ export {
   CheckListItems,
 } from "@/db/tables/CheckListItems";
 export {
+  type ChecklistEntry,
+  type NewChecklistEntry,
+  ChecklistEntries,
+} from "@/db/tables/ChecklistEntries";
+export {
+  type Checklist,
+  type NewChecklist,
+  Checklists,
+} from "@/db/tables/Checklists";
+export {
   type ItemActivity,
   type NewItemActivity,
   ItemActivities,

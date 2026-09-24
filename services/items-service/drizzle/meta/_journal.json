@@ -50,6 +50,13 @@
       "when": 1790265825651,
       "tag": "0006_warm_thor",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1790268953971,
+      "tag": "0007_burly_darkstar",
+      "breakpoints": true
     }
   ]
 }

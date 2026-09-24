@@ -1,0 +1,20 @@
+query GetChecklists($itemId: String!) {
+  getChecklists(itemId: $itemId) {
+    id
+    itemId
+    name
+    createdById
+    createdAt
+    completedCount
+    totalCount
+    entries {
+      id
+      checklistId
+      title
+      completed
+      orderIndex
+      createdById
+      createdAt
+    }
+  }
+}
