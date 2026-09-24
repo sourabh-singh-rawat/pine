@@ -1,3 +1,4 @@
+import { HttpAttachmentClient, type IAttachmentClient } from "@pine/attachment";
 import { HttpAuthorizationClient, type IAuthorizationClient } from "@pine/authorization";
 import { NatsPublisher, type IPublisher } from "@pine/events";
 import {
@@ -29,7 +30,21 @@ import { env } from "@/bootstrap/env";
 import { logger } from "@/bootstrap/logger";
 import { createContext } from "@/graphql";
 import { IIdentityRepository, IdentityRepository, ItemsIdentitySyncConsumer } from "@/features/identities";
-import { IItemAssigneeRepository, IItemRepository, IItemService, ItemAssigneeRepository, ItemRepository, ItemService } from "@/features/item";
+import {
+  IItemAssigneeRepository,
+  IItemAttachmentRepository,
+  IItemAttachmentService,
+  IItemAttachmentUploadRequestRepository,
+  IItemRepository,
+  IItemService,
+  ItemAssigneeRepository,
+  ItemAttachmentCreatedConsumer,
+  ItemAttachmentRepository,
+  ItemAttachmentService,
+  ItemAttachmentUploadRequestRepository,
+  ItemRepository,
+  ItemService,
+} from "@/features/item";
 import { IProjectRepository, IProjectService, ProjectRepository, ProjectService } from "@/features/project";
 import { ISpaceRepository, ISpaceService, SpaceRepository, SpaceService } from "@/features/spaces";
 import { IStatusRepository, IStatusService, StatusRepository, StatusService } from "@/features/status";
@@ -58,7 +73,12 @@ container
 container.bind<IIdentityRepository>(TYPES.IdentityRepository).to(IdentityRepository);
 container.bind<IItemRepository>(TYPES.ItemRepository).to(ItemRepository);
 container.bind<IItemAssigneeRepository>(TYPES.ItemAssigneeRepository).to(ItemAssigneeRepository);
+container.bind<IItemAttachmentRepository>(TYPES.ItemAttachmentRepository).to(ItemAttachmentRepository);
+container
+  .bind<IItemAttachmentUploadRequestRepository>(TYPES.ItemAttachmentUploadRequestRepository)
+  .to(ItemAttachmentUploadRequestRepository);
 container.bind<IItemService>(TYPES.ItemService).to(ItemService);
+container.bind<IItemAttachmentService>(TYPES.ItemAttachmentService).to(ItemAttachmentService);
 container.bind<IStatusRepository>(TYPES.StatusRepository).to(StatusRepository);
 container.bind<IStatusService>(TYPES.StatusService).to(StatusService);
 container.bind<IProjectRepository>(TYPES.ProjectRepository).to(ProjectRepository);
@@ -68,7 +88,13 @@ container.bind<ISpaceService>(TYPES.SpaceService).to(SpaceService);
 container
   .bind<IAuthorizationClient>(TYPES.AuthorizationClient)
   .toConstantValue(new HttpAuthorizationClient({ baseUrl: env.AUTHORIZATION_SERVICE_URL }));
+container
+  .bind<IAttachmentClient>(TYPES.AttachmentClient)
+  .toConstantValue(new HttpAttachmentClient({ baseUrl: env.ATTACHMENT_SERVICE_URL }));
 container.bind<ItemsIdentitySyncConsumer>(TYPES.ItemsIdentitySyncConsumer).to(ItemsIdentitySyncConsumer);
+container
+  .bind<ItemAttachmentCreatedConsumer>(TYPES.ItemAttachmentCreatedConsumer)
+  .to(ItemAttachmentCreatedConsumer);
 
 export const bindHttpServer = async (): Promise<void> => {
   const { schema } = await import("@/graphql/schema");

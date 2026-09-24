@@ -22,12 +22,26 @@ export type CreateItemMutationVariables = Exact<{
 
 export type CreateItemMutation = { createItem: string | null };
 
+export type CreateItemAttachmentUploadRequestMutationVariables = Exact<{
+  input: Types.CreateItemAttachmentUploadRequestInput;
+}>;
+
+
+export type CreateItemAttachmentUploadRequestMutation = { createItemAttachmentUploadRequest: { uploadRequestId: string | null, url: string | null, expiresAt: string | null, headers: Array<{ key: string | null, value: string | null }> | null } | null };
+
 export type DeleteItemMutationVariables = Exact<{
   id: string;
 }>;
 
 
 export type DeleteItemMutation = { deleteItem: string | null };
+
+export type DeleteItemAttachmentMutationVariables = Exact<{
+  id: string;
+}>;
+
+
+export type DeleteItemAttachmentMutation = { deleteItemAttachment: boolean | null };
 
 export type GetAuditLogsQueryVariables = Exact<{
   entityType: string;
@@ -44,6 +58,13 @@ export type GetItemQueryVariables = Exact<{
 
 
 export type GetItemQuery = { getItem: { id: string | null, description: string | null, name: string | null, statusId: string | null, priority: string | null, dueDate: unknown, project: { id: string | null, name: string | null } | null, parentItem: { id: string | null, name: string | null } | null } | null };
+
+export type GetItemAttachmentsQueryVariables = Exact<{
+  itemId: string;
+}>;
+
+
+export type GetItemAttachmentsQuery = { getItemAttachments: Array<{ id: string | null, itemId: string | null, attachmentId: string | null, name: string | null, originalName: string | null, mimeType: string | null, size: number | null, createdById: string | null, createdAt: unknown }> | null };
 
 export type GetProjectItemsQueryVariables = Exact<{
   projectId: string;
@@ -187,6 +208,35 @@ export const useCreateItemMutation = <
 
 useCreateItemMutation.getKey = () => ['CreateItem'];
 
+export const CreateItemAttachmentUploadRequestDocument = new TypedDocumentString(`
+    mutation CreateItemAttachmentUploadRequest($input: CreateItemAttachmentUploadRequestInput!) {
+  createItemAttachmentUploadRequest(input: $input) {
+    uploadRequestId
+    url
+    expiresAt
+    headers {
+      key
+      value
+    }
+  }
+}
+    `);
+
+export const useCreateItemAttachmentUploadRequestMutation = <
+      TError = unknown,
+      TContext = unknown
+    >(options?: UseMutationOptions<CreateItemAttachmentUploadRequestMutation, TError, CreateItemAttachmentUploadRequestMutationVariables, TContext>) => {
+    
+    return useMutation<CreateItemAttachmentUploadRequestMutation, TError, CreateItemAttachmentUploadRequestMutationVariables, TContext>(
+      {
+    mutationKey: ['CreateItemAttachmentUploadRequest'],
+    mutationFn: (variables?: CreateItemAttachmentUploadRequestMutationVariables) => graphQLFetcher<CreateItemAttachmentUploadRequestMutation, CreateItemAttachmentUploadRequestMutationVariables>(CreateItemAttachmentUploadRequestDocument, variables)(),
+    ...options
+  }
+    )};
+
+useCreateItemAttachmentUploadRequestMutation.getKey = () => ['CreateItemAttachmentUploadRequest'];
+
 export const DeleteItemDocument = new TypedDocumentString(`
     mutation DeleteItem($id: String!) {
   deleteItem(id: $id)
@@ -207,6 +257,27 @@ export const useDeleteItemMutation = <
     )};
 
 useDeleteItemMutation.getKey = () => ['DeleteItem'];
+
+export const DeleteItemAttachmentDocument = new TypedDocumentString(`
+    mutation DeleteItemAttachment($id: String!) {
+  deleteItemAttachment(id: $id)
+}
+    `);
+
+export const useDeleteItemAttachmentMutation = <
+      TError = unknown,
+      TContext = unknown
+    >(options?: UseMutationOptions<DeleteItemAttachmentMutation, TError, DeleteItemAttachmentMutationVariables, TContext>) => {
+    
+    return useMutation<DeleteItemAttachmentMutation, TError, DeleteItemAttachmentMutationVariables, TContext>(
+      {
+    mutationKey: ['DeleteItemAttachment'],
+    mutationFn: (variables?: DeleteItemAttachmentMutationVariables) => graphQLFetcher<DeleteItemAttachmentMutation, DeleteItemAttachmentMutationVariables>(DeleteItemAttachmentDocument, variables)(),
+    ...options
+  }
+    )};
+
+useDeleteItemAttachmentMutation.getKey = () => ['DeleteItemAttachment'];
 
 export const GetAuditLogsDocument = new TypedDocumentString(`
     query GetAuditLogs($entityType: String!, $entityId: String!, $workspaceId: String!) {
@@ -286,6 +357,42 @@ export const useGetItemQuery = <
 useGetItemQuery.document = GetItemDocument;
 
 useGetItemQuery.getKey = (variables: GetItemQueryVariables) => ['GetItem', variables];
+
+export const GetItemAttachmentsDocument = new TypedDocumentString(`
+    query GetItemAttachments($itemId: String!) {
+  getItemAttachments(itemId: $itemId) {
+    id
+    itemId
+    attachmentId
+    name
+    originalName
+    mimeType
+    size
+    createdById
+    createdAt
+  }
+}
+    `);
+
+export const useGetItemAttachmentsQuery = <
+      TData = GetItemAttachmentsQuery,
+      TError = unknown
+    >(
+      variables: GetItemAttachmentsQueryVariables,
+      options?: Omit<UseQueryOptions<GetItemAttachmentsQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<GetItemAttachmentsQuery, TError, TData>['queryKey'] }
+    ) => {
+    
+    return useQuery<GetItemAttachmentsQuery, TError, TData>(
+      {
+    queryKey: ['GetItemAttachments', variables],
+    queryFn: graphQLFetcher<GetItemAttachmentsQuery, GetItemAttachmentsQueryVariables>(GetItemAttachmentsDocument, variables),
+    ...options
+  }
+    )};
+
+useGetItemAttachmentsQuery.document = GetItemAttachmentsDocument;
+
+useGetItemAttachmentsQuery.getKey = (variables: GetItemAttachmentsQueryVariables) => ['GetItemAttachments', variables];
 
 export const GetProjectItemsDocument = new TypedDocumentString(`
     query GetProjectItems($projectId: String!) {

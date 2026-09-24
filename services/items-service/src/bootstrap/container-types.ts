@@ -13,7 +13,12 @@ export const TYPES = {
   IdentityRepository: Symbol.for("IIdentityRepository"),
   ItemRepository: Symbol.for("IItemRepository"),
   ItemAssigneeRepository: Symbol.for("IItemAssigneeRepository"),
+  ItemAttachmentRepository: Symbol.for("IItemAttachmentRepository"),
+  ItemAttachmentUploadRequestRepository: Symbol.for(
+    "IItemAttachmentUploadRequestRepository",
+  ),
   ItemService: Symbol.for("IItemService"),
+  ItemAttachmentService: Symbol.for("IItemAttachmentService"),
   ProjectRepository: Symbol.for("IProjectRepository"),
   ProjectService: Symbol.for("IProjectService"),
   SpaceRepository: Symbol.for("ISpaceRepository"),
@@ -21,5 +26,7 @@ export const TYPES = {
   StatusRepository: Symbol.for("IStatusRepository"),
   StatusService: Symbol.for("IStatusService"),
   AuthorizationClient: Symbol.for("IAuthorizationClient"),
+  AttachmentClient: Symbol.for("IAttachmentClient"),
   ItemsIdentitySyncConsumer: Symbol.for("ItemsIdentitySyncConsumer"),
+  ItemAttachmentCreatedConsumer: Symbol.for("ItemAttachmentCreatedConsumer"),
 } as const;

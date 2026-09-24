@@ -18,6 +18,11 @@ export {
   type NewItemAttachment,
   ItemAttachments,
 } from "@/db/tables/ItemAttachments";
+export {
+  type ItemAttachmentUploadRequest,
+  type NewItemAttachmentUploadRequest,
+  ItemAttachmentUploadRequests,
+} from "@/db/tables/ItemAttachmentUploadRequests";
 export { type ItemComment, type NewItemComment, ItemComments } from "@/db/tables/ItemComments";
 export { type Item, type NewItem, Items, ItemsRelations } from "@/db/tables/Items";
 export {
