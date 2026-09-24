@@ -6,7 +6,7 @@ export const Items = pgTable("items", {
   name: text("name").notNull(),
   type: text("type").notNull(),
   priority: text("priority"),
-  projectId: uuid("list_id").notNull(),
+  listId: uuid("list_id").notNull(),
   createdById: uuid("created_by_id").notNull(),
   updatedById: uuid("updated_by_id"),
   ...auditColumns,
