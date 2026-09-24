@@ -1,7 +1,7 @@
 import { requireIdentityId } from "@pine/identity";
 import { builder } from "@pine/server";
 import { TYPES, container } from "@/bootstrap";
-import { IItemAttachmentService } from "@/features/item";
+import { IItemAttachmentService } from "@/features/attachments";
 
 builder.mutationFields((t) => ({
   deleteItemAttachment: t.boolean({

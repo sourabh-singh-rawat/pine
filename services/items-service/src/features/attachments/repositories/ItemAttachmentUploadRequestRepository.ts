@@ -11,7 +11,7 @@ import type {
   CreateItemAttachmentUploadRequestEntity,
   IItemAttachmentUploadRequestRepository,
   ItemAttachmentUploadRequestRepositoryOptions,
-} from "@/features/item/repositories/IItemAttachmentUploadRequestRepository";
+} from "@/features/attachments/repositories/IItemAttachmentUploadRequestRepository";
 
 @injectable()
 export class ItemAttachmentUploadRequestRepository

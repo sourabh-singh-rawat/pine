@@ -10,7 +10,7 @@ import {
 import { inject, injectable } from "inversify";
 import type { JsMsg } from "nats";
 import { TYPES } from "@/bootstrap/container-types";
-import type { IItemAttachmentService } from "@/features/item/services";
+import type { IItemAttachmentService } from "@/features/attachments/services";
 
 @injectable()
 export class ItemAttachmentCreatedConsumer extends Consumer<

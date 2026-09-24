@@ -31,6 +31,15 @@ import { logger } from "@/bootstrap/logger";
 import { createContext } from "@/graphql";
 import { IIdentityRepository, IdentityRepository, ItemsIdentitySyncConsumer } from "@/features/identities";
 import {
+  IItemAttachmentRepository,
+  IItemAttachmentService,
+  IItemAttachmentUploadRequestRepository,
+  ItemAttachmentCreatedConsumer,
+  ItemAttachmentRepository,
+  ItemAttachmentService,
+  ItemAttachmentUploadRequestRepository,
+} from "@/features/attachments";
+import {
   ChecklistEntryRepository,
   ChecklistRepository,
   ChecklistService,
@@ -40,16 +49,9 @@ import {
 } from "@/features/checklists";
 import {
   IItemAssigneeRepository,
-  IItemAttachmentRepository,
-  IItemAttachmentService,
-  IItemAttachmentUploadRequestRepository,
   IItemRepository,
   IItemService,
   ItemAssigneeRepository,
-  ItemAttachmentCreatedConsumer,
-  ItemAttachmentRepository,
-  ItemAttachmentService,
-  ItemAttachmentUploadRequestRepository,
   ItemRepository,
   ItemService,
 } from "@/features/item";

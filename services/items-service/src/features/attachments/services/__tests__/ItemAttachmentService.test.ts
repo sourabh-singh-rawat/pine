@@ -10,14 +10,14 @@ import {
   ItemAttachmentAlreadyLinkedError,
   ItemAttachmentNotFoundError,
   ItemAttachmentUploadRequestNotFoundError,
-  ItemNotFoundError,
-} from "@/features/item/errors";
+} from "@/features/attachments/errors";
 import type {
   IItemAttachmentRepository,
   IItemAttachmentUploadRequestRepository,
-  IItemRepository,
-} from "@/features/item/repositories";
-import { ItemAttachmentService } from "@/features/item/services/ItemAttachmentService";
+} from "@/features/attachments/repositories";
+import { ItemAttachmentService } from "@/features/attachments/services/ItemAttachmentService";
+import { ItemNotFoundError } from "@/features/item/errors";
+import type { IItemRepository } from "@/features/item/repositories";
 import type { IProjectRepository } from "@/features/project/repositories";
 import type { ISpaceRepository } from "@/features/spaces/repositories";
 
