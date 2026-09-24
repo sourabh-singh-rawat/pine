@@ -29,6 +29,27 @@
       "when": 1790005453416,
       "tag": "0003_huge_doomsday",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1790186658758,
+      "tag": "0004_glamorous_firestar",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1790187305383,
+      "tag": "0005_minor_young_avengers",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1790265825651,
+      "tag": "0006_warm_thor",
+      "breakpoints": true
     }
   ]
 }

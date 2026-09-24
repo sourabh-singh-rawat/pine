@@ -56,6 +56,22 @@ export type CreateIdentityInput = {
   username: Scalars['String']['input'];
 };
 
+export type CreateItemAttachmentInput = {
+  attachmentId: Scalars['String']['input'];
+  itemId: Scalars['String']['input'];
+  mimeType: Scalars['String']['input'];
+  name: Scalars['String']['input'];
+  originalName: Scalars['String']['input'];
+  size?: InputMaybe<Scalars['Int']['input']>;
+};
+
+export type CreateItemAttachmentUploadRequestInput = {
+  contentType: Scalars['String']['input'];
+  filename: Scalars['String']['input'];
+  itemId: Scalars['String']['input'];
+  size: Scalars['Int']['input'];
+};
+
 export type CreateItemInput = {
   assigneeIds: Array<Scalars['String']['input']>;
   component?: InputMaybe<Scalars['String']['input']>;
@@ -160,6 +176,33 @@ export type IdentityRelationsObject = {
   workspaces?: Maybe<Array<WorkspaceRelationObject>>;
 };
 
+export type ItemAttachmentObject = {
+  __typename?: 'ItemAttachmentObject';
+  attachmentId?: Maybe<Scalars['String']['output']>;
+  createdAt?: Maybe<Scalars['DateTimeISO']['output']>;
+  createdById?: Maybe<Scalars['String']['output']>;
+  id?: Maybe<Scalars['String']['output']>;
+  itemId?: Maybe<Scalars['String']['output']>;
+  mimeType?: Maybe<Scalars['String']['output']>;
+  name?: Maybe<Scalars['String']['output']>;
+  originalName?: Maybe<Scalars['String']['output']>;
+  size?: Maybe<Scalars['Int']['output']>;
+};
+
+export type ItemAttachmentUploadHeaderObject = {
+  __typename?: 'ItemAttachmentUploadHeaderObject';
+  key?: Maybe<Scalars['String']['output']>;
+  value?: Maybe<Scalars['String']['output']>;
+};
+
+export type ItemAttachmentUploadTargetObject = {
+  __typename?: 'ItemAttachmentUploadTargetObject';
+  expiresAt?: Maybe<Scalars['String']['output']>;
+  headers?: Maybe<Array<ItemAttachmentUploadHeaderObject>>;
+  uploadRequestId?: Maybe<Scalars['String']['output']>;
+  url?: Maybe<Scalars['String']['output']>;
+};
+
 export type ItemObject = {
   __typename?: 'ItemObject';
   component?: Maybe<Scalars['String']['output']>;
@@ -181,6 +224,8 @@ export type Mutation = {
   createClient?: Maybe<ClientObject>;
   createIdentity?: Maybe<IdentityObject>;
   createItem?: Maybe<Scalars['String']['output']>;
+  createItemAttachment?: Maybe<ItemAttachmentObject>;
+  createItemAttachmentUploadRequest?: Maybe<ItemAttachmentUploadTargetObject>;
   createPhotoUploadRequest?: Maybe<PhotoUploadTargetObject>;
   createPlatformRelation?: Maybe<PlatformRelationObject>;
   createProfile?: Maybe<ProfileObject>;
@@ -194,6 +239,7 @@ export type Mutation = {
   deleteClient?: Maybe<Scalars['String']['output']>;
   deleteIdentity?: Maybe<Scalars['String']['output']>;
   deleteItem?: Maybe<Scalars['String']['output']>;
+  deleteItemAttachment?: Maybe<Scalars['Boolean']['output']>;
   deletePlatformRelation?: Maybe<Scalars['String']['output']>;
   deleteTenant?: Maybe<Scalars['String']['output']>;
   deleteTenantRelation?: Maybe<Scalars['Boolean']['output']>;
@@ -220,6 +266,16 @@ export type MutationCreateIdentityArgs = {
 
 export type MutationCreateItemArgs = {
   input: CreateItemInput;
+};
+
+
+export type MutationCreateItemAttachmentArgs = {
+  input: CreateItemAttachmentInput;
+};
+
+
+export type MutationCreateItemAttachmentUploadRequestArgs = {
+  input: CreateItemAttachmentUploadRequestInput;
 };
 
 
@@ -284,6 +340,11 @@ export type MutationDeleteIdentityArgs = {
 
 
 export type MutationDeleteItemArgs = {
+  id: Scalars['String']['input'];
+};
+
+
+export type MutationDeleteItemAttachmentArgs = {
   id: Scalars['String']['input'];
 };
 
@@ -413,6 +474,7 @@ export type Query = {
   getIdentities?: Maybe<Array<PlatformIdentityObject>>;
   getIdentityRelations?: Maybe<IdentityRelationsObject>;
   getItem?: Maybe<ItemObject>;
+  getItemAttachments?: Maybe<Array<ItemAttachmentObject>>;
   getMyTenants?: Maybe<Array<TenantObject>>;
   getMyWorkspacePreference?: Maybe<WorkspacePreferenceObject>;
   getMyWorkspaces?: Maybe<Array<WorkspaceObject>>;
@@ -474,6 +536,11 @@ export type QueryGetIdentityRelationsArgs = {
 
 export type QueryGetItemArgs = {
   id: Scalars['String']['input'];
+};
+
+
+export type QueryGetItemAttachmentsArgs = {
+  itemId: Scalars['String']['input'];
 };
 
 

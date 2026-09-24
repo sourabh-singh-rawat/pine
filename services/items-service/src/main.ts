@@ -14,6 +14,7 @@ import { bindHttpServer, broker, container, initializeDb, TYPES } from "@/bootst
 import { writeSchemaToDist } from "@/bootstrap/graphql";
 import { logger } from "@/bootstrap/logger";
 import { ItemsIdentitySyncConsumer } from "@/features/identities";
+import { ItemAttachmentCreatedConsumer } from "@/features/item";
 
 export { container, db } from "@/bootstrap";
 export { builder, createContext } from "@/graphql";
@@ -35,6 +36,9 @@ const main = async () => {
   void container.get<IOutboxWorker>(TYPES.OutboxWorker).start();
   void container.get<IOutboxCleanupWorker>(TYPES.OutboxCleanupWorker).start();
   void container.get<ItemsIdentitySyncConsumer>(TYPES.ItemsIdentitySyncConsumer).start();
+  void container
+    .get<ItemAttachmentCreatedConsumer>(TYPES.ItemAttachmentCreatedConsumer)
+    .start();
 };
 
 main().catch((error) => {

@@ -1,0 +1,13 @@
+query GetItemAttachments($itemId: String!) {
+  getItemAttachments(itemId: $itemId) {
+    id
+    itemId
+    attachmentId
+    name
+    originalName
+    mimeType
+    size
+    createdById
+    createdAt
+  }
+}
