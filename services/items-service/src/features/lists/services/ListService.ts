@@ -145,7 +145,24 @@ export class ListService implements IListService {
   }
 
   async update(options: UpdateListOptions) {
-    const { id, name } = options;
+    const { id, userId, name } = options;
+
+    const list = await this.listRepository.findById(id);
+    if (!list) {
+      throw new ListNotFoundError();
+    }
+
+    const space = await this.spaceRepository.findById(list.spaceId);
+    if (!space) {
+      throw new SpaceNotFoundError();
+    }
+
+    await requirePermission(
+      this.authorizationClient,
+      userId,
+      "update",
+      `workspace:${space.workspaceId}`,
+    );
 
     await this.db.transaction(async (tx) => {
       const updatedList = await this.listRepository.update(id, { name }, { tx });

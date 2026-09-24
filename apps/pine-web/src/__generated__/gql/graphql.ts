@@ -295,6 +295,7 @@ export type Mutation = {
   updateChecklist?: Maybe<ChecklistObject>;
   updateChecklistEntry?: Maybe<ChecklistEntryObject>;
   updateItem?: Maybe<Scalars['String']['output']>;
+  updateList?: Maybe<Scalars['String']['output']>;
   updateProfileGender?: Maybe<ProfileObject>;
   updateProfileName?: Maybe<ProfileObject>;
   updateWorkspace?: Maybe<WorkspaceObject>;
@@ -464,6 +465,11 @@ export type MutationUpdateChecklistEntryArgs = {
 
 export type MutationUpdateItemArgs = {
   input: UpdateItemInput;
+};
+
+
+export type MutationUpdateListArgs = {
+  input: UpdateListInput;
 };
 
 
@@ -761,6 +767,11 @@ export type UpdateItemInput = {
   priority?: InputMaybe<Scalars['String']['input']>;
   statusId?: InputMaybe<Scalars['String']['input']>;
   type?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type UpdateListInput = {
+  id: Scalars['String']['input'];
+  name: Scalars['String']['input'];
 };
 
 export type UpdateProfileGenderInput = {
