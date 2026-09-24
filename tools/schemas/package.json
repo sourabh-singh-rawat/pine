@@ -1,0 +1,11 @@
+{
+  "name": "@pine/schemas",
+  "private": true,
+  "description": "Watch and compose GraphQL supergraph + OpenAPI for local turbo dev",
+  "scripts": {
+    "dev": "tsx ../scripts/schemas/compose-schemas.ts --watch"
+  },
+  "devDependencies": {
+    "tsx": "4.23.1"
+  }
+}

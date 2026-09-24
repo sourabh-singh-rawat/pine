@@ -16,15 +16,17 @@ One pipeline: service schema → supergraph/OpenAPI → app clients. Related: `g
 ## Recipe
 
 1. Service build/start writes `services/<svc>/dist/schema.graphql` (Pothos) and/or `dist/openapi.json`.
-2. Compose at repo root:
+2. Compose into the gateway artifacts:
 
 ```bash
 pnpm schemas:compose
 ```
 
-Output: `services/api-gateway/dist/supergraph.graphql`. Watch: `pnpm schemas:watch`.
+Output: `services/api-gateway/dist/supergraph.graphql` (+ composed OpenAPI).
 
-3. App clients (after the supergraph exists):
+**Local `pnpm dev` / `dev:apps` already runs `@pine/schemas` `dev`**, which is `compose-schemas --watch`. Subgraph schema changes recompose automatically; api-gateway hot-reloads the supergraph. Standalone watch: `pnpm schemas:watch` or `turbo run dev --filter=@pine/schemas`.
+
+3. App clients (after the supergraph exists) — still explicit:
 
 ```bash
 pnpm --filter @pine/pine-web gen
@@ -38,10 +40,11 @@ Never hand-edit `**/__generated__/**` or `api-gateway/dist/*`. If codegen is sta
 
 ## Anti-patterns
 
-- Running `gen:gql` before `schemas:compose` when the supergraph is missing
+- Running `gen:gql` before a successful compose when the supergraph is missing
 - Hand-copying server types into the app
 - Inventing a client operation name that does not match the server field / `operationId`
 - Editing `graphql-codegen.ts` / `openapi-codegen.ts` to paper over a server rename
+- Leaving `@pine/schemas` out of a custom `turbo run dev` filter set when you expect a fresh supergraph
 
 ## Done when
 

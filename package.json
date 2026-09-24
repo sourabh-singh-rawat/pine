@@ -26,7 +26,7 @@
     "dev:infra:keto": "docker compose --env-file .env -f infra/docker/compose.ory-db.yaml -f infra/docker/compose.keto.yaml up -d",
     "dev:infra:keto:down": "docker compose --env-file .env -f infra/docker/compose.ory-db.yaml -f infra/docker/compose.keto.yaml down",
     "dev": "pnpm run dev:apps",
-    "dev:apps": "turbo run dev --filter=@pine/pine-web --filter=@pine/identity-web --filter=@pine/platform-web --filter=@pine/identity-service --filter=@pine/attachment-service --filter=@pine/attachment-scanner-service --filter=@pine/notification-service --filter=@pine/platform-service --filter=@pine/authorization-service --filter=@pine/items-service --filter=@pine/audit-service --filter=@pine/api-gateway --filter=@pine/data-gateway",
+    "dev:apps": "turbo run dev --filter=@pine/pine-web --filter=@pine/identity-web --filter=@pine/platform-web --filter=@pine/identity-service --filter=@pine/attachment-service --filter=@pine/attachment-scanner-service --filter=@pine/notification-service --filter=@pine/platform-service --filter=@pine/authorization-service --filter=@pine/items-service --filter=@pine/audit-service --filter=@pine/api-gateway --filter=@pine/data-gateway --filter=@pine/schemas",
     "db:generate": "turbo run db:generate",
     "db:migrate": "turbo run db:migrate",
     "setup": "tsx tools/scripts/setup/setup.ts --restart",
