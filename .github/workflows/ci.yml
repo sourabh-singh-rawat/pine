@@ -1,16 +1,16 @@
-# Build and test packages affected vs the PR base (or development on push).
+# Build and test packages affected vs the PR base (or main on push).
 #
 # Triggers:
-# - pull_request targeting development or main
-# - push to development or main
+# - pull_request targeting dev or main
+# - push to dev or main
 # - workflow_dispatch (manual run from the Actions tab)
 name: ci
 
 on:
   push:
-    branches: [development, main]
+    branches: [dev, main]
   pull_request:
-    branches: [development, main]
+    branches: [dev, main]
   workflow_dispatch:
 
 concurrency:
@@ -51,14 +51,14 @@ jobs:
             turbo-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}-
             turbo-${{ runner.os }}-
 
-      # Compare against PR base when present; otherwise development (default branch).
+      # Compare against PR base when present; otherwise main.
       - name: Resolve Turbo base ref
         id: base
         run: |
           if [ "${{ github.event_name }}" = "pull_request" ]; then
             BASE="origin/${{ github.base_ref }}"
           else
-            BASE="origin/development"
+            BASE="origin/main"
           fi
           git fetch --no-tags --depth=1 origin "${BASE#origin/}" || true
           echo "ref=$BASE" >> "$GITHUB_OUTPUT"
