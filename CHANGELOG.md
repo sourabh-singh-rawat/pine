@@ -1,5 +1,62 @@
 # Changelog
 
+## v2026.09.24.1
+
+### Major
+
+- 2c3a46a8: feat(items): rename issue domain to item across service, events, and web — Sourabh Singh Rawat (`@pine/audit-service`, `@pine/authorization-service`, `@pine/common`, `@pine/events`, `@pine/items-service`, `@pine/notification-service`, `@pine/outbox`, `@pine/pine-web`)
+
+### Minor
+
+- 5f02f5a1: feat(auth): share OIDC browser sign-in helpers across web apps — Sourabh Singh Rawat (`@pine/auth`, `@pine/pine-web`, `@pine/platform-web`)
+- 9ee99da6: feat(auth): share PKCE helpers via @pine/auth — Sourabh Singh Rawat (`@pine/auth`, `@pine/pine-web`, `@pine/platform-web`)
+- 17a7a3db: feat(audit): show create activity on issue detail — Sourabh Singh Rawat (`@pine/audit-service`, `@pine/pine-web`)
+- 7fb0820c: feat(audit): sync item updated events into audit logs — Sourabh Singh Rawat (`@pine/audit-service`)
+- c231b16e: feat(audit): create audit-service microservice — Sourabh Singh Rawat (`@pine/audit-service`)
+- 9a92efeb: feat(issue-list): edit due date from list with Calendar — Sourabh Singh Rawat (`@pine/issues-service`, `@pine/pine-web`, `@pine/ui`)
+- be877960: feat(issues): schedule IssueUpdatedEvent on update — Sourabh Singh Rawat (`@pine/events`, `@pine/issues-service`)
+- 93a9ef9b: feat(ui): add Menu and MenuItem components — Sourabh Singh Rawat (`@pine/pine-web`, `@pine/ui`)
+- e163b5bc: feat(items): upload and link attachments on item detail — Sourabh Singh Rawat (`@pine/items-service`, `@pine/pine-web`)
+- 15ea4dd6: feat(ui): stabilize IssueList menu, grouping, and wavy loader — Sourabh Singh Rawat (`@pine/pine-web`, `@pine/ui`)
+
+### Patch
+
+- 20b381ad: feat(issues): show nested children in project issue list — Sourabh Singh Rawat (`@pine/issues-service`, `@pine/pine-web`, `@pine/ui`)
+- cda60a62: feat(ui): add loading indicators and progress components — Sourabh Singh Rawat (`@pine/ui`)
+- 8cfee8bc: feat(ui): add Select form component — Sourabh Singh Rawat (`@pine/ui`)
+- 1b8f27bc: fix(ui): close Menu on outside click with invisible backdrop — Sourabh Singh Rawat (`@pine/ui`)
+- 9093046a: refactor(identity): validate oauth routes via typebox schemas — Sourabh Singh Rawat (`@pine/identity-service`)
+- 506bed82: fix(identity): emit email-verified for admin creates and sync on verified only — Sourabh Singh Rawat (`@pine/audit-service`, `@pine/identity-service`, `@pine/platform-service`)
+- 39e7d6c2: feat(pine-web): show identity profile photo in AccountSwitcher — Sourabh Singh Rawat (`@pine/pine-web`)
+- 3856e455: feat(pine-web): issue list leading status icon menu — Sourabh Singh Rawat (`@pine/pine-web`)
+- 097dbd44: feat(pine-web): edit issue name from list view — Sourabh Singh Rawat (`@pine/pine-web`)
+- dc562518: feat(pine-web): redirect profile to identity-web — Sourabh Singh Rawat (`@pine/pine-web`)
+- e44b19df: refactor(ui): modularize DataTable into subcomponents with context — Sourabh Singh Rawat (`@pine/ui`)
+
+### Packages
+
+- `@pine/api-gateway@0.4.3`
+- `@pine/attachment-scanner-service@0.1.3`
+- `@pine/attachment-service@0.5.3`
+- `@pine/audit-service@0.1.0`
+- `@pine/auth@0.2.0`
+- `@pine/authorization-service@0.6.1`
+- `@pine/common@1.0.0`
+- `@pine/data-gateway@0.1.3`
+- `@pine/events@1.0.0`
+- `@pine/identity@0.3.2`
+- `@pine/identity-service@0.6.2`
+- `@pine/identity-web@0.6.3`
+- `@pine/items-service@1.0.0`
+- `@pine/notification-service@0.4.3`
+- `@pine/outbox@0.1.4`
+- `@pine/pine-web@0.8.0`
+- `@pine/platform-service@0.5.2`
+- `@pine/platform-web@0.5.3`
+- `@pine/security@0.1.3`
+- `@pine/server@1.1.3`
+- `@pine/ui@0.3.0`
+
 ## v2026.09.20.1
 
 ### Minor

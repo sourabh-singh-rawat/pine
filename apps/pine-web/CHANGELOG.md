@@ -1,5 +1,40 @@
 # @pine/pine-web
 
+## 0.8.0
+
+### Minor Changes
+
+- 9a92efe: feat(issue-list): edit due date from list with Calendar
+- 2c3a46a: feat(items): rename issue domain to item across service, events, and web
+
+### Patch Changes
+
+- 5f02f5a: feat(auth): share OIDC browser sign-in helpers across web apps
+- 9ee99da: feat(auth): share PKCE helpers via @pine/auth
+- 17a7a3d: feat(audit): show create activity on issue detail
+- 20b381a: feat(issues): show nested children in project issue list
+- 93a9ef9: feat(ui): add Menu and MenuItem components
+- e163b5b: feat(items): upload and link attachments on item detail
+- 39e7d6c: feat(pine-web): show identity profile photo in AccountSwitcher
+- 3856e45: feat(pine-web): issue list leading status icon menu
+- 097dbd4: feat(pine-web): edit issue name from list view
+- dc56251: feat(pine-web): redirect profile to identity-web
+- 15ea4dd: feat(ui): stabilize IssueList menu, grouping, and wavy loader
+- Updated dependencies [5f02f5a]
+- Updated dependencies [9ee99da]
+- Updated dependencies [9a92efe]
+- Updated dependencies [20b381a]
+- Updated dependencies [cda60a6]
+- Updated dependencies [93a9ef9]
+- Updated dependencies [8cfee8b]
+- Updated dependencies [1b8f27b]
+- Updated dependencies [e44b19d]
+- Updated dependencies [2c3a46a]
+- Updated dependencies [15ea4dd]
+  - @pine/auth@0.2.0
+  - @pine/ui@0.3.0
+  - @pine/common@1.0.0
+
 ## 0.7.2
 
 ### Patch Changes

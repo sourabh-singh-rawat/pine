@@ -1,5 +1,21 @@
 # @pine/ui
 
+## 0.3.0
+
+### Minor Changes
+
+- 9a92efe: feat(issue-list): edit due date from list with Calendar
+- 93a9ef9: feat(ui): add Menu and MenuItem components
+- 15ea4dd: feat(ui): stabilize IssueList menu, grouping, and wavy loader
+
+### Patch Changes
+
+- 20b381a: feat(issues): show nested children in project issue list
+- cda60a6: feat(ui): add loading indicators and progress components
+- 8cfee8b: feat(ui): add Select form component
+- 1b8f27b: fix(ui): close Menu on outside click with invisible backdrop
+- e44b19d: refactor(ui): modularize DataTable into subcomponents with context
+
 ## 0.2.0
 
 ### Minor Changes

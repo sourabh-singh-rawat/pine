@@ -1,7 +1,7 @@
 {
   "$schema": "https://json.schemastore.org/package.json",
   "name": "@pine/audit-service",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "private": true,
   "description": "Audit service",
   "keywords": [

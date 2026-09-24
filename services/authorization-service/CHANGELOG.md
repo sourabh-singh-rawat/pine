@@ -1,5 +1,18 @@
 # @pine/authorization-service
 
+## 0.6.1
+
+### Patch Changes
+
+- 2c3a46a: feat(items): rename issue domain to item across service, events, and web
+- Updated dependencies [be87796]
+- Updated dependencies [2c3a46a]
+  - @pine/events@1.0.0
+  - @pine/common@1.0.0
+  - @pine/identity@0.3.2
+  - @pine/security@0.1.3
+  - @pine/server@1.1.3
+
 ## 0.6.0
 
 ### Minor Changes

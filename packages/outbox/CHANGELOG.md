@@ -1,5 +1,13 @@
 # @pine/outbox
 
+## 0.1.4
+
+### Patch Changes
+
+- 2c3a46a: feat(items): rename issue domain to item across service, events, and web
+- Updated dependencies [2c3a46a]
+  - @pine/common@1.0.0
+
 ## 0.1.3
 
 ### Patch Changes
