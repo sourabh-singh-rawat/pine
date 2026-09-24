@@ -1,5 +1,19 @@
 # @pine/platform-service
 
+## 0.5.2
+
+### Patch Changes
+
+- 506bed8: fix(identity): emit email-verified for admin creates and sync on verified only
+- Updated dependencies [be87796]
+- Updated dependencies [2c3a46a]
+  - @pine/events@1.0.0
+  - @pine/common@1.0.0
+  - @pine/outbox@0.1.4
+  - @pine/identity@0.3.2
+  - @pine/security@0.1.3
+  - @pine/server@1.1.3
+
 ## 0.5.1
 
 ### Patch Changes

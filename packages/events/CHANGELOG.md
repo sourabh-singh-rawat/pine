@@ -1,5 +1,21 @@
 # @pine/events
 
+## 1.0.0
+
+### Major Changes
+
+- 2c3a46a: feat(items): rename issue domain to item across service, events, and web
+
+### Minor Changes
+
+- be87796: feat(issues): schedule IssueUpdatedEvent on update
+
+### Patch Changes
+
+- Updated dependencies [2c3a46a]
+  - @pine/common@1.0.0
+  - @pine/server@1.1.3
+
 ## 0.5.1
 
 ### Patch Changes

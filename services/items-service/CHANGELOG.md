@@ -1,5 +1,29 @@
 # @pine/items-service
 
+## 1.0.0
+
+### Major Changes
+
+- 2c3a46a: feat(items): rename issue domain to item across service, events, and web
+
+### Minor Changes
+
+- e163b5b: feat(items): upload and link attachments on item detail
+
+### Patch Changes
+
+- 9a92efe: feat(issue-list): edit due date from list with Calendar
+- 20b381a: feat(issues): show nested children in project issue list
+- be87796: feat(issues): schedule IssueUpdatedEvent on update
+- Updated dependencies [be87796]
+- Updated dependencies [2c3a46a]
+  - @pine/events@1.0.0
+  - @pine/common@1.0.0
+  - @pine/outbox@0.1.4
+  - @pine/identity@0.3.2
+  - @pine/security@0.1.3
+  - @pine/server@1.1.3
+
 ## 0.6.1
 
 ### Patch Changes
