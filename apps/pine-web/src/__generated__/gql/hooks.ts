@@ -15,6 +15,55 @@ export type DeleteAttachmentMutationVariables = Exact<{
 
 export type DeleteAttachmentMutation = { deleteAttachment: string | null };
 
+export type CreateChecklistMutationVariables = Exact<{
+  input: Types.CreateChecklistInput;
+}>;
+
+
+export type CreateChecklistMutation = { createChecklist: { id: string | null, itemId: string | null, name: string | null, createdById: string | null, createdAt: unknown, completedCount: number | null, totalCount: number | null, entries: Array<{ id: string | null, checklistId: string | null, title: string | null, completed: boolean | null, orderIndex: number | null, createdById: string | null, createdAt: unknown }> | null } | null };
+
+export type CreateChecklistEntryMutationVariables = Exact<{
+  input: Types.CreateChecklistEntryInput;
+}>;
+
+
+export type CreateChecklistEntryMutation = { createChecklistEntry: { id: string | null, checklistId: string | null, title: string | null, completed: boolean | null, orderIndex: number | null, createdById: string | null, createdAt: unknown } | null };
+
+export type DeleteChecklistMutationVariables = Exact<{
+  id: string;
+}>;
+
+
+export type DeleteChecklistMutation = { deleteChecklist: boolean | null };
+
+export type DeleteChecklistEntryMutationVariables = Exact<{
+  id: string;
+}>;
+
+
+export type DeleteChecklistEntryMutation = { deleteChecklistEntry: boolean | null };
+
+export type GetChecklistsQueryVariables = Exact<{
+  itemId: string;
+}>;
+
+
+export type GetChecklistsQuery = { getChecklists: Array<{ id: string | null, itemId: string | null, name: string | null, createdById: string | null, createdAt: unknown, completedCount: number | null, totalCount: number | null, entries: Array<{ id: string | null, checklistId: string | null, title: string | null, completed: boolean | null, orderIndex: number | null, createdById: string | null, createdAt: unknown }> | null }> | null };
+
+export type UpdateChecklistMutationVariables = Exact<{
+  input: Types.UpdateChecklistInput;
+}>;
+
+
+export type UpdateChecklistMutation = { updateChecklist: { id: string | null, itemId: string | null, name: string | null, createdById: string | null, createdAt: unknown, completedCount: number | null, totalCount: number | null, entries: Array<{ id: string | null, checklistId: string | null, title: string | null, completed: boolean | null, orderIndex: number | null, createdById: string | null, createdAt: unknown }> | null } | null };
+
+export type UpdateChecklistEntryMutationVariables = Exact<{
+  input: Types.UpdateChecklistEntryInput;
+}>;
+
+
+export type UpdateChecklistEntryMutation = { updateChecklistEntry: { id: string | null, checklistId: string | null, title: string | null, completed: boolean | null, orderIndex: number | null, createdById: string | null, createdAt: unknown } | null };
+
 export type CreateItemMutationVariables = Exact<{
   input: Types.CreateItemInput;
 }>;
@@ -57,7 +106,7 @@ export type GetItemQueryVariables = Exact<{
 }>;
 
 
-export type GetItemQuery = { getItem: { id: string | null, description: string | null, name: string | null, statusId: string | null, priority: string | null, dueDate: unknown, project: { id: string | null, name: string | null } | null, parentItem: { id: string | null, name: string | null } | null } | null };
+export type GetItemQuery = { getItem: { id: string | null, description: string | null, name: string | null, statusId: string | null, priority: string | null, dueDate: unknown, list: { id: string | null, name: string | null } | null, parentItem: { id: string | null, name: string | null } | null } | null };
 
 export type GetItemAttachmentsQueryVariables = Exact<{
   itemId: string;
@@ -66,12 +115,12 @@ export type GetItemAttachmentsQueryVariables = Exact<{
 
 export type GetItemAttachmentsQuery = { getItemAttachments: Array<{ id: string | null, itemId: string | null, attachmentId: string | null, name: string | null, originalName: string | null, mimeType: string | null, size: number | null, createdById: string | null, createdAt: unknown }> | null };
 
-export type GetProjectItemsQueryVariables = Exact<{
-  projectId: string;
+export type GetListItemsQueryVariables = Exact<{
+  listId: string;
 }>;
 
 
-export type GetProjectItemsQuery = { getProjectItems: Array<{ description: string | null, id: string | null, name: string | null, statusId: string | null, priority: string | null, dueDate: unknown, hasChildren: boolean | null }> | null };
+export type GetListItemsQuery = { getListItems: Array<{ description: string | null, id: string | null, name: string | null, statusId: string | null, priority: string | null, dueDate: unknown, hasChildren: boolean | null }> | null };
 
 export type GetSubItemsQueryVariables = Exact<{
   input: Types.GetSubItemsInput;
@@ -87,26 +136,12 @@ export type UpdateItemMutationVariables = Exact<{
 
 export type UpdateItemMutation = { updateItem: string | null };
 
-export type CreateProjectMutationVariables = Exact<{
-  input: Types.CreateProjectInput;
+export type CreateListMutationVariables = Exact<{
+  input: Types.CreateListInput;
 }>;
 
 
-export type CreateProjectMutation = { createProject: string | null };
-
-export type FindProjectQueryVariables = Exact<{
-  findProjectId: string;
-}>;
-
-
-export type FindProjectQuery = { findProject: { id: string | null, spaceId: string | null, name: string | null } | null };
-
-export type FindProjectsQueryVariables = Exact<{
-  spaceId: string;
-}>;
-
-
-export type FindProjectsQuery = { findProjects: { rowCount: number | null, rows: Array<{ id: string | null, spaceId: string | null, name: string | null }> | null } | null };
+export type CreateListMutation = { createList: string | null };
 
 export type FindStatusesQueryVariables = Exact<{
   input: Types.FindStatusesOptions;
@@ -114,6 +149,27 @@ export type FindStatusesQueryVariables = Exact<{
 
 
 export type FindStatusesQuery = { findStatuses: Array<{ id: string | null, name: string | null }> | null };
+
+export type GetListQueryVariables = Exact<{
+  id: string;
+}>;
+
+
+export type GetListQuery = { getList: { id: string | null, spaceId: string | null, name: string | null } | null };
+
+export type GetListsQueryVariables = Exact<{
+  spaceId: string;
+}>;
+
+
+export type GetListsQuery = { getLists: { rowCount: number | null, rows: Array<{ id: string | null, spaceId: string | null, name: string | null }> | null } | null };
+
+export type UpdateListMutationVariables = Exact<{
+  input: Types.UpdateListInput;
+}>;
+
+
+export type UpdateListMutation = { updateList: string | null };
 
 export type CreateSpaceMutationVariables = Exact<{
   input: Types.CreateSpaceInput;
@@ -186,6 +242,225 @@ export const useDeleteAttachmentMutation = <
     )};
 
 useDeleteAttachmentMutation.getKey = () => ['DeleteAttachment'];
+
+export const CreateChecklistDocument = new TypedDocumentString(`
+    mutation CreateChecklist($input: CreateChecklistInput!) {
+  createChecklist(input: $input) {
+    id
+    itemId
+    name
+    createdById
+    createdAt
+    completedCount
+    totalCount
+    entries {
+      id
+      checklistId
+      title
+      completed
+      orderIndex
+      createdById
+      createdAt
+    }
+  }
+}
+    `);
+
+export const useCreateChecklistMutation = <
+      TError = unknown,
+      TContext = unknown
+    >(options?: UseMutationOptions<CreateChecklistMutation, TError, CreateChecklistMutationVariables, TContext>) => {
+    
+    return useMutation<CreateChecklistMutation, TError, CreateChecklistMutationVariables, TContext>(
+      {
+    mutationKey: ['CreateChecklist'],
+    mutationFn: (variables?: CreateChecklistMutationVariables) => graphQLFetcher<CreateChecklistMutation, CreateChecklistMutationVariables>(CreateChecklistDocument, variables)(),
+    ...options
+  }
+    )};
+
+useCreateChecklistMutation.getKey = () => ['CreateChecklist'];
+
+export const CreateChecklistEntryDocument = new TypedDocumentString(`
+    mutation CreateChecklistEntry($input: CreateChecklistEntryInput!) {
+  createChecklistEntry(input: $input) {
+    id
+    checklistId
+    title
+    completed
+    orderIndex
+    createdById
+    createdAt
+  }
+}
+    `);
+
+export const useCreateChecklistEntryMutation = <
+      TError = unknown,
+      TContext = unknown
+    >(options?: UseMutationOptions<CreateChecklistEntryMutation, TError, CreateChecklistEntryMutationVariables, TContext>) => {
+    
+    return useMutation<CreateChecklistEntryMutation, TError, CreateChecklistEntryMutationVariables, TContext>(
+      {
+    mutationKey: ['CreateChecklistEntry'],
+    mutationFn: (variables?: CreateChecklistEntryMutationVariables) => graphQLFetcher<CreateChecklistEntryMutation, CreateChecklistEntryMutationVariables>(CreateChecklistEntryDocument, variables)(),
+    ...options
+  }
+    )};
+
+useCreateChecklistEntryMutation.getKey = () => ['CreateChecklistEntry'];
+
+export const DeleteChecklistDocument = new TypedDocumentString(`
+    mutation DeleteChecklist($id: String!) {
+  deleteChecklist(id: $id)
+}
+    `);
+
+export const useDeleteChecklistMutation = <
+      TError = unknown,
+      TContext = unknown
+    >(options?: UseMutationOptions<DeleteChecklistMutation, TError, DeleteChecklistMutationVariables, TContext>) => {
+    
+    return useMutation<DeleteChecklistMutation, TError, DeleteChecklistMutationVariables, TContext>(
+      {
+    mutationKey: ['DeleteChecklist'],
+    mutationFn: (variables?: DeleteChecklistMutationVariables) => graphQLFetcher<DeleteChecklistMutation, DeleteChecklistMutationVariables>(DeleteChecklistDocument, variables)(),
+    ...options
+  }
+    )};
+
+useDeleteChecklistMutation.getKey = () => ['DeleteChecklist'];
+
+export const DeleteChecklistEntryDocument = new TypedDocumentString(`
+    mutation DeleteChecklistEntry($id: String!) {
+  deleteChecklistEntry(id: $id)
+}
+    `);
+
+export const useDeleteChecklistEntryMutation = <
+      TError = unknown,
+      TContext = unknown
+    >(options?: UseMutationOptions<DeleteChecklistEntryMutation, TError, DeleteChecklistEntryMutationVariables, TContext>) => {
+    
+    return useMutation<DeleteChecklistEntryMutation, TError, DeleteChecklistEntryMutationVariables, TContext>(
+      {
+    mutationKey: ['DeleteChecklistEntry'],
+    mutationFn: (variables?: DeleteChecklistEntryMutationVariables) => graphQLFetcher<DeleteChecklistEntryMutation, DeleteChecklistEntryMutationVariables>(DeleteChecklistEntryDocument, variables)(),
+    ...options
+  }
+    )};
+
+useDeleteChecklistEntryMutation.getKey = () => ['DeleteChecklistEntry'];
+
+export const GetChecklistsDocument = new TypedDocumentString(`
+    query GetChecklists($itemId: String!) {
+  getChecklists(itemId: $itemId) {
+    id
+    itemId
+    name
+    createdById
+    createdAt
+    completedCount
+    totalCount
+    entries {
+      id
+      checklistId
+      title
+      completed
+      orderIndex
+      createdById
+      createdAt
+    }
+  }
+}
+    `);
+
+export const useGetChecklistsQuery = <
+      TData = GetChecklistsQuery,
+      TError = unknown
+    >(
+      variables: GetChecklistsQueryVariables,
+      options?: Omit<UseQueryOptions<GetChecklistsQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<GetChecklistsQuery, TError, TData>['queryKey'] }
+    ) => {
+    
+    return useQuery<GetChecklistsQuery, TError, TData>(
+      {
+    queryKey: ['GetChecklists', variables],
+    queryFn: graphQLFetcher<GetChecklistsQuery, GetChecklistsQueryVariables>(GetChecklistsDocument, variables),
+    ...options
+  }
+    )};
+
+useGetChecklistsQuery.document = GetChecklistsDocument;
+
+useGetChecklistsQuery.getKey = (variables: GetChecklistsQueryVariables) => ['GetChecklists', variables];
+
+export const UpdateChecklistDocument = new TypedDocumentString(`
+    mutation UpdateChecklist($input: UpdateChecklistInput!) {
+  updateChecklist(input: $input) {
+    id
+    itemId
+    name
+    createdById
+    createdAt
+    completedCount
+    totalCount
+    entries {
+      id
+      checklistId
+      title
+      completed
+      orderIndex
+      createdById
+      createdAt
+    }
+  }
+}
+    `);
+
+export const useUpdateChecklistMutation = <
+      TError = unknown,
+      TContext = unknown
+    >(options?: UseMutationOptions<UpdateChecklistMutation, TError, UpdateChecklistMutationVariables, TContext>) => {
+    
+    return useMutation<UpdateChecklistMutation, TError, UpdateChecklistMutationVariables, TContext>(
+      {
+    mutationKey: ['UpdateChecklist'],
+    mutationFn: (variables?: UpdateChecklistMutationVariables) => graphQLFetcher<UpdateChecklistMutation, UpdateChecklistMutationVariables>(UpdateChecklistDocument, variables)(),
+    ...options
+  }
+    )};
+
+useUpdateChecklistMutation.getKey = () => ['UpdateChecklist'];
+
+export const UpdateChecklistEntryDocument = new TypedDocumentString(`
+    mutation UpdateChecklistEntry($input: UpdateChecklistEntryInput!) {
+  updateChecklistEntry(input: $input) {
+    id
+    checklistId
+    title
+    completed
+    orderIndex
+    createdById
+    createdAt
+  }
+}
+    `);
+
+export const useUpdateChecklistEntryMutation = <
+      TError = unknown,
+      TContext = unknown
+    >(options?: UseMutationOptions<UpdateChecklistEntryMutation, TError, UpdateChecklistEntryMutationVariables, TContext>) => {
+    
+    return useMutation<UpdateChecklistEntryMutation, TError, UpdateChecklistEntryMutationVariables, TContext>(
+      {
+    mutationKey: ['UpdateChecklistEntry'],
+    mutationFn: (variables?: UpdateChecklistEntryMutationVariables) => graphQLFetcher<UpdateChecklistEntryMutation, UpdateChecklistEntryMutationVariables>(UpdateChecklistEntryDocument, variables)(),
+    ...options
+  }
+    )};
+
+useUpdateChecklistEntryMutation.getKey = () => ['UpdateChecklistEntry'];
 
 export const CreateItemDocument = new TypedDocumentString(`
     mutation CreateItem($input: CreateItemInput!) {
@@ -322,7 +597,7 @@ export const GetItemDocument = new TypedDocumentString(`
   getItem(id: $id) {
     id
     description
-    project {
+    list {
       id
       name
     }
@@ -394,9 +669,9 @@ useGetItemAttachmentsQuery.document = GetItemAttachmentsDocument;
 
 useGetItemAttachmentsQuery.getKey = (variables: GetItemAttachmentsQueryVariables) => ['GetItemAttachments', variables];
 
-export const GetProjectItemsDocument = new TypedDocumentString(`
-    query GetProjectItems($projectId: String!) {
-  getProjectItems(projectId: $projectId) {
+export const GetListItemsDocument = new TypedDocumentString(`
+    query GetListItems($listId: String!) {
+  getListItems(listId: $listId) {
     description
     id
     name
@@ -408,25 +683,25 @@ export const GetProjectItemsDocument = new TypedDocumentString(`
 }
     `);
 
-export const useGetProjectItemsQuery = <
-      TData = GetProjectItemsQuery,
+export const useGetListItemsQuery = <
+      TData = GetListItemsQuery,
       TError = unknown
     >(
-      variables: GetProjectItemsQueryVariables,
-      options?: Omit<UseQueryOptions<GetProjectItemsQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<GetProjectItemsQuery, TError, TData>['queryKey'] }
+      variables: GetListItemsQueryVariables,
+      options?: Omit<UseQueryOptions<GetListItemsQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<GetListItemsQuery, TError, TData>['queryKey'] }
     ) => {
     
-    return useQuery<GetProjectItemsQuery, TError, TData>(
+    return useQuery<GetListItemsQuery, TError, TData>(
       {
-    queryKey: ['GetProjectItems', variables],
-    queryFn: graphQLFetcher<GetProjectItemsQuery, GetProjectItemsQueryVariables>(GetProjectItemsDocument, variables),
+    queryKey: ['GetListItems', variables],
+    queryFn: graphQLFetcher<GetListItemsQuery, GetListItemsQueryVariables>(GetListItemsDocument, variables),
     ...options
   }
     )};
 
-useGetProjectItemsQuery.document = GetProjectItemsDocument;
+useGetListItemsQuery.document = GetListItemsDocument;
 
-useGetProjectItemsQuery.getKey = (variables: GetProjectItemsQueryVariables) => ['GetProjectItems', variables];
+useGetListItemsQuery.getKey = (variables: GetListItemsQueryVariables) => ['GetListItems', variables];
 
 export const GetSubItemsDocument = new TypedDocumentString(`
     query GetSubItems($input: GetSubItemsInput!) {
@@ -482,89 +757,26 @@ export const useUpdateItemMutation = <
 
 useUpdateItemMutation.getKey = () => ['UpdateItem'];
 
-export const CreateProjectDocument = new TypedDocumentString(`
-    mutation CreateProject($input: CreateProjectInput!) {
-  createProject(input: $input)
+export const CreateListDocument = new TypedDocumentString(`
+    mutation CreateList($input: CreateListInput!) {
+  createList(input: $input)
 }
     `);
 
-export const useCreateProjectMutation = <
+export const useCreateListMutation = <
       TError = unknown,
       TContext = unknown
-    >(options?: UseMutationOptions<CreateProjectMutation, TError, CreateProjectMutationVariables, TContext>) => {
+    >(options?: UseMutationOptions<CreateListMutation, TError, CreateListMutationVariables, TContext>) => {
     
-    return useMutation<CreateProjectMutation, TError, CreateProjectMutationVariables, TContext>(
+    return useMutation<CreateListMutation, TError, CreateListMutationVariables, TContext>(
       {
-    mutationKey: ['CreateProject'],
-    mutationFn: (variables?: CreateProjectMutationVariables) => graphQLFetcher<CreateProjectMutation, CreateProjectMutationVariables>(CreateProjectDocument, variables)(),
+    mutationKey: ['CreateList'],
+    mutationFn: (variables?: CreateListMutationVariables) => graphQLFetcher<CreateListMutation, CreateListMutationVariables>(CreateListDocument, variables)(),
     ...options
   }
     )};
 
-useCreateProjectMutation.getKey = () => ['CreateProject'];
-
-export const FindProjectDocument = new TypedDocumentString(`
-    query FindProject($findProjectId: String!) {
-  findProject(id: $findProjectId) {
-    id
-    spaceId
-    name
-  }
-}
-    `);
-
-export const useFindProjectQuery = <
-      TData = FindProjectQuery,
-      TError = unknown
-    >(
-      variables: FindProjectQueryVariables,
-      options?: Omit<UseQueryOptions<FindProjectQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<FindProjectQuery, TError, TData>['queryKey'] }
-    ) => {
-    
-    return useQuery<FindProjectQuery, TError, TData>(
-      {
-    queryKey: ['FindProject', variables],
-    queryFn: graphQLFetcher<FindProjectQuery, FindProjectQueryVariables>(FindProjectDocument, variables),
-    ...options
-  }
-    )};
-
-useFindProjectQuery.document = FindProjectDocument;
-
-useFindProjectQuery.getKey = (variables: FindProjectQueryVariables) => ['FindProject', variables];
-
-export const FindProjectsDocument = new TypedDocumentString(`
-    query FindProjects($spaceId: String!) {
-  findProjects(spaceId: $spaceId) {
-    rows {
-      id
-      spaceId
-      name
-    }
-    rowCount
-  }
-}
-    `);
-
-export const useFindProjectsQuery = <
-      TData = FindProjectsQuery,
-      TError = unknown
-    >(
-      variables: FindProjectsQueryVariables,
-      options?: Omit<UseQueryOptions<FindProjectsQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<FindProjectsQuery, TError, TData>['queryKey'] }
-    ) => {
-    
-    return useQuery<FindProjectsQuery, TError, TData>(
-      {
-    queryKey: ['FindProjects', variables],
-    queryFn: graphQLFetcher<FindProjectsQuery, FindProjectsQueryVariables>(FindProjectsDocument, variables),
-    ...options
-  }
-    )};
-
-useFindProjectsQuery.document = FindProjectsDocument;
-
-useFindProjectsQuery.getKey = (variables: FindProjectsQueryVariables) => ['FindProjects', variables];
+useCreateListMutation.getKey = () => ['CreateList'];
 
 export const FindStatusesDocument = new TypedDocumentString(`
     query FindStatuses($input: FindStatusesOptions!) {
@@ -594,6 +806,90 @@ export const useFindStatusesQuery = <
 useFindStatusesQuery.document = FindStatusesDocument;
 
 useFindStatusesQuery.getKey = (variables: FindStatusesQueryVariables) => ['FindStatuses', variables];
+
+export const GetListDocument = new TypedDocumentString(`
+    query GetList($id: String!) {
+  getList(id: $id) {
+    id
+    spaceId
+    name
+  }
+}
+    `);
+
+export const useGetListQuery = <
+      TData = GetListQuery,
+      TError = unknown
+    >(
+      variables: GetListQueryVariables,
+      options?: Omit<UseQueryOptions<GetListQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<GetListQuery, TError, TData>['queryKey'] }
+    ) => {
+    
+    return useQuery<GetListQuery, TError, TData>(
+      {
+    queryKey: ['GetList', variables],
+    queryFn: graphQLFetcher<GetListQuery, GetListQueryVariables>(GetListDocument, variables),
+    ...options
+  }
+    )};
+
+useGetListQuery.document = GetListDocument;
+
+useGetListQuery.getKey = (variables: GetListQueryVariables) => ['GetList', variables];
+
+export const GetListsDocument = new TypedDocumentString(`
+    query GetLists($spaceId: String!) {
+  getLists(spaceId: $spaceId) {
+    rows {
+      id
+      spaceId
+      name
+    }
+    rowCount
+  }
+}
+    `);
+
+export const useGetListsQuery = <
+      TData = GetListsQuery,
+      TError = unknown
+    >(
+      variables: GetListsQueryVariables,
+      options?: Omit<UseQueryOptions<GetListsQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<GetListsQuery, TError, TData>['queryKey'] }
+    ) => {
+    
+    return useQuery<GetListsQuery, TError, TData>(
+      {
+    queryKey: ['GetLists', variables],
+    queryFn: graphQLFetcher<GetListsQuery, GetListsQueryVariables>(GetListsDocument, variables),
+    ...options
+  }
+    )};
+
+useGetListsQuery.document = GetListsDocument;
+
+useGetListsQuery.getKey = (variables: GetListsQueryVariables) => ['GetLists', variables];
+
+export const UpdateListDocument = new TypedDocumentString(`
+    mutation UpdateList($input: UpdateListInput!) {
+  updateList(input: $input)
+}
+    `);
+
+export const useUpdateListMutation = <
+      TError = unknown,
+      TContext = unknown
+    >(options?: UseMutationOptions<UpdateListMutation, TError, UpdateListMutationVariables, TContext>) => {
+    
+    return useMutation<UpdateListMutation, TError, UpdateListMutationVariables, TContext>(
+      {
+    mutationKey: ['UpdateList'],
+    mutationFn: (variables?: UpdateListMutationVariables) => graphQLFetcher<UpdateListMutation, UpdateListMutationVariables>(UpdateListDocument, variables)(),
+    ...options
+  }
+    )};
+
+useUpdateListMutation.getKey = () => ['UpdateList'];
 
 export const CreateSpaceDocument = new TypedDocumentString(`
     mutation CreateSpace($input: CreateSpaceInput!) {

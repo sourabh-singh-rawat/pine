@@ -3,7 +3,7 @@ import { useCallback, useState } from "react";
 import {
   useDeleteItemMutation,
   useGetItemQuery,
-  useGetProjectItemsQuery,
+  useGetListItemsQuery,
   useGetSubItemsQuery,
   useUpdateItemMutation,
 } from "@generated/gql";
@@ -12,13 +12,13 @@ import type { ItemStatusOverride } from "./ItemListUiContext";
 
 type UseItemListActionsArgs = {
   itemId?: string;
-  projectId?: string;
+  listId?: string;
   statusById: Map<string, string>;
 };
 
 export const useItemListActions = ({
   itemId,
-  projectId,
+  listId,
   statusById,
 }: UseItemListActionsArgs) => {
   const queryClient = useQueryClient();
@@ -35,9 +35,9 @@ export const useItemListActions = ({
   const [nameOverrides, setNameOverrides] = useState<Record<string, string>>({});
 
   const invalidateItemLists = useCallback(async () => {
-    if (projectId) {
+    if (listId) {
       await queryClient.invalidateQueries({
-        queryKey: useGetProjectItemsQuery.getKey({ projectId }),
+        queryKey: useGetListItemsQuery.getKey({ listId }),
       });
       await queryClient.invalidateQueries({
         queryKey: ["GetSubItems"],
@@ -48,7 +48,7 @@ export const useItemListActions = ({
         queryKey: useGetSubItemsQuery.getKey({ input: { parentItemId: itemId } }),
       });
     }
-  }, [itemId, projectId, queryClient]);
+  }, [itemId, listId, queryClient]);
 
   const handleDelete = useCallback(
     async (id: string) => {

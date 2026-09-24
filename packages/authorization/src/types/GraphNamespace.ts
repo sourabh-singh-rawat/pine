@@ -5,7 +5,7 @@ export type GraphNamespace =
   | "tenant"
   | "workspace"
   | "space"
-  | "project"
+  | "list"
   | "item"
   | "role"
   | "permission";
@@ -17,7 +17,7 @@ export const GRAPH_NAMESPACES: readonly GraphNamespace[] = [
   "tenant",
   "workspace",
   "space",
-  "project",
+  "list",
   "item",
   "role",
   "permission",

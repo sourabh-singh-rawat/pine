@@ -1,5 +1,15 @@
 # @pine/platform-service
 
+## 0.5.3
+
+### Patch Changes
+
+- Updated dependencies [36d1802]
+  - @pine/events@1.1.0
+  - @pine/authorization@0.7.0
+  - @pine/common@1.1.0
+  - @pine/server@1.1.4
+
 ## 0.5.2
 
 ### Patch Changes

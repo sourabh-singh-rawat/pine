@@ -1,4 +1,4 @@
-import { ProjectMember } from ".";
+import { ListMember } from ".";
 import { ItemPriority } from "../enums";
 import { ItemStatus } from "../enums/item-status";
 
@@ -8,14 +8,14 @@ interface ItemProps {
   ownerId: string;
   status: ItemStatus | string;
   priority: ItemPriority | string;
-  projectId: string;
+  listId: string;
   resolution: boolean;
   createdAt: string | Date;
   updatedAt?: string | Date;
   commentCount?: number;
   description?: string;
-  reporter?: ProjectMember;
-  assignees?: ProjectMember[];
+  reporter?: ListMember;
+  assignees?: ListMember[];
 }
 
 export class Item {
@@ -24,14 +24,14 @@ export class Item {
   ownerId: string;
   status: ItemStatus | string;
   priority: ItemPriority | string;
-  projectId: string;
+  listId: string;
   resolution: boolean;
   createdAt: string | Date;
   updatedAt?: string | Date;
   commentCount?: number;
   description?: string;
-  reporter?: ProjectMember;
-  assignees?: ProjectMember[];
+  reporter?: ListMember;
+  assignees?: ListMember[];
 
   constructor({
     id,
@@ -39,7 +39,7 @@ export class Item {
     ownerId,
     status,
     priority,
-    projectId,
+    listId,
     resolution,
     createdAt,
     updatedAt,
@@ -53,7 +53,7 @@ export class Item {
     this.ownerId = ownerId;
     this.status = status;
     this.priority = priority;
-    this.projectId = projectId;
+    this.listId = listId;
     this.resolution = resolution;
     this.createdAt = createdAt;
     this.updatedAt = updatedAt;

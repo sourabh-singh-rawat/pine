@@ -22,7 +22,7 @@ export class ItemRepository implements IItemRepository {
         id: entity.id,
         name: entity.name,
         type: entity.type,
-        projectId: entity.projectId,
+        listId: entity.listId,
         createdById: entity.createdById,
         priority: entity.priority ?? null,
         updatedById: entity.updatedById ?? null,
@@ -41,7 +41,7 @@ export class ItemRepository implements IItemRepository {
       .set({
         name: entity.name,
         type: entity.type,
-        projectId: entity.projectId,
+        listId: entity.listId,
         ...(entity.priority !== undefined ? { priority: entity.priority } : {}),
         ...(entity.updatedById !== undefined ? { updatedById: entity.updatedById } : {}),
         updatedAt: now,

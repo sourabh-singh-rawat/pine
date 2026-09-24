@@ -31,23 +31,34 @@ import { logger } from "@/bootstrap/logger";
 import { createContext } from "@/graphql";
 import { IIdentityRepository, IdentityRepository, ItemsIdentitySyncConsumer } from "@/features/identities";
 import {
-  IItemAssigneeRepository,
   IItemAttachmentRepository,
   IItemAttachmentService,
   IItemAttachmentUploadRequestRepository,
-  IItemRepository,
-  IItemService,
-  ItemAssigneeRepository,
   ItemAttachmentCreatedConsumer,
   ItemAttachmentRepository,
   ItemAttachmentService,
   ItemAttachmentUploadRequestRepository,
+} from "@/features/attachments";
+import {
+  ChecklistEntryRepository,
+  ChecklistRepository,
+  ChecklistService,
+  IChecklistEntryRepository,
+  IChecklistRepository,
+  IChecklistService,
+} from "@/features/checklists";
+import {
+  IItemAssigneeRepository,
+  IItemRepository,
+  IItemService,
+  ItemAssigneeRepository,
   ItemRepository,
   ItemService,
 } from "@/features/item";
-import { IProjectRepository, IProjectService, ProjectRepository, ProjectService } from "@/features/project";
+import { IListRepository, IListService, ListRepository, ListService } from "@/features/lists";
 import { ISpaceRepository, ISpaceService, SpaceRepository, SpaceService } from "@/features/spaces";
 import { IStatusRepository, IStatusService, StatusRepository, StatusService } from "@/features/status";
+import { ISubItemService, SubItemService } from "@/features/sub-items";
 
 export const container = new Container({ defaultScope: "Singleton" });
 
@@ -78,11 +89,17 @@ container
   .bind<IItemAttachmentUploadRequestRepository>(TYPES.ItemAttachmentUploadRequestRepository)
   .to(ItemAttachmentUploadRequestRepository);
 container.bind<IItemService>(TYPES.ItemService).to(ItemService);
+container.bind<ISubItemService>(TYPES.SubItemService).to(SubItemService);
 container.bind<IItemAttachmentService>(TYPES.ItemAttachmentService).to(ItemAttachmentService);
+container.bind<IChecklistRepository>(TYPES.ChecklistRepository).to(ChecklistRepository);
+container
+  .bind<IChecklistEntryRepository>(TYPES.ChecklistEntryRepository)
+  .to(ChecklistEntryRepository);
+container.bind<IChecklistService>(TYPES.ChecklistService).to(ChecklistService);
 container.bind<IStatusRepository>(TYPES.StatusRepository).to(StatusRepository);
 container.bind<IStatusService>(TYPES.StatusService).to(StatusService);
-container.bind<IProjectRepository>(TYPES.ProjectRepository).to(ProjectRepository);
-container.bind<IProjectService>(TYPES.ProjectService).to(ProjectService);
+container.bind<IListRepository>(TYPES.ListRepository).to(ListRepository);
+container.bind<IListService>(TYPES.ListService).to(ListService);
 container.bind<ISpaceRepository>(TYPES.SpaceRepository).to(SpaceRepository);
 container.bind<ISpaceService>(TYPES.SpaceService).to(SpaceService);
 container

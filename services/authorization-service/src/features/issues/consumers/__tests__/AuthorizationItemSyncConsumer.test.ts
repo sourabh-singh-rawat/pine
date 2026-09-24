@@ -1,4 +1,4 @@
-import { ITEM_PROJECT, OWNER } from "@pine/authorization";
+import { ITEM_LIST, OWNER } from "@pine/authorization";
 import { createCloudEvent, ItemCreatedEvent } from "@pine/events";
 import { describe, expect, it, vi } from "vitest";
 import { AuthorizationItemSyncConsumer } from "@/features/issues/consumers/AuthorizationItemSyncConsumer";
@@ -17,7 +17,7 @@ const createBroker = () => ({
 });
 
 describe("AuthorizationItemSyncConsumer", () => {
-  it("writes the item project and owner tuples when an issue is created", async () => {
+  it("writes the item list and owner tuples when an item is created", async () => {
     const authorizationGraphProvider = createGraphProvider();
     const consumer = new AuthorizationItemSyncConsumer(
       createBroker(),
@@ -35,7 +35,7 @@ describe("AuthorizationItemSyncConsumer", () => {
         name: "Fix login",
         ownerId: "user-1",
         reporterId: "user-2",
-        projectId: "project-1",
+        listId: "list-1",
         createdAt: "2026-01-01T00:00:00.000Z",
       },
     });
@@ -44,8 +44,8 @@ describe("AuthorizationItemSyncConsumer", () => {
 
     expect(authorizationGraphProvider.createRelationship).toHaveBeenCalledWith({
       object: { namespace: "item", id: "issue-1" },
-      relation: ITEM_PROJECT,
-      subject: { namespace: "project", id: "project-1" },
+      relation: ITEM_LIST,
+      subject: { namespace: "list", id: "list-1" },
     });
     expect(authorizationGraphProvider.createRelationship).toHaveBeenCalledWith({
       object: { namespace: "item", id: "issue-1" },

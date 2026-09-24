@@ -1,0 +1,20 @@
+mutation UpdateChecklist($input: UpdateChecklistInput!) {
+  updateChecklist(input: $input) {
+    id
+    itemId
+    name
+    createdById
+    createdAt
+    completedCount
+    totalCount
+    entries {
+      id
+      checklistId
+      title
+      completed
+      orderIndex
+      createdById
+      createdAt
+    }
+  }
+}

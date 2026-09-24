@@ -4,7 +4,7 @@ export type Resource =
   | "tenant"
   | "workspace"
   | "space"
-  | "project"
+  | "list"
   | "item"
   | "role"
   | "permission";
@@ -17,7 +17,7 @@ export const RESOURCES: readonly Resource[] = [
   "tenant",
   "workspace",
   "space",
-  "project",
+  "list",
   "item",
   "role",
   "permission",

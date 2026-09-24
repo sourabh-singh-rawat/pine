@@ -105,7 +105,7 @@ export class workspace implements Namespace {
       this.related.admin.includes(ctx.subject) ||
       this.related.owner.includes(ctx.subject) ||
       this.related.tenant.traverse((item) => item.permits.administer(ctx)),
-    create_project: (ctx: Context): boolean =>
+    create_list: (ctx: Context): boolean =>
       this.related.member.includes(ctx.subject) ||
       this.related.admin.includes(ctx.subject) ||
       this.related.owner.includes(ctx.subject) ||
@@ -139,18 +139,18 @@ export class space implements Namespace {
       this.related.admin.includes(ctx.subject) ||
       this.related.owner.includes(ctx.subject) ||
       this.related.workspace.traverse((item) => item.permits.manage_members(ctx)),
-    create_project: (ctx: Context): boolean =>
+    create_list: (ctx: Context): boolean =>
       this.related.member.includes(ctx.subject) ||
       this.related.admin.includes(ctx.subject) ||
       this.related.owner.includes(ctx.subject) ||
-      this.related.workspace.traverse((item) => item.permits.create_project(ctx)),
+      this.related.workspace.traverse((item) => item.permits.create_list(ctx)),
     delete: (ctx: Context): boolean =>
       this.related.owner.includes(ctx.subject) ||
       this.related.workspace.traverse((item) => item.permits.delete(ctx)),
   };
 }
 
-export class project implements Namespace {
+export class list implements Namespace {
   // NOSONAR typescript:S101
   related: {
     owner: identity[];
@@ -177,7 +177,7 @@ export class project implements Namespace {
       this.related.member.includes(ctx.subject) ||
       this.related.admin.includes(ctx.subject) ||
       this.related.owner.includes(ctx.subject) ||
-      this.related.space.traverse((item) => item.permits.create_project(ctx)),
+      this.related.space.traverse((item) => item.permits.create_list(ctx)),
     delete: (ctx: Context): boolean =>
       this.related.owner.includes(ctx.subject) ||
       this.related.space.traverse((item) => item.permits.delete(ctx)),
@@ -190,7 +190,7 @@ export class item implements Namespace {
     owner: identity[];
     admin: identity[];
     member: identity[];
-    project: project[];
+    list: list[];
   };
 
   permits = {
@@ -198,18 +198,18 @@ export class item implements Namespace {
       this.related.member.includes(ctx.subject) ||
       this.related.admin.includes(ctx.subject) ||
       this.related.owner.includes(ctx.subject) ||
-      this.related.project.traverse((item) => item.permits.read(ctx)),
+      this.related.list.traverse((item) => item.permits.read(ctx)),
     update: (ctx: Context): boolean =>
       this.related.admin.includes(ctx.subject) ||
       this.related.owner.includes(ctx.subject) ||
-      this.related.project.traverse((item) => item.permits.update(ctx)),
+      this.related.list.traverse((item) => item.permits.update(ctx)),
     manage_members: (ctx: Context): boolean =>
       this.related.admin.includes(ctx.subject) ||
       this.related.owner.includes(ctx.subject) ||
-      this.related.project.traverse((item) => item.permits.manage_members(ctx)),
+      this.related.list.traverse((item) => item.permits.manage_members(ctx)),
     delete: (ctx: Context): boolean =>
       this.related.owner.includes(ctx.subject) ||
-      this.related.project.traverse((item) => item.permits.delete(ctx)),
+      this.related.list.traverse((item) => item.permits.delete(ctx)),
   };
 }
 

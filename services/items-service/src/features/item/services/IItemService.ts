@@ -1,13 +1,12 @@
-import { ItemStatus, ItemPriority, PagingOptions, ServiceResponse } from "@pine/common";
-import type { Item } from "@/db";
+import { ItemStatus, ItemPriority, ServiceResponse } from "@pine/common";
 import type {
   ItemWithHasChildren,
-  ItemWithProject,
+  ItemWithList,
 } from "@/features/item/repositories";
 
 export interface CreateItemOptions {
   userId: string;
-  projectId: string;
+  listId: string;
   type: string;
   name: string;
   assigneeIds: string[];
@@ -25,11 +24,6 @@ export interface GetItemOptions {
   itemId: string;
 }
 
-export interface ListChildrenOptions extends PagingOptions {
-  userId: string;
-  parentItemId: string;
-}
-
 export interface UpdateItemOptions {
   userId: string;
   itemId: string;
@@ -45,7 +39,7 @@ export interface UpdateItemOptions {
 }
 
 export interface ListItemsOptions {
-  projectId: string;
+  listId: string;
   userId: string;
 }
 
@@ -56,9 +50,8 @@ export interface DeleteItemOptions {
 
 export interface IItemService {
   create(options: CreateItemOptions): Promise<string>;
-  getById(options: GetItemOptions): Promise<ItemWithProject | null>;
+  getById(options: GetItemOptions): Promise<ItemWithList | null>;
   list(options: ListItemsOptions): Promise<ItemWithHasChildren[]>;
-  listChildren(options: ListChildrenOptions): Promise<Item[]>;
   update(options: UpdateItemOptions): Promise<void>;
   delete(options: DeleteItemOptions): Promise<void>;
   getStatusList(): Promise<ServiceResponse<ItemStatus[]>>;

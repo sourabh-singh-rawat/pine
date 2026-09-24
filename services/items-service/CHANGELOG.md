@@ -1,5 +1,23 @@
 # @pine/items-service
 
+## 1.1.0
+
+### Minor Changes
+
+- 6977338: feat(items): add item checklists API and detail UI
+- e9b15c5: feat(lists): rename lists from the sidebar menu
+- 36d1802: refactor: rename Project domain to List
+
+### Patch Changes
+
+- ca3dd7e: refactor(items-service): move attachments into features/attachments
+- ac2682a: refactor(items-service): move sub-items into features/sub-items
+- Updated dependencies [36d1802]
+  - @pine/events@1.1.0
+  - @pine/authorization@0.7.0
+  - @pine/common@1.1.0
+  - @pine/server@1.1.4
+
 ## 1.0.0
 
 ### Major Changes

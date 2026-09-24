@@ -7,7 +7,7 @@ export type CreateStatusEntity = {
   name: string;
   type: string;
   orderIndex: number;
-  projectId: string;
+  listId: string;
 };
 
 export interface IStatusRepository {
@@ -15,5 +15,5 @@ export interface IStatusRepository {
     entities: CreateStatusEntity[],
     options?: StatusRepositoryOptions,
   ): Promise<StatusOption[]>;
-  findByProjectId(projectId: string, options?: StatusRepositoryOptions): Promise<StatusOption[]>;
+  findByListId(listId: string, options?: StatusRepositoryOptions): Promise<StatusOption[]>;
 }

@@ -7,18 +7,18 @@ import {
   type GetSubItemsQuery,
   type GetSubItemsQueryVariables,
 } from "@generated/gql";
-import { type IssueSource } from "./mapItemRow";
+import { type ItemSource } from "./mapItemRow";
 
 const EMPTY_IDS: ReadonlySet<string> = new Set();
 
 export const useItemListNesting = (options: {
   enabled: boolean;
-  projectDataUpdatedAt?: number;
+  listDataUpdatedAt?: number;
 }) => {
-  const { enabled, projectDataUpdatedAt } = options;
+  const { enabled, listDataUpdatedAt } = options;
   const queryClient = useQueryClient();
   const [childrenByParentId, setChildrenByParentId] = useState<
-    Record<string, IssueSource[]>
+    Record<string, ItemSource[]>
   >({});
   const [expandedParentIds, setExpandedParentIds] =
     useState<ReadonlySet<string>>(EMPTY_IDS);
@@ -78,7 +78,7 @@ export const useItemListNesting = (options: {
     return () => {
       cancelled = true;
     };
-  }, [enabled, loadedParentIdsKey, projectDataUpdatedAt, queryClient]);
+  }, [enabled, loadedParentIdsKey, listDataUpdatedAt, queryClient]);
 
   const onToggleNestedItem = useCallback(
     (id: string) => {

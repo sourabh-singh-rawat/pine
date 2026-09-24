@@ -3,13 +3,13 @@ import { Box, Grid2, IconButton } from "@mui/material";
 import { CustomBreadcrumbs } from "../CustomBreadcrumbs";
 
 interface LocationProps {
-  project: {
+  list: {
     id: string;
     name: string;
   };
 }
 
-export const ViewLocation = ({ project }: LocationProps) => {
+export const ViewLocation = ({ list }: LocationProps) => {
   return (
     <Box>
       <Grid2 container>
@@ -19,7 +19,7 @@ export const ViewLocation = ({ project }: LocationProps) => {
           </IconButton>
         </Grid2>
         <Grid2 sx={{ alignContent: "center" }}>
-          <CustomBreadcrumbs isLoading={false} items={[{ text: project.name, onClick() {} }]} />
+          <CustomBreadcrumbs isLoading={false} items={[{ text: list.name, onClick() {} }]} />
         </Grid2>
       </Grid2>
     </Box>

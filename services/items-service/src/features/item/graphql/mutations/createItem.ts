@@ -18,7 +18,7 @@ builder.mutationFields((t) => ({
         userId,
         name: input.name,
         type: input.type,
-        projectId: input.projectId,
+        listId: input.listId,
         parentItemId: input.parentItemId ?? undefined,
         statusId: String(input.statusId),
         priority: parseItemPriority(input.priority),

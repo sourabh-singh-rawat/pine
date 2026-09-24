@@ -14,7 +14,7 @@ import { bindHttpServer, broker, container, initializeDb, TYPES } from "@/bootst
 import { writeSchemaToDist } from "@/bootstrap/graphql";
 import { logger } from "@/bootstrap/logger";
 import { ItemsIdentitySyncConsumer } from "@/features/identities";
-import { ItemAttachmentCreatedConsumer } from "@/features/item";
+import { ItemAttachmentCreatedConsumer } from "@/features/attachments";
 
 export { container, db } from "@/bootstrap";
 export { builder, createContext } from "@/graphql";

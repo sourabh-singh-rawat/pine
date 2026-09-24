@@ -16,7 +16,7 @@ import { logger } from "@/bootstrap/logger";
 import { AuthorizationProfileSyncConsumer } from "@/features/identity";
 import {
   AuthorizationItemSyncConsumer,
-  AuthorizationProjectSyncConsumer,
+  AuthorizationListSyncConsumer,
   AuthorizationSpaceSyncConsumer,
 } from "@/features/issues";
 
@@ -72,7 +72,7 @@ const main = async () => {
     .get<AuthorizationSpaceSyncConsumer>(TYPES.AuthorizationSpaceSyncConsumer)
     .start();
   void container
-    .get<AuthorizationProjectSyncConsumer>(TYPES.AuthorizationProjectSyncConsumer)
+    .get<AuthorizationListSyncConsumer>(TYPES.AuthorizationListSyncConsumer)
     .start();
   void container
     .get<AuthorizationItemSyncConsumer>(TYPES.AuthorizationItemSyncConsumer)

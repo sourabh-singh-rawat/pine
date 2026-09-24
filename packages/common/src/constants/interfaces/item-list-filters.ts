@@ -1,6 +1,6 @@
 import { Filters } from ".";
 
 export interface ItemListFilters extends Filters {
-  projectId?: string;
+  listId?: string;
   priority?: string;
 }

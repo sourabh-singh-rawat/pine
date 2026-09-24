@@ -5,10 +5,10 @@ import { CustomTabs } from "../../../../shared/components/CustomTabs";
 import { AddItemButton } from "../../../item/components/AddItemButton";
 
 interface ViewProps {
-  projectId: string;
+  listId: string;
 }
 
-export const ViewSwitcher = ({ projectId }: ViewProps) => {
+export const ViewSwitcher = ({ listId }: ViewProps) => {
   const [selectedTab, setSelectedTab] = useState(0);
 
   const handleChange = (_e: unknown, newValue: number) => {
@@ -25,7 +25,7 @@ export const ViewSwitcher = ({ projectId }: ViewProps) => {
       </Grid2>
       <Grid2 flexGrow={1}></Grid2>
       <Grid2>
-        <AddItemButton projectId={projectId} />
+        <AddItemButton listId={listId} />
       </Grid2>
     </Grid2>
   );

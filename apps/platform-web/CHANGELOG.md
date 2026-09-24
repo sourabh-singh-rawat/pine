@@ -1,5 +1,13 @@
 # @pine/platform-web
 
+## 0.5.4
+
+### Patch Changes
+
+- 36d1802: refactor: rename Project domain to List
+- Updated dependencies [36d1802]
+  - @pine/authorization@0.7.0
+
 ## 0.5.3
 
 ### Patch Changes

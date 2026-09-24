@@ -5,7 +5,7 @@ export const ItemActivities = pgTable("item_activities", {
   ...idColumn,
   type: text("type").notNull(),
   itemId: uuid("item_id").notNull(),
-  projectId: uuid("project_id").notNull(),
+  listId: uuid("list_id").notNull(),
   userId: uuid("user_id").notNull(),
   timestamp: timestamp("timestamp", { withTimezone: true }).notNull(),
   ...auditColumns,

@@ -8,6 +8,7 @@ import { useItemParams, useSnackbar } from "@shared";
 import {
   ItemActivity,
   ItemAttachments,
+  ItemChecklists,
   ItemDescription,
   ItemFields,
   ItemList,
@@ -40,8 +41,8 @@ export const ItemPage = () => {
   };
 
   const item = itemQuery.data;
-  const projectId = item?.project?.id ?? undefined;
-  const projectName = item?.project?.name ?? undefined;
+  const listId = item?.list?.id ?? undefined;
+  const listName = item?.list?.name ?? undefined;
   const itemName = item?.name ?? undefined;
   const itemDescription = item?.description ?? undefined;
   const statusId = item?.statusId ?? undefined;
@@ -49,8 +50,8 @@ export const ItemPage = () => {
   const resolvedItemId = item?.id ?? undefined;
 
   const handleBackToList = () => {
-    if (!projectId) return;
-    void navigate({ to: "/v/l/$viewId", params: { viewId: projectId } });
+    if (!listId) return;
+    void navigate({ to: "/v/l/$viewId", params: { viewId: listId } });
   };
 
   return (
@@ -61,20 +62,20 @@ export const ItemPage = () => {
             <IconButton
               aria-label="Back to list"
               onClick={handleBackToList}
-              disabled={!projectId}
+              disabled={!listId}
             >
               <ArrowBack />
             </IconButton>
           }
           title={<ItemName itemId={itemId} initialValue={itemName} />}
-          subtitle={projectName}
+          subtitle={listName}
         />
       </Grid2>
-      {item && itemId && projectId && statusId && priority && (
+      {item && itemId && listId && statusId && priority && (
         <Grid2 size={12}>
           <ItemFields
             itemId={itemId}
-            projectId={projectId}
+            listId={listId}
             statusId={statusId}
             priority={priority}
             updateItem={updateItem}
@@ -92,25 +93,25 @@ export const ItemPage = () => {
         </Typography>
       </Grid2>
 
-      {projectId && resolvedItemId && (
+      {listId && resolvedItemId && (
         <Grid2 size={12}>
           <Stack spacing={1}>
             <Stack direction="row" spacing={1} alignItems="center">
               <Typography variant="body1" fontWeight="600">
                 Sub Items
               </Typography>
-              <ItemModal projectId={projectId} />
+              <ItemModal listId={listId} />
             </Stack>
             <ItemList itemId={resolvedItemId} style={{ showBorder: true }} />
           </Stack>
         </Grid2>
       )}
 
-      <Grid2 size={12}>
-        <Typography variant="body1" fontWeight="600">
-          Checklists
-        </Typography>
-      </Grid2>
+      {itemId && (
+        <Grid2 size={12}>
+          <ItemChecklists itemId={itemId} />
+        </Grid2>
+      )}
 
       {itemId && (
         <Grid2 size={12}>

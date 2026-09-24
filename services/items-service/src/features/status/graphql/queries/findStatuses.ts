@@ -11,9 +11,9 @@ builder.queryFields((t) => ({
       input: t.arg({ type: FindStatusesOptions, required: true }),
     },
     resolve: async (_root, { input }) => {
-      const { projectId } = input;
+      const { listId } = input;
       const service = container.get<IStatusService>(TYPES.StatusService);
-      return await service.findStatuses({ projectId });
+      return await service.findStatuses({ listId });
     },
   }),
 }));

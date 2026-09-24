@@ -1,0 +1,11 @@
+mutation CreateChecklistEntry($input: CreateChecklistEntryInput!) {
+  createChecklistEntry(input: $input) {
+    id
+    checklistId
+    title
+    completed
+    orderIndex
+    createdById
+    createdAt
+  }
+}

@@ -4,7 +4,7 @@ export * from "./errors";
 export * from "./http";
 export * from "./invalid-credentials.error";
 export * from "./missing-data-source.error";
-export * from "./project-not-found.error";
+export * from "./list-not-found.error";
 export * from "./query-execution.error";
 export * from "./standard.error";
 export * from "./transaction-execution.error";

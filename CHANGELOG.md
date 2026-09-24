@@ -1,5 +1,35 @@
 # Changelog
 
+## v2026.09.25.1
+
+### Minor
+
+- 69773387: feat(items): add item checklists API and detail UI — Sourabh Singh Rawat (`@pine/items-service`, `@pine/pine-web`)
+- e9b15c5a: feat(lists): rename lists from the sidebar menu — Sourabh Singh Rawat (`@pine/items-service`, `@pine/pine-web`)
+- 36d1802c: refactor: rename Project domain to List — Sourabh Singh Rawat (`@pine/authorization`, `@pine/authorization-service`, `@pine/common`, `@pine/events`, `@pine/identity-web`, `@pine/items-service`, `@pine/pine-web`, `@pine/platform-web`)
+
+### Patch
+
+- ca3dd7ed: refactor(items-service): move attachments into features/attachments — Sourabh Singh Rawat (`@pine/items-service`)
+- ac2682ae: refactor(items-service): move sub-items into features/sub-items — Sourabh Singh Rawat (`@pine/items-service`)
+
+### Packages
+
+- `@pine/api-gateway@0.4.4`
+- `@pine/audit-service@0.1.1`
+- `@pine/authorization@0.7.0`
+- `@pine/authorization-service@0.7.0`
+- `@pine/common@1.1.0`
+- `@pine/data-gateway@0.1.4`
+- `@pine/events@1.1.0`
+- `@pine/identity-service@0.6.3`
+- `@pine/identity-web@0.6.4`
+- `@pine/items-service@1.1.0`
+- `@pine/pine-web@0.9.0`
+- `@pine/platform-service@0.5.3`
+- `@pine/platform-web@0.5.4`
+- `@pine/server@1.1.4`
+
 ## v2026.09.24.1
 
 ### Major

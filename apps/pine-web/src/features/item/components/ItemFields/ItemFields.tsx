@@ -9,7 +9,7 @@ import { ItemStatusSelector } from "../ItemStatusSelector";
 
 interface ItemFieldsProps {
   itemId: string;
-  projectId: string;
+  listId: string;
   statusId: string;
   priority: string;
   updateItem: (input: UpdateItemInput) => Promise<unknown>;
@@ -17,7 +17,7 @@ interface ItemFieldsProps {
 
 export const ItemFields = ({
   itemId,
-  projectId,
+  listId,
   statusId,
   priority,
   updateItem,
@@ -33,7 +33,7 @@ export const ItemFields = ({
       component: (
         <ItemStatusSelector
           form={statusForm}
-          projectId={projectId}
+          listId={listId}
           name="statusId"
           onSubmit={async (value) => {
             await updateItem({ itemId, statusId: value });

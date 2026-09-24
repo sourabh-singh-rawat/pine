@@ -6,7 +6,7 @@ export const StatusOptions = pgTable("status_options", {
   name: text("name").notNull(),
   type: text("type").notNull(),
   orderIndex: integer("order_index").notNull(),
-  projectId: uuid("project_id").notNull(),
+  listId: uuid("list_id").notNull(),
   ...auditColumns,
 });
 

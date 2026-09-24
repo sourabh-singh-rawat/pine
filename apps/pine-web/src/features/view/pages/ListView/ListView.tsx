@@ -1,6 +1,6 @@
 import { Grid2, useTheme } from "@mui/material";
 import { useMemo } from "react";
-import { useFindStatusesQuery, useFindProjectQuery } from "@generated/gql";
+import { useFindStatusesQuery, useGetListQuery } from "@generated/gql";
 import { useViewParams } from "@shared";
 import {
   StatusesContext,
@@ -13,50 +13,50 @@ const EMPTY_STATUSES: StatusOption[] = [];
 
 export const ListView = () => {
   const theme = useTheme();
-  const { viewId: projectId } = useViewParams();
-  const projectQuery = useFindProjectQuery(
-    { findProjectId: projectId! },
+  const { viewId: listId } = useViewParams();
+  const listQuery = useGetListQuery(
+    { id: listId! },
     {
-      select: (data) => data.findProject,
-      enabled: Boolean(projectId),
+      select: (data) => data.getList,
+      enabled: Boolean(listId),
     },
   );
   const statusesQuery = useFindStatusesQuery(
-    { input: { projectId: projectId! } },
+    { input: { listId: listId! } },
     {
       select: (data) =>
         (data.findStatuses ?? []).filter(
           (status): status is { id: string; name: string } =>
             Boolean(status.id) && Boolean(status.name),
         ),
-      enabled: Boolean(projectId),
+      enabled: Boolean(listId),
     },
   );
 
-  const project = projectQuery.data;
+  const list = listQuery.data;
   const statuses = statusesQuery.data ?? EMPTY_STATUSES;
   const statusesContextValue = useMemo(() => ({ statuses }), [statuses]);
 
-  const projectView =
-    project?.id && project.name
+  const listView =
+    list?.id && list.name
       ? {
-          id: project.id,
-          name: project.name,
+          id: list.id,
+          name: list.name,
         }
       : null;
 
   const isBootstrapping =
-    Boolean(projectId) && (projectQuery.isPending || statusesQuery.isPending);
-  const canRenderItems = Boolean(projectView) && !statusesQuery.isPending;
+    Boolean(listId) && (listQuery.isPending || statusesQuery.isPending);
+  const canRenderItems = Boolean(listView) && !statusesQuery.isPending;
 
-  if (isBootstrapping && !projectView) {
+  if (isBootstrapping && !listView) {
     return <ItemListLoader />;
   }
 
   return (
     <Grid2 container sx={{ scrollbarGutter: "stable" }}>
       <StatusesContext.Provider value={statusesContextValue}>
-        {projectView && (
+        {listView && (
           <>
             <Grid2
               size={12}
@@ -66,7 +66,7 @@ export const ListView = () => {
                 borderBottom: `1px solid ${theme.palette.action.hover}`,
               }}
             >
-              <ViewLocation project={projectView} />
+              <ViewLocation list={listView} />
             </Grid2>
             <Grid2
               size={12}
@@ -75,11 +75,11 @@ export const ListView = () => {
                 borderBottom: `1px solid ${theme.palette.action.hover}`,
               }}
             >
-              <ViewSwitcher projectId={projectView.id} />
+              <ViewSwitcher listId={listView.id} />
             </Grid2>
             <Grid2 size={12} sx={{ p: theme.spacing(2) }}>
               {canRenderItems ? (
-                <ItemList projectId={projectView.id} />
+                <ItemList listId={listView.id} />
               ) : (
                 <ItemListLoader />
               )}
