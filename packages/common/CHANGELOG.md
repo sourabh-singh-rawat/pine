@@ -1,5 +1,11 @@
 # @pine/common
 
+## 1.1.0
+
+### Minor Changes
+
+- 36d1802: refactor: rename Project domain to List
+
 ## 1.0.0
 
 ### Major Changes

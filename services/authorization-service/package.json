@@ -1,7 +1,7 @@
 {
   "$schema": "https://json.schemastore.org/package.json",
   "name": "@pine/authorization-service",
-  "version": "0.6.1",
+  "version": "0.7.0",
   "description": "Authorization service — graph checks and relationship writes (Ory Keto)",
   "keywords": [
     "authorization",

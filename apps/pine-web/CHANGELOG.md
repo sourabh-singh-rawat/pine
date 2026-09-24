@@ -1,5 +1,18 @@
 # @pine/pine-web
 
+## 0.9.0
+
+### Minor Changes
+
+- 36d1802: refactor: rename Project domain to List
+
+### Patch Changes
+
+- 6977338: feat(items): add item checklists API and detail UI
+- e9b15c5: feat(lists): rename lists from the sidebar menu
+- Updated dependencies [36d1802]
+  - @pine/common@1.1.0
+
 ## 0.8.0
 
 ### Minor Changes

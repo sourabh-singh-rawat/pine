@@ -1,5 +1,11 @@
 # @pine/authorization
 
+## 0.7.0
+
+### Minor Changes
+
+- 36d1802: refactor: rename Project domain to List
+
 ## 0.6.0
 
 ### Minor Changes

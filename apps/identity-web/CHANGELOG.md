@@ -1,5 +1,11 @@
 # @pine/identity-web
 
+## 0.6.4
+
+### Patch Changes
+
+- 36d1802: refactor: rename Project domain to List
+
 ## 0.6.3
 
 ### Patch Changes

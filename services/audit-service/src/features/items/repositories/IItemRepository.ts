@@ -6,7 +6,7 @@ export type UpsertItemEntity = {
   id: string;
   name: string;
   type: string;
-  projectId: string;
+  listId: string;
   createdById: string;
   priority?: string | null;
   updatedById?: string | null;
