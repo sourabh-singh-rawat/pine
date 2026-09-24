@@ -1,5 +1,5 @@
 import { builder } from "@pine/server";
-import type { CreateItemAttachmentUploadRequestResult } from "@/features/item/services";
+import type { CreateItemAttachmentUploadRequestResult } from "@/features/attachments/services";
 
 export const ItemAttachmentUploadHeaderObject = builder
   .objectRef<{ key: string; value: string }>("ItemAttachmentUploadHeaderObject")

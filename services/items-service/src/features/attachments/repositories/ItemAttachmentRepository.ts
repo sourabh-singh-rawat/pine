@@ -7,7 +7,7 @@ import type {
   CreateItemAttachmentEntity,
   IItemAttachmentRepository,
   ItemAttachmentRepositoryOptions,
-} from "@/features/item/repositories/IItemAttachmentRepository";
+} from "@/features/attachments/repositories/IItemAttachmentRepository";
 
 @injectable()
 export class ItemAttachmentRepository implements IItemAttachmentRepository {
