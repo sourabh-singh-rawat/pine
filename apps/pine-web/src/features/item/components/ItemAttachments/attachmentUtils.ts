@@ -18,3 +18,13 @@ export const getAttachmentUrl = (attachmentId: string): string => {
     "https://localhost:4001";
   return `${base.replace(/\/$/, "")}/attachments/${attachmentId}`;
 };
+
+export const isImageMimeType = (mimeType: string): boolean =>
+  mimeType.toLowerCase().startsWith("image/");
+
+export const isPdfAttachment = (mimeType: string, name: string): boolean => {
+  if (mimeType.toLowerCase() === "application/pdf") {
+    return true;
+  }
+  return name.toLowerCase().endsWith(".pdf");
+};
