@@ -1,9 +1,7 @@
 import { builder } from "@pine/server";
 import type { ChecklistEntry } from "@/db";
 
-export const ChecklistEntryObject = builder.objectRef<ChecklistEntry>(
-  "ChecklistEntryObject",
-);
+export const ChecklistEntryObject = builder.objectRef<ChecklistEntry>("ChecklistEntryObject");
 
 ChecklistEntryObject.implement({
   fields: (t) => ({

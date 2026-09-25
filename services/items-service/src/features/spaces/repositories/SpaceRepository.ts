@@ -14,10 +14,7 @@ import type {
 export class SpaceRepository implements ISpaceRepository {
   constructor(@inject(TYPES.Database) private readonly db: Database) {}
 
-  async save(
-    entity: CreateSpaceEntity,
-    options?: SpaceRepositoryOptions,
-  ): Promise<Space> {
+  async save(entity: CreateSpaceEntity, options?: SpaceRepositoryOptions): Promise<Space> {
     const client = this.client(options);
     const now = new Date();
 
@@ -36,10 +33,7 @@ export class SpaceRepository implements ISpaceRepository {
     return created;
   }
 
-  async findById(
-    id: string,
-    options?: SpaceRepositoryOptions,
-  ): Promise<Space | null> {
+  async findById(id: string, options?: SpaceRepositoryOptions): Promise<Space | null> {
     const client = this.client(options);
     const [row] = await client
       .select()
@@ -50,17 +44,12 @@ export class SpaceRepository implements ISpaceRepository {
     return row ?? null;
   }
 
-  async findMany(
-    filter: ListSpacesFilter,
-    options?: SpaceRepositoryOptions,
-  ): Promise<Space[]> {
+  async findMany(filter: ListSpacesFilter, options?: SpaceRepositoryOptions): Promise<Space[]> {
     const client = this.client(options);
     return client
       .select()
       .from(Spaces)
-      .where(
-        and(eq(Spaces.workspaceId, filter.workspaceId), isNull(Spaces.deletedAt)),
-      );
+      .where(and(eq(Spaces.workspaceId, filter.workspaceId), isNull(Spaces.deletedAt)));
   }
 
   private client(options?: SpaceRepositoryOptions) {

@@ -31,10 +31,14 @@ export const WorkspaceRelations = ({ workspaceId }: WorkspaceRelationsProps) => 
 
   return (
     <Stack spacing={2}>
-      <Stack direction="row" spacing={2} sx={{ alignItems: "center", justifyContent: "space-between" }}>
+      <Stack
+        direction="row"
+        spacing={2}
+        sx={{ alignItems: "center", justifyContent: "space-between" }}
+      >
         <Typography color="text.secondary">
-          Graph relations for this workspace. Creating an workspace writes the owner relation
-          for the creator.
+          Graph relations for this workspace. Creating an workspace writes the owner relation for
+          the creator.
         </Typography>
         <CreateWorkspaceRelationModal workspaceId={workspaceId} />
       </Stack>

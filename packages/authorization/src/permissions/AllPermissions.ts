@@ -23,19 +23,9 @@ export type WorkspacePermission =
   | "create_list"
   | "delete";
 
-export type SpacePermission =
-  | "read"
-  | "update"
-  | "manage_members"
-  | "create_list"
-  | "delete";
+export type SpacePermission = "read" | "update" | "manage_members" | "create_list" | "delete";
 
-export type ListPermission =
-  | "read"
-  | "update"
-  | "manage_members"
-  | "create_item"
-  | "delete";
+export type ListPermission = "read" | "update" | "manage_members" | "create_item" | "delete";
 
 export type ItemPermission = "read" | "update" | "manage_members" | "delete";
 

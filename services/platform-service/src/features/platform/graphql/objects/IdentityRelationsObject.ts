@@ -4,9 +4,8 @@ import type { IdentityRelations } from "@/features/platform/services/IIdentityRe
 import { PlatformRelationObject } from "@/features/platform/graphql/objects/PlatformRelationObject";
 import { TenantRelationObject } from "@/features/tenants/graphql/objects/TenantRelationObject";
 
-export const IdentityRelationsObject = builder.objectRef<IdentityRelations>(
-  "IdentityRelationsObject",
-);
+export const IdentityRelationsObject =
+  builder.objectRef<IdentityRelations>("IdentityRelationsObject");
 
 IdentityRelationsObject.implement({
   fields: (t) => ({

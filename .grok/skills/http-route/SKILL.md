@@ -31,12 +31,12 @@ One operation per route file. Feature barrel: `export const <feature>Routes: Htt
 
 Filename = exported const = `operationId`. Client codegen uses that name.
 
-| Piece | Example |
-| ----- | ------- |
-| File | `checkRelationship.ts` |
-| Export | `export const checkRelationship` |
-| `operationId` | `"checkRelationship"` |
-| URL | namespaced path is separate (`/authorization/checkRelationship`) |
+| Piece         | Example                                                          |
+| ------------- | ---------------------------------------------------------------- |
+| File          | `checkRelationship.ts`                                           |
+| Export        | `export const checkRelationship`                                 |
+| `operationId` | `"checkRelationship"`                                            |
+| URL           | namespaced path is separate (`/authorization/checkRelationship`) |
 
 Do not invent a second name (`consent.ts` + `operationId: "getConsentChallenge"`). New reads prefer `get*` (`getAttachmentContent`, `getIdentityFromSession`).
 

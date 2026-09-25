@@ -24,9 +24,7 @@ export const ItemStatusCell = ({
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const open = Boolean(anchorEl);
   const triggerId = `status-trigger-${itemId}`;
-  const statusOptions = statuses.filter(
-    (status) => Boolean(status.id) && Boolean(status.name),
-  );
+  const statusOptions = statuses.filter((status) => Boolean(status.id) && Boolean(status.name));
   const hasStatuses = statusOptions.length > 0;
 
   const handleClose = () => {

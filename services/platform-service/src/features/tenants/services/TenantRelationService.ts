@@ -16,10 +16,7 @@ import type { IOutboxService } from "@pine/outbox";
 import { inject, injectable } from "inversify";
 import { TYPES } from "@/bootstrap/container-types";
 import type { Database } from "@/db";
-import {
-  InvalidTenantRelationError,
-  TenantRelationNotFoundError,
-} from "@/features/tenants/errors";
+import { InvalidTenantRelationError, TenantRelationNotFoundError } from "@/features/tenants/errors";
 import type {
   CreateTenantRelationInput,
   CreateTenantRelationOptions,
@@ -120,12 +117,7 @@ export class TenantRelationService implements ITenantRelationService {
     const relation = parts[1];
     const subjectIdentityId = parts[2];
 
-    await requirePermission(
-      this.authorizationClient,
-      identityId,
-      "read",
-      `tenant:${tenantId}`,
-    );
+    await requirePermission(this.authorizationClient, identityId, "read", `tenant:${tenantId}`);
 
     assertTenantRelation(relation);
 

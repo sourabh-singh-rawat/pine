@@ -1,9 +1,8 @@
 import { builder } from "@pine/server";
 import type { WorkspaceRelation } from "@/features/workspaces/services/IWorkspaceRelationService";
 
-export const WorkspaceRelationObject = builder.objectRef<WorkspaceRelation>(
-  "WorkspaceRelationObject",
-);
+export const WorkspaceRelationObject =
+  builder.objectRef<WorkspaceRelation>("WorkspaceRelationObject");
 
 WorkspaceRelationObject.implement({
   fields: (t) => ({

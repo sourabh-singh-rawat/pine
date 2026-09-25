@@ -12,17 +12,8 @@ import {
 import { useQueryClient } from "@tanstack/react-query";
 import { createLink, useRouterState } from "@tanstack/react-router";
 import { useRef, useState } from "react";
-import {
-  useGetListQuery,
-  useGetListsQuery,
-  useUpdateListMutation,
-} from "@generated/gql";
-import {
-  Menu,
-  MenuItem,
-  MenuItemIcon,
-  type MenuAnchorPosition,
-} from "@pine/ui";
+import { useGetListQuery, useGetListsQuery, useUpdateListMutation } from "@generated/gql";
+import { Menu, MenuItem, MenuItemIcon, type MenuAnchorPosition } from "@pine/ui";
 import { useSnackbar } from "@shared";
 import { useListStore } from "../../store";
 
@@ -35,12 +26,7 @@ type ListNavItemProps = {
   nested?: boolean;
 };
 
-export const ListNavItem = ({
-  listId,
-  name,
-  spaceId,
-  nested = false,
-}: ListNavItemProps) => {
+export const ListNavItem = ({ listId, name, spaceId, nested = false }: ListNavItemProps) => {
   const viewId = useRouterState({ select: (s) => s.location.pathname.split("/").pop() });
   const setCurrentList = useListStore((s) => s.setCurrentList);
   const currentList = useListStore((s) => s.currentList);
@@ -108,9 +94,7 @@ export const ListNavItem = ({
       setIsRenaming(false);
       snackbar.success("List renamed");
     } catch (error) {
-      snackbar.error(
-        error instanceof Error ? error.message : "Failed to rename list",
-      );
+      snackbar.error(error instanceof Error ? error.message : "Failed to rename list");
     }
   };
 
@@ -211,11 +195,7 @@ export const ListNavItem = ({
       >
         <MoreVert fontSize="small" />
       </IconButton>
-      <Menu
-        anchorPosition={menuAnchor}
-        open={menuOpen}
-        onClose={closeMenu}
-      >
+      <Menu anchorPosition={menuAnchor} open={menuOpen} onClose={closeMenu}>
         <MenuItem onClick={startRename}>
           <MenuItemIcon>
             <EditOutlined fontSize="small" />

@@ -15,7 +15,9 @@ vi.mock("@aws-sdk/client-s3", async (importOriginal) => {
 });
 
 vi.mock("@aws-sdk/s3-request-presigner", () => ({
-  getSignedUrl: vi.fn().mockResolvedValue("http://127.0.0.1:8333/attachments/tenant-1/object-1?X-Amz-Signature=xyz"),
+  getSignedUrl: vi
+    .fn()
+    .mockResolvedValue("http://127.0.0.1:8333/attachments/tenant-1/object-1?X-Amz-Signature=xyz"),
 }));
 
 vi.mock("@/bootstrap/env", () => ({

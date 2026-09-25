@@ -18,10 +18,7 @@ describe("AttachmentScannedConsumer", () => {
       updateSecurityStatus: vi.fn().mockResolvedValue({}),
     };
 
-    const consumer = new AttachmentScannedConsumer(
-      createBroker() as never,
-      attachmentService,
-    );
+    const consumer = new AttachmentScannedConsumer(createBroker() as never, attachmentService);
 
     const message = { ack: vi.fn() };
     const event = createCloudEvent({

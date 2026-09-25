@@ -30,8 +30,7 @@ const postgresReadyTimeoutMs = 180_000;
 const postgresReadyPollMs = 2_000;
 const postgresReadyStableChecks = 3;
 
-const UUID_PATTERN =
-  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 const sleepSync = (ms: number): void => {
   Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, ms);
@@ -119,7 +118,9 @@ const waitForPostgres = (): void => {
 };
 
 const parseIdentityId = (output: string): string => {
-  const match = output.match(/^IDENTITY_ID=([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})\s*$/im);
+  const match = output.match(
+    /^IDENTITY_ID=([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})\s*$/im,
+  );
   const identityId = match?.[1]?.trim();
   if (!identityId || !UUID_PATTERN.test(identityId)) {
     throw new Error(
@@ -136,7 +137,9 @@ const parseSetupMode = (): "restart" | "skip-docker" => {
   const unknown = flags.filter((flag) => flag !== "--skip-docker" && flag !== "--restart");
 
   if (unknown.length > 0) {
-    throw new Error(`Unknown setup flag(s): ${unknown.join(", ")}. Use --restart or --skip-docker.`);
+    throw new Error(
+      `Unknown setup flag(s): ${unknown.join(", ")}. Use --restart or --skip-docker.`,
+    );
   }
 
   if (skipDocker && restart) {
@@ -179,10 +182,9 @@ const main = (): void => {
   runPnpm(["--filter", "@pine/platform-service", "db:seed"]);
 
   console.log("setup: bootstrapping admin identity");
-  const bootstrapOutput = runPnpm(
-    ["--filter", "@pine/identity-service", "cli:bootstrap-admin"],
-    { captureStdout: true },
-  );
+  const bootstrapOutput = runPnpm(["--filter", "@pine/identity-service", "cli:bootstrap-admin"], {
+    captureStdout: true,
+  });
   process.stdout.write(bootstrapOutput);
 
   const identityId = parseIdentityId(bootstrapOutput);

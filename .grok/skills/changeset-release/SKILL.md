@@ -12,12 +12,12 @@ when-to-use: >
 
 PR/commit policy: `AGENTS.md`. This skill is the file shape and release flow.
 
-| Concept | Value |
-| ------- | ----- |
-| PR notes | `.changeset/*.md` via `pnpm changeset` |
-| Product tag | `vYYYY.MM.DD.N` |
-| Release branch | `release/YYYY.MM.DD.N` |
-| Config | `.changeset/config.json` (`baseBranch: main`) |
+| Concept        | Value                                         |
+| -------------- | --------------------------------------------- |
+| PR notes       | `.changeset/*.md` via `pnpm changeset`        |
+| Product tag    | `vYYYY.MM.DD.N`                               |
+| Release branch | `release/YYYY.MM.DD.N`                        |
+| Config         | `.changeset/config.json` (`baseBranch: main`) |
 
 Scripts: `tools/scripts/branches/create-release-branch.ts`, `clean-local-branches.ts`; `tools/scripts/release/changeset-required.ts`, `release-branch-check.ts`, `release.ts`; `tools/scripts/changelog/main.ts`.
 

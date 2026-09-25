@@ -39,10 +39,7 @@ describe("buildWorkspaceForest", () => {
   });
 
   it("nests children under parents present in the set", () => {
-    const forest = buildWorkspaceForest([
-      org("child", "Child", "parent"),
-      org("parent", "Parent"),
-    ]);
+    const forest = buildWorkspaceForest([org("child", "Child", "parent"), org("parent", "Parent")]);
 
     expect(forest).toHaveLength(1);
     expect(forest[0]?.id).toBe("parent");

@@ -140,13 +140,7 @@ export const ProfilePhotoBlock = ({ photoUrl, fullName }: ProfilePhotoBlockProps
             </Typography>
           </Box>
         </Box>
-        <input
-          ref={fileInputRef}
-          type="file"
-          accept="image/*"
-          hidden
-          onChange={handleSelectFile}
-        />
+        <input ref={fileInputRef} type="file" accept="image/*" hidden onChange={handleSelectFile} />
         <Button
           variant="outlined"
           size="small"

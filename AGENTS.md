@@ -72,6 +72,7 @@ Saying **publish** runs `git-publish` end to end: new branch → changeset → c
 - Do not search or edit `infra/data/` or `node_modules/` for product work.
 - Use current packages only: `@pine/server`, `@pine/events` — not `server-core` / `event-bus`.
 - Load the matching skill under `.grok/skills/` (`orientation`, `service-feature`, `repository`, `drizzle`, `service`, `graphql`, `http-route`, `events`, `outbox`, `workers`, `authorization`, `identity-auth`, `testing`, `web-feature`, `schema-codegen`, `shared-packages`, `material-design-3`, `changeset-release`, `git-publish`, `open-pr`, `docker-infra`, `k8s`, `observability`, `dev-loop`). Skill folders have no `pine-` prefix.
+- **Format with oxfmt before committing.** After editing TypeScript/JavaScript/JSON (and other oxfmt-supported files), run `pnpm exec oxfmt <paths you changed>` before commit or publish. Use `pnpm fmt` only for intentional repo-wide format PRs. Keep a full-repo reformat in its own chore commit.
 - **No comments in code.** Do not add `//`, `/* */`, or JSDoc unless the user explicitly asks. Prefer clear names and structure over explanatory comments.
 - **Standalone functions are arrows; class methods are not.** Module-level and other standalone functions use `const name = (…) => { … }` / `const name = async (…) => { … }` — never `function` declarations. Inside classes, use normal methods (`method(…) { … }` / `async method(…) { … }`), not arrow property methods. Constructors stay as `constructor`. Interfaces/types express callables as properties (`name: (arg: T) => R`), not method syntax.
 - **Public members first.** In classes and modules, put the constructor and public methods/functions above private/protected helpers. Keep the public surface at the top of the type or file.
@@ -83,11 +84,11 @@ One **feature folder** is one **problem**. Name it after the resource (plural ke
 
 **Drop the repeated noun** on repositories and services — the type already names the subject. **Keep the noun** where names share a flat namespace: GraphQL fields, HTTP `operationId`s, event types, error classes, table names.
 
-| Layer | One | Many | Create | Update | Delete |
-| --- | --- | --- | --- | --- | --- |
-| `IWorkspaceRepository` | `findById` (null if missing) | `findMany` | `save` | `update` | `softDelete` |
-| `IWorkspaceService` | `getById` (throws if missing) | `list` | `create` | `update` | `delete` |
-| GraphQL field / HTTP `operationId` | `getWorkspace` | `getWorkspaces` | `createWorkspace` | `updateWorkspace` | `deleteWorkspace` |
+| Layer                              | One                           | Many            | Create            | Update            | Delete            |
+| ---------------------------------- | ----------------------------- | --------------- | ----------------- | ----------------- | ----------------- |
+| `IWorkspaceRepository`             | `findById` (null if missing)  | `findMany`      | `save`            | `update`          | `softDelete`      |
+| `IWorkspaceService`                | `getById` (throws if missing) | `list`          | `create`          | `update`          | `delete`          |
+| GraphQL field / HTTP `operationId` | `getWorkspace`                | `getWorkspaces` | `createWorkspace` | `updateWorkspace` | `deleteWorkspace` |
 
 Call sites read `workspaceService.create(...)`. The GraphQL field stays `createWorkspace`.
 

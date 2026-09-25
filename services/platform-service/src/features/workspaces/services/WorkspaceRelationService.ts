@@ -138,10 +138,7 @@ export class WorkspaceRelationService implements IWorkspaceRelationService {
     return workspaceRelation;
   }
 
-  async list(
-    input: ListWorkspaceRelationsInput,
-    identityId: string,
-  ): Promise<WorkspaceRelation[]> {
+  async list(input: ListWorkspaceRelationsInput, identityId: string): Promise<WorkspaceRelation[]> {
     await requirePermission(
       this.authorizationClient,
       identityId,

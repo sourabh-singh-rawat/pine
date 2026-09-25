@@ -2,10 +2,7 @@ import { Grid2, useTheme } from "@mui/material";
 import { useMemo } from "react";
 import { useFindStatusesQuery, useGetListQuery } from "@generated/gql";
 import { useViewParams } from "@shared";
-import {
-  StatusesContext,
-  type StatusOption,
-} from "@shared/contexts/StatusesContext";
+import { StatusesContext, type StatusOption } from "@shared/contexts/StatusesContext";
 import { ItemList, ItemListLoader } from "@features/item/components/ItemList";
 import { ViewLocation, ViewSwitcher } from "../../components";
 
@@ -45,8 +42,7 @@ export const ListView = () => {
         }
       : null;
 
-  const isBootstrapping =
-    Boolean(listId) && (listQuery.isPending || statusesQuery.isPending);
+  const isBootstrapping = Boolean(listId) && (listQuery.isPending || statusesQuery.isPending);
   const canRenderItems = Boolean(listView) && !statusesQuery.isPending;
 
   if (isBootstrapping && !listView) {
@@ -78,11 +74,7 @@ export const ListView = () => {
               <ViewSwitcher listId={listView.id} />
             </Grid2>
             <Grid2 size={12} sx={{ p: theme.spacing(2) }}>
-              {canRenderItems ? (
-                <ItemList listId={listView.id} />
-              ) : (
-                <ItemListLoader />
-              )}
+              {canRenderItems ? <ItemList listId={listView.id} /> : <ItemListLoader />}
             </Grid2>
           </>
         )}

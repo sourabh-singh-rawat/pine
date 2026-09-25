@@ -14,9 +14,7 @@ import type {
 } from "@/features/attachments/repositories/IItemAttachmentUploadRequestRepository";
 
 @injectable()
-export class ItemAttachmentUploadRequestRepository
-  implements IItemAttachmentUploadRequestRepository
-{
+export class ItemAttachmentUploadRequestRepository implements IItemAttachmentUploadRequestRepository {
   constructor(@inject(TYPES.Database) private readonly db: Database) {}
 
   async save(
@@ -61,9 +59,7 @@ export class ItemAttachmentUploadRequestRepository
 
   async update(
     id: string,
-    entity: Partial<
-      Pick<ItemAttachmentUploadRequest, "status" | "attachmentId" | "completedAt">
-    >,
+    entity: Partial<Pick<ItemAttachmentUploadRequest, "status" | "attachmentId" | "completedAt">>,
     options?: ItemAttachmentUploadRequestRepositoryOptions,
   ): Promise<ItemAttachmentUploadRequest> {
     const client = this.client(options);
@@ -72,12 +68,8 @@ export class ItemAttachmentUploadRequestRepository
       .update(ItemAttachmentUploadRequests)
       .set({
         ...(entity.status !== undefined ? { status: entity.status } : {}),
-        ...(entity.attachmentId !== undefined
-          ? { attachmentId: entity.attachmentId }
-          : {}),
-        ...(entity.completedAt !== undefined
-          ? { completedAt: entity.completedAt }
-          : {}),
+        ...(entity.attachmentId !== undefined ? { attachmentId: entity.attachmentId } : {}),
+        ...(entity.completedAt !== undefined ? { completedAt: entity.completedAt } : {}),
       })
       .where(eq(ItemAttachmentUploadRequests.id, id))
       .returning();

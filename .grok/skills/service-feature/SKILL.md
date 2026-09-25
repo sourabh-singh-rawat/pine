@@ -12,17 +12,17 @@ when-to-use: >
 
 Wire layers; do not re-implement them. Canonical GraphQL: `platform-service` `features/workspaces`. Canonical HTTP: `authorization-service` `features/authorization`. Related: `repository`, `drizzle`, `service`, `graphql`, `http-route`, `events`, `outbox`, `workers`, `authorization`, `testing`.
 
-| Layer | Skill |
-| ----- | ----- |
-| Repository / Drizzle tables | `repository` / `drizzle` |
-| Application service | `service` |
-| Authz checks / relation events | `authorization` |
-| GraphQL fields | `graphql` |
-| HTTP routes | `http-route` |
-| NATS publish / consumers | `events` |
-| Outbox schedule + pollers | `outbox` |
-| Background process kind | `workers` |
-| Colocated tests | `testing` |
+| Layer                          | Skill                    |
+| ------------------------------ | ------------------------ |
+| Repository / Drizzle tables    | `repository` / `drizzle` |
+| Application service            | `service`                |
+| Authz checks / relation events | `authorization`          |
+| GraphQL fields                 | `graphql`                |
+| HTTP routes                    | `http-route`             |
+| NATS publish / consumers       | `events`                 |
+| Outbox schedule + pollers      | `outbox`                 |
+| Background process kind        | `workers`                |
+| Colocated tests                | `testing`                |
 
 Verbs and rename rules: `AGENTS.md`.
 
@@ -39,11 +39,11 @@ services/<svc>/src/
 
 ## Feature folders
 
-| Kind | Folder | Examples |
-| ---- | ------ | -------- |
-| Entity aggregate | plural kebab-case | `workspaces`, `identities`, `tenants` |
-| Use-case / protocol | the problem | `signin`, `oauth`, `verification`, `attachment-upload` |
-| Foreign projection | source entity name | `identities` / `tenants` in a consuming service |
+| Kind                | Folder             | Examples                                               |
+| ------------------- | ------------------ | ------------------------------------------------------ |
+| Entity aggregate    | plural kebab-case  | `workspaces`, `identities`, `tenants`                  |
+| Use-case / protocol | the problem        | `signin`, `oauth`, `verification`, `attachment-upload` |
+| Foreign projection  | source entity name | `identities` / `tenants` in a consuming service        |
 
 Keep aggregate + relations + transport + repos + services + errors together. Split only when the lifecycle differs (`attachment` vs `attachment-upload`). Legacy singular folders stay until a dedicated rename.
 
@@ -65,14 +65,14 @@ container.bind<IWorkspaceService>(TYPES.WorkspaceService).to(WorkspaceService);
 
 ## Imports
 
-| Need | From |
-| ---- | ---- |
-| Server / routes / logger | `@pine/server` |
-| Bus | `@pine/events` |
-| Persistence | Drizzle `src/db/` + feature repositories |
-| Authz | `@pine/authorization` |
-| Outbox | `@pine/outbox` |
-| Enums / errors | `@pine/common`, `@pine/errors` |
+| Need                     | From                                     |
+| ------------------------ | ---------------------------------------- |
+| Server / routes / logger | `@pine/server`                           |
+| Bus                      | `@pine/events`                           |
+| Persistence              | Drizzle `src/db/` + feature repositories |
+| Authz                    | `@pine/authorization`                    |
+| Outbox                   | `@pine/outbox`                           |
+| Enums / errors           | `@pine/common`, `@pine/errors`           |
 
 Live vs dead package names: `orientation`.
 

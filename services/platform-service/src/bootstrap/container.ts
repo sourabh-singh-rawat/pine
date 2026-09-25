@@ -15,10 +15,7 @@ import {
   type IOutboxWorker,
   type IRetryPolicy,
 } from "@pine/outbox";
-import {
-  resolveIdentityFromHeaders,
-  resolveTenantContextFromHeaders,
-} from "@pine/identity";
+import { resolveIdentityFromHeaders, resolveTenantContextFromHeaders } from "@pine/identity";
 import { createGraphQLServer, createHttpServer, type IHttpServer } from "@pine/server";
 import { Container } from "inversify";
 import { readFileSync } from "node:fs";
@@ -40,18 +37,9 @@ import {
   WorkspaceRepository,
   WorkspaceService,
 } from "@/features/workspaces";
-import {
-  type IIdentityRelationService,
-  type IPlatformRelationService,
-  IdentityRelationService,
-  PlatformRelationService,
-} from "@/features/platform";
+import { type IIdentityRelationService, type IPlatformRelationService, IdentityRelationService, PlatformRelationService } from "@/features/platform";
 import { type IIdentityRepository, type IIdentityService, IdentityRepository, IdentityService, PlatformIdentitySyncConsumer } from "@/features/identities";
-import {
-  type IOnboardingService,
-  OnboardingService,
-  PlatformUserOnboardingConsumer,
-} from "@/features/onboarding";
+import { type IOnboardingService, OnboardingService, PlatformUserOnboardingConsumer } from "@/features/onboarding";
 import { type ITenantRelationService, TenantRelationService, type ITenantRepository, type ITenantService, TenantRepository } from "@/features/tenants";
 import { TenantService } from "@/features/tenants/services/TenantService";
 import { createContext } from "@/graphql";
@@ -84,13 +72,9 @@ container.bind<ITenantRepository>(TYPES.TenantRepository).to(TenantRepository);
 container.bind<ITenantService>(TYPES.TenantService).to(TenantService);
 container.bind<ITenantRelationService>(TYPES.TenantRelationService).to(TenantRelationService);
 container.bind<IWorkspaceRepository>(TYPES.WorkspaceRepository).to(WorkspaceRepository);
-container
-  .bind<IWorkspacePreferenceRepository>(TYPES.WorkspacePreferenceRepository)
-  .to(WorkspacePreferenceRepository);
+container.bind<IWorkspacePreferenceRepository>(TYPES.WorkspacePreferenceRepository).to(WorkspacePreferenceRepository);
 container.bind<IWorkspaceService>(TYPES.WorkspaceService).to(WorkspaceService);
-container
-  .bind<IWorkspacePreferenceService>(TYPES.WorkspacePreferenceService)
-  .to(WorkspacePreferenceService);
+container.bind<IWorkspacePreferenceService>(TYPES.WorkspacePreferenceService).to(WorkspacePreferenceService);
 container.bind<IWorkspaceRelationService>(TYPES.WorkspaceRelationService).to(WorkspaceRelationService);
 container.bind<IPlatformRelationService>(TYPES.PlatformRelationService).to(PlatformRelationService);
 container.bind<IIdentityRelationService>(TYPES.IdentityRelationService).to(IdentityRelationService);

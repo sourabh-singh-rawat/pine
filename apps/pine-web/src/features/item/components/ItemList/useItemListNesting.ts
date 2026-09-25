@@ -11,19 +11,12 @@ import { type ItemSource } from "./mapItemRow";
 
 const EMPTY_IDS: ReadonlySet<string> = new Set();
 
-export const useItemListNesting = (options: {
-  enabled: boolean;
-  listDataUpdatedAt?: number;
-}) => {
+export const useItemListNesting = (options: { enabled: boolean; listDataUpdatedAt?: number }) => {
   const { enabled, listDataUpdatedAt } = options;
   const queryClient = useQueryClient();
-  const [childrenByParentId, setChildrenByParentId] = useState<
-    Record<string, ItemSource[]>
-  >({});
-  const [expandedParentIds, setExpandedParentIds] =
-    useState<ReadonlySet<string>>(EMPTY_IDS);
-  const [expandingItemIds, setExpandingIssueIds] =
-    useState<ReadonlySet<string>>(EMPTY_IDS);
+  const [childrenByParentId, setChildrenByParentId] = useState<Record<string, ItemSource[]>>({});
+  const [expandedParentIds, setExpandedParentIds] = useState<ReadonlySet<string>>(EMPTY_IDS);
+  const [expandingItemIds, setExpandingIssueIds] = useState<ReadonlySet<string>>(EMPTY_IDS);
 
   const loadChildren = useCallback(
     async (parentItemId: string) => {

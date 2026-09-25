@@ -92,9 +92,7 @@ export const ItemChecklists = ({ itemId }: ItemChecklistsProps) => {
       snackbar.success("Checklist created");
       await refresh();
     } catch (error) {
-      snackbar.error(
-        error instanceof Error ? error.message : "Failed to create checklist",
-      );
+      snackbar.error(error instanceof Error ? error.message : "Failed to create checklist");
     }
   };
 
@@ -114,9 +112,7 @@ export const ItemChecklists = ({ itemId }: ItemChecklistsProps) => {
       snackbar.success("Checklist renamed");
       await refresh();
     } catch (error) {
-      snackbar.error(
-        error instanceof Error ? error.message : "Failed to rename checklist",
-      );
+      snackbar.error(error instanceof Error ? error.message : "Failed to rename checklist");
     }
   };
 
@@ -126,9 +122,7 @@ export const ItemChecklists = ({ itemId }: ItemChecklistsProps) => {
       snackbar.success("Checklist deleted");
       await refresh();
     } catch (error) {
-      snackbar.error(
-        error instanceof Error ? error.message : "Failed to delete checklist",
-      );
+      snackbar.error(error instanceof Error ? error.message : "Failed to delete checklist");
     }
   };
 
@@ -146,9 +140,7 @@ export const ItemChecklists = ({ itemId }: ItemChecklistsProps) => {
       setEntryDrafts((current) => ({ ...current, [checklistId]: "" }));
       await refresh();
     } catch (error) {
-      snackbar.error(
-        error instanceof Error ? error.message : "Failed to add entry",
-      );
+      snackbar.error(error instanceof Error ? error.message : "Failed to add entry");
     }
   };
 
@@ -160,9 +152,7 @@ export const ItemChecklists = ({ itemId }: ItemChecklistsProps) => {
       });
       await refresh();
     } catch (error) {
-      snackbar.error(
-        error instanceof Error ? error.message : "Failed to update entry",
-      );
+      snackbar.error(error instanceof Error ? error.message : "Failed to update entry");
     } finally {
       setBusyEntryId(null);
     }
@@ -174,9 +164,7 @@ export const ItemChecklists = ({ itemId }: ItemChecklistsProps) => {
       await deleteEntryMutation.mutateAsync({ id: entryId });
       await refresh();
     } catch (error) {
-      snackbar.error(
-        error instanceof Error ? error.message : "Failed to delete entry",
-      );
+      snackbar.error(error instanceof Error ? error.message : "Failed to delete entry");
     } finally {
       setBusyEntryId(null);
     }
@@ -270,9 +258,7 @@ export const ItemChecklists = ({ itemId }: ItemChecklistsProps) => {
 
       {checklists.map((checklist) => {
         const progress =
-          checklist.totalCount === 0
-            ? 0
-            : (checklist.completedCount / checklist.totalCount) * 100;
+          checklist.totalCount === 0 ? 0 : (checklist.completedCount / checklist.totalCount) * 100;
         const entryDraft = entryDrafts[checklist.id] ?? "";
         const isRenaming = renamingId === checklist.id;
 
@@ -361,18 +347,11 @@ export const ItemChecklists = ({ itemId }: ItemChecklistsProps) => {
               )}
             </Stack>
 
-            {checklist.totalCount > 0 && (
-              <ProgressLinear variant="determinate" value={progress} />
-            )}
+            {checklist.totalCount > 0 && <ProgressLinear variant="determinate" value={progress} />}
 
             <Stack spacing={0.5}>
               {checklist.entries.map((entry) => (
-                <Stack
-                  key={entry.id}
-                  direction="row"
-                  spacing={0.5}
-                  alignItems="center"
-                >
+                <Stack key={entry.id} direction="row" spacing={0.5} alignItems="center">
                   <Checkbox
                     size="small"
                     checked={entry.completed}

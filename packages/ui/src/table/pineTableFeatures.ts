@@ -25,4 +25,6 @@ export const {
   features: pineTableFeatures,
 });
 
-export type PineTableInstance<TData extends RowData = RowData> = ReturnType<typeof usePineTableContext<TData>>;
+export type PineTableInstance<TData extends RowData = RowData> = ReturnType<
+  typeof usePineTableContext<TData>
+>;

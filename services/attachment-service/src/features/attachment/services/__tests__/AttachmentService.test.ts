@@ -156,9 +156,7 @@ describe("AttachmentService", () => {
 
       const service = new AttachmentService(db, attachmentRepository, objectStorage, outboxService);
 
-      await expect(service.delete({ id: "non-existent" })).rejects.toBeInstanceOf(
-        NotFoundError,
-      );
+      await expect(service.delete({ id: "non-existent" })).rejects.toBeInstanceOf(NotFoundError);
     });
 
     it("deletes attachment when found", async () => {

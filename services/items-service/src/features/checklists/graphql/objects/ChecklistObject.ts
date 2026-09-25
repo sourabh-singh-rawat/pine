@@ -14,9 +14,7 @@ export type ChecklistObjectShape = {
   entries: ChecklistEntry[];
 };
 
-export const toChecklistObjectShape = (
-  row: ChecklistWithEntries,
-): ChecklistObjectShape => ({
+export const toChecklistObjectShape = (row: ChecklistWithEntries): ChecklistObjectShape => ({
   id: row.checklist.id,
   itemId: row.checklist.itemId,
   name: row.checklist.name,
@@ -27,9 +25,7 @@ export const toChecklistObjectShape = (
   entries: row.entries,
 });
 
-export const ChecklistObject = builder.objectRef<ChecklistObjectShape>(
-  "ChecklistObject",
-);
+export const ChecklistObject = builder.objectRef<ChecklistObjectShape>("ChecklistObject");
 
 ChecklistObject.implement({
   fields: (t) => ({

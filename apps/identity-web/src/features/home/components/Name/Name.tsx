@@ -50,8 +50,7 @@ export const Name = () => {
             Name
           </Typography>
           <Typography color="text.secondary">
-            No profile yet.{" "}
-            <Link to="/">Create your profile</Link>
+            No profile yet. <Link to="/">Create your profile</Link>
           </Typography>
         </Stack>
       </Container>

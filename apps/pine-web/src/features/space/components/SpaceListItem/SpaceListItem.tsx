@@ -30,10 +30,7 @@ export const SpaceListItem = ({ spaceId, name, workspaceId }: SpaceListItemProps
     select: (s) => s.location.pathname.split("/").pop(),
   });
 
-  const listsQuery = useGetListsQuery(
-    { spaceId },
-    { enabled: expanded || Boolean(activeViewId) },
-  );
+  const listsQuery = useGetListsQuery({ spaceId }, { enabled: expanded || Boolean(activeViewId) });
 
   const listRows = listsQuery.data?.getLists?.rows;
   const lists = listRows ?? [];
@@ -124,10 +121,7 @@ export const SpaceListItem = ({ spaceId, name, workspaceId }: SpaceListItemProps
                   id: string;
                   name: string;
                   spaceId: string;
-                } =>
-                  Boolean(list?.id) &&
-                  Boolean(list?.name) &&
-                  Boolean(list?.spaceId),
+                } => Boolean(list?.id) && Boolean(list?.name) && Boolean(list?.spaceId),
               )
               .map((list) => (
                 <ListNavItem

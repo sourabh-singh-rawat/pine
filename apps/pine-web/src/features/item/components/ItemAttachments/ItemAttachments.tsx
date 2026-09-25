@@ -43,8 +43,7 @@ export const ItemAttachments = ({ itemId }: ItemAttachmentsProps) => {
               id: attachment.id,
               attachmentId: attachment.attachmentId,
               name: attachment.name,
-              mimeType:
-                typeof attachment.mimeType === "string" ? attachment.mimeType : "",
+              mimeType: typeof attachment.mimeType === "string" ? attachment.mimeType : "",
               size: typeof attachment.size === "number" ? attachment.size : null,
             },
           ];
@@ -116,9 +115,7 @@ export const ItemAttachments = ({ itemId }: ItemAttachmentsProps) => {
       }, 8000);
     } catch (error) {
       snackbar.error(
-        error instanceof Error
-          ? error.message
-          : "Could not upload attachment. Please try again.",
+        error instanceof Error ? error.message : "Could not upload attachment. Please try again.",
       );
     } finally {
       setIsUploading(false);
@@ -144,9 +141,7 @@ export const ItemAttachments = ({ itemId }: ItemAttachmentsProps) => {
       await attachmentsQuery.refetch();
     } catch (error) {
       snackbar.error(
-        error instanceof Error
-          ? error.message
-          : "Could not remove attachment. Please try again.",
+        error instanceof Error ? error.message : "Could not remove attachment. Please try again.",
       );
     } finally {
       setDeletingId(null);
@@ -155,12 +150,7 @@ export const ItemAttachments = ({ itemId }: ItemAttachmentsProps) => {
 
   return (
     <Stack spacing={1.5}>
-      <input
-        ref={fileInputRef}
-        type="file"
-        hidden
-        onChange={handleSelectFile}
-      />
+      <input ref={fileInputRef} type="file" hidden onChange={handleSelectFile} />
 
       <AttachmentDropZone
         isPending={isPending}
@@ -225,9 +215,7 @@ export const ItemAttachments = ({ itemId }: ItemAttachmentsProps) => {
                   setShowAllAttachments((current) => !current);
                 }}
               >
-                {showAllAttachments
-                  ? "Show less"
-                  : `More (${hiddenAttachmentCount})`}
+                {showAllAttachments ? "Show less" : `More (${hiddenAttachmentCount})`}
               </Button>
             </Box>
           )}

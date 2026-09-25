@@ -35,9 +35,7 @@ type CliOptions = {
   readonly force: boolean;
 };
 
-export const main = async (
-  argv: readonly string[] = process.argv.slice(2),
-): Promise<number> => {
+export const main = async (argv: readonly string[] = process.argv.slice(2)): Promise<number> => {
   const parsed = parseArgs(argv);
   if ("error" in parsed) {
     console.error(parsed.error);
@@ -168,10 +166,7 @@ const parseArgs = (argv: readonly string[]): CliOptions | { error: string } => {
   return { help, dryRun, tag, backfill, force };
 };
 
-const resolveTagFromBranch = (
-  branch: string,
-  explicit: string | null,
-): string | null => {
+const resolveTagFromBranch = (branch: string, explicit: string | null): string | null => {
   if (explicit !== null) {
     const version = explicit.startsWith("v") ? explicit.slice(1) : explicit;
     const parts = parseReleaseVersionParts(version);
@@ -185,13 +180,9 @@ const resolveTagFromBranch = (
   return parts === null ? null : formatReleaseTag(parts);
 };
 
-const changedPackagesFor = async (
-  currentCommit: string | null,
-  previousCommit: string | null,
-) => {
+const changedPackagesFor = async (currentCommit: string | null, previousCommit: string | null) => {
   const current = await packageVersionsFor(ROOT, currentCommit);
-  const previous =
-    previousCommit === null ? null : await packageVersionsFor(ROOT, previousCommit);
+  const previous = previousCommit === null ? null : await packageVersionsFor(ROOT, previousCommit);
   return diffPackageVersions(current, previous);
 };
 
@@ -207,10 +198,7 @@ const collectSections = async (input: {
     if (entries.length > 0 || !input.backfill) {
       const previous = history.find((drop) => drop.tag !== input.tag) ?? null;
       const matching = history.find((drop) => drop.tag === input.tag) ?? null;
-      const changed = await changedPackagesFor(
-        matching?.commit ?? null,
-        previous?.commit ?? null,
-      );
+      const changed = await changedPackagesFor(matching?.commit ?? null, previous?.commit ?? null);
       incoming.push({
         tag: input.tag,
         body: formatChangelogSection(input.tag, entries, changed),
@@ -261,8 +249,7 @@ const writeMergedChangelog = (
 ): string => {
   const current =
     currentTag === null ? undefined : incoming.find((item) => item.tag === currentTag);
-  const rest =
-    currentTag === null ? incoming : incoming.filter((item) => item.tag !== currentTag);
+  const rest = currentTag === null ? incoming : incoming.filter((item) => item.tag !== currentTag);
 
   let next = existing;
   if (current !== undefined) {

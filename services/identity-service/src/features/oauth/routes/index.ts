@@ -11,10 +11,4 @@ export * from "@/features/oauth/routes/consent";
 export * from "@/features/oauth/routes/rejectConsent";
 export * from "@/features/oauth/routes/token";
 
-export const oauthRoutes: HttpRoute[] = [
-  authorize,
-  consent,
-  acceptConsent,
-  rejectConsent,
-  token,
-];
+export const oauthRoutes: HttpRoute[] = [authorize, consent, acceptConsent, rejectConsent, token];

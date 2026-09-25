@@ -20,4 +20,3 @@ export const TYPES = {
   AuthorizationListSyncConsumer: Symbol.for("AuthorizationListSyncConsumer"),
   AuthorizationItemSyncConsumer: Symbol.for("AuthorizationItemSyncConsumer"),
 } as const;
-

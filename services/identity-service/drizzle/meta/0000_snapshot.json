@@ -60,9 +60,7 @@
         "identities_idp_id_unique": {
           "name": "identities_idp_id_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "idp_id"
-          ]
+          "columns": ["idp_id"]
         }
       },
       "policies": {},
@@ -148,12 +146,8 @@
           "name": "identity_profiles_identity_id_identities_id_fk",
           "tableFrom": "identity_profiles",
           "tableTo": "identities",
-          "columnsFrom": [
-            "identity_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["identity_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }

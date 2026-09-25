@@ -62,9 +62,7 @@ export class ItemAttachmentRepository implements IItemAttachmentRepository {
     return client
       .select()
       .from(ItemAttachments)
-      .where(
-        and(eq(ItemAttachments.itemId, itemId), isNull(ItemAttachments.deletedAt)),
-      )
+      .where(and(eq(ItemAttachments.itemId, itemId), isNull(ItemAttachments.deletedAt)))
       .orderBy(desc(ItemAttachments.createdAt));
   }
 
@@ -89,10 +87,7 @@ export class ItemAttachmentRepository implements IItemAttachmentRepository {
     return row ?? null;
   }
 
-  async softDelete(
-    id: string,
-    options?: ItemAttachmentRepositoryOptions,
-  ): Promise<boolean> {
+  async softDelete(id: string, options?: ItemAttachmentRepositoryOptions): Promise<boolean> {
     const client = this.client(options);
     const now = new Date();
 

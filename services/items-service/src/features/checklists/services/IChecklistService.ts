@@ -61,7 +61,5 @@ export interface IChecklistService {
   createEntry: (options: CreateChecklistEntryOptions) => Promise<ChecklistEntry>;
   updateEntry: (options: UpdateChecklistEntryOptions) => Promise<ChecklistEntry>;
   deleteEntry: (options: DeleteChecklistEntryOptions) => Promise<void>;
-  reorderEntries: (
-    options: ReorderChecklistEntriesOptions,
-  ) => Promise<ChecklistEntry[]>;
+  reorderEntries: (options: ReorderChecklistEntriesOptions) => Promise<ChecklistEntry[]>;
 }

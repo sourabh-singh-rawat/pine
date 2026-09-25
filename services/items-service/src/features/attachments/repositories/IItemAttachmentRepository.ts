@@ -31,8 +31,5 @@ export interface IItemAttachmentRepository {
     attachmentId: string,
     options?: ItemAttachmentRepositoryOptions,
   ) => Promise<ItemAttachment | null>;
-  softDelete: (
-    id: string,
-    options?: ItemAttachmentRepositoryOptions,
-  ) => Promise<boolean>;
+  softDelete: (id: string, options?: ItemAttachmentRepositoryOptions) => Promise<boolean>;
 }

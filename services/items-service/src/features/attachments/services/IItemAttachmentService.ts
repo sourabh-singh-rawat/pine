@@ -48,7 +48,5 @@ export interface IItemAttachmentService {
   createUploadRequest: (
     options: CreateItemAttachmentUploadRequestOptions,
   ) => Promise<CreateItemAttachmentUploadRequestResult>;
-  completeUpload: (
-    options: CompleteItemAttachmentUploadOptions,
-  ) => Promise<ItemAttachment | null>;
+  completeUpload: (options: CompleteItemAttachmentUploadOptions) => Promise<ItemAttachment | null>;
 }

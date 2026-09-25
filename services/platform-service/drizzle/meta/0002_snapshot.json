@@ -96,9 +96,7 @@
         "capabilities_key_unique": {
           "name": "capabilities_key_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "key"
-          ]
+          "columns": ["key"]
         }
       },
       "policies": {},
@@ -191,12 +189,8 @@
           "name": "organization_members_organization_id_organizations_id_fk",
           "tableFrom": "organization_members",
           "tableTo": "organizations",
-          "columnsFrom": [
-            "organization_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["organization_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -204,12 +198,8 @@
           "name": "organization_members_role_id_organization_roles_role_id_fk",
           "tableFrom": "organization_members",
           "tableTo": "organization_roles",
-          "columnsFrom": [
-            "role_id"
-          ],
-          "columnsTo": [
-            "role_id"
-          ],
+          "columnsFrom": ["role_id"],
+          "columnsTo": ["role_id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -219,11 +209,7 @@
         "organization_members_organization_id_identity_id_role_id_unique": {
           "name": "organization_members_organization_id_identity_id_role_id_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "organization_id",
-            "identity_id",
-            "role_id"
-          ]
+          "columns": ["organization_id", "identity_id", "role_id"]
         }
       },
       "policies": {},
@@ -259,12 +245,8 @@
           "name": "organization_roles_role_id_roles_id_fk",
           "tableFrom": "organization_roles",
           "tableTo": "roles",
-          "columnsFrom": [
-            "role_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["role_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -272,12 +254,8 @@
           "name": "organization_roles_organization_id_organizations_id_fk",
           "tableFrom": "organization_roles",
           "tableTo": "organizations",
-          "columnsFrom": [
-            "organization_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["organization_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -287,9 +265,7 @@
         "organization_roles_role_id_unique": {
           "name": "organization_roles_role_id_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "role_id"
-          ]
+          "columns": ["role_id"]
         }
       },
       "policies": {},
@@ -376,12 +352,8 @@
           "name": "organizations_tenant_id_tenants_id_fk",
           "tableFrom": "organizations",
           "tableTo": "tenants",
-          "columnsFrom": [
-            "tenant_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["tenant_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -389,12 +361,8 @@
           "name": "organizations_parent_organization_id_organizations_id_fk",
           "tableFrom": "organizations",
           "tableTo": "organizations",
-          "columnsFrom": [
-            "parent_organization_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["parent_organization_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -404,10 +372,7 @@
         "organizations_tenant_id_slug_unique": {
           "name": "organizations_tenant_id_slug_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "tenant_id",
-            "slug"
-          ]
+          "columns": ["tenant_id", "slug"]
         }
       },
       "policies": {},
@@ -646,12 +611,8 @@
           "name": "platform_members_platform_role_id_platform_roles_role_id_fk",
           "tableFrom": "platform_members",
           "tableTo": "platform_roles",
-          "columnsFrom": [
-            "platform_role_id"
-          ],
-          "columnsTo": [
-            "role_id"
-          ],
+          "columnsFrom": ["platform_role_id"],
+          "columnsTo": ["role_id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -661,10 +622,7 @@
         "platform_members_platform_role_id_identity_id_unique": {
           "name": "platform_members_platform_role_id_identity_id_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "platform_role_id",
-            "identity_id"
-          ]
+          "columns": ["platform_role_id", "identity_id"]
         }
       },
       "policies": {},
@@ -694,12 +652,8 @@
           "name": "platform_roles_role_id_roles_id_fk",
           "tableFrom": "platform_roles",
           "tableTo": "roles",
-          "columnsFrom": [
-            "role_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["role_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -709,9 +663,7 @@
         "platform_roles_role_id_unique": {
           "name": "platform_roles_role_id_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "role_id"
-          ]
+          "columns": ["role_id"]
         }
       },
       "policies": {},
@@ -874,12 +826,8 @@
           "name": "tenant_members_tenant_id_tenants_id_fk",
           "tableFrom": "tenant_members",
           "tableTo": "tenants",
-          "columnsFrom": [
-            "tenant_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["tenant_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -887,12 +835,8 @@
           "name": "tenant_members_role_id_tenant_roles_role_id_fk",
           "tableFrom": "tenant_members",
           "tableTo": "tenant_roles",
-          "columnsFrom": [
-            "role_id"
-          ],
-          "columnsTo": [
-            "role_id"
-          ],
+          "columnsFrom": ["role_id"],
+          "columnsTo": ["role_id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -902,11 +846,7 @@
         "tenant_members_tenant_id_identity_id_role_id_unique": {
           "name": "tenant_members_tenant_id_identity_id_role_id_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "tenant_id",
-            "identity_id",
-            "role_id"
-          ]
+          "columns": ["tenant_id", "identity_id", "role_id"]
         }
       },
       "policies": {},
@@ -942,12 +882,8 @@
           "name": "tenant_roles_role_id_roles_id_fk",
           "tableFrom": "tenant_roles",
           "tableTo": "roles",
-          "columnsFrom": [
-            "role_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["role_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -955,12 +891,8 @@
           "name": "tenant_roles_tenant_id_tenants_id_fk",
           "tableFrom": "tenant_roles",
           "tableTo": "tenants",
-          "columnsFrom": [
-            "tenant_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["tenant_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -970,9 +902,7 @@
         "tenant_roles_role_id_unique": {
           "name": "tenant_roles_role_id_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "role_id"
-          ]
+          "columns": ["role_id"]
         }
       },
       "policies": {},
@@ -1048,9 +978,7 @@
         "tenants_slug_unique": {
           "name": "tenants_slug_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "slug"
-          ]
+          "columns": ["slug"]
         }
       },
       "policies": {},

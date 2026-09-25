@@ -1,9 +1,5 @@
 import { EMAIL_VERIFICATION_STATUS, UserNotFoundError } from "@pine/common";
-import {
-  createCloudEvent,
-  IdentityEmailVerifiedEvent,
-  UserRegisteredEvent,
-} from "@pine/events";
+import { createCloudEvent, IdentityEmailVerifiedEvent, UserRegisteredEvent } from "@pine/events";
 import type { IOutboxService } from "@pine/outbox";
 import { inject, injectable } from "inversify";
 import { TYPES } from "@/bootstrap/container-types";

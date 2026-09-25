@@ -27,9 +27,7 @@ export class AuthorizationService implements IAuthorizationService {
     return this.authorizationGraphProvider.checkPermission(input);
   }
 
-  async ensureRelationship(
-    relationship: GraphRelationship,
-  ): Promise<{ created: boolean }> {
+  async ensureRelationship(relationship: GraphRelationship): Promise<{ created: boolean }> {
     assertExclusiveSubject(relationship);
 
     const existing = await this.authorizationGraphProvider.listRelationships({
@@ -50,15 +48,14 @@ export class AuthorizationService implements IAuthorizationService {
   async listRelationships(input: ListRelationshipsInput): Promise<GraphRelationship[]> {
     return this.authorizationGraphProvider.listRelationships({
       namespace: input.namespace,
-      object: input.object !== undefined ? { namespace: input.namespace, id: input.object } : undefined,
+      object:
+        input.object !== undefined ? { namespace: input.namespace, id: input.object } : undefined,
       relation: input.relation,
       subject: input.subject,
     });
   }
 
-  async deleteRelationship(
-    relationship: GraphRelationship,
-  ): Promise<{ deleted: boolean }> {
+  async deleteRelationship(relationship: GraphRelationship): Promise<{ deleted: boolean }> {
     assertExclusiveSubject(relationship);
 
     const existing = await this.authorizationGraphProvider.listRelationships({

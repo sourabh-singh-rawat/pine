@@ -42,10 +42,7 @@ export class StatusRepository implements IStatusRepository {
       .returning();
   }
 
-  async findByListId(
-    listId: string,
-    options?: StatusRepositoryOptions,
-  ): Promise<StatusOption[]> {
+  async findByListId(listId: string, options?: StatusRepositoryOptions): Promise<StatusOption[]> {
     const client = this.client(options);
     return client
       .select()

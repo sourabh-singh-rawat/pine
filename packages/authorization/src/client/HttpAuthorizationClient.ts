@@ -24,9 +24,7 @@ export class HttpAuthorizationClient implements IAuthorizationClient {
     return body.allowed;
   }
 
-  async ensureRelationship(
-    relationship: GraphRelationship,
-  ): Promise<{ created: boolean }> {
+  async ensureRelationship(relationship: GraphRelationship): Promise<{ created: boolean }> {
     const body = await this.postJson("/authorization/ensureRelationship", relationship);
     if (!isEnsureRelationshipResponse(body)) {
       throw new Error("ensureRelationship returned an invalid response body");
@@ -42,9 +40,7 @@ export class HttpAuthorizationClient implements IAuthorizationClient {
     return body.relationships;
   }
 
-  async deleteRelationship(
-    relationship: GraphRelationship,
-  ): Promise<{ deleted: boolean }> {
+  async deleteRelationship(relationship: GraphRelationship): Promise<{ deleted: boolean }> {
     const body = await this.postJson("/authorization/deleteRelationship", relationship);
     if (!isDeleteRelationshipResponse(body)) {
       throw new Error("deleteRelationship returned an invalid response body");

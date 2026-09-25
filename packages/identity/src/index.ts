@@ -4,10 +4,7 @@ export { resolveIdentityFromHeaders } from "./resolveIdentityFromHeaders";
 export { resolveTenantContextFromHeaders } from "./resolveTenantContextFromHeaders";
 export { requireIdentity, requireIdentityId } from "./requireIdentity";
 export { requireWorkspaceId, requireTenantId } from "./requireTenantContext";
-export {
-  X_WORKSPACE_ID_HEADER,
-  X_TENANT_ID_HEADER,
-} from "./tenantContextHeaders";
+export { X_WORKSPACE_ID_HEADER, X_TENANT_ID_HEADER } from "./tenantContextHeaders";
 export {
   GetIdentityFromAccessTokenResponseSchema,
   GetIdentityFromSessionResponseSchema,
@@ -18,4 +15,3 @@ export type {
   GetIdentityFromSessionResponse,
   Identity,
 } from "./schemas";
-

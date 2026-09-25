@@ -139,9 +139,7 @@ describe("WorkspaceRelationService", () => {
       createDbMock(),
     );
 
-    await expect(
-      service.list({ workspaceId, relation: ADMIN }, actorId),
-    ).resolves.toEqual([
+    await expect(service.list({ workspaceId, relation: ADMIN }, actorId)).resolves.toEqual([
       {
         id: `${workspaceId}:${ADMIN}:${identityId}`,
         workspaceId,
@@ -160,8 +158,8 @@ describe("WorkspaceRelationService", () => {
       createDbMock(),
     );
 
-    await expect(
-      service.list({ workspaceId, relation: "viewer" }, actorId),
-    ).rejects.toBeInstanceOf(InvalidWorkspaceRelationError);
+    await expect(service.list({ workspaceId, relation: "viewer" }, actorId)).rejects.toBeInstanceOf(
+      InvalidWorkspaceRelationError,
+    );
   });
 });

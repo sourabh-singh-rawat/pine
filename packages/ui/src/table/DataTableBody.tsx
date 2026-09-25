@@ -21,11 +21,7 @@ export const DataTableBody = <TData extends RowData = RowData>({
       {() => (
         <tbody>
           {table.getRowModel().rows.map((row) => (
-            <DataTableRow<TData>
-              key={row.id}
-              row={row}
-              onRowClick={onRowClick}
-            />
+            <DataTableRow<TData> key={row.id} row={row} onRowClick={onRowClick} />
           ))}
         </tbody>
       )}

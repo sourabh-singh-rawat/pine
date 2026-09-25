@@ -57,21 +57,27 @@ Bind package types; `NatsPublisher` is `IOutboxPublisher` (`satisfies IOutboxPub
 ```ts
 container.bind<IOutboxRepository>(TYPES.OutboxRepository).toConstantValue(new OutboxRepository(db));
 container.bind<IRetryPolicy>(TYPES.RetryPolicy).toConstantValue(new ExponentialBackoffPolicy());
-container.bind<IOutboxService>(TYPES.OutboxService).toConstantValue(
-  new OutboxService(
-    container.get<IOutboxRepository>(TYPES.OutboxRepository),
-    container.get<IRetryPolicy>(TYPES.RetryPolicy),
-  ),
-);
-container.bind<IOutboxWorker>(TYPES.OutboxWorker).toConstantValue(
-  new OutboxWorker(container.get<IOutboxService>(TYPES.OutboxService), publisher),
-);
-container.bind<IOutboxCleanupService>(TYPES.OutboxCleanupService).toConstantValue(
-  new OutboxCleanupService(container.get<IOutboxRepository>(TYPES.OutboxRepository)),
-);
-container.bind<IOutboxCleanupWorker>(TYPES.OutboxCleanupWorker).toConstantValue(
-  new OutboxCleanupWorker(container.get<IOutboxCleanupService>(TYPES.OutboxCleanupService)),
-);
+container
+  .bind<IOutboxService>(TYPES.OutboxService)
+  .toConstantValue(
+    new OutboxService(
+      container.get<IOutboxRepository>(TYPES.OutboxRepository),
+      container.get<IRetryPolicy>(TYPES.RetryPolicy),
+    ),
+  );
+container
+  .bind<IOutboxWorker>(TYPES.OutboxWorker)
+  .toConstantValue(new OutboxWorker(container.get<IOutboxService>(TYPES.OutboxService), publisher));
+container
+  .bind<IOutboxCleanupService>(TYPES.OutboxCleanupService)
+  .toConstantValue(
+    new OutboxCleanupService(container.get<IOutboxRepository>(TYPES.OutboxRepository)),
+  );
+container
+  .bind<IOutboxCleanupWorker>(TYPES.OutboxCleanupWorker)
+  .toConstantValue(
+    new OutboxCleanupWorker(container.get<IOutboxCleanupService>(TYPES.OutboxCleanupService)),
+  );
 ```
 
 ```ts

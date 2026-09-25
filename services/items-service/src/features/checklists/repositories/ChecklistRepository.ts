@@ -57,10 +57,7 @@ export class ChecklistRepository implements IChecklistRepository {
     return updated ?? null;
   }
 
-  async findById(
-    id: string,
-    options?: ChecklistRepositoryOptions,
-  ): Promise<Checklist | null> {
+  async findById(id: string, options?: ChecklistRepositoryOptions): Promise<Checklist | null> {
     const client = this.client(options);
     const [row] = await client
       .select()
@@ -71,10 +68,7 @@ export class ChecklistRepository implements IChecklistRepository {
     return row ?? null;
   }
 
-  async findByItemId(
-    itemId: string,
-    options?: ChecklistRepositoryOptions,
-  ): Promise<Checklist[]> {
+  async findByItemId(itemId: string, options?: ChecklistRepositoryOptions): Promise<Checklist[]> {
     const client = this.client(options);
 
     return client
@@ -84,10 +78,7 @@ export class ChecklistRepository implements IChecklistRepository {
       .orderBy(asc(Checklists.createdAt));
   }
 
-  async softDelete(
-    id: string,
-    options?: ChecklistRepositoryOptions,
-  ): Promise<boolean> {
+  async softDelete(id: string, options?: ChecklistRepositoryOptions): Promise<boolean> {
     const client = this.client(options);
     const now = new Date();
 

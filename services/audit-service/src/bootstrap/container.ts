@@ -1,8 +1,5 @@
 import { HttpAuthorizationClient, type IAuthorizationClient } from "@pine/authorization";
-import {
-  resolveIdentityFromHeaders,
-  resolveTenantContextFromHeaders,
-} from "@pine/identity";
+import { resolveIdentityFromHeaders, resolveTenantContextFromHeaders } from "@pine/identity";
 import { createGraphQLServer, createHttpServer, type IHttpServer } from "@pine/server";
 import { Container } from "inversify";
 import { readFileSync } from "node:fs";
@@ -12,29 +9,12 @@ import { db } from "@/bootstrap/db";
 import { env } from "@/bootstrap/env";
 import { logger } from "@/bootstrap/logger";
 import { createContext } from "@/graphql";
-import {
-  type IAuditLogRepository,
-  type IAuditLogService,
-  AuditLogRepository,
-  AuditLogService,
-} from "@/features/audit";
-import {
-  type IIdentityRepository,
-  IdentityRepository,
-  AuditIdentitySyncConsumer,
-} from "@/features/identities";
+import { type IAuditLogRepository, type IAuditLogService, AuditLogRepository, AuditLogService } from "@/features/audit";
+import { type IIdentityRepository, IdentityRepository, AuditIdentitySyncConsumer } from "@/features/identities";
 import { type IItemRepository, ItemRepository, AuditItemsSyncConsumer } from "@/features/items";
 import { type ISpaceRepository, SpaceRepository } from "@/features/spaces";
-import {
-  type IWorkspaceRepository,
-  WorkspaceRepository,
-  AuditPlatformSyncConsumer,
-} from "@/features/workspaces";
-import {
-  type IAttachmentRepository,
-  AttachmentRepository,
-  AuditAttachmentSyncConsumer,
-} from "@/features/attachments";
+import { type IWorkspaceRepository, WorkspaceRepository, AuditPlatformSyncConsumer } from "@/features/workspaces";
+import { type IAttachmentRepository, AttachmentRepository, AuditAttachmentSyncConsumer } from "@/features/attachments";
 
 export const container = new Container({ defaultScope: "Singleton" });
 
@@ -50,9 +30,7 @@ container.bind<IItemRepository>(TYPES.ItemRepository).to(ItemRepository);
 container.bind<IWorkspaceRepository>(TYPES.WorkspaceRepository).to(WorkspaceRepository);
 container.bind<IAttachmentRepository>(TYPES.AttachmentRepository).to(AttachmentRepository);
 
-container
-  .bind<IAuthorizationClient>(TYPES.AuthorizationClient)
-  .toConstantValue(new HttpAuthorizationClient({ baseUrl: env.AUTHORIZATION_SERVICE_URL }));
+container.bind<IAuthorizationClient>(TYPES.AuthorizationClient).toConstantValue(new HttpAuthorizationClient({ baseUrl: env.AUTHORIZATION_SERVICE_URL }));
 
 container.bind(TYPES.AuditIdentitySyncConsumer).to(AuditIdentitySyncConsumer);
 container.bind(TYPES.AuditItemsSyncConsumer).to(AuditItemsSyncConsumer);

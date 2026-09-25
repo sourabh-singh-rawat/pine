@@ -34,10 +34,7 @@ export const ListsPanel = ({ spaceId }: ListsPanelProps) => {
                   id: string;
                   name: string;
                   spaceId: string;
-                } =>
-                  Boolean(list?.id) &&
-                  Boolean(list?.name) &&
-                  Boolean(list?.spaceId),
+                } => Boolean(list?.id) && Boolean(list?.name) && Boolean(list?.spaceId),
               )
               .map((list) => (
                 <ListNavItem

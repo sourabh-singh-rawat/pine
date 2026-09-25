@@ -83,12 +83,7 @@ export class ChecklistEntryRepository implements IChecklistEntryRepository {
     return client
       .select()
       .from(ChecklistEntries)
-      .where(
-        and(
-          eq(ChecklistEntries.checklistId, checklistId),
-          isNull(ChecklistEntries.deletedAt),
-        ),
-      )
+      .where(and(eq(ChecklistEntries.checklistId, checklistId), isNull(ChecklistEntries.deletedAt)))
       .orderBy(asc(ChecklistEntries.orderIndex));
   }
 
@@ -122,22 +117,14 @@ export class ChecklistEntryRepository implements IChecklistEntryRepository {
     const [row] = await client
       .select({ orderIndex: ChecklistEntries.orderIndex })
       .from(ChecklistEntries)
-      .where(
-        and(
-          eq(ChecklistEntries.checklistId, checklistId),
-          isNull(ChecklistEntries.deletedAt),
-        ),
-      )
+      .where(and(eq(ChecklistEntries.checklistId, checklistId), isNull(ChecklistEntries.deletedAt)))
       .orderBy(desc(ChecklistEntries.orderIndex))
       .limit(1);
 
     return row?.orderIndex ?? null;
   }
 
-  async softDelete(
-    id: string,
-    options?: ChecklistEntryRepositoryOptions,
-  ): Promise<boolean> {
+  async softDelete(id: string, options?: ChecklistEntryRepositoryOptions): Promise<boolean> {
     const client = this.client(options);
     const now = new Date();
 
@@ -168,12 +155,7 @@ export class ChecklistEntryRepository implements IChecklistEntryRepository {
         updatedAt: now,
         version: sql`${ChecklistEntries.version} + 1`,
       })
-      .where(
-        and(
-          eq(ChecklistEntries.checklistId, checklistId),
-          isNull(ChecklistEntries.deletedAt),
-        ),
-      )
+      .where(and(eq(ChecklistEntries.checklistId, checklistId), isNull(ChecklistEntries.deletedAt)))
       .returning({ id: ChecklistEntries.id });
 
     return deleted.length;

@@ -1,8 +1,5 @@
 import { ATTACHMENT_SCOPE_TYPE, type IAttachmentClient } from "@pine/attachment";
-import {
-  requirePermission,
-  type IAuthorizationClient,
-} from "@pine/authorization";
+import { requirePermission, type IAuthorizationClient } from "@pine/authorization";
 import { UserProfileAlreadyExistsError, UserProfileNotFoundError } from "@pine/common";
 import {
   createCloudEvent,

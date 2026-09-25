@@ -29,9 +29,7 @@ async function rmWithRetry(targetPath) {
     } catch (error) {
       lastError = error;
       const code =
-        error && typeof error === "object" && "code" in error
-          ? String(error.code)
-          : undefined;
+        error && typeof error === "object" && "code" in error ? String(error.code) : undefined;
       if (code === undefined || !RETRY_CODES.has(code) || attempt === MAX_ATTEMPTS) {
         throw error;
       }

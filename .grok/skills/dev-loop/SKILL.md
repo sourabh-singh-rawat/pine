@@ -25,12 +25,12 @@ pnpm dev:apps
 
 `dev:apps` includes `@pine/schemas` (compose watch). Services rewrite `dist/schema.graphql` / `openapi.json` on boot; the watcher recomposes the gateway supergraph/OpenAPI; api-gateway hot-reloads. One-shot: `pnpm schemas:compose`. Standalone watch: `pnpm schemas:watch`.
 
-| Infra variant | Script |
-| ------------- | ------ |
-| Default single-db + Ory | `dev:infra` |
-| Multi-db | `dev:infra:multi-db` |
-| + OTEL stack | `dev:infra:observability` |
-| Kratos / Hydra only | `dev:infra:kratos` / `dev:infra:hydra` |
+| Infra variant           | Script                                 |
+| ----------------------- | -------------------------------------- |
+| Default single-db + Ory | `dev:infra`                            |
+| Multi-db                | `dev:infra:multi-db`                   |
+| + OTEL stack            | `dev:infra:observability`              |
+| Kratos / Hydra only     | `dev:infra:kratos` / `dev:infra:hydra` |
 
 Compose overlays and ports: `docker-infra`. Env: single root `.env` (from `.env.example`).
 
@@ -41,12 +41,12 @@ pnpm exec turbo run build test --filter=@pine/<name>...
 
 `...` includes dependents. Shortcuts: `pnpm pine-web`, `identity-service`, `items-service`, `api-gateway`, …
 
-| Touched | Command |
-| ------- | ------- |
-| Package/service | `turbo run build test --filter=@pine/<name>...` |
-| GraphQL schema | service `dist/schema.graphql` → `@pine/schemas` watch (or `schemas:compose`) → web `gen` |
-| Shared lib | `build:server` or affected filters |
-| Style | `pnpm lint` / `fmt:check` |
+| Touched         | Command                                                                                  |
+| --------------- | ---------------------------------------------------------------------------------------- |
+| Package/service | `turbo run build test --filter=@pine/<name>...`                                          |
+| GraphQL schema  | service `dist/schema.graphql` → `@pine/schemas` watch (or `schemas:compose`) → web `gen` |
+| Shared lib      | `build:server` or affected filters                                                       |
+| Style           | `pnpm lint` / `fmt:check`                                                                |
 
 Also: `pnpm build`, `build:server`, `build:affected`, `test`, `test:affected`, `check:knip`. Supergraph: `services/api-gateway/dist/supergraph.graphql`. Pre-commit runs `pnpm build`.
 

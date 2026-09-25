@@ -16,10 +16,7 @@ const DEFAULT_GAP_PX = 4;
 const FULL_AMPLITUDE_PROGRESS_MIN = 0.1;
 const FULL_AMPLITUDE_PROGRESS_MAX = 0.95;
 
-export type CircularProgressWavyProps = Omit<
-  BoxProps,
-  "children" | "color"
-> & {
+export type CircularProgressWavyProps = Omit<BoxProps, "children" | "color"> & {
   value?: number;
   size?: number;
   strokeWidth?: number;
@@ -33,10 +30,7 @@ export type CircularProgressWavyProps = Omit<
 };
 
 const determinateAmplitudeFactor = (progress: number): number => {
-  if (
-    progress <= FULL_AMPLITUDE_PROGRESS_MIN ||
-    progress >= FULL_AMPLITUDE_PROGRESS_MAX
-  ) {
+  if (progress <= FULL_AMPLITUDE_PROGRESS_MIN || progress >= FULL_AMPLITUDE_PROGRESS_MAX) {
     return 0;
   }
   return 1;
@@ -59,8 +53,7 @@ export const CircularProgressWavy = ({
   const theme = useTheme();
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const fillColor = color ?? theme.palette.primary.main;
-  const resolvedTrackColor =
-    trackColor ?? alpha(theme.palette.primary.main, 0.24);
+  const resolvedTrackColor = trackColor ?? alpha(theme.palette.primary.main, 0.24);
   const propsRef = useRef({
     value,
     fillColor,
@@ -129,9 +122,7 @@ export const CircularProgressWavy = ({
             rotationRad: 0,
           };
 
-      const ampFactor = indeterminate
-        ? 1
-        : determinateAmplitudeFactor(motion.progress);
+      const ampFactor = indeterminate ? 1 : determinateAmplitudeFactor(motion.progress);
       const radius = (size - next.strokeWidth) / 2 - next.amplitude * ampFactor;
       const wavePhaseRad = radius > 0 ? waveDistancePx / radius : 0;
 
@@ -158,9 +149,7 @@ export const CircularProgressWavy = ({
   }, [size]);
 
   const ariaValue =
-    value === undefined
-      ? undefined
-      : Math.round(Math.min(100, Math.max(0, value * 100)));
+    value === undefined ? undefined : Math.round(Math.min(100, Math.max(0, value * 100)));
 
   return (
     <Box
@@ -179,10 +168,7 @@ export const CircularProgressWavy = ({
       }}
       {...rest}
     >
-      <canvas
-        ref={canvasRef}
-        style={{ display: "block", width: size, height: size }}
-      />
+      <canvas ref={canvasRef} style={{ display: "block", width: size, height: size }} />
     </Box>
   );
 };

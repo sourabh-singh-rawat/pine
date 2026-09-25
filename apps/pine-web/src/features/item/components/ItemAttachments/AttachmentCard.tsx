@@ -15,13 +15,7 @@ interface AttachmentCardProps {
   onDelete: () => void;
 }
 
-const FileTypeIcon = ({
-  mimeType,
-  name,
-}: {
-  mimeType: string;
-  name: string;
-}): ReactElement => {
+const FileTypeIcon = ({ mimeType, name }: { mimeType: string; name: string }): ReactElement => {
   if (isPdfAttachment(mimeType, name)) {
     return <PictureAsPdfOutlined color="error" sx={{ fontSize: 40 }} />;
   }
@@ -54,11 +48,7 @@ export const AttachmentCard = ({
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const isPdf = isPdfAttachment(mimeType, name);
   const showImage = isImageMimeType(mimeType) && !imageFailed;
-  const lightboxKind: AttachmentLightboxKind | null = showImage
-    ? "image"
-    : isPdf
-      ? "pdf"
-      : null;
+  const lightboxKind: AttachmentLightboxKind | null = showImage ? "image" : isPdf ? "pdf" : null;
 
   return (
     <Box

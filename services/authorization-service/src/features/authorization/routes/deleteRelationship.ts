@@ -17,8 +17,7 @@ export const deleteRelationship: HttpRoute = {
   schema: {
     tags: ["authorization"],
     summary: "Delete a graph relationship",
-    description:
-      "Idempotently delete a relationship from the authorization graph (Ory Keto).",
+    description: "Idempotently delete a relationship from the authorization graph (Ory Keto).",
     operationId: "deleteRelationship",
     body: GraphRelationshipBodySchema,
     response: {

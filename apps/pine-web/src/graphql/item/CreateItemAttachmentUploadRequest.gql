@@ -1,6 +1,4 @@
-mutation CreateItemAttachmentUploadRequest(
-  $input: CreateItemAttachmentUploadRequestInput!
-) {
+mutation CreateItemAttachmentUploadRequest($input: CreateItemAttachmentUploadRequestInput!) {
   createItemAttachmentUploadRequest(input: $input) {
     uploadRequestId
     url

@@ -30,10 +30,12 @@ export const parsePermission = (
 
 export const tryParsePermission = (
   key: string,
-): {
-  namespace: Resource;
-  permission: string;
-} | undefined => {
+):
+  | {
+      namespace: Resource;
+      permission: string;
+    }
+  | undefined => {
   try {
     return parsePermission(key);
   } catch (error) {

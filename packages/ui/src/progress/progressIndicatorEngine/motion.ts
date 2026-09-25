@@ -44,10 +44,7 @@ const sweepAt = (t: number): number => {
 };
 
 const additionalRotationDeg = (t: number): number => {
-  const step = Math.min(
-    Math.floor(t / ROTATION_STEP_INTERVAL),
-    ROTATION_STEP_COUNT - 1,
-  );
+  const step = Math.min(Math.floor(t / ROTATION_STEP_INTERVAL), ROTATION_STEP_COUNT - 1);
   const fraction = Math.min(
     1,
     Math.max(0, (t - step * ROTATION_STEP_INTERVAL) / ROTATION_STEP_DURATION),
@@ -60,14 +57,9 @@ export type IndeterminateMotion = {
   rotationRad: number;
 };
 
-export const resolveIndeterminateMotion = (
-  elapsedMs: number,
-): IndeterminateMotion => {
+export const resolveIndeterminateMotion = (elapsedMs: number): IndeterminateMotion => {
   const t = (elapsedMs % INDETERMINATE_CYCLE_MS) / INDETERMINATE_CYCLE_MS;
-  const rotationDeg =
-    t * GLOBAL_ROTATION_TURNS * 360 +
-    additionalRotationDeg(t) +
-    START_OFFSET_DEG;
+  const rotationDeg = t * GLOBAL_ROTATION_TURNS * 360 + additionalRotationDeg(t) + START_OFFSET_DEG;
   return {
     progress: sweepAt(t),
     rotationRad: (rotationDeg * Math.PI) / 180,
@@ -102,11 +94,7 @@ export const LINEAR_INDETERMINATE_EASING = (t: number): number => {
   return sampleBezier(guess, linearBezierY1, linearBezierY2);
 };
 
-const keyframeProgress = (
-  elapsedInCycle: number,
-  delay: number,
-  duration: number,
-): number => {
+const keyframeProgress = (elapsedInCycle: number, delay: number, duration: number): number => {
   if (elapsedInCycle <= delay) return 0;
   if (elapsedInCycle >= delay + duration) return 1;
   return LINEAR_INDETERMINATE_EASING((elapsedInCycle - delay) / duration);
@@ -119,22 +107,12 @@ export type LinearIndeterminateMotion = {
   secondTail: number;
 };
 
-export const resolveLinearIndeterminateMotion = (
-  elapsedMs: number,
-): LinearIndeterminateMotion => {
+export const resolveLinearIndeterminateMotion = (elapsedMs: number): LinearIndeterminateMotion => {
   const t = elapsedMs % LINEAR_INDETERMINATE_CYCLE_MS;
   return {
     firstHead: keyframeProgress(t, FIRST_LINE_HEAD_DELAY, FIRST_LINE_HEAD_DURATION),
     firstTail: keyframeProgress(t, FIRST_LINE_TAIL_DELAY, FIRST_LINE_TAIL_DURATION),
-    secondHead: keyframeProgress(
-      t,
-      SECOND_LINE_HEAD_DELAY,
-      SECOND_LINE_HEAD_DURATION,
-    ),
-    secondTail: keyframeProgress(
-      t,
-      SECOND_LINE_TAIL_DELAY,
-      SECOND_LINE_TAIL_DURATION,
-    ),
+    secondHead: keyframeProgress(t, SECOND_LINE_HEAD_DELAY, SECOND_LINE_HEAD_DURATION),
+    secondTail: keyframeProgress(t, SECOND_LINE_TAIL_DELAY, SECOND_LINE_TAIL_DURATION),
   };
 };

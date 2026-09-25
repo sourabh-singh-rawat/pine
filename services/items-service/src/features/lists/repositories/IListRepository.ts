@@ -15,11 +15,7 @@ export type UpdateListEntity = {
 
 export interface IListRepository {
   save(entity: CreateListEntity, options?: ListRepositoryOptions): Promise<List>;
-  update(
-    id: string,
-    entity: UpdateListEntity,
-    options?: ListRepositoryOptions,
-  ): Promise<List>;
+  update(id: string, entity: UpdateListEntity, options?: ListRepositoryOptions): Promise<List>;
   findById(id: string, options?: ListRepositoryOptions): Promise<List | null>;
   findBySpaceId(
     spaceId: string,

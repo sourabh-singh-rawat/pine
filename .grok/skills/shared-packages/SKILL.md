@@ -14,14 +14,14 @@ Extract only when **two** services (or a service + an app) need the same module.
 
 ## Recipe
 
-| Put in `@pine/*` | Keep in the service |
-| ---------------- | ------------------- |
-| Enums/DTOs/errors used by 2+ consumers (`@pine/common`, `@pine/errors`) | Feature services, tables, GraphQL/HTTP |
+| Put in `@pine/*`                                                                    | Keep in the service                                               |
+| ----------------------------------------------------------------------------------- | ----------------------------------------------------------------- |
+| Enums/DTOs/errors used by 2+ consumers (`@pine/common`, `@pine/errors`)             | Feature services, tables, GraphQL/HTTP                            |
 | Cross-service clients (`@pine/identity`, `@pine/authorization`, `@pine/attachment`) | Kratos/Hydra/Keto SDKs (wrap behind `integrations/` `I*Provider`) |
-| Bus + outbox runtime (`@pine/events`, `@pine/outbox`) | Durable consumer classes, schedule call sites |
-| HTTP/GraphQL server kit (`@pine/server`) | Feature routes/resolvers |
-| OTEL bootstrap (`@pine/observability`) | Per-service `initializeObservability({ serviceName })` |
-| UI primitives (`@pine/ui`) | App feature screens |
+| Bus + outbox runtime (`@pine/events`, `@pine/outbox`)                               | Durable consumer classes, schedule call sites                     |
+| HTTP/GraphQL server kit (`@pine/server`)                                            | Feature routes/resolvers                                          |
+| OTEL bootstrap (`@pine/observability`)                                              | Per-service `initializeObservability({ serviceName })`            |
+| UI primitives (`@pine/ui`)                                                          | App feature screens                                               |
 
 New package: `packages/<name>` with `@pine/<name>`, consumed via `workspace:^`. Do not add `packages/` for a single service. Prefer `@pine/common` for a small shared enum over a one-file package.
 

@@ -1,21 +1,12 @@
-import {
-  InsufficientPermissionError,
-  type IAuthorizationClient,
-} from "@pine/authorization";
+import { InsufficientPermissionError, type IAuthorizationClient } from "@pine/authorization";
 import { ITEM_PRIORITY } from "@pine/common";
 import { ItemCreatedEvent, ItemUpdatedEvent } from "@pine/events";
 import type { IOutboxService } from "@pine/outbox";
 import { describe, expect, it, vi } from "vitest";
 import type { DbClient, Item } from "@/db";
 import { ItemNotFoundError } from "@/features/item/errors";
-import type {
-  IItemAssigneeRepository,
-  IItemRepository,
-} from "@/features/item/repositories";
-import {
-  type ItemDatabase,
-  ItemService,
-} from "@/features/item/services/ItemService";
+import type { IItemAssigneeRepository, IItemRepository } from "@/features/item/repositories";
+import { type ItemDatabase, ItemService } from "@/features/item/services/ItemService";
 
 const item: Item = {
   id: "issue-1",
@@ -38,9 +29,7 @@ const item: Item = {
   deletedAt: null,
 };
 
-const createItemRepository = (
-  overrides: Partial<IItemRepository> = {},
-): IItemRepository => ({
+const createItemRepository = (overrides: Partial<IItemRepository> = {}): IItemRepository => ({
   save: vi.fn().mockResolvedValue(item),
   update: vi.fn().mockResolvedValue(item),
   softDelete: vi.fn().mockResolvedValue(true),
@@ -58,9 +47,7 @@ const createItemAssigneeRepository = (
   ...overrides,
 });
 
-const createOutboxService = (
-  overrides: Partial<IOutboxService> = {},
-): IOutboxService => ({
+const createOutboxService = (overrides: Partial<IOutboxService> = {}): IOutboxService => ({
   schedule: vi.fn().mockResolvedValue({ id: "outbox-1" }),
   claimBatch: vi.fn().mockResolvedValue([]),
   complete: vi.fn().mockResolvedValue({ id: "outbox-1" }),
@@ -93,13 +80,15 @@ const createDb = (): ItemDatabase => ({
   }),
 });
 
-const createService = (deps: {
-  db?: ItemDatabase;
-  itemRepository?: IItemRepository;
-  itemAssigneeRepository?: IItemAssigneeRepository;
-  outboxService?: IOutboxService;
-  authorizationClient?: IAuthorizationClient;
-} = {}) =>
+const createService = (
+  deps: {
+    db?: ItemDatabase;
+    itemRepository?: IItemRepository;
+    itemAssigneeRepository?: IItemAssigneeRepository;
+    outboxService?: IOutboxService;
+    authorizationClient?: IAuthorizationClient;
+  } = {},
+) =>
   new ItemService(
     deps.db ?? createDb(),
     deps.itemRepository ?? createItemRepository(),
@@ -282,9 +271,7 @@ describe("ItemService", () => {
 
     const service = createService({ itemRepository, authorizationClient });
 
-    await expect(
-      service.delete({ id: "issue-1", userId: "user-1" }),
-    ).resolves.toBeUndefined();
+    await expect(service.delete({ id: "issue-1", userId: "user-1" })).resolves.toBeUndefined();
 
     expect(authorizationClient.checkRelationship).toHaveBeenCalledWith({
       namespace: "list",
@@ -305,9 +292,9 @@ describe("ItemService", () => {
 
     const service = createService({ itemRepository, authorizationClient });
 
-    await expect(
-      service.delete({ id: "issue-1", userId: "user-1" }),
-    ).rejects.toBeInstanceOf(InsufficientPermissionError);
+    await expect(service.delete({ id: "issue-1", userId: "user-1" })).rejects.toBeInstanceOf(
+      InsufficientPermissionError,
+    );
     expect(itemRepository.softDelete).not.toHaveBeenCalled();
   });
 
@@ -319,9 +306,9 @@ describe("ItemService", () => {
 
     const service = createService({ itemRepository, authorizationClient });
 
-    await expect(
-      service.delete({ id: "missing", userId: "user-1" }),
-    ).rejects.toBeInstanceOf(ItemNotFoundError);
+    await expect(service.delete({ id: "missing", userId: "user-1" })).rejects.toBeInstanceOf(
+      ItemNotFoundError,
+    );
     expect(authorizationClient.checkRelationship).not.toHaveBeenCalled();
     expect(itemRepository.softDelete).not.toHaveBeenCalled();
   });
@@ -336,13 +323,8 @@ describe("ItemService", () => {
     });
     const service = createService({ itemRepository });
 
-    await expect(
-      service.list({ listId: "list-1", userId: "user-1" }),
-    ).resolves.toEqual(roots);
+    await expect(service.list({ listId: "list-1", userId: "user-1" })).resolves.toEqual(roots);
 
-    expect(itemRepository.findRootsByList).toHaveBeenCalledWith(
-      "list-1",
-      "user-1",
-    );
+    expect(itemRepository.findRootsByList).toHaveBeenCalledWith("list-1", "user-1");
   });
 });

@@ -11,6 +11,4 @@ export const WorkspaceRelationCreatedDataSchema = Type.Object(
   { additionalProperties: false },
 );
 
-export type WorkspaceRelationCreatedData = Type.Static<
-  typeof WorkspaceRelationCreatedDataSchema
->;
+export type WorkspaceRelationCreatedData = Type.Static<typeof WorkspaceRelationCreatedDataSchema>;
