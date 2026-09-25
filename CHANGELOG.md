@@ -1,5 +1,30 @@
 # Changelog
 
+## v2026.09.25.2
+
+### Patch
+
+- cb64c160: feat(pine-web): attachment drag-drop upload and show more — Sourabh Singh Rawat (`@pine/pine-web`)
+- ca70154b: feat(pine-web): grid attachment previews with image lightbox — Sourabh Singh Rawat (`@pine/pine-web`)
+- 606145b3: feat(pine-web): PDF attachment icon and lightbox preview — Sourabh Singh Rawat (`@pine/pine-web`)
+
+### Packages
+
+- `@pine/api-gateway@0.4.4`
+- `@pine/audit-service@0.1.1`
+- `@pine/authorization@0.7.0`
+- `@pine/authorization-service@0.7.0`
+- `@pine/common@1.1.0`
+- `@pine/data-gateway@0.1.4`
+- `@pine/events@1.1.0`
+- `@pine/identity-service@0.6.3`
+- `@pine/identity-web@0.6.4`
+- `@pine/items-service@1.1.0`
+- `@pine/pine-web@0.9.1`
+- `@pine/platform-service@0.5.3`
+- `@pine/platform-web@0.5.4`
+- `@pine/server@1.1.4`
+
 ## v2026.09.25.1
 
 ### Minor
