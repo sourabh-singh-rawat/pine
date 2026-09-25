@@ -7,9 +7,9 @@ import {
 } from "@generated/gql";
 import { ProgressCircularIndicator } from "@pine/ui";
 import { useSnackbar } from "@shared";
-import { AttachmentCard } from "./AttachmentCard";
-import { AttachmentDropZone } from "./AttachmentDropZone";
-import { formatFileSize, getAttachmentUrl } from "./attachmentUtils";
+import { formatFileSize, getAttachmentUrl } from "../../utils";
+import { AttachmentCard } from "../AttachmentCard";
+import { AttachmentDropZone } from "../AttachmentDropZone";
 
 interface ItemAttachmentsProps {
   itemId: string;
