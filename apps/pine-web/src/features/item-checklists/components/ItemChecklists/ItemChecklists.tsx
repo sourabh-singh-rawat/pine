@@ -31,6 +31,7 @@ import {
   type MenuAnchorPosition,
 } from "@pine/ui";
 import { useSnackbar } from "@shared";
+import { ChecklistEntryItem } from "./ChecklistEntryItem";
 import { mapChecklists } from "./mapChecklist";
 
 type ItemChecklistsProps = {
@@ -149,6 +150,20 @@ export const ItemChecklists = ({ itemId }: ItemChecklistsProps) => {
     try {
       await updateEntryMutation.mutateAsync({
         input: { id: entryId, completed },
+      });
+      await refresh();
+    } catch (error) {
+      snackbar.error(error instanceof Error ? error.message : "Failed to update entry");
+    } finally {
+      setBusyEntryId(null);
+    }
+  };
+
+  const handleUpdateEntryTitle = async (entryId: string, title: string) => {
+    setBusyEntryId(entryId);
+    try {
+      await updateEntryMutation.mutateAsync({
+        input: { id: entryId, title },
       });
       await refresh();
     } catch (error) {
@@ -351,40 +366,14 @@ export const ItemChecklists = ({ itemId }: ItemChecklistsProps) => {
 
             <Stack spacing={0.5}>
               {checklist.entries.map((entry) => (
-                <Stack key={entry.id} direction="row" spacing={0.5} alignItems="center">
-                  <Checkbox
-                    size="small"
-                    checked={entry.completed}
-                    disabled={busyEntryId === entry.id || isMutating}
-                    onChange={(_event, checked) => {
-                      void handleToggleEntry(entry.id, checked);
-                    }}
-                    inputProps={{
-                      "aria-label": `Mark ${entry.title} ${entry.completed ? "incomplete" : "complete"}`,
-                    }}
-                  />
-                  <Typography
-                    variant="body2"
-                    sx={{
-                      flex: 1,
-                      minWidth: 0,
-                      textDecoration: entry.completed ? "line-through" : "none",
-                      color: entry.completed ? "text.secondary" : "text.primary",
-                    }}
-                  >
-                    {entry.title}
-                  </Typography>
-                  <IconButton
-                    size="small"
-                    aria-label={`Delete ${entry.title}`}
-                    disabled={busyEntryId === entry.id || isMutating}
-                    onClick={() => {
-                      void handleDeleteEntry(entry.id);
-                    }}
-                  >
-                    <DeleteOutline fontSize="small" />
-                  </IconButton>
-                </Stack>
+                <ChecklistEntryItem
+                  key={entry.id}
+                  entry={entry}
+                  disabled={busyEntryId === entry.id || isMutating}
+                  onToggle={handleToggleEntry}
+                  onUpdateTitle={handleUpdateEntryTitle}
+                  onDelete={handleDeleteEntry}
+                />
               ))}
             </Stack>
 
