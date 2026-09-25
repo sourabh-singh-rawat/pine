@@ -1,20 +1,14 @@
 import ArrowBack from "@mui/icons-material/ArrowBack";
-import { Grid2, IconButton, Stack, Typography, useTheme } from "@mui/material";
+import { Grid2, IconButton, Typography, useTheme } from "@mui/material";
 import { useNavigate } from "@tanstack/react-router";
 import { useGetItemQuery, useUpdateItemMutation } from "@generated/gql";
 import type { UpdateItemInput } from "@generated/gql/graphql";
 import { AppBar } from "@pine/ui";
 import { useItemParams, useSnackbar } from "@shared";
-import {
-  ItemActivity,
-  ItemAttachments,
-  ItemChecklists,
-  ItemDescription,
-  ItemFields,
-  ItemList,
-  ItemModal,
-  ItemName,
-} from "../../components";
+import { ItemAttachments } from "@features/item-attachments";
+import { ItemChecklists } from "@features/item-checklists";
+import { ItemSubItems } from "@features/item-sub-items";
+import { ItemActivity, ItemDescription, ItemFields, ItemName } from "../../components";
 
 export const ItemPage = () => {
   const theme = useTheme();
@@ -91,15 +85,7 @@ export const ItemPage = () => {
 
       {listId && resolvedItemId && (
         <Grid2 size={12}>
-          <Stack spacing={1}>
-            <Stack direction="row" spacing={1} alignItems="center">
-              <Typography variant="body1" fontWeight="600">
-                Sub Items
-              </Typography>
-              <ItemModal listId={listId} />
-            </Stack>
-            <ItemList itemId={resolvedItemId} style={{ showBorder: true }} />
-          </Stack>
+          <ItemSubItems listId={listId} itemId={resolvedItemId} />
         </Grid2>
       )}
 

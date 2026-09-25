@@ -1,6 +1,4 @@
 export * from "./ItemActivity";
-export * from "./ItemAttachments";
-export * from "./ItemChecklists";
 export * from "./ItemDescription";
 export * from "./ItemFields";
 export * from "./ItemForm";
