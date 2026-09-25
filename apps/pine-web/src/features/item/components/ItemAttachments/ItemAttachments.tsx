@@ -8,37 +8,21 @@ import {
 import { ProgressCircularIndicator } from "@pine/ui";
 import { useSnackbar } from "@shared";
 import { AttachmentCard } from "./AttachmentCard";
+import { AttachmentDropZone } from "./AttachmentDropZone";
+import { formatFileSize, getAttachmentUrl } from "./attachmentUtils";
 
 interface ItemAttachmentsProps {
   itemId: string;
 }
 
-const formatFileSize = (size: number | null | undefined): string => {
-  if (size === null || size === undefined || size <= 0) {
-    return "";
-  }
-  if (size < 1024) {
-    return `${size} B`;
-  }
-  if (size < 1024 * 1024) {
-    return `${(size / 1024).toFixed(1)} KB`;
-  }
-  return `${(size / (1024 * 1024)).toFixed(1)} MB`;
-};
-
-const getAttachmentUrl = (attachmentId: string): string => {
-  const base =
-    import.meta.env.VITE_DATA_GATEWAY_URL ??
-    import.meta.env.VITE_API_BASE_URL ??
-    "https://localhost:4001";
-  return `${base.replace(/\/$/, "")}/attachments/${attachmentId}`;
-};
+const INITIAL_VISIBLE_ATTACHMENTS = 4;
 
 export const ItemAttachments = ({ itemId }: ItemAttachmentsProps) => {
   const snackbar = useSnackbar();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [showAllAttachments, setShowAllAttachments] = useState(false);
 
   const attachmentsQuery = useGetItemAttachmentsQuery(
     { itemId },
@@ -71,17 +55,15 @@ export const ItemAttachments = ({ itemId }: ItemAttachmentsProps) => {
   const deleteAttachmentMutation = useDeleteItemAttachmentMutation();
 
   const attachments = attachmentsQuery.data ?? [];
-  const isPending =
-    createUploadRequestMutation.isPending || isUploading;
+  const isPending = createUploadRequestMutation.isPending || isUploading;
+  const hasHiddenAttachments = attachments.length > INITIAL_VISIBLE_ATTACHMENTS;
+  const visibleAttachments =
+    showAllAttachments || !hasHiddenAttachments
+      ? attachments
+      : attachments.slice(0, INITIAL_VISIBLE_ATTACHMENTS);
+  const hiddenAttachmentCount = attachments.length - INITIAL_VISIBLE_ATTACHMENTS;
 
-  const handleSelectFile = async (event: ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    event.target.value = "";
-
-    if (!file) {
-      return;
-    }
-
+  const uploadFile = async (file: File) => {
     setIsUploading(true);
 
     try {
@@ -143,6 +125,17 @@ export const ItemAttachments = ({ itemId }: ItemAttachmentsProps) => {
     }
   };
 
+  const handleSelectFile = (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    event.target.value = "";
+
+    if (!file) {
+      return;
+    }
+
+    void uploadFile(file);
+  };
+
   const handleDelete = async (id: string) => {
     setDeletingId(id);
     try {
@@ -162,27 +155,22 @@ export const ItemAttachments = ({ itemId }: ItemAttachmentsProps) => {
 
   return (
     <Stack spacing={1.5}>
-      <Stack direction="row" spacing={1} alignItems="center">
-        <input
-          ref={fileInputRef}
-          type="file"
-          hidden
-          onChange={handleSelectFile}
-        />
-        <Button
-          variant="outlined"
-          size="small"
-          disabled={isPending}
-          onClick={() => {
-            fileInputRef.current?.click();
-          }}
-        >
-          {isPending ? "Uploading…" : "Upload"}
-        </Button>
-        {isPending && (
-          <ProgressCircularIndicator size={24} aria-label="Uploading attachment" />
-        )}
-      </Stack>
+      <input
+        ref={fileInputRef}
+        type="file"
+        hidden
+        onChange={handleSelectFile}
+      />
+
+      <AttachmentDropZone
+        isPending={isPending}
+        onBrowse={() => {
+          fileInputRef.current?.click();
+        }}
+        onFile={(file) => {
+          void uploadFile(file);
+        }}
+      />
 
       {attachmentsQuery.isPending && (
         <ProgressCircularIndicator size={32} aria-label="Loading attachments" />
@@ -201,31 +189,49 @@ export const ItemAttachments = ({ itemId }: ItemAttachmentsProps) => {
       )}
 
       {attachments.length > 0 && (
-        <Box
-          sx={{
-            display: "grid",
-            gridTemplateColumns: {
-              xs: "repeat(2, minmax(0, 1fr))",
-              sm: "repeat(3, minmax(0, 1fr))",
-              md: "repeat(4, minmax(0, 1fr))",
-            },
-            gap: 1.5,
-          }}
-        >
-          {attachments.map((attachment) => (
-            <AttachmentCard
-              key={attachment.id}
-              name={attachment.name}
-              mimeType={attachment.mimeType}
-              sizeLabel={formatFileSize(attachment.size)}
-              href={getAttachmentUrl(attachment.attachmentId)}
-              isDeleting={deletingId === attachment.id}
-              onDelete={() => {
-                void handleDelete(attachment.id);
-              }}
-            />
-          ))}
-        </Box>
+        <Stack spacing={1}>
+          <Box
+            sx={{
+              display: "grid",
+              gridTemplateColumns: {
+                xs: "repeat(2, minmax(0, 1fr))",
+                sm: "repeat(3, minmax(0, 1fr))",
+                md: "repeat(4, minmax(0, 1fr))",
+              },
+              gap: 1.5,
+            }}
+          >
+            {visibleAttachments.map((attachment) => (
+              <AttachmentCard
+                key={attachment.id}
+                name={attachment.name}
+                mimeType={attachment.mimeType}
+                sizeLabel={formatFileSize(attachment.size)}
+                href={getAttachmentUrl(attachment.attachmentId)}
+                isDeleting={deletingId === attachment.id}
+                onDelete={() => {
+                  void handleDelete(attachment.id);
+                }}
+              />
+            ))}
+          </Box>
+
+          {hasHiddenAttachments && (
+            <Box sx={{ display: "flex", justifyContent: "center" }}>
+              <Button
+                variant="text"
+                size="small"
+                onClick={() => {
+                  setShowAllAttachments((current) => !current);
+                }}
+              >
+                {showAllAttachments
+                  ? "Show less"
+                  : `More (${hiddenAttachmentCount})`}
+              </Button>
+            </Box>
+          )}
+        </Stack>
       )}
     </Stack>
   );
