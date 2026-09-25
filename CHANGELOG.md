@@ -1,5 +1,18 @@
 # Changelog
 
+## v2026.09.25.3
+
+### Patch
+
+- 7402a719: refactor(pine-web): move item attachments to attachments feature — Sourabh Singh Rawat (`@pine/pine-web`)
+- 7c6bfe1c: feat(pine-web): edit checklist item description via double click or edit button — Sourabh Singh Rawat (`@pine/pine-web`)
+- 2af2b5c9: refactor(pine-web): extract item-checklists and rename item-attachments — Sourabh Singh Rawat (`@pine/pine-web`)
+- 0568fbde: refactor(pine-web): extract item-sub-items feature — Sourabh Singh Rawat (`@pine/pine-web`)
+
+### Packages
+
+- `@pine/pine-web@0.9.2`
+
 ## v2026.09.25.2
 
 ### Patch

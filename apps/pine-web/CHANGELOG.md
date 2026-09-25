@@ -1,5 +1,14 @@
 # @pine/pine-web
 
+## 0.9.2
+
+### Patch Changes
+
+- 7402a71: refactor(pine-web): move item attachments to attachments feature
+- 7c6bfe1: feat(pine-web): edit checklist item description via double click or edit button
+- 2af2b5c: refactor(pine-web): extract item-checklists and rename item-attachments
+- 0568fbd: refactor(pine-web): extract item-sub-items feature
+
 ## 0.9.1
 
 ### Patch Changes
