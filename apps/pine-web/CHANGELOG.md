@@ -1,5 +1,13 @@
 # @pine/pine-web
 
+## 0.9.1
+
+### Patch Changes
+
+- cb64c16: feat(pine-web): attachment drag-drop upload and show more
+- ca70154: feat(pine-web): grid attachment previews with image lightbox
+- 606145b: feat(pine-web): PDF attachment icon and lightbox preview
+
 ## 0.9.0
 
 ### Minor Changes
