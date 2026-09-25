@@ -3,8 +3,8 @@ import InsertDriveFileOutlined from "@mui/icons-material/InsertDriveFileOutlined
 import PictureAsPdfOutlined from "@mui/icons-material/PictureAsPdfOutlined";
 import { Box, IconButton, Stack, Typography, useTheme } from "@mui/material";
 import { useState, type ReactElement } from "react";
-import { AttachmentLightbox, type AttachmentLightboxKind } from "./AttachmentLightbox";
-import { isImageMimeType, isPdfAttachment } from "./attachmentUtils";
+import { isImageMimeType, isPdfAttachment } from "../../utils";
+import { AttachmentLightbox, type AttachmentLightboxKind } from "../AttachmentLightbox";
 
 interface AttachmentCardProps {
   name: string;

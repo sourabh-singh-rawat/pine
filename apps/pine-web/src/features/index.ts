@@ -1,3 +1,4 @@
+export * from "./attachments";
 export * from "./auth";
 export * from "./home";
 export * from "./item";

@@ -5,9 +5,9 @@ import { useGetItemQuery, useUpdateItemMutation } from "@generated/gql";
 import type { UpdateItemInput } from "@generated/gql/graphql";
 import { AppBar } from "@pine/ui";
 import { useItemParams, useSnackbar } from "@shared";
+import { ItemAttachments } from "@features/attachments";
 import {
   ItemActivity,
-  ItemAttachments,
   ItemChecklists,
   ItemDescription,
   ItemFields,
