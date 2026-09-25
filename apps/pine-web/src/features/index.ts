@@ -3,6 +3,7 @@ export * from "./home";
 export * from "./item";
 export * from "./item-attachments";
 export * from "./item-checklists";
+export * from "./item-sub-items";
 export * from "./workspace";
 export * from "./space";
 export * from "./lists";
