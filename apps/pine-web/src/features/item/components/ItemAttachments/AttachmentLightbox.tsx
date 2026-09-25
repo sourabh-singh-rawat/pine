@@ -2,15 +2,25 @@ import Close from "@mui/icons-material/Close";
 import OpenInNew from "@mui/icons-material/OpenInNew";
 import { Box, IconButton, Modal, Stack, Typography, useTheme } from "@mui/material";
 
+export type AttachmentLightboxKind = "image" | "pdf";
+
 interface AttachmentLightboxProps {
   open: boolean;
   name: string;
   href: string;
+  kind: AttachmentLightboxKind;
   onClose: () => void;
 }
 
-export const AttachmentLightbox = ({ open, name, href, onClose }: AttachmentLightboxProps) => {
+export const AttachmentLightbox = ({
+  open,
+  name,
+  href,
+  kind,
+  onClose,
+}: AttachmentLightboxProps) => {
   const theme = useTheme();
+  const previewMaxHeight = "calc(92vh - 56px)";
 
   return (
     <Modal
@@ -28,6 +38,7 @@ export const AttachmentLightbox = ({ open, name, href, onClose }: AttachmentLigh
         sx={{
           position: "relative",
           outline: "none",
+          width: kind === "pdf" ? "min(96vw, 1200px)" : undefined,
           maxWidth: "min(96vw, 1200px)",
           maxHeight: "92vh",
           display: "flex",
@@ -87,20 +98,37 @@ export const AttachmentLightbox = ({ open, name, href, onClose }: AttachmentLigh
           </IconButton>
         </Stack>
 
-        <Box
-          component="img"
-          src={href}
-          alt={name}
-          sx={{
-            display: "block",
-            maxWidth: "100%",
-            maxHeight: "calc(92vh - 56px)",
-            objectFit: "contain",
-            borderRadius: 1.5,
-            boxShadow: theme.shadows[24],
-            bgcolor: "rgba(0,0,0,0.35)",
-          }}
-        />
+        {kind === "pdf" ? (
+          <Box
+            component="iframe"
+            title={name}
+            src={href}
+            sx={{
+              display: "block",
+              width: "100%",
+              height: previewMaxHeight,
+              border: 0,
+              borderRadius: 1.5,
+              boxShadow: theme.shadows[24],
+              bgcolor: "common.white",
+            }}
+          />
+        ) : (
+          <Box
+            component="img"
+            src={href}
+            alt={name}
+            sx={{
+              display: "block",
+              maxWidth: "100%",
+              maxHeight: previewMaxHeight,
+              objectFit: "contain",
+              borderRadius: 1.5,
+              boxShadow: theme.shadows[24],
+              bgcolor: "rgba(0,0,0,0.35)",
+            }}
+          />
+        )}
       </Box>
     </Modal>
   );

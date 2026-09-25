@@ -1,8 +1,10 @@
 import DeleteOutline from "@mui/icons-material/DeleteOutline";
 import InsertDriveFileOutlined from "@mui/icons-material/InsertDriveFileOutlined";
+import PictureAsPdfOutlined from "@mui/icons-material/PictureAsPdfOutlined";
 import { Box, IconButton, Stack, Typography, useTheme } from "@mui/material";
-import { useState } from "react";
-import { AttachmentLightbox } from "./AttachmentLightbox";
+import { useState, type ReactElement } from "react";
+import { AttachmentLightbox, type AttachmentLightboxKind } from "./AttachmentLightbox";
+import { isImageMimeType, isPdfAttachment } from "./attachmentUtils";
 
 interface AttachmentCardProps {
   name: string;
@@ -13,8 +15,31 @@ interface AttachmentCardProps {
   onDelete: () => void;
 }
 
-const isImageMimeType = (mimeType: string): boolean =>
-  mimeType.toLowerCase().startsWith("image/");
+const FileTypeIcon = ({
+  mimeType,
+  name,
+}: {
+  mimeType: string;
+  name: string;
+}): ReactElement => {
+  if (isPdfAttachment(mimeType, name)) {
+    return <PictureAsPdfOutlined color="error" sx={{ fontSize: 40 }} />;
+  }
+  return <InsertDriveFileOutlined color="action" sx={{ fontSize: 40 }} />;
+};
+
+const previewSurfaceSx = {
+  aspectRatio: "1 / 1",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  bgcolor: "action.hover",
+  border: 0,
+  p: 0,
+  m: 0,
+  overflow: "hidden",
+  width: "100%",
+};
 
 export const AttachmentCard = ({
   name,
@@ -27,7 +52,13 @@ export const AttachmentCard = ({
   const theme = useTheme();
   const [imageFailed, setImageFailed] = useState(false);
   const [lightboxOpen, setLightboxOpen] = useState(false);
+  const isPdf = isPdfAttachment(mimeType, name);
   const showImage = isImageMimeType(mimeType) && !imageFailed;
+  const lightboxKind: AttachmentLightboxKind | null = showImage
+    ? "image"
+    : isPdf
+      ? "pdf"
+      : null;
 
   return (
     <Box
@@ -54,17 +85,8 @@ export const AttachmentCard = ({
             setLightboxOpen(true);
           }}
           sx={{
-            aspectRatio: "1 / 1",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            bgcolor: "action.hover",
-            border: 0,
-            p: 0,
-            m: 0,
+            ...previewSurfaceSx,
             cursor: "zoom-in",
-            overflow: "hidden",
-            width: "100%",
           }}
         >
           <Box
@@ -84,6 +106,22 @@ export const AttachmentCard = ({
             }}
           />
         </Box>
+      ) : lightboxKind === "pdf" ? (
+        <Box
+          component="button"
+          type="button"
+          aria-label={`Preview ${name}`}
+          onClick={() => {
+            setLightboxOpen(true);
+          }}
+          sx={{
+            ...previewSurfaceSx,
+            cursor: "zoom-in",
+            color: "inherit",
+          }}
+        >
+          <FileTypeIcon mimeType={mimeType} name={name} />
+        </Box>
       ) : (
         <Box
           component="a"
@@ -92,17 +130,12 @@ export const AttachmentCard = ({
           rel="noopener noreferrer"
           aria-label={`Open ${name}`}
           sx={{
-            aspectRatio: "1 / 1",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            bgcolor: "action.hover",
+            ...previewSurfaceSx,
             textDecoration: "none",
             color: "inherit",
-            overflow: "hidden",
           }}
         >
-          <InsertDriveFileOutlined color="action" sx={{ fontSize: 40 }} />
+          <FileTypeIcon mimeType={mimeType} name={name} />
         </Box>
       )}
 
@@ -158,11 +191,12 @@ export const AttachmentCard = ({
         <DeleteOutline fontSize="small" />
       </IconButton>
 
-      {showImage && (
+      {lightboxKind !== null && (
         <AttachmentLightbox
           open={lightboxOpen}
           name={name}
           href={href}
+          kind={lightboxKind}
           onClose={() => {
             setLightboxOpen(false);
           }}
