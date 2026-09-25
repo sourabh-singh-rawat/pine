@@ -14,6 +14,7 @@ import {
 import { useNavigate } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import type { ChangeEvent, FormEvent, KeyboardEvent, MouseEvent } from "react";
+import { ItemChecklistCount } from "@features/item-checklists";
 import { useSnackbar } from "@shared";
 
 export interface ItemNameCellProps {
@@ -274,6 +275,7 @@ export const ItemNameCell = ({
       >
         {name}
       </MuiLink>
+      <ItemChecklistCount itemId={itemId} />
     </Box>
   );
 };
