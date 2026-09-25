@@ -1,13 +1,4 @@
-import DeleteOutline from "@mui/icons-material/DeleteOutline";
-import InsertDriveFileOutlined from "@mui/icons-material/InsertDriveFileOutlined";
-import {
-  Box,
-  Button,
-  IconButton,
-  Stack,
-  Typography,
-  useTheme,
-} from "@mui/material";
+import { Box, Button, Stack, Typography } from "@mui/material";
 import { useRef, useState, type ChangeEvent } from "react";
 import {
   useCreateItemAttachmentUploadRequestMutation,
@@ -16,6 +7,7 @@ import {
 } from "@generated/gql";
 import { ProgressCircularIndicator } from "@pine/ui";
 import { useSnackbar } from "@shared";
+import { AttachmentCard } from "./AttachmentCard";
 
 interface ItemAttachmentsProps {
   itemId: string;
@@ -43,7 +35,6 @@ const getAttachmentUrl = (attachmentId: string): string => {
 };
 
 export const ItemAttachments = ({ itemId }: ItemAttachmentsProps) => {
-  const theme = useTheme();
   const snackbar = useSnackbar();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isUploading, setIsUploading] = useState(false);
@@ -209,57 +200,33 @@ export const ItemAttachments = ({ itemId }: ItemAttachmentsProps) => {
         </Typography>
       )}
 
-      {attachments.map((attachment) => (
-        <Stack
-          key={attachment.id}
-          direction="row"
-          spacing={1.5}
-          alignItems="center"
+      {attachments.length > 0 && (
+        <Box
           sx={{
-            px: 1.5,
-            py: 1,
-            borderRadius: 2,
-            border: `1px solid ${theme.palette.divider}`,
+            display: "grid",
+            gridTemplateColumns: {
+              xs: "repeat(2, minmax(0, 1fr))",
+              sm: "repeat(3, minmax(0, 1fr))",
+              md: "repeat(4, minmax(0, 1fr))",
+            },
+            gap: 1.5,
           }}
         >
-          <InsertDriveFileOutlined color="action" fontSize="small" />
-          <Box sx={{ flex: 1, minWidth: 0 }}>
-            <Typography
-              component="a"
+          {attachments.map((attachment) => (
+            <AttachmentCard
+              key={attachment.id}
+              name={attachment.name}
+              mimeType={attachment.mimeType}
+              sizeLabel={formatFileSize(attachment.size)}
               href={getAttachmentUrl(attachment.attachmentId)}
-              target="_blank"
-              rel="noopener noreferrer"
-              variant="body2"
-              sx={{
-                fontWeight: 500,
-                color: "primary.main",
-                textDecoration: "none",
-                display: "block",
-                overflow: "hidden",
-                textOverflow: "ellipsis",
-                whiteSpace: "nowrap",
+              isDeleting={deletingId === attachment.id}
+              onDelete={() => {
+                void handleDelete(attachment.id);
               }}
-            >
-              {attachment.name}
-            </Typography>
-            <Typography variant="caption" color="text.secondary">
-              {[attachment.mimeType, formatFileSize(attachment.size)]
-                .filter((part): part is string => part.length > 0)
-                .join(" · ")}
-            </Typography>
-          </Box>
-          <IconButton
-            aria-label={`Remove ${attachment.name}`}
-            size="small"
-            disabled={deletingId === attachment.id}
-            onClick={() => {
-              void handleDelete(attachment.id);
-            }}
-          >
-            <DeleteOutline fontSize="small" />
-          </IconButton>
-        </Stack>
-      ))}
+            />
+          ))}
+        </Box>
+      )}
     </Stack>
   );
 };
