@@ -5,10 +5,10 @@ import { useGetItemQuery, useUpdateItemMutation } from "@generated/gql";
 import type { UpdateItemInput } from "@generated/gql/graphql";
 import { AppBar } from "@pine/ui";
 import { useItemParams, useSnackbar } from "@shared";
-import { ItemAttachments } from "@features/attachments";
+import { ItemAttachments } from "@features/item-attachments";
+import { ItemChecklists } from "@features/item-checklists";
 import {
   ItemActivity,
-  ItemChecklists,
   ItemDescription,
   ItemFields,
   ItemList,
