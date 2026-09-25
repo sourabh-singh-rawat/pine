@@ -1,8 +1,5 @@
 import { NatsPublisher, type IPublisher } from "@pine/events";
-import {
-  resolveIdentityFromHeaders,
-  resolveTenantContextFromHeaders,
-} from "@pine/identity";
+import { resolveIdentityFromHeaders, resolveTenantContextFromHeaders } from "@pine/identity";
 import {
   ExponentialBackoffPolicy,
   OutboxCleanupService,
@@ -29,13 +26,7 @@ import { env } from "@/bootstrap/env";
 import { logger } from "@/bootstrap/logger";
 import { imageProcessingQueue } from "@/bootstrap/queue";
 import { redisClient } from "@/bootstrap/redis-client";
-import {
-  AttachmentRepository,
-  AttachmentScannedConsumer,
-  AttachmentService,
-  IAttachmentRepository,
-  IAttachmentService,
-} from "@/features/attachment";
+import { AttachmentRepository, AttachmentScannedConsumer, AttachmentService, IAttachmentRepository, IAttachmentService } from "@/features/attachment";
 import { AttachmentUploadRepository, AttachmentUploadService, IAttachmentUploadRepository, IAttachmentUploadService } from "@/features/attachment-upload";
 import { AttachmentIdentitySyncConsumer, IIdentityRepository, IdentityRepository } from "@/features/identities";
 import { AttachmentTenantSyncConsumer, ITenantRepository, TenantRepository } from "@/features/tenants";

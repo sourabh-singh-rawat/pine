@@ -40,10 +40,10 @@ export const Route = createFileRoute("/_authenticated/i/$issueId")({
 
 3. **GQL** in `src/graphql/<domain>/X.gql`. File name and operation = PascalCase of the **server field**.
 
-| Server field | Client file | Operation |
-| ------------ | ----------- | --------- |
-| `getWorkspace` | `GetWorkspace.gql` | `query GetWorkspace` |
-| `getWorkspaces` | `GetWorkspaces.gql` | `query GetWorkspaces` |
+| Server field      | Client file           | Operation                  |
+| ----------------- | --------------------- | -------------------------- |
+| `getWorkspace`    | `GetWorkspace.gql`    | `query GetWorkspace`       |
+| `getWorkspaces`   | `GetWorkspaces.gql`   | `query GetWorkspaces`      |
 | `createWorkspace` | `CreateWorkspace.gql` | `mutation CreateWorkspace` |
 
 Existing `FindIssue` / `FindProjects` match current `find*` server fields — leave until the schema is renamed.

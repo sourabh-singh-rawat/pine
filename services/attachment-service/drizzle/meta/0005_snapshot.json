@@ -112,12 +112,8 @@
           "name": "attachment_uploads_tenant_id_tenants_id_fk",
           "tableFrom": "attachment_uploads",
           "tableTo": "tenants",
-          "columnsFrom": [
-            "tenant_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["tenant_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -125,12 +121,8 @@
           "name": "attachment_uploads_created_by_identities_id_fk",
           "tableFrom": "attachment_uploads",
           "tableTo": "identities",
-          "columnsFrom": [
-            "created_by"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["created_by"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -219,12 +211,8 @@
           "name": "attachment_versions_attachment_id_attachments_id_fk",
           "tableFrom": "attachment_versions",
           "tableTo": "attachments",
-          "columnsFrom": [
-            "attachment_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["attachment_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -232,12 +220,8 @@
           "name": "attachment_versions_created_by_identities_id_fk",
           "tableFrom": "attachment_versions",
           "tableTo": "identities",
-          "columnsFrom": [
-            "created_by"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["created_by"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -332,12 +316,8 @@
           "name": "attachments_tenant_id_tenants_id_fk",
           "tableFrom": "attachments",
           "tableTo": "tenants",
-          "columnsFrom": [
-            "tenant_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["tenant_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -345,12 +325,8 @@
           "name": "attachments_created_by_identities_id_fk",
           "tableFrom": "attachments",
           "tableTo": "identities",
-          "columnsFrom": [
-            "created_by"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["created_by"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -595,9 +571,7 @@
         "tenants_slug_unique": {
           "name": "tenants_slug_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "slug"
-          ]
+          "columns": ["slug"]
         }
       },
       "policies": {},

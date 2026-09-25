@@ -31,16 +31,22 @@ export class ProfilePhotoAttachmentConsumer extends Consumer<CloudEvent<Attachme
   async onMessage(message: JsMsg, payload: CloudEvent<AttachmentCreatedData>): Promise<void> {
     const event = validateEvent(AttachmentCreatedEvent, payload);
     const data = event.data;
-    if (!data || data.scopeType !== "IDENTITY" || data.status !== "AVAILABLE" || data.securityStatus !== "CLEAN") {
+    if (
+      !data ||
+      data.scopeType !== "IDENTITY" ||
+      data.status !== "AVAILABLE" ||
+      data.securityStatus !== "CLEAN"
+    ) {
       message.ack();
       return;
     }
 
-    const uploadRequestId = typeof data.operationId === "string"
-      ? data.operationId
-      : typeof data.metadata?.uploadRequestId === "string"
-        ? data.metadata.uploadRequestId
-        : undefined;
+    const uploadRequestId =
+      typeof data.operationId === "string"
+        ? data.operationId
+        : typeof data.metadata?.uploadRequestId === "string"
+          ? data.metadata.uploadRequestId
+          : undefined;
 
     const photoUrl = data.url ?? `${env.DATA_GATEWAY_URL}/attachments/${data.id}`;
 

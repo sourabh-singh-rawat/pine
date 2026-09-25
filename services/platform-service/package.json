@@ -5,9 +5,9 @@
   "description": "Platform service — tenants, workspaces, and memberships",
   "keywords": [
     "membership",
-    "workspace",
     "platform",
-    "tenant"
+    "tenant",
+    "workspace"
   ],
   "homepage": "https://github.com/sourabh-singh-rawat/pine#readme",
   "bugs": {

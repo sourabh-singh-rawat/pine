@@ -18,9 +18,7 @@ export const Workspaces = pgTable(
     tenantId: uuid("tenant_id")
       .notNull()
       .references(() => Tenants.id),
-    parentWorkspaceId: uuid("parent_workspace_id").references(
-      (): AnyPgColumn => Workspaces.id,
-    ),
+    parentWorkspaceId: uuid("parent_workspace_id").references((): AnyPgColumn => Workspaces.id),
     name: varchar("name", { length: 255 }).notNull(),
     slug: varchar("slug", { length: 100 }).notNull(),
     description: text("description"),

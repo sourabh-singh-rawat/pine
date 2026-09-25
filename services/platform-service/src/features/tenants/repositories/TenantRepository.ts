@@ -17,10 +17,7 @@ export class TenantRepository implements ITenantRepository {
     return options?.tx ?? this.db;
   }
 
-  async save(
-    entity: CreateTenantEntity,
-    options?: TenantRepositoryOptions,
-  ): Promise<Tenant> {
+  async save(entity: CreateTenantEntity, options?: TenantRepositoryOptions): Promise<Tenant> {
     const client = this.client(options);
     const now = new Date();
 

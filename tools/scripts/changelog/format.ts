@@ -1,7 +1,4 @@
-import {
-  formatReleaseTag,
-  parseReleaseVersionParts,
-} from "../release/release-version.ts";
+import { formatReleaseTag, parseReleaseVersionParts } from "../release/release-version.ts";
 
 export type ChangesetBump = "major" | "minor" | "patch";
 
@@ -46,8 +43,7 @@ const BUMP_HEADING: Readonly<Record<ChangesetBump, string>> = {
 const isChangesetBump = (value: string): value is ChangesetBump =>
   value === "major" || value === "minor" || value === "patch";
 
-export const isSkippedChangesetFile = (fileName: string): boolean =>
-  SKIP_CHANGESET.has(fileName);
+export const isSkippedChangesetFile = (fileName: string): boolean => SKIP_CHANGESET.has(fileName);
 
 export const isChangesetMarkdownPath = (path: string): boolean => {
   const normalized = path.replace(/\\/g, "/");
@@ -60,10 +56,7 @@ export const isChangesetMarkdownPath = (path: string): boolean => {
   return folder === ".changeset" && !SKIP_CHANGESET.has(file);
 };
 
-export const parseChangesetMarkdown = (
-  fileName: string,
-  raw: string,
-): ParsedChangeset | null => {
+export const parseChangesetMarkdown = (fileName: string, raw: string): ParsedChangeset | null => {
   const trimmed = raw.replace(/^\uFEFF/, "");
   const match = trimmed.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n([\s\S]*)$/);
   if (match === null) {
@@ -215,10 +208,7 @@ export const formatChangelogSection = (
   return lines.join("\n");
 };
 
-export const extractChangelogSection = (
-  existing: string,
-  tag: string,
-): string | null => {
+export const extractChangelogSection = (existing: string, tag: string): string | null => {
   const section = splitChangelog(existing).find((item) => item.tag === tag);
   if (section === undefined) {
     return null;
@@ -227,11 +217,8 @@ export const extractChangelogSection = (
   return body.length > 0 ? `${body}\n` : null;
 };
 
-export const mergeChangelog = (
-  existing: string,
-  tag: string,
-  section: string,
-): string => mergeChangelogSections(existing, [{ tag, body: section.trim() }], true);
+export const mergeChangelog = (existing: string, tag: string, section: string): string =>
+  mergeChangelogSections(existing, [{ tag, body: section.trim() }], true);
 
 export const mergeChangelogSections = (
   existing: string,
@@ -299,9 +286,7 @@ const highestBump = (packages: Readonly<Record<string, ChangesetBump>>): Changes
   return "patch";
 };
 
-const formatPackageNames = (
-  packages: Readonly<Record<string, ChangesetBump>>,
-): string =>
+const formatPackageNames = (packages: Readonly<Record<string, ChangesetBump>>): string =>
   Object.keys(packages)
     .sort((a, b) => a.localeCompare(b))
     .map((name) => `\`${name}\``)
@@ -309,8 +294,7 @@ const formatPackageNames = (
 
 const formatChangelogEntry = (entry: ChangelogEntry): string => {
   const who = entry.authors.length > 0 ? entry.authors.join(", ") : "unknown";
-  const sha =
-    entry.hash !== null && entry.hash.length > 0 ? shortCommitSha(entry.hash) : null;
+  const sha = entry.hash !== null && entry.hash.length > 0 ? shortCommitSha(entry.hash) : null;
   const prefix = sha !== null ? `${sha}: ` : "";
   const pkgs = formatPackageNames(entry.changeset.packages);
   const suffix = pkgs.length > 0 ? ` — ${who} (${pkgs})` : ` — ${who}`;
@@ -319,9 +303,7 @@ const formatChangelogEntry = (entry: ChangelogEntry): string => {
 
 const splitChangelog = (existing: string): readonly ChangelogSection[] => {
   const source =
-    existing.trim().length === 0
-      ? `${CHANGELOG_TITLE}\n\n`
-      : `${existing.replace(/\s+$/, "")}\n`;
+    existing.trim().length === 0 ? `${CHANGELOG_TITLE}\n\n` : `${existing.replace(/\s+$/, "")}\n`;
   const rest = source.startsWith(CHANGELOG_TITLE)
     ? source.slice(CHANGELOG_TITLE.length).replace(/^\r?\n/, "")
     : source;

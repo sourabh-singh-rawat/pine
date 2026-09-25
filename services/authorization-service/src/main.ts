@@ -68,15 +68,9 @@ const main = async () => {
   void container
     .get<AuthorizationProfileSyncConsumer>(TYPES.AuthorizationProfileSyncConsumer)
     .start();
-  void container
-    .get<AuthorizationSpaceSyncConsumer>(TYPES.AuthorizationSpaceSyncConsumer)
-    .start();
-  void container
-    .get<AuthorizationListSyncConsumer>(TYPES.AuthorizationListSyncConsumer)
-    .start();
-  void container
-    .get<AuthorizationItemSyncConsumer>(TYPES.AuthorizationItemSyncConsumer)
-    .start();
+  void container.get<AuthorizationSpaceSyncConsumer>(TYPES.AuthorizationSpaceSyncConsumer).start();
+  void container.get<AuthorizationListSyncConsumer>(TYPES.AuthorizationListSyncConsumer).start();
+  void container.get<AuthorizationItemSyncConsumer>(TYPES.AuthorizationItemSyncConsumer).start();
 };
 
 main().catch((error) => {

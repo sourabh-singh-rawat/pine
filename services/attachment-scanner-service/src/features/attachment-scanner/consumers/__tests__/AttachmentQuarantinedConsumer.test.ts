@@ -1,8 +1,4 @@
-import {
-  AttachmentQuarantinedEvent,
-  createCloudEvent,
-  type IBroker,
-} from "@pine/events";
+import { AttachmentQuarantinedEvent, createCloudEvent, type IBroker } from "@pine/events";
 import type { JsMsg } from "nats";
 import { describe, expect, it, vi } from "vitest";
 import type { IAttachmentScannerService } from "@/features/attachment-scanner/services";
@@ -49,10 +45,7 @@ describe("AttachmentQuarantinedConsumer", () => {
       }),
     };
 
-    const consumer = new AttachmentQuarantinedConsumer(
-      createBroker(),
-      scannerService,
-    );
+    const consumer = new AttachmentQuarantinedConsumer(createBroker(), scannerService);
 
     const messageObj: unknown = { ack: vi.fn() };
     if (!toJsMsg(messageObj)) {

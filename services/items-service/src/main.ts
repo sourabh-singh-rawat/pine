@@ -36,9 +36,7 @@ const main = async () => {
   void container.get<IOutboxWorker>(TYPES.OutboxWorker).start();
   void container.get<IOutboxCleanupWorker>(TYPES.OutboxCleanupWorker).start();
   void container.get<ItemsIdentitySyncConsumer>(TYPES.ItemsIdentitySyncConsumer).start();
-  void container
-    .get<ItemAttachmentCreatedConsumer>(TYPES.ItemAttachmentCreatedConsumer)
-    .start();
+  void container.get<ItemAttachmentCreatedConsumer>(TYPES.ItemAttachmentCreatedConsumer).start();
 };
 
 main().catch((error) => {

@@ -11,10 +11,7 @@ import {
 
 function isResendBody(body: unknown): body is { email: string } {
   return (
-    body !== null &&
-    typeof body === "object" &&
-    "email" in body &&
-    typeof body.email === "string"
+    body !== null && typeof body === "object" && "email" in body && typeof body.email === "string"
   );
 }
 

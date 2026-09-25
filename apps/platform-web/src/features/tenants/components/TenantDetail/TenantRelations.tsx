@@ -31,7 +31,11 @@ export const TenantRelations = ({ tenantId }: TenantRelationsProps) => {
 
   return (
     <Stack spacing={2}>
-      <Stack direction="row" spacing={2} sx={{ alignItems: "center", justifyContent: "space-between" }}>
+      <Stack
+        direction="row"
+        spacing={2}
+        sx={{ alignItems: "center", justifyContent: "space-between" }}
+      >
         <Typography color="text.secondary">
           Graph relations for this tenant. Creating a tenant writes the owner relation for the
           creator.

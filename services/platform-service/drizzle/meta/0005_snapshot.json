@@ -116,12 +116,8 @@
           "name": "identity_workspace_preferences_identity_id_identities_id_fk",
           "tableFrom": "identity_workspace_preferences",
           "tableTo": "identities",
-          "columnsFrom": [
-            "identity_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["identity_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -129,12 +125,8 @@
           "name": "identity_workspace_preferences_workspace_id_workspaces_id_fk",
           "tableFrom": "identity_workspace_preferences",
           "tableTo": "workspaces",
-          "columnsFrom": [
-            "workspace_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["workspace_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -142,12 +134,8 @@
           "name": "identity_workspace_preferences_tenant_id_tenants_id_fk",
           "tableFrom": "identity_workspace_preferences",
           "tableTo": "tenants",
-          "columnsFrom": [
-            "tenant_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["tenant_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -157,9 +145,7 @@
         "identity_workspace_preferences_identity_id_unique": {
           "name": "identity_workspace_preferences_identity_id_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "identity_id"
-          ]
+          "columns": ["identity_id"]
         }
       },
       "policies": {},
@@ -387,9 +373,7 @@
         "tenants_slug_unique": {
           "name": "tenants_slug_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "slug"
-          ]
+          "columns": ["slug"]
         }
       },
       "policies": {},
@@ -476,12 +460,8 @@
           "name": "workspaces_tenant_id_tenants_id_fk",
           "tableFrom": "workspaces",
           "tableTo": "tenants",
-          "columnsFrom": [
-            "tenant_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["tenant_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -489,12 +469,8 @@
           "name": "workspaces_parent_workspace_id_workspaces_id_fk",
           "tableFrom": "workspaces",
           "tableTo": "workspaces",
-          "columnsFrom": [
-            "parent_workspace_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["parent_workspace_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -504,10 +480,7 @@
         "workspaces_tenant_id_slug_unique": {
           "name": "workspaces_tenant_id_slug_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "tenant_id",
-            "slug"
-          ]
+          "columns": ["tenant_id", "slug"]
         }
       },
       "policies": {},

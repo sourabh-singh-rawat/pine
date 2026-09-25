@@ -9,6 +9,3 @@ export {
   ProfileGenderUpdatedDataSchema,
   type ProfileGenderUpdatedData,
 } from "./ProfileGenderUpdatedDataSchema";
-
-
-

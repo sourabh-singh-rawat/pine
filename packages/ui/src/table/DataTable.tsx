@@ -39,9 +39,7 @@ export const DataTable = <TData extends RowData>({
   showBorder = false,
   groupedColumnMode = "remove",
 }: DataTableProps<TData>) => {
-  const [expanded, setExpanded] = useState<ExpandedState>(
-    () => initialState?.expanded ?? true,
-  );
+  const [expanded, setExpanded] = useState<ExpandedState>(() => initialState?.expanded ?? true);
 
   const handleExpandedChange = useCallback((updater: Updater<ExpandedState>) => {
     setExpanded((previous) => {

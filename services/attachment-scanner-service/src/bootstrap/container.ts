@@ -28,15 +28,8 @@ import {
   type IAttachmentScannerService,
   type IAttachmentScanRepository,
 } from "@/features/attachment-scanner";
-import {
-  type IMalwareScannerService,
-  MalwareScannerService,
-} from "@/features/malware-scanner";
-import {
-  ClamClient,
-  ClamMalwareScanner,
-  type IMalwareScanner,
-} from "@/integrations/malware-scanner";
+import { type IMalwareScannerService, MalwareScannerService } from "@/features/malware-scanner";
+import { ClamClient, ClamMalwareScanner, type IMalwareScanner } from "@/integrations/malware-scanner";
 
 export const container = new Container({ defaultScope: "Singleton" });
 

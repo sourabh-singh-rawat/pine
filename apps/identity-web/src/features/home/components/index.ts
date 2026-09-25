@@ -11,4 +11,3 @@ export * from "./UpdateGender";
 export * from "./UpdateGenderForm";
 export * from "./UpdateName";
 export * from "./UpdateNameForm";
-

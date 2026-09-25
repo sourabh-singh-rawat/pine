@@ -14,25 +14,13 @@ export type UpdateChecklistEntity = {
 };
 
 export interface IChecklistRepository {
-  save: (
-    entity: CreateChecklistEntity,
-    options?: ChecklistRepositoryOptions,
-  ) => Promise<Checklist>;
+  save: (entity: CreateChecklistEntity, options?: ChecklistRepositoryOptions) => Promise<Checklist>;
   update: (
     id: string,
     entity: UpdateChecklistEntity,
     options?: ChecklistRepositoryOptions,
   ) => Promise<Checklist | null>;
-  findById: (
-    id: string,
-    options?: ChecklistRepositoryOptions,
-  ) => Promise<Checklist | null>;
-  findByItemId: (
-    itemId: string,
-    options?: ChecklistRepositoryOptions,
-  ) => Promise<Checklist[]>;
-  softDelete: (
-    id: string,
-    options?: ChecklistRepositoryOptions,
-  ) => Promise<boolean>;
+  findById: (id: string, options?: ChecklistRepositoryOptions) => Promise<Checklist | null>;
+  findByItemId: (itemId: string, options?: ChecklistRepositoryOptions) => Promise<Checklist[]>;
+  softDelete: (id: string, options?: ChecklistRepositoryOptions) => Promise<boolean>;
 }

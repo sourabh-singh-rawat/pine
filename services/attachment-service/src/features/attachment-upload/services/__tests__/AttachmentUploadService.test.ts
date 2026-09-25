@@ -127,13 +127,17 @@ describe("AttachmentUploadService", () => {
 
       expect(target.url).toMatch(/^http:\/\/127\.0\.0\.1:4001\/attachments\/upload\/[0-9a-f-]+$/);
       expect(target.objectId).toMatch(
-        new RegExp(`^${ATTACHMENT_STORAGE_ZONE.QUARANTINE}/workspace/01a015a6-2e8f-74da-92ce-174d8adb00d4/[0-9a-f-]+$`),
+        new RegExp(
+          `^${ATTACHMENT_STORAGE_ZONE.QUARANTINE}/workspace/01a015a6-2e8f-74da-92ce-174d8adb00d4/[0-9a-f-]+$`,
+        ),
       );
       expect(target.headers).toEqual({ "Content-Type": "image/png" });
       expect(attachmentUploads.save).toHaveBeenCalledWith(
         expect.objectContaining({
           storageObjectKey: expect.stringMatching(
-            new RegExp(`^${ATTACHMENT_STORAGE_ZONE.QUARANTINE}/workspace/01a015a6-2e8f-74da-92ce-174d8adb00d4/[0-9a-f-]+$`),
+            new RegExp(
+              `^${ATTACHMENT_STORAGE_ZONE.QUARANTINE}/workspace/01a015a6-2e8f-74da-92ce-174d8adb00d4/[0-9a-f-]+$`,
+            ),
           ),
         }),
       );

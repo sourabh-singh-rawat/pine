@@ -19,10 +19,7 @@ const createBroker = () => ({
 describe("AuthorizationListSyncConsumer", () => {
   it("writes the list space and owner tuples when a list is created", async () => {
     const authorizationGraphProvider = createGraphProvider();
-    const consumer = new AuthorizationListSyncConsumer(
-      createBroker(),
-      authorizationGraphProvider,
-    );
+    const consumer = new AuthorizationListSyncConsumer(createBroker(), authorizationGraphProvider);
     const message = { ack: vi.fn() };
     const event = createCloudEvent({
       type: ListCreatedEvent.type,

@@ -18,10 +18,7 @@ export class M3Animator {
   rotation = 0;
   morph = 0;
 
-  constructor(
-    stiffness = DEFAULT_SPRING_STIFFNESS,
-    damping = DEFAULT_SPRING_DAMPING,
-  ) {
+  constructor(stiffness = DEFAULT_SPRING_STIFFNESS, damping = DEFAULT_SPRING_DAMPING) {
     this.spring = new Spring(stiffness, damping);
     this.spring.target = 1;
   }
@@ -46,8 +43,7 @@ export class M3Animator {
       this.prevCycle = cycle;
     }
 
-    this.fraction =
-      (this.elapsed % DURATION_PER_SHAPE_MS) / DURATION_PER_SHAPE_MS;
+    this.fraction = (this.elapsed % DURATION_PER_SHAPE_MS) / DURATION_PER_SHAPE_MS;
     this.spring.step(dt);
 
     const base = this.morphTarget - 1;

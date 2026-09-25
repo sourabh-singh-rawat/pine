@@ -49,9 +49,6 @@ export default defineConfig({
     https: readDevTls("identity-web"),
   },
   optimizeDeps: {
-    include: [
-      "@mui/icons-material/MarkEmailUnreadOutlined",
-      "@mui/icons-material/Verified",
-    ],
+    include: ["@mui/icons-material/MarkEmailUnreadOutlined", "@mui/icons-material/Verified"],
   },
 });

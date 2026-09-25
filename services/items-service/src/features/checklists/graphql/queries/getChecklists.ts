@@ -2,10 +2,7 @@ import { requireIdentityId } from "@pine/identity";
 import { builder } from "@pine/server";
 import { TYPES, container } from "@/bootstrap";
 import type { IChecklistService } from "@/features/checklists/services";
-import {
-  ChecklistObject,
-  toChecklistObjectShape,
-} from "../objects/ChecklistObject";
+import { ChecklistObject, toChecklistObjectShape } from "../objects/ChecklistObject";
 
 builder.queryFields((t) => ({
   getChecklists: t.field({

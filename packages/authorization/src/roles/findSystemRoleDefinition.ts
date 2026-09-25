@@ -1,8 +1,4 @@
-import {
-  ALL_WORKSPACE_ROLES,
-  ALL_PLATFORM_ROLES,
-  ALL_TENANT_ROLES,
-} from "./SystemRoles";
+import { ALL_WORKSPACE_ROLES, ALL_PLATFORM_ROLES, ALL_TENANT_ROLES } from "./SystemRoles";
 import type { RoleDefinition } from "./RoleDefinition";
 
 const matchesRole = (

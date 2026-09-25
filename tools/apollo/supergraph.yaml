@@ -20,5 +20,3 @@ subgraphs:
     routing_url: https://127.0.0.1:5005/graphql
     schema:
       file: ../../services/platform-service/dist/schema.graphql
-
-

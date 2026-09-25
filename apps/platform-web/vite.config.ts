@@ -38,10 +38,7 @@ export default defineConfig({
       "@routes": path.resolve(__dirname, "src/routes"),
       "@shared": path.resolve(__dirname, "src/shared"),
       "@generated": path.resolve(__dirname, "src/__generated__"),
-      "@pine/authorization": path.resolve(
-        __dirname,
-        "../../packages/authorization/dist/index.js",
-      ),
+      "@pine/authorization": path.resolve(__dirname, "../../packages/authorization/dist/index.js"),
       "@graphql-typed-document-node/core": path.resolve(
         __dirname,
         "src/shims/graphql-typed-document-node-core.ts",

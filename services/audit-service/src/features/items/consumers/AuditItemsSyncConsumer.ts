@@ -25,11 +25,7 @@ export class AuditItemsSyncConsumer extends Consumer<
 > {
   readonly stream = Streams.ITEMS;
   readonly consumer = "audit-issues-sync";
-  readonly subjects = [
-    ItemCreatedEvent.type,
-    ItemUpdatedEvent.type,
-    SpaceCreatedEvent.type,
-  ];
+  readonly subjects = [ItemCreatedEvent.type, ItemUpdatedEvent.type, SpaceCreatedEvent.type];
 
   constructor(
     @inject(TYPES.Broker)

@@ -16,8 +16,7 @@ export const PLATFORM_ROLES: Record<string, RoleDefinition> = {
     id: "01900000-0000-7000-8000-000000000001",
     key: "platform.admin",
     name: "Platform Admin",
-    description:
-      "Platform administrator with tenant and platform role management permissions",
+    description: "Platform administrator with tenant and platform role management permissions",
     relation: "admin",
     permissionKeys: [
       ...permissionKeys("platform", PLATFORM_PERMISSIONS),
@@ -42,8 +41,7 @@ export const TENANT_ROLES: Record<string, RoleDefinition> = {
     id: "01900000-0000-7000-8000-000000000005",
     key: "tenant.owner",
     name: "Tenant Owner",
-    description:
-      "Full control of a tenant, including workspaces, roles, grants, and membership",
+    description: "Full control of a tenant, including workspaces, roles, grants, and membership",
     relation: "owner",
     permissionKeys: [
       ...permissionKeys("tenant", TENANT_PERMISSIONS),
@@ -116,10 +114,7 @@ export const WORKSPACE_ROLES: Record<string, RoleDefinition> = {
       "Manages workspace settings and grants without deleting the workspace or defining roles",
     relation: "admin",
     permissionKeys: [
-      ...permissionKeys(
-        "workspace",
-        withoutActions(WORKSPACE_PERMISSIONS, "delete"),
-      ),
+      ...permissionKeys("workspace", withoutActions(WORKSPACE_PERMISSIONS, "delete")),
       ...permissionKeys("space", withoutActions(SPACE_PERMISSIONS, "delete")),
       ...permissionKeys("list", withoutActions(LIST_PERMISSIONS, "delete")),
       ...permissionKeys("item", withoutActions(ITEM_PERMISSIONS, "delete")),
@@ -168,7 +163,4 @@ export const ALL_SYSTEM_ROLES: readonly RoleDefinition[] = [
 
 export type PlatformRoleKey = "platform.admin" | "platform.member";
 export type TenantRoleKey = "tenant.owner" | "tenant.admin" | "tenant.member";
-export type WorkspaceRoleKey =
-  | "workspace.owner"
-  | "workspace.admin"
-  | "workspace.member";
+export type WorkspaceRoleKey = "workspace.owner" | "workspace.admin" | "workspace.member";

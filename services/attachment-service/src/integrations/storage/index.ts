@@ -7,4 +7,3 @@ export type {
   UploadTarget,
 } from "@/integrations/storage/IObjectStorage";
 export { SeaweedObjectStorage } from "@/integrations/storage/SeaweedObjectStorage";
-

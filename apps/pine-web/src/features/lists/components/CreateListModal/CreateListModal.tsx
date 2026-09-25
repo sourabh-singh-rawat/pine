@@ -11,10 +11,7 @@ type CreateListModalProps = {
   disabled?: boolean;
 };
 
-export const CreateListModal = ({
-  spaceId,
-  disabled = false,
-}: CreateListModalProps) => {
+export const CreateListModal = ({ spaceId, disabled = false }: CreateListModalProps) => {
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
 

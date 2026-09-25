@@ -1,13 +1,5 @@
-import {
-  PLATFORM_OBJECT_ID,
-  PLATFORM_TENANT,
-  TENANT_PLATFORM,
-} from "@pine/authorization";
-import {
-  createCloudEvent,
-  TenantCreatedEvent,
-  TenantDeletedEvent,
-} from "@pine/events";
+import { PLATFORM_OBJECT_ID, PLATFORM_TENANT, TENANT_PLATFORM } from "@pine/authorization";
+import { createCloudEvent, TenantCreatedEvent, TenantDeletedEvent } from "@pine/events";
 import { describe, expect, it, vi } from "vitest";
 import { AuthorizationTenantSyncConsumer } from "@/features/platform/consumers/AuthorizationTenantSyncConsumer";
 

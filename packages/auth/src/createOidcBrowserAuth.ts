@@ -38,14 +38,11 @@ export type OidcBrowserAuth = {
 
 const DEFAULT_SCOPE = "openid email";
 
-export const createOidcBrowserAuth = (
-  options: CreateOidcBrowserAuthOptions,
-): OidcBrowserAuth => {
+export const createOidcBrowserAuth = (options: CreateOidcBrowserAuthOptions): OidcBrowserAuth => {
   const { storageKeys, getClientId, getRedirectUri, buildAuthorizeUrl } = options;
   const getScope = options.getScope ?? (() => DEFAULT_SCOPE);
 
-  const isAuthenticated = (): boolean =>
-    sessionStorage.getItem(storageKeys.authenticated) === "1";
+  const isAuthenticated = (): boolean => sessionStorage.getItem(storageKeys.authenticated) === "1";
 
   const markAuthenticated = (): void => {
     sessionStorage.setItem(storageKeys.authenticated, "1");

@@ -186,21 +186,13 @@ const buildWavyLine = (
   for (let i = 0; i <= steps; i++) {
     const t = i / steps;
     const x = x0 + dir * length * t;
-    const y =
-      amplitude > 0
-        ? cy + amplitude * Math.sin((TWO_PI * x) / wavelength + phase)
-        : cy;
+    const y = amplitude > 0 ? cy + amplitude * Math.sin((TWO_PI * x) / wavelength + phase) : cy;
     if (i === 0) ctx.moveTo(x, y);
     else ctx.lineTo(x, y);
   }
 };
 
-const buildFlatLine = (
-  ctx: CanvasRenderingContext2D,
-  x0: number,
-  x1: number,
-  cy: number,
-): void => {
+const buildFlatLine = (ctx: CanvasRenderingContext2D, x0: number, x1: number, cy: number): void => {
   ctx.moveTo(x0, cy);
   ctx.lineTo(x1, cy);
 };

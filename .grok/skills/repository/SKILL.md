@@ -39,7 +39,9 @@ export const Workspaces = pgTable(
   "workspaces",
   {
     ...idColumn,
-    tenantId: uuid("tenant_id").notNull().references(() => Tenants.id),
+    tenantId: uuid("tenant_id")
+      .notNull()
+      .references(() => Tenants.id),
     name: varchar("name", { length: 255 }).notNull(),
     slug: varchar("slug", { length: 100 }).notNull(),
     ...auditColumns,
@@ -57,22 +59,19 @@ Table TS only. Migration generate/apply: `AGENTS.md`.
 
 Drop the entity noun. Persistence verbs — not domain `create` / `getById`.
 
-| Method | Meaning |
-| ------ | ------- |
-| `save` | insert |
-| `update` | patch; return row or `null` |
+| Method                                | Meaning                                       |
+| ------------------------------------- | --------------------------------------------- |
+| `save`                                | insert                                        |
+| `update`                              | patch; return row or `null`                   |
 | `findById` / `findByIds` / `findMany` | read; **null / empty**, never throw not-found |
-| `existsBy…` | boolean existence |
-| `softDelete` / `hardDelete` | delete |
+| `existsBy…`                           | boolean existence                             |
+| `softDelete` / `hardDelete`           | delete                                        |
 
 ```ts
 export type WorkspaceRepositoryOptions = { tx: DbClient };
 
 export interface IWorkspaceRepository {
-  save: (
-    entity: CreateWorkspaceEntity,
-    options?: WorkspaceRepositoryOptions,
-  ) => Promise<Workspace>;
+  save: (entity: CreateWorkspaceEntity, options?: WorkspaceRepositoryOptions) => Promise<Workspace>;
   update: (
     id: string,
     entity: UpdateWorkspaceEntity,

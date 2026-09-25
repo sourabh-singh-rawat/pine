@@ -11,5 +11,4 @@ export type HttpMethod = (typeof HttpMethod)[keyof typeof HttpMethod];
 
 const httpMethods = new Set<string>(Object.values(HttpMethod));
 
-export const isHttpMethod = (method: string): method is HttpMethod =>
-  httpMethods.has(method);
+export const isHttpMethod = (method: string): method is HttpMethod => httpMethods.has(method);

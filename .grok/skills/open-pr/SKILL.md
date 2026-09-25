@@ -17,11 +17,11 @@ Repo operation. Stay in the parent session. Branch/changeset/commit/push: [git-p
 
 This skill starts from a branch that already has its commits on `origin`. Integration branch is `dev` (never `development`).
 
-| Mode | When | After create |
-| ---- | ---- | ------------ |
-| **Publish** | Followed from `git-publish` publish mode, or user said `publish` / `ship it` | Squash-merge, delete source branch, switch to `dev`, pull |
-| **Open only** | User said only open/create a PR / MR | Switch to `dev`, pull (leave PR open) |
-| **Merge only** | User said merge on an existing PR | Squash-merge, delete source branch, switch to `dev`, pull |
+| Mode           | When                                                                         | After create                                              |
+| -------------- | ---------------------------------------------------------------------------- | --------------------------------------------------------- |
+| **Publish**    | Followed from `git-publish` publish mode, or user said `publish` / `ship it` | Squash-merge, delete source branch, switch to `dev`, pull |
+| **Open only**  | User said only open/create a PR / MR                                         | Switch to `dev`, pull (leave PR open)                     |
+| **Merge only** | User said merge on an existing PR                                            | Squash-merge, delete source branch, switch to `dev`, pull |
 
 ## Recipe
 
@@ -43,11 +43,11 @@ Merge-only: resolve the PR number with `gh pr view --json number,url,baseRefName
 
 ### 2. Create the pull request
 
-| Source branch | `--base` |
-| --- | --- |
-| `feat/*`, `fix/*`, `chore/*` | `dev` |
-| `hotfix/*` | `main` |
-| `release/*` | do not open with this skill |
+| Source branch                | `--base`                    |
+| ---------------------------- | --------------------------- |
+| `feat/*`, `fix/*`, `chore/*` | `dev`                       |
+| `hotfix/*`                   | `main`                      |
+| `release/*`                  | do not open with this skill |
 
 Title = conventional commit subject on the branch. Body = short behavior summary + test plan, via `--body-file` (scratch file under `$env:TEMP`, delete after):
 

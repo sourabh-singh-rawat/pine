@@ -113,7 +113,9 @@ const RelationNode = ({ data }: NodeProps<RelationFlowNode>) => {
         boxShadow: isIdentity ? 1 : 0,
       }}
     >
-      {!isIdentity ? <Handle type="target" position={Position.Left} style={{ opacity: 0 }} /> : null}
+      {!isIdentity ? (
+        <Handle type="target" position={Position.Left} style={{ opacity: 0 }} />
+      ) : null}
       <Stack spacing={0.25} sx={{ minWidth: 0 }}>
         <Typography
           variant="caption"
@@ -157,7 +159,9 @@ const RelationNode = ({ data }: NodeProps<RelationFlowNode>) => {
           </Typography>
         ) : null}
       </Stack>
-      {isIdentity ? <Handle type="source" position={Position.Right} style={{ opacity: 0 }} /> : null}
+      {isIdentity ? (
+        <Handle type="source" position={Position.Right} style={{ opacity: 0 }} />
+      ) : null}
     </Box>
   );
 };
@@ -274,9 +278,7 @@ export const IdentityRelationsGraph = ({
     });
 
     const stackHeight =
-      objectEntries.length > 0
-        ? (objectEntries.length - 1) * ROW_GAP + NODE_HEIGHT
-        : NODE_HEIGHT;
+      objectEntries.length > 0 ? (objectEntries.length - 1) * ROW_GAP + NODE_HEIGHT : NODE_HEIGHT;
     const identityY = Math.max(0, (stackHeight - NODE_HEIGHT) / 2);
 
     const identityTitle = displayName?.trim() ? displayName.trim() : truncateId(identityId);

@@ -26,8 +26,7 @@ export type Env = Type.Static<typeof EnvSchema>;
 const parseEnv = (): Env => {
   const withDefaults = Value.Default(EnvSchema, {
     ATTACHMENT_SCANNER_DATABASE_URL:
-      process.env.ATTACHMENT_SCANNER_DATABASE_URL ??
-      process.env.ATTACHMENT_DATABASE_URL,
+      process.env.ATTACHMENT_SCANNER_DATABASE_URL ?? process.env.ATTACHMENT_DATABASE_URL,
     ...process.env,
   });
   const cleaned = Value.Clean(EnvSchema, withDefaults);

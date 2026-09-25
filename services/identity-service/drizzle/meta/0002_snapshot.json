@@ -60,9 +60,7 @@
         "identities_idp_id_unique": {
           "name": "identities_idp_id_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "idp_id"
-          ]
+          "columns": ["idp_id"]
         }
       },
       "policies": {},
@@ -269,12 +267,8 @@
           "name": "profile_photo_upload_requests_profile_id_profiles_id_fk",
           "tableFrom": "profile_photo_upload_requests",
           "tableTo": "profiles",
-          "columnsFrom": [
-            "profile_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["profile_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -370,12 +364,8 @@
           "name": "profiles_identity_id_identities_id_fk",
           "tableFrom": "profiles",
           "tableTo": "identities",
-          "columnsFrom": [
-            "identity_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["identity_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }

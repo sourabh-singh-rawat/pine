@@ -1,7 +1,4 @@
-import {
-  workspaceTenantRelationship,
-  type GraphRelationship,
-} from "@pine/authorization";
+import { workspaceTenantRelationship, type GraphRelationship } from "@pine/authorization";
 import {
   type CloudEvent,
   type IBroker,
@@ -18,9 +15,7 @@ import { ensureRelationship } from "@/features/platform/consumers/syncRelationsh
 import type { IAuthorizationGraphProvider } from "@/integrations/authorization";
 
 @injectable()
-export class AuthorizationWorkspaceSyncConsumer extends Consumer<
-  CloudEvent<WorkspaceCreatedData>
-> {
+export class AuthorizationWorkspaceSyncConsumer extends Consumer<CloudEvent<WorkspaceCreatedData>> {
   readonly stream = Streams.PLATFORM;
   readonly consumer = "authorization-workspace-sync";
   readonly subjects = [WorkspaceCreatedEvent.type];
@@ -47,10 +42,7 @@ export class AuthorizationWorkspaceSyncConsumer extends Consumer<
       return;
     }
 
-    const relationship: GraphRelationship = workspaceTenantRelationship(
-      data.id,
-      data.tenantId,
-    );
+    const relationship: GraphRelationship = workspaceTenantRelationship(data.id, data.tenantId);
     await ensureRelationship(this.authorizationGraphProvider, relationship);
     message.ack();
   }

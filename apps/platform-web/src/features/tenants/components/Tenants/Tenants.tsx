@@ -66,9 +66,7 @@ export const Tenants = () => {
           <Typography variant="h5" component="h1" gutterBottom>
             Tenants
           </Typography>
-          <Typography color="text.secondary">
-            Tenants managed by the tenant service.
-          </Typography>
+          <Typography color="text.secondary">Tenants managed by the tenant service.</Typography>
         </Box>
         <CreateTenantModal />
       </Stack>

@@ -23,7 +23,9 @@ describe("ProfilePhotoAttachmentConsumer", () => {
     };
 
     const consumer = new ProfilePhotoAttachmentConsumer(
-      createBroker() as unknown as Parameters<typeof ProfilePhotoAttachmentConsumer.prototype.constructor>[0],
+      createBroker() as unknown as Parameters<
+        typeof ProfilePhotoAttachmentConsumer.prototype.constructor
+      >[0],
       profileService as unknown as IProfileService,
     );
 
@@ -46,10 +48,7 @@ describe("ProfilePhotoAttachmentConsumer", () => {
       },
     });
 
-    await consumer.onMessage(
-      message as unknown as Parameters<typeof consumer.onMessage>[0],
-      event,
-    );
+    await consumer.onMessage(message as unknown as Parameters<typeof consumer.onMessage>[0], event);
 
     expect(profileService.updatePhoto).toHaveBeenCalledWith({
       identityId: "user-1",
@@ -72,7 +71,9 @@ describe("ProfilePhotoAttachmentConsumer", () => {
     };
 
     const consumer = new ProfilePhotoAttachmentConsumer(
-      createBroker() as unknown as Parameters<typeof ProfilePhotoAttachmentConsumer.prototype.constructor>[0],
+      createBroker() as unknown as Parameters<
+        typeof ProfilePhotoAttachmentConsumer.prototype.constructor
+      >[0],
       profileService as unknown as IProfileService,
     );
 
@@ -94,10 +95,7 @@ describe("ProfilePhotoAttachmentConsumer", () => {
       },
     });
 
-    await consumer.onMessage(
-      message as unknown as Parameters<typeof consumer.onMessage>[0],
-      event,
-    );
+    await consumer.onMessage(message as unknown as Parameters<typeof consumer.onMessage>[0], event);
 
     expect(profileService.updatePhoto).not.toHaveBeenCalled();
     expect(message.ack).toHaveBeenCalled();

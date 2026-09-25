@@ -14,10 +14,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useState, type MouseEvent } from "react";
 import { useSetMyWorkspacePreferenceMutation } from "@generated/gql";
 import { useSnackbar } from "@shared";
-import {
-  type CurrentWorkspace,
-  useWorkspaceStore,
-} from "../../store";
+import { type CurrentWorkspace, useWorkspaceStore } from "../../store";
 
 export const WorkspaceSwitcher = () => {
   const workspaces = useWorkspaceStore((s) => s.workspaces);

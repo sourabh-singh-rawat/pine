@@ -13,9 +13,7 @@ builder.queryFields((t) => ({
       identityRequired: true,
     },
     resolve: async (_root, _args, ctx) => {
-      const service = container.get<IWorkspacePreferenceService>(
-        TYPES.WorkspacePreferenceService,
-      );
+      const service = container.get<IWorkspacePreferenceService>(TYPES.WorkspacePreferenceService);
       return service.get(requireIdentityId(ctx));
     },
   }),

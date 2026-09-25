@@ -70,13 +70,7 @@ export const ItemNameTableCell = ({
   );
 };
 
-export const ItemPriorityTableCell = ({
-  itemId,
-  value,
-}: {
-  itemId: string;
-  value: string;
-}) => {
+export const ItemPriorityTableCell = ({ itemId, value }: { itemId: string; value: string }) => {
   const ui = useContext(ItemListUiContext);
   if (!ui) return value;
   const current = ui.priorityOverrides[itemId] ?? value;

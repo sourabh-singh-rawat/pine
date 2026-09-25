@@ -29,7 +29,10 @@ export const EmailBlock = ({ email, emailVerified }: EmailBlockProps) => {
       );
     } catch (error) {
       snackbar.error(
-        getErrorMessage(error, "We could not send a verification email right now. Please try again."),
+        getErrorMessage(
+          error,
+          "We could not send a verification email right now. Please try again.",
+        ),
       );
     }
   };

@@ -35,7 +35,12 @@ const git = async (args: readonly string[], cwd = process.cwd()): Promise<string
 };
 
 const lines = (out: string): string[] =>
-  out.length === 0 ? [] : out.split(/\r?\n/).map((l) => l.trim()).filter(Boolean);
+  out.length === 0
+    ? []
+    : out
+        .split(/\r?\n/)
+        .map((l) => l.trim())
+        .filter(Boolean);
 
 const gitLines = async (args: readonly string[], cwd: string): Promise<string[]> => {
   try {
@@ -182,9 +187,11 @@ const resolveParts = async (
 ): Promise<ReleaseVersionParts | { error: string }> => {
   if (options.explicit !== null) {
     const resolved = parseReleaseRef(options.explicit);
-    return resolved ?? {
-      error: `Invalid release id. Expected ${formatReleaseBranchExample()} or ${formatReleaseTagExample()}. Got: ${options.explicit}`,
-    };
+    return (
+      resolved ?? {
+        error: `Invalid release id. Expected ${formatReleaseBranchExample()} or ${formatReleaseTagExample()}. Got: ${options.explicit}`,
+      }
+    );
   }
   let day = calendarDateParts();
   if (options.date !== null) {

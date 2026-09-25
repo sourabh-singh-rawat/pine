@@ -6,23 +6,12 @@ import {
   type PineTableFeatures,
 } from "@pine/ui";
 import { memo, useCallback, useContext, useMemo, useState } from "react";
-import {
-  useGetListItemsQuery,
-  useGetSubItemsQuery,
-} from "@generated/gql";
+import { useGetListItemsQuery, useGetSubItemsQuery } from "@generated/gql";
 import { StatusesContext } from "@shared/contexts/StatusesContext";
 import { ItemRowActionsMenu } from "./ItemRowActionsMenu";
-import {
-  FLAT_COLUMNS,
-  getItemRowId,
-  GROUPED_COLUMNS,
-  STATUS_GROUPING,
-} from "./ItemListColumns";
+import { FLAT_COLUMNS, getItemRowId, GROUPED_COLUMNS, STATUS_GROUPING } from "./ItemListColumns";
 import { ItemListLoader } from "./ItemListLoader";
-import {
-  ItemListUiContext,
-  type ItemListUiContextValue,
-} from "./ItemListUiContext";
+import { ItemListUiContext, type ItemListUiContextValue } from "./ItemListUiContext";
 import { sortItemRows, toItemRow } from "./mapItemRow";
 import { type ItemListProps, type ItemRow } from "./types";
 import { useItemListActions } from "./useItemListActions";
@@ -41,13 +30,7 @@ type ItemListTableProps = {
 const getItemSubRows = (row: ItemRow) => row.children;
 
 const ItemListTable = memo(
-  ({
-    rows,
-    columns,
-    shouldGroup,
-    enableNestedRows,
-    showBorder,
-  }: ItemListTableProps) => (
+  ({ rows, columns, shouldGroup, enableNestedRows, showBorder }: ItemListTableProps) => (
     <DataTable
       data={rows.length > 0 ? rows : EMPTY_ROWS}
       columns={columns}
@@ -117,24 +100,18 @@ export const ItemList = ({ itemId, listId, style }: ItemListProps) => {
     handleStatusChange,
   } = useItemListActions({ itemId, listId, statusById });
 
-  const {
-    childrenByParentId,
-    expandedParentIds,
-    expandingItemIds,
-    onToggleNestedItem,
-  } = useItemListNesting({
-    enabled: enableNestedRows,
-    listDataUpdatedAt: listItems.dataUpdatedAt,
-  });
+  const { childrenByParentId, expandedParentIds, expandingItemIds, onToggleNestedItem } =
+    useItemListNesting({
+      enabled: enableNestedRows,
+      listDataUpdatedAt: listItems.dataUpdatedAt,
+    });
 
   const rows = useMemo((): ItemRow[] => {
     const source = itemId ? (subItems.data ?? []) : (listItems.data ?? []);
     const mapped = source.flatMap((item) => {
       if (!item) return [];
-      const isOpen =
-        enableNestedRows && item.id ? expandedParentIds.has(item.id) : false;
-      const childSources =
-        isOpen && item.id ? childrenByParentId[item.id] : undefined;
+      const isOpen = enableNestedRows && item.id ? expandedParentIds.has(item.id) : false;
+      const childSources = isOpen && item.id ? childrenByParentId[item.id] : undefined;
       const children =
         childSources === undefined
           ? undefined

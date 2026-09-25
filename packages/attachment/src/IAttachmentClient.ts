@@ -1,8 +1,5 @@
 import type { Readable } from "node:stream";
-import type {
-  CreateUploadTargetInput,
-  CreateUploadTargetResponse,
-} from "./schemas";
+import type { CreateUploadTargetInput, CreateUploadTargetResponse } from "./schemas";
 
 export interface CreateUploadTargetOptions {
   input: CreateUploadTargetInput;
@@ -16,10 +13,6 @@ export interface DownloadAttachmentOptions {
 }
 
 export interface IAttachmentClient {
-  createUploadTarget: (
-    options: CreateUploadTargetOptions,
-  ) => Promise<CreateUploadTargetResponse>;
-  downloadStream: (
-    options: DownloadAttachmentOptions,
-  ) => Promise<Readable>;
+  createUploadTarget: (options: CreateUploadTargetOptions) => Promise<CreateUploadTargetResponse>;
+  downloadStream: (options: DownloadAttachmentOptions) => Promise<Readable>;
 }

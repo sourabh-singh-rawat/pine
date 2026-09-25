@@ -1,7 +1,4 @@
-import {
-  InvalidPermissionKeyError,
-  parsePermission,
-} from "@pine/authorization";
+import { InvalidPermissionKeyError, parsePermission } from "@pine/authorization";
 import { describe, expect, it } from "vitest";
 
 describe("parsePermission", () => {

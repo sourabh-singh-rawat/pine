@@ -116,12 +116,8 @@
           "name": "identity_organization_preferences_identity_id_identities_id_fk",
           "tableFrom": "identity_organization_preferences",
           "tableTo": "identities",
-          "columnsFrom": [
-            "identity_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["identity_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -129,12 +125,8 @@
           "name": "identity_organization_preferences_organization_id_organizations_id_fk",
           "tableFrom": "identity_organization_preferences",
           "tableTo": "organizations",
-          "columnsFrom": [
-            "organization_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["organization_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -142,12 +134,8 @@
           "name": "identity_organization_preferences_tenant_id_tenants_id_fk",
           "tableFrom": "identity_organization_preferences",
           "tableTo": "tenants",
-          "columnsFrom": [
-            "tenant_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["tenant_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -157,9 +145,7 @@
         "identity_organization_preferences_identity_id_unique": {
           "name": "identity_organization_preferences_identity_id_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "identity_id"
-          ]
+          "columns": ["identity_id"]
         }
       },
       "policies": {},
@@ -246,12 +232,8 @@
           "name": "organizations_tenant_id_tenants_id_fk",
           "tableFrom": "organizations",
           "tableTo": "tenants",
-          "columnsFrom": [
-            "tenant_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["tenant_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -259,12 +241,8 @@
           "name": "organizations_parent_organization_id_organizations_id_fk",
           "tableFrom": "organizations",
           "tableTo": "organizations",
-          "columnsFrom": [
-            "parent_organization_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["parent_organization_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -274,10 +252,7 @@
         "organizations_tenant_id_slug_unique": {
           "name": "organizations_tenant_id_slug_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "tenant_id",
-            "slug"
-          ]
+          "columns": ["tenant_id", "slug"]
         }
       },
       "policies": {},
@@ -505,9 +480,7 @@
         "tenants_slug_unique": {
           "name": "tenants_slug_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "slug"
-          ]
+          "columns": ["slug"]
         }
       },
       "policies": {},

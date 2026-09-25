@@ -1,7 +1,4 @@
-import {
-  InsufficientPermissionError,
-  type IAuthorizationClient,
-} from "@pine/authorization";
+import { InsufficientPermissionError, type IAuthorizationClient } from "@pine/authorization";
 import { ITEM_PRIORITY } from "@pine/common";
 import { describe, expect, it, vi } from "vitest";
 import type { Checklist, ChecklistEntry, DbClient, Item, List, Space } from "@/db";
@@ -117,9 +114,7 @@ const createDb = (): ChecklistDatabase => ({
   }),
 });
 
-const createItemRepository = (
-  overrides: Partial<IItemRepository> = {},
-): IItemRepository => ({
+const createItemRepository = (overrides: Partial<IItemRepository> = {}): IItemRepository => ({
   save: vi.fn(),
   update: vi.fn(),
   softDelete: vi.fn(),
@@ -156,9 +151,7 @@ const createChecklistEntryRepository = (
   ...overrides,
 });
 
-const createListRepository = (
-  overrides: Partial<IListRepository> = {},
-): IListRepository => ({
+const createListRepository = (overrides: Partial<IListRepository> = {}): IListRepository => ({
   save: vi.fn(),
   update: vi.fn(),
   findById: vi.fn().mockResolvedValue(list),
@@ -166,9 +159,7 @@ const createListRepository = (
   ...overrides,
 });
 
-const createSpaceRepository = (
-  overrides: Partial<ISpaceRepository> = {},
-): ISpaceRepository => ({
+const createSpaceRepository = (overrides: Partial<ISpaceRepository> = {}): ISpaceRepository => ({
   save: vi.fn(),
   findById: vi.fn().mockResolvedValue(space),
   findMany: vi.fn(),
@@ -185,15 +176,17 @@ const createAuthorizationClient = (
   ...overrides,
 });
 
-const createService = (deps: {
-  db?: ChecklistDatabase;
-  checklistRepository?: IChecklistRepository;
-  checklistEntryRepository?: IChecklistEntryRepository;
-  itemRepository?: IItemRepository;
-  listRepository?: IListRepository;
-  spaceRepository?: ISpaceRepository;
-  authorizationClient?: IAuthorizationClient;
-} = {}) =>
+const createService = (
+  deps: {
+    db?: ChecklistDatabase;
+    checklistRepository?: IChecklistRepository;
+    checklistEntryRepository?: IChecklistEntryRepository;
+    itemRepository?: IItemRepository;
+    listRepository?: IListRepository;
+    spaceRepository?: ISpaceRepository;
+    authorizationClient?: IAuthorizationClient;
+  } = {},
+) =>
   new ChecklistService(
     deps.db ?? createDb(),
     deps.checklistRepository ?? createChecklistRepository(),
@@ -224,9 +217,7 @@ describe("ChecklistService", () => {
       subject: "identity:user-1",
     });
     expect(checklistRepository.findByItemId).toHaveBeenCalledWith("item-1");
-    expect(checklistEntryRepository.findByChecklistIds).toHaveBeenCalledWith([
-      "checklist-1",
-    ]);
+    expect(checklistEntryRepository.findByChecklistIds).toHaveBeenCalledWith(["checklist-1"]);
     expect(result).toEqual([
       {
         checklist,
@@ -346,10 +337,9 @@ describe("ChecklistService", () => {
     expect(checklistRepository.softDelete).toHaveBeenCalledWith("checklist-1", {
       tx: {},
     });
-    expect(checklistEntryRepository.softDeleteByChecklistId).toHaveBeenCalledWith(
-      "checklist-1",
-      { tx: {} },
-    );
+    expect(checklistEntryRepository.softDeleteByChecklistId).toHaveBeenCalledWith("checklist-1", {
+      tx: {},
+    });
   });
 
   it("creates an entry with the next order index", async () => {
@@ -452,9 +442,9 @@ describe("ChecklistService", () => {
     const authorizationClient = createAuthorizationClient();
     const service = createService({ itemRepository, authorizationClient });
 
-    await expect(
-      service.list({ itemId: "missing", identityId: "user-1" }),
-    ).rejects.toBeInstanceOf(ItemNotFoundError);
+    await expect(service.list({ itemId: "missing", identityId: "user-1" })).rejects.toBeInstanceOf(
+      ItemNotFoundError,
+    );
     expect(authorizationClient.checkRelationship).not.toHaveBeenCalled();
   });
 
@@ -490,8 +480,8 @@ describe("ChecklistService", () => {
     });
     const service = createService({ authorizationClient });
 
-    await expect(
-      service.list({ itemId: "item-1", identityId: "user-1" }),
-    ).rejects.toBeInstanceOf(InsufficientPermissionError);
+    await expect(service.list({ itemId: "item-1", identityId: "user-1" })).rejects.toBeInstanceOf(
+      InsufficientPermissionError,
+    );
   });
 });

@@ -16,5 +16,4 @@ export const ItemAttachmentUploadRequests = pgTable("item_attachment_upload_requ
 });
 
 export type ItemAttachmentUploadRequest = typeof ItemAttachmentUploadRequests.$inferSelect;
-export type NewItemAttachmentUploadRequest =
-  typeof ItemAttachmentUploadRequests.$inferInsert;
+export type NewItemAttachmentUploadRequest = typeof ItemAttachmentUploadRequests.$inferInsert;

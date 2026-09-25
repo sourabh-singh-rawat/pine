@@ -249,7 +249,9 @@ describe("ProfileService", () => {
       createDb(),
     );
 
-    await expect(service.getByIdentityId("missing")).rejects.toBeInstanceOf(UserProfileNotFoundError);
+    await expect(service.getByIdentityId("missing")).rejects.toBeInstanceOf(
+      UserProfileNotFoundError,
+    );
   });
 
   it("updates name fields on the identity profile", async () => {

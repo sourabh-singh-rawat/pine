@@ -29,8 +29,5 @@ export interface IProfileRepository {
   existsById(id: string): Promise<boolean>;
   softDelete(id: string, options?: ProfileRepositoryOptions): Promise<void>;
   findById(id: string): Promise<Profile | null>;
-  findByIdentityId(
-    identityId: string,
-    options?: ProfileRepositoryOptions,
-  ): Promise<Profile | null>;
+  findByIdentityId(identityId: string, options?: ProfileRepositoryOptions): Promise<Profile | null>;
 }

@@ -13,12 +13,12 @@ when-to-use: >
 
 Pick an existing kind. Do not invent a new queue for domain events. Related: `outbox`, `events`, `service-feature`, `k8s`.
 
-| Kind | When | Where |
-| ---- | ---- | ----- |
-| Outbox poller | Publish events that were committed with a DB write | `OutboxWorker` / `OutboxCleanupWorker` in the **same** service (`outbox`) |
-| NATS consumer | React to another service’s CloudEvent | `features/<feature>/consumers/` (`events`) |
+| Kind                     | When                                                | Where                                                                           |
+| ------------------------ | --------------------------------------------------- | ------------------------------------------------------------------------------- |
+| Outbox poller            | Publish events that were committed with a DB write  | `OutboxWorker` / `OutboxCleanupWorker` in the **same** service (`outbox`)       |
+| NATS consumer            | React to another service’s CloudEvent               | `features/<feature>/consumers/` (`events`)                                      |
 | Dedicated worker service | Work that should not sit on an HTTP/GraphQL process | `attachment-scanner-service` (DB + broker + outbox + consumers; no HTTP server) |
-| Redis queue | Attachment image resize only | BullMQ `QUEUE.IMAGE_PROCESSING` in `attachment-service` |
+| Redis queue              | Attachment image resize only                        | BullMQ `QUEUE.IMAGE_PROCESSING` in `attachment-service`                         |
 
 ## Recipe
 

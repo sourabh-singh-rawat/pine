@@ -1,7 +1,4 @@
-import {
-  requirePermission,
-  type IAuthorizationClient,
-} from "@pine/authorization";
+import { requirePermission, type IAuthorizationClient } from "@pine/authorization";
 import { ItemStatus, ITEM_PRIORITY, ServiceResponse } from "@pine/common";
 import { createCloudEvent, ItemCreatedEvent, ItemUpdatedEvent } from "@pine/events";
 import type { IOutboxService } from "@pine/outbox";
@@ -39,16 +36,8 @@ export class ItemService implements IItemService {
   ) {}
 
   async create(options: CreateItemOptions) {
-    const {
-      userId,
-      assigneeIds,
-      parentItemId,
-      estimate,
-      component,
-      statusId,
-      priority,
-      ...input
-    } = options;
+    const { userId, assigneeIds, parentItemId, estimate, component, statusId, priority, ...input } =
+      options;
 
     return this.db.transaction(async (tx) => {
       if (parentItemId) {
@@ -189,12 +178,7 @@ export class ItemService implements IItemService {
       throw new ItemNotFoundError(`Item not found: ${id}`);
     }
 
-    await requirePermission(
-      this.authorizationClient,
-      userId,
-      "delete",
-      `list:${item.listId}`,
-    );
+    await requirePermission(this.authorizationClient, userId, "delete", `list:${item.listId}`);
 
     const deleted = await this.itemRepository.softDelete(id);
     if (!deleted) {

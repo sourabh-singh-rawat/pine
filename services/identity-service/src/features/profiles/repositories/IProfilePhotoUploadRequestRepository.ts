@@ -17,12 +17,7 @@ export interface IProfilePhotoUploadRequestRepository {
   ): Promise<ProfilePhotoUploadRequest | null>;
   update(
     id: string,
-    entity: Partial<
-      Pick<
-        ProfilePhotoUploadRequest,
-        "status" | "attachmentId" | "completedAt"
-      >
-    >,
+    entity: Partial<Pick<ProfilePhotoUploadRequest, "status" | "attachmentId" | "completedAt">>,
     options?: ProfilePhotoUploadRequestRepositoryOptions,
   ): Promise<ProfilePhotoUploadRequest>;
 }

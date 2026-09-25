@@ -14,16 +14,7 @@ export type ListSpacesFilter = {
 };
 
 export interface ISpaceRepository {
-  save: (
-    entity: CreateSpaceEntity,
-    options?: SpaceRepositoryOptions,
-  ) => Promise<Space>;
-  findById: (
-    id: string,
-    options?: SpaceRepositoryOptions,
-  ) => Promise<Space | null>;
-  findMany: (
-    filter: ListSpacesFilter,
-    options?: SpaceRepositoryOptions,
-  ) => Promise<Space[]>;
+  save: (entity: CreateSpaceEntity, options?: SpaceRepositoryOptions) => Promise<Space>;
+  findById: (id: string, options?: SpaceRepositoryOptions) => Promise<Space | null>;
+  findMany: (filter: ListSpacesFilter, options?: SpaceRepositoryOptions) => Promise<Space[]>;
 }

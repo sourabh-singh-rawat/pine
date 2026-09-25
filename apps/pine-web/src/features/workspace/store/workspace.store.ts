@@ -58,9 +58,7 @@ const writeStoredWorkspace = (workspace: CurrentWorkspace | null) => {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(workspace));
 };
 
-export const toCurrentWorkspace = (
-  workspace: WorkspaceTreeNode,
-): CurrentWorkspace | null => {
+export const toCurrentWorkspace = (workspace: WorkspaceTreeNode): CurrentWorkspace | null => {
   if (
     typeof workspace.id !== "string" ||
     typeof workspace.name !== "string" ||
@@ -110,10 +108,7 @@ interface WorkspaceState {
   currentWorkspace: CurrentWorkspace | null;
   isLoading: boolean;
   setCurrentWorkspace: (workspace: CurrentWorkspace | null) => void;
-  syncWorkspaces: (
-    workspaces: WorkspaceFromQuery[],
-    options?: SyncWorkspacesOptions,
-  ) => void;
+  syncWorkspaces: (workspaces: WorkspaceFromQuery[], options?: SyncWorkspacesOptions) => void;
 }
 
 export const useWorkspaceStore = create<WorkspaceState>((set, get) => ({

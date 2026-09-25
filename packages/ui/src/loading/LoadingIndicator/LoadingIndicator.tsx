@@ -1,16 +1,8 @@
 import { Box, type BoxProps, useTheme } from "@mui/material";
 import { useEffect, useRef } from "react";
-import {
-  drawIndicator,
-  getMorphedShape,
-  M3Animator,
-  setupCanvas,
-} from "./loadingIndicatorEngine";
+import { drawIndicator, getMorphedShape, M3Animator, setupCanvas } from "./loadingIndicatorEngine";
 
-export type LoadingIndicatorProps = Omit<
-  BoxProps,
-  "children" | "color"
-> & {
+export type LoadingIndicatorProps = Omit<BoxProps, "children" | "color"> & {
   size?: number;
   color?: string;
   sizeRatio?: number;
@@ -98,10 +90,7 @@ export const LoadingIndicator = ({
       }}
       {...rest}
     >
-      <canvas
-        ref={canvasRef}
-        style={{ display: "block", width: size, height: size }}
-      />
+      <canvas ref={canvasRef} style={{ display: "block", width: size, height: size }} />
     </Box>
   );
 };

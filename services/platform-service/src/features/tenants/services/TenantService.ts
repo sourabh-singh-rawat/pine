@@ -104,12 +104,7 @@ export class TenantService implements ITenantService {
   }
 
   async getTenantById(id: string, identityId: string): Promise<Tenant> {
-    await requirePermission(
-      this.authorizationClient,
-      identityId,
-      "read",
-      `tenant:${id}`,
-    );
+    await requirePermission(this.authorizationClient, identityId, "read", `tenant:${id}`);
 
     const tenant = await this.tenantRepository.findById(id);
     if (!tenant) {
@@ -148,12 +143,7 @@ export class TenantService implements ITenantService {
   }
 
   async deleteTenant(id: string, platformId: string, identityId: string): Promise<void> {
-    await requirePermission(
-      this.authorizationClient,
-      identityId,
-      "suspend",
-      `tenant:${id}`,
-    );
+    await requirePermission(this.authorizationClient, identityId, "suspend", `tenant:${id}`);
 
     await this.db.transaction(async (tx) => {
       const deleted = await this.tenantRepository.softDelete(id, { tx });

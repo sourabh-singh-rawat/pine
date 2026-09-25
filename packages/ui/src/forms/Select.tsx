@@ -282,7 +282,9 @@ export const Select = ({
                 : children}
             </StyledSelect>
             {resolvedHelperText ? (
-              <FormHelperText sx={{ fontSize: theme.typography.body1.fontSize, ml: 0, mt: theme.spacing(1) }}>
+              <FormHelperText
+                sx={{ fontSize: theme.typography.body1.fontSize, ml: 0, mt: theme.spacing(1) }}
+              >
                 {resolvedHelperText}
               </FormHelperText>
             ) : null}

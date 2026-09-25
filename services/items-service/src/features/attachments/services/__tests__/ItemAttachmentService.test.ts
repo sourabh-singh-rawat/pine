@@ -1,8 +1,5 @@
 import { ATTACHMENT_SCOPE_TYPE, type IAttachmentClient } from "@pine/attachment";
-import {
-  InsufficientPermissionError,
-  type IAuthorizationClient,
-} from "@pine/authorization";
+import { InsufficientPermissionError, type IAuthorizationClient } from "@pine/authorization";
 import { ITEM_PRIORITY } from "@pine/common";
 import { describe, expect, it, vi } from "vitest";
 import type { Item, ItemAttachment, ItemAttachmentUploadRequest, List, Space } from "@/db";
@@ -93,9 +90,7 @@ const uploadRequest: ItemAttachmentUploadRequest = {
   completedAt: null,
 };
 
-const createItemRepository = (
-  overrides: Partial<IItemRepository> = {},
-): IItemRepository => ({
+const createItemRepository = (overrides: Partial<IItemRepository> = {}): IItemRepository => ({
   save: vi.fn(),
   update: vi.fn(),
   softDelete: vi.fn(),
@@ -131,9 +126,7 @@ const createUploadRequestRepository = (
   ...overrides,
 });
 
-const createListRepository = (
-  overrides: Partial<IListRepository> = {},
-): IListRepository => ({
+const createListRepository = (overrides: Partial<IListRepository> = {}): IListRepository => ({
   save: vi.fn(),
   update: vi.fn(),
   findById: vi.fn().mockResolvedValue(list),
@@ -141,18 +134,14 @@ const createListRepository = (
   ...overrides,
 });
 
-const createSpaceRepository = (
-  overrides: Partial<ISpaceRepository> = {},
-): ISpaceRepository => ({
+const createSpaceRepository = (overrides: Partial<ISpaceRepository> = {}): ISpaceRepository => ({
   save: vi.fn(),
   findById: vi.fn().mockResolvedValue(space),
   findMany: vi.fn(),
   ...overrides,
 });
 
-const createAttachmentClient = (
-  overrides: Partial<IAttachmentClient> = {},
-): IAttachmentClient => ({
+const createAttachmentClient = (overrides: Partial<IAttachmentClient> = {}): IAttachmentClient => ({
   createUploadTarget: vi.fn().mockResolvedValue({
     objectId: "obj-1",
     url: "https://localhost:4001/attachments/upload/upload-1",
@@ -173,15 +162,17 @@ const createAuthorizationClient = (
   ...overrides,
 });
 
-const createService = (deps: {
-  itemRepository?: IItemRepository;
-  itemAttachmentRepository?: IItemAttachmentRepository;
-  itemAttachmentUploadRequestRepository?: IItemAttachmentUploadRequestRepository;
-  listRepository?: IListRepository;
-  spaceRepository?: ISpaceRepository;
-  attachmentClient?: IAttachmentClient;
-  authorizationClient?: IAuthorizationClient;
-} = {}) =>
+const createService = (
+  deps: {
+    itemRepository?: IItemRepository;
+    itemAttachmentRepository?: IItemAttachmentRepository;
+    itemAttachmentUploadRequestRepository?: IItemAttachmentUploadRequestRepository;
+    listRepository?: IListRepository;
+    spaceRepository?: ISpaceRepository;
+    attachmentClient?: IAttachmentClient;
+    authorizationClient?: IAuthorizationClient;
+  } = {},
+) =>
   new ItemAttachmentService(
     deps.itemRepository ?? createItemRepository(),
     deps.itemAttachmentRepository ?? createItemAttachmentRepository(),
@@ -293,9 +284,7 @@ describe("ItemAttachmentService", () => {
     const authorizationClient = createAuthorizationClient();
     const service = createService({ itemAttachmentRepository, authorizationClient });
 
-    await expect(
-      service.delete({ id: "link-1", identityId: "user-1" }),
-    ).resolves.toBeUndefined();
+    await expect(service.delete({ id: "link-1", identityId: "user-1" })).resolves.toBeUndefined();
 
     expect(authorizationClient.checkRelationship).toHaveBeenCalledWith({
       namespace: "workspace",
@@ -313,9 +302,9 @@ describe("ItemAttachmentService", () => {
     const authorizationClient = createAuthorizationClient();
     const service = createService({ itemAttachmentRepository, authorizationClient });
 
-    await expect(
-      service.delete({ id: "missing", identityId: "user-1" }),
-    ).rejects.toBeInstanceOf(ItemAttachmentNotFoundError);
+    await expect(service.delete({ id: "missing", identityId: "user-1" })).rejects.toBeInstanceOf(
+      ItemAttachmentNotFoundError,
+    );
     expect(authorizationClient.checkRelationship).not.toHaveBeenCalled();
     expect(itemAttachmentRepository.softDelete).not.toHaveBeenCalled();
   });

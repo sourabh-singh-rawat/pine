@@ -24,12 +24,12 @@ Set each `POSTGRES_*_PASSWORD`. Apps need full `<DOMAIN>_DATABASE_URL` (`postgre
 
 ## Commands
 
-| Script | Stack |
-| ------ | ----- |
-| `pnpm dev:infra` / `:down` | compose + single-db + ory-db + kratos + hydra + keto |
-| `dev:infra:multi-db` | multi-db overlay |
-| `dev:infra:observability` | + Alloy/Tempo/Loki/Grafana |
-| `dev:infra:kratos` / `hydra` / `keto` | Ory identity + OAuth + graph auth |
+| Script                                | Stack                                                |
+| ------------------------------------- | ---------------------------------------------------- |
+| `pnpm dev:infra` / `:down`            | compose + single-db + ory-db + kratos + hydra + keto |
+| `dev:infra:multi-db`                  | multi-db overlay                                     |
+| `dev:infra:observability`             | + Alloy/Tempo/Loki/Grafana                           |
+| `dev:infra:kratos` / `hydra` / `keto` | Ory identity + OAuth + graph auth                    |
 
 Overlays: `compose.yaml`, `compose.single-db.yaml` (default), `compose.multi-db.yaml`, `compose.ory-db.yaml`, `compose.kratos.yaml`, `compose.hydra.yaml`, `compose.keto.yaml`. Extend these; do not invent new basenames.
 
@@ -37,19 +37,19 @@ Overlays: `compose.yaml`, `compose.single-db.yaml` (default), `compose.multi-db.
 
 Confirm in active compose + `.env.example`.
 
-| Host | Service |
-| ---- | ------- |
-| 5432 | Postgres (single-db) |
-| 5433–5439 | Per-service Postgres (multi-db) |
-| 5440 | Ory Postgres (kratos/hydra/keto) |
-| 4222 / 8222 | NATS client / monitor |
-| 6380 | Redis (`REDIS_URL`) |
-| 4433 / 4434 | Kratos public / admin |
-| 4444 / 4445 | Hydra public / admin |
-| 4466 / 4467 | Keto read / write |
-| 5555 | pgAdmin |
-| 4317 | Alloy OTLP (obs profile only) |
-| 8333 / 8888 | SeaweedFS S3 / filer UI |
+| Host        | Service                          |
+| ----------- | -------------------------------- |
+| 5432        | Postgres (single-db)             |
+| 5433–5439   | Per-service Postgres (multi-db)  |
+| 5440        | Ory Postgres (kratos/hydra/keto) |
+| 4222 / 8222 | NATS client / monitor            |
+| 6380        | Redis (`REDIS_URL`)              |
+| 4433 / 4434 | Kratos public / admin            |
+| 4444 / 4445 | Hydra public / admin             |
+| 4466 / 4467 | Keto read / write                |
+| 5555        | pgAdmin                          |
+| 4317        | Alloy OTLP (obs profile only)    |
+| 8333 / 8888 | SeaweedFS S3 / filer UI          |
 
 ## Object storage
 

@@ -36,9 +36,7 @@ export const ItemDescription = ({ itemId, initialValue = "" }: ItemDescriptionPr
     form.setValue("description", defaultValue);
   };
 
-  const onSubmit: SubmitHandler<Pick<UpdateItemInput, "description">> = async ({
-    description,
-  }) => {
+  const onSubmit: SubmitHandler<Pick<UpdateItemInput, "description">> = async ({ description }) => {
     if (updateItemMutation.isPending) return;
 
     await updateItemMutation.mutateAsync({ input: { itemId, description } });

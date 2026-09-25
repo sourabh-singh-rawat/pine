@@ -25,6 +25,4 @@ export type ItemListUiContextValue = {
   onToggleNestedItem: (itemId: string) => void;
 };
 
-export const ItemListUiContext = createContext<ItemListUiContextValue | null>(
-  null,
-);
+export const ItemListUiContext = createContext<ItemListUiContextValue | null>(null);

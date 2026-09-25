@@ -36,7 +36,10 @@ export class FastifyHttpRequestAdapter {
           return request.isMultipart();
         }
         const contentType = request.headers["content-type"];
-        return typeof contentType === "string" && contentType.toLowerCase().includes("multipart/form-data");
+        return (
+          typeof contentType === "string" &&
+          contentType.toLowerCase().includes("multipart/form-data")
+        );
       },
       file: async (): Promise<HttpUploadedFile | undefined> => {
         if (typeof request.file !== "function") return undefined;

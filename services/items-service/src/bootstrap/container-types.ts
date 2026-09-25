@@ -14,9 +14,7 @@ export const TYPES = {
   ItemRepository: Symbol.for("IItemRepository"),
   ItemAssigneeRepository: Symbol.for("IItemAssigneeRepository"),
   ItemAttachmentRepository: Symbol.for("IItemAttachmentRepository"),
-  ItemAttachmentUploadRequestRepository: Symbol.for(
-    "IItemAttachmentUploadRequestRepository",
-  ),
+  ItemAttachmentUploadRequestRepository: Symbol.for("IItemAttachmentUploadRequestRepository"),
   ItemService: Symbol.for("IItemService"),
   SubItemService: Symbol.for("ISubItemService"),
   ItemAttachmentService: Symbol.for("IItemAttachmentService"),

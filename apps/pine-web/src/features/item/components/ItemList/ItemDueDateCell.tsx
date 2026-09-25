@@ -25,12 +25,7 @@ const toDateValue = (value: string | null): Date | null => {
 
 const toIsoDate = (date: Date): string => dayjs(date).startOf("day").format();
 
-export const ItemDueDateCell = ({
-  itemId,
-  value,
-  disabled,
-  onChange,
-}: ItemDueDateCellProps) => {
+export const ItemDueDateCell = ({ itemId, value, disabled, onChange }: ItemDueDateCellProps) => {
   const theme = useTheme();
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const open = Boolean(anchorEl);
@@ -67,9 +62,7 @@ export const ItemDueDateCell = ({
           px: 1,
           py: 0.5,
           minHeight: theme.spacing(4),
-          color: value
-            ? theme.palette.text.primary
-            : theme.palette.text.secondary,
+          color: value ? theme.palette.text.primary : theme.palette.text.secondary,
           "&:hover": {
             backgroundColor: theme.palette.action.hover,
           },

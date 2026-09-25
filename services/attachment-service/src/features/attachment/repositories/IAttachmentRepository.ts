@@ -1,9 +1,4 @@
-import type {
-  Attachment,
-  AttachmentVersion,
-  NewAttachment,
-  NewAttachmentVersion,
-} from "@/db";
+import type { Attachment, AttachmentVersion, NewAttachment, NewAttachmentVersion } from "@/db";
 import type { AttachmentSecurityStatus, AttachmentStatus } from "@/features/attachment/constants";
 
 export type AttachmentRepositoryOptions = { tx?: unknown };

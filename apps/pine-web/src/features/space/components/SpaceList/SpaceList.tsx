@@ -56,12 +56,7 @@ export const SpaceList = () => {
             } => Boolean(space.id) && Boolean(space.name) && Boolean(space.workspaceId),
           )
           .map(({ id, name, workspaceId: spaceWorkspaceId }) => (
-            <SpaceListItem
-              key={id}
-              spaceId={id}
-              name={name}
-              workspaceId={spaceWorkspaceId}
-            />
+            <SpaceListItem key={id} spaceId={id} name={name} workspaceId={spaceWorkspaceId} />
           ))
       )}
     </List>

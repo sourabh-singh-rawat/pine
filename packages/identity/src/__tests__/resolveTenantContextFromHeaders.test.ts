@@ -1,10 +1,7 @@
 import type { HttpRequest } from "@pine/server";
 import { describe, expect, it } from "vitest";
 import { resolveTenantContextFromHeaders } from "../resolveTenantContextFromHeaders";
-import {
-  X_WORKSPACE_ID_HEADER,
-  X_TENANT_ID_HEADER,
-} from "../tenantContextHeaders";
+import { X_WORKSPACE_ID_HEADER, X_TENANT_ID_HEADER } from "../tenantContextHeaders";
 
 const createRequest = (headers: Record<string, string | undefined>): HttpRequest => ({
   method: "GET",
