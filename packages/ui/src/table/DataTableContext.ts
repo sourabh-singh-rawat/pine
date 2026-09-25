@@ -9,7 +9,9 @@ export const DataTableContext = createContext<DataTableContextValue | null>(null
 export const useDataTableContext = (): DataTableContextValue => {
   const context = useContext(DataTableContext);
   if (!context) {
-    throw new Error("useDataTableContext must be used within a DataTableRoot or DataTable component");
+    throw new Error(
+      "useDataTableContext must be used within a DataTableRoot or DataTable component",
+    );
   }
   return context;
 };

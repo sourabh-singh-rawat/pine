@@ -64,7 +64,11 @@ export const UpdateNameForm = ({ firstName, middleName, lastName }: UpdateNameFo
         </Grid>
         <Grid size={12}>
           <Stack direction="row" spacing={2} sx={{ justifyContent: "flex-end" }}>
-            <Button type="submit" variant="contained" disabled={updateProfileNameMutation.isPending}>
+            <Button
+              type="submit"
+              variant="contained"
+              disabled={updateProfileNameMutation.isPending}
+            >
               {updateProfileNameMutation.isPending ? "Saving…" : "Save"}
             </Button>
           </Stack>

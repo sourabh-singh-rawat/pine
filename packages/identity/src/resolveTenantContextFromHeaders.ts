@@ -1,8 +1,5 @@
 import type { HttpRequest } from "@pine/server";
-import {
-  X_WORKSPACE_ID_HEADER,
-  X_TENANT_ID_HEADER,
-} from "./tenantContextHeaders";
+import { X_WORKSPACE_ID_HEADER, X_TENANT_ID_HEADER } from "./tenantContextHeaders";
 
 const readHeaderValue = (value: string | string[] | undefined): string | undefined => {
   if (typeof value === "string" && value.length > 0) {

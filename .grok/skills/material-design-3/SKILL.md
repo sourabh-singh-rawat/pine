@@ -53,13 +53,13 @@ Theme work: extend `palette` (and eventually CSS variables / `colorSchemes` if m
 
 M3 type scale: **15 baseline + 15 emphasized** roles across display, headline, title, body, label ([typography](https://m3.material.io/styles/typography)).
 
-| Role family | Use |
-| --- | --- |
-| Display | Rare hero / empty-state titles |
-| Headline | Page and section titles |
-| Title | Card headers, dialog titles, nav section labels |
-| Body | Reading content, list secondary lines |
-| Label | Buttons, chips, dense UI, overlines |
+| Role family | Use                                             |
+| ----------- | ----------------------------------------------- |
+| Display     | Rare hero / empty-state titles                  |
+| Headline    | Page and section titles                         |
+| Title       | Card headers, dialog titles, nav section labels |
+| Body        | Reading content, list secondary lines           |
+| Label       | Buttons, chips, dense UI, overlines             |
 
 **Emphasized** styles: stronger weight/optical sizing for priority moments (unread counts, primary CTA labels, recording/start actions). Do not emphasize everything — contrast makes emphasis work.
 
@@ -75,13 +75,13 @@ Corner scale ([shape](https://m3.material.io/styles/shape)): none 0 → XS 4 →
 
 Pine `shape` tokens today (`borderRadiusSmall` … `borderRadiusRounded`) approximate this scale in rem — **map components to the scale consistently**:
 
-| Component class | Typical corner |
-| --- | --- |
-| Dense list rows / inputs in toolbars | XS–S |
-| Buttons, text fields, chips | full or M–L depending on variant |
-| Cards, menus, popovers | M–XL |
-| Dialogs / sheets | L–XL |
-| FABs / pills / avatars | full |
+| Component class                      | Typical corner                   |
+| ------------------------------------ | -------------------------------- |
+| Dense list rows / inputs in toolbars | XS–S                             |
+| Buttons, text fields, chips          | full or M–L depending on variant |
+| Cards, menus, popovers               | M–XL                             |
+| Dialogs / sheets                     | L–XL                             |
+| FABs / pills / avatars               | full                             |
 
 Expressive tactics:
 
@@ -127,19 +127,19 @@ In MUI: `theme.transitions`, `Collapse`/`Fade`/`Grow`, and CSS transitions via `
 
 Apply across pine-web / identity-web / `@pine/ui`:
 
-| Pattern | Expressive guidance |
-| --- | --- |
-| Primary button | Filled primary; emphasized label; clear hover/focus/pressed; one primary per region |
-| Secondary / tertiary actions | Tonal, outlined, or text — lower visual weight |
-| Icon buttons | 40+ target; tooltip; selected state uses container color, not only icon tint |
-| FAB | Reserved for the single most important create/action on a screen |
-| Lists / nav | Selected row: secondary container or primary container tint; avoid heavy shadows |
-| Cards | Surface container; optional tonal border (`outline-variant`); clickable cards use container transform cues |
-| Text fields | Outline or filled per density; error uses error role; helper text in `on-surface-variant` |
-| Chips / filters | Filter chips show selected morph/container; input chips stay quieter |
-| Dialogs / sheets | Scrim + surface; title = title role; actions right-aligned / stacked on narrow |
-| Snackbars | Short, one action max; semantic color only when needed |
-| Progress | Prefer expressive loading indicator / morph when available; otherwise linear/circular with primary |
+| Pattern                      | Expressive guidance                                                                                        |
+| ---------------------------- | ---------------------------------------------------------------------------------------------------------- |
+| Primary button               | Filled primary; emphasized label; clear hover/focus/pressed; one primary per region                        |
+| Secondary / tertiary actions | Tonal, outlined, or text — lower visual weight                                                             |
+| Icon buttons                 | 40+ target; tooltip; selected state uses container color, not only icon tint                               |
+| FAB                          | Reserved for the single most important create/action on a screen                                           |
+| Lists / nav                  | Selected row: secondary container or primary container tint; avoid heavy shadows                           |
+| Cards                        | Surface container; optional tonal border (`outline-variant`); clickable cards use container transform cues |
+| Text fields                  | Outline or filled per density; error uses error role; helper text in `on-surface-variant`                  |
+| Chips / filters              | Filter chips show selected morph/container; input chips stay quieter                                       |
+| Dialogs / sheets             | Scrim + surface; title = title role; actions right-aligned / stacked on narrow                             |
+| Snackbars                    | Short, one action max; semantic color only when needed                                                     |
+| Progress                     | Prefer expressive loading indicator / morph when available; otherwise linear/circular with primary         |
 
 Prefer `@pine/ui` buttons/modals/fields when they fit; restyle via theme rather than forking.
 

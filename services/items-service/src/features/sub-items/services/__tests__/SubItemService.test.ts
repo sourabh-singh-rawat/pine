@@ -33,9 +33,7 @@ const childItem: Item = {
   parentItemId: "parent-1",
 };
 
-const createItemRepository = (
-  overrides: Partial<IItemRepository> = {},
-): IItemRepository => ({
+const createItemRepository = (overrides: Partial<IItemRepository> = {}): IItemRepository => ({
   save: vi.fn(),
   update: vi.fn(),
   softDelete: vi.fn(),

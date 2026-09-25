@@ -15,9 +15,7 @@ builder.mutationFields((t) => ({
       identityRequired: true,
     },
     resolve: async (_root, { workspaceId }, ctx) => {
-      const service = container.get<IWorkspacePreferenceService>(
-        TYPES.WorkspacePreferenceService,
-      );
+      const service = container.get<IWorkspacePreferenceService>(TYPES.WorkspacePreferenceService);
       return service.set(workspaceId, requireIdentityId(ctx));
     },
   }),

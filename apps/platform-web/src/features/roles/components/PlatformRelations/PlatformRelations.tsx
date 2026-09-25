@@ -100,9 +100,7 @@ export const PlatformRelations = () => {
                         openIdentity(identityId);
                       }}
                     >
-                      <TableCell>
-                        {displayName || identityId || "—"}
-                      </TableCell>
+                      <TableCell>{displayName || identityId || "—"}</TableCell>
                       <TableCell sx={{ fontFamily: "monospace", fontSize: "0.875rem" }}>
                         {identityId}
                       </TableCell>

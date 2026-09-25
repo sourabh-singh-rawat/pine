@@ -15,13 +15,7 @@ interface ItemFieldsProps {
   updateItem: (input: UpdateItemInput) => Promise<unknown>;
 }
 
-export const ItemFields = ({
-  itemId,
-  listId,
-  statusId,
-  priority,
-  updateItem,
-}: ItemFieldsProps) => {
+export const ItemFields = ({ itemId, listId, statusId, priority, updateItem }: ItemFieldsProps) => {
   const theme = useTheme();
   const statusForm = useForm({ defaultValues: { statusId } });
   const priorityForm = useForm({ defaultValues: { priority } });

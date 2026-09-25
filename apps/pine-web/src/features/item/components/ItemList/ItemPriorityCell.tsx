@@ -16,12 +16,7 @@ const prioritySelectOptions = PRIORITY_OPTIONS.map((option) => ({
   name: option,
 }));
 
-export const ItemPriorityCell = ({
-  itemId,
-  value,
-  disabled,
-  onChange,
-}: ItemPriorityCellProps) => {
+export const ItemPriorityCell = ({ itemId, value, disabled, onChange }: ItemPriorityCellProps) => {
   const handleChange = (event: SelectChangeEvent<unknown>) => {
     const next = event.target.value;
     if (typeof next !== "string" || !next || next === value) return;

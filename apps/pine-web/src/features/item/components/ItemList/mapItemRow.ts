@@ -24,8 +24,7 @@ export const toItemRow = (
   const baseStatusId = typeof item.statusId === "string" ? item.statusId : "";
   const statusOverride = options.statusOverrides[item.id];
   const statusId = statusOverride?.statusId ?? baseStatusId;
-  const statusName =
-    statusOverride?.statusName ?? options.statusById.get(statusId) ?? "No status";
+  const statusName = statusOverride?.statusName ?? options.statusById.get(statusId) ?? "No status";
   const priority = typeof item.priority === "string" ? item.priority : "";
   const name = options.nameOverrides[item.id] ?? item.name;
   const dueDate = typeof item.dueDate === "string" ? item.dueDate : null;

@@ -78,7 +78,9 @@ describe("MeService", () => {
 
   it("propagates provider unavailable errors from the session service", async () => {
     const sessionService = {
-      getIdentityFromSessionToken: vi.fn().mockRejectedValue(new IdentityProviderUnavailableError()),
+      getIdentityFromSessionToken: vi
+        .fn()
+        .mockRejectedValue(new IdentityProviderUnavailableError()),
     };
     const profileRepository = {
       findByIdentityId: vi.fn(),

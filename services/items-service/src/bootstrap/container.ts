@@ -1,10 +1,7 @@
 import { HttpAttachmentClient, type IAttachmentClient } from "@pine/attachment";
 import { HttpAuthorizationClient, type IAuthorizationClient } from "@pine/authorization";
 import { NatsPublisher, type IPublisher } from "@pine/events";
-import {
-  resolveIdentityFromHeaders,
-  resolveTenantContextFromHeaders,
-} from "@pine/identity";
+import { resolveIdentityFromHeaders, resolveTenantContextFromHeaders } from "@pine/identity";
 import { createGraphQLServer, createHttpServer, type IHttpServer } from "@pine/server";
 import {
   ExponentialBackoffPolicy,
@@ -47,14 +44,7 @@ import {
   IChecklistRepository,
   IChecklistService,
 } from "@/features/checklists";
-import {
-  IItemAssigneeRepository,
-  IItemRepository,
-  IItemService,
-  ItemAssigneeRepository,
-  ItemRepository,
-  ItemService,
-} from "@/features/item";
+import { IItemAssigneeRepository, IItemRepository, IItemService, ItemAssigneeRepository, ItemRepository, ItemService } from "@/features/item";
 import { IListRepository, IListService, ListRepository, ListService } from "@/features/lists";
 import { ISpaceRepository, ISpaceService, SpaceRepository, SpaceService } from "@/features/spaces";
 import { IStatusRepository, IStatusService, StatusRepository, StatusService } from "@/features/status";
@@ -85,16 +75,12 @@ container.bind<IIdentityRepository>(TYPES.IdentityRepository).to(IdentityReposit
 container.bind<IItemRepository>(TYPES.ItemRepository).to(ItemRepository);
 container.bind<IItemAssigneeRepository>(TYPES.ItemAssigneeRepository).to(ItemAssigneeRepository);
 container.bind<IItemAttachmentRepository>(TYPES.ItemAttachmentRepository).to(ItemAttachmentRepository);
-container
-  .bind<IItemAttachmentUploadRequestRepository>(TYPES.ItemAttachmentUploadRequestRepository)
-  .to(ItemAttachmentUploadRequestRepository);
+container.bind<IItemAttachmentUploadRequestRepository>(TYPES.ItemAttachmentUploadRequestRepository).to(ItemAttachmentUploadRequestRepository);
 container.bind<IItemService>(TYPES.ItemService).to(ItemService);
 container.bind<ISubItemService>(TYPES.SubItemService).to(SubItemService);
 container.bind<IItemAttachmentService>(TYPES.ItemAttachmentService).to(ItemAttachmentService);
 container.bind<IChecklistRepository>(TYPES.ChecklistRepository).to(ChecklistRepository);
-container
-  .bind<IChecklistEntryRepository>(TYPES.ChecklistEntryRepository)
-  .to(ChecklistEntryRepository);
+container.bind<IChecklistEntryRepository>(TYPES.ChecklistEntryRepository).to(ChecklistEntryRepository);
 container.bind<IChecklistService>(TYPES.ChecklistService).to(ChecklistService);
 container.bind<IStatusRepository>(TYPES.StatusRepository).to(StatusRepository);
 container.bind<IStatusService>(TYPES.StatusService).to(StatusService);
@@ -102,16 +88,10 @@ container.bind<IListRepository>(TYPES.ListRepository).to(ListRepository);
 container.bind<IListService>(TYPES.ListService).to(ListService);
 container.bind<ISpaceRepository>(TYPES.SpaceRepository).to(SpaceRepository);
 container.bind<ISpaceService>(TYPES.SpaceService).to(SpaceService);
-container
-  .bind<IAuthorizationClient>(TYPES.AuthorizationClient)
-  .toConstantValue(new HttpAuthorizationClient({ baseUrl: env.AUTHORIZATION_SERVICE_URL }));
-container
-  .bind<IAttachmentClient>(TYPES.AttachmentClient)
-  .toConstantValue(new HttpAttachmentClient({ baseUrl: env.ATTACHMENT_SERVICE_URL }));
+container.bind<IAuthorizationClient>(TYPES.AuthorizationClient).toConstantValue(new HttpAuthorizationClient({ baseUrl: env.AUTHORIZATION_SERVICE_URL }));
+container.bind<IAttachmentClient>(TYPES.AttachmentClient).toConstantValue(new HttpAttachmentClient({ baseUrl: env.ATTACHMENT_SERVICE_URL }));
 container.bind<ItemsIdentitySyncConsumer>(TYPES.ItemsIdentitySyncConsumer).to(ItemsIdentitySyncConsumer);
-container
-  .bind<ItemAttachmentCreatedConsumer>(TYPES.ItemAttachmentCreatedConsumer)
-  .to(ItemAttachmentCreatedConsumer);
+container.bind<ItemAttachmentCreatedConsumer>(TYPES.ItemAttachmentCreatedConsumer).to(ItemAttachmentCreatedConsumer);
 
 export const bindHttpServer = async (): Promise<void> => {
   const { schema } = await import("@/graphql/schema");

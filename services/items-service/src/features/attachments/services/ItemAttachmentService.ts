@@ -1,7 +1,4 @@
-import {
-  requirePermission,
-  type IAuthorizationClient,
-} from "@pine/authorization";
+import { requirePermission, type IAuthorizationClient } from "@pine/authorization";
 import { ATTACHMENT_SCOPE_TYPE, type IAttachmentClient } from "@pine/attachment";
 import { inject, injectable } from "inversify";
 import { TYPES } from "@/bootstrap/container-types";
@@ -50,15 +47,7 @@ export class ItemAttachmentService implements IItemAttachmentService {
   ) {}
 
   async create(options: CreateItemAttachmentOptions): Promise<ItemAttachment> {
-    const {
-      itemId,
-      attachmentId,
-      name,
-      originalName,
-      mimeType,
-      size,
-      identityId,
-    } = options;
+    const { itemId, attachmentId, name, originalName, mimeType, size, identityId } = options;
 
     const item = await this.requireItem(itemId);
     const workspaceId = await this.resolveWorkspaceId(item);
@@ -184,9 +173,7 @@ export class ItemAttachmentService implements IItemAttachmentService {
   ): Promise<ItemAttachment | null> {
     const { uploadRequestId, attachmentId } = options;
 
-    const request = await this.itemAttachmentUploadRequestRepository.findById(
-      uploadRequestId,
-    );
+    const request = await this.itemAttachmentUploadRequestRepository.findById(uploadRequestId);
     if (!request) {
       throw new ItemAttachmentUploadRequestNotFoundError(
         `Item attachment upload request not found: ${uploadRequestId}`,

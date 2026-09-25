@@ -145,7 +145,11 @@ describe("AttachmentScanRepository", () => {
     }
     const repository = new AttachmentScanRepository(db);
 
-    const result = await repository.findByAttachmentAndVersion("att-1", "ver-1", ATTACHMENT_SCAN_TYPE.MALWARE);
+    const result = await repository.findByAttachmentAndVersion(
+      "att-1",
+      "ver-1",
+      ATTACHMENT_SCAN_TYPE.MALWARE,
+    );
     expect(result?.id).toBe("scan-1");
   });
 

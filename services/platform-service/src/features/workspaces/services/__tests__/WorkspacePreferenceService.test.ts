@@ -90,9 +90,7 @@ describe("WorkspacePreferenceService", () => {
     };
     const service = createService({ workspaceRepository });
 
-    await expect(service.set("missing", identityId)).rejects.toBeInstanceOf(
-      WorkspaceNotFoundError,
-    );
+    await expect(service.set("missing", identityId)).rejects.toBeInstanceOf(WorkspaceNotFoundError);
   });
 
   it("rejects set when workspace is inactive", async () => {

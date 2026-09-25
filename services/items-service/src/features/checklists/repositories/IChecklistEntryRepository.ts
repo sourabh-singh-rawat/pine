@@ -42,10 +42,7 @@ export interface IChecklistEntryRepository {
     checklistId: string,
     options?: ChecklistEntryRepositoryOptions,
   ) => Promise<number | null>;
-  softDelete: (
-    id: string,
-    options?: ChecklistEntryRepositoryOptions,
-  ) => Promise<boolean>;
+  softDelete: (id: string, options?: ChecklistEntryRepositoryOptions) => Promise<boolean>;
   softDeleteByChecklistId: (
     checklistId: string,
     options?: ChecklistEntryRepositoryOptions,

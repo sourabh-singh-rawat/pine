@@ -17,7 +17,8 @@ export const DataTableRow = <TData extends RowData = RowData>({
 
   if (row.getIsGrouped()) {
     const rawValue = row.groupingValue;
-    const displayValue = typeof rawValue === "string" || typeof rawValue === "number" ? `${rawValue}` : "";
+    const displayValue =
+      typeof rawValue === "string" || typeof rawValue === "number" ? `${rawValue}` : "";
 
     return (
       <tr data-grouped="true">

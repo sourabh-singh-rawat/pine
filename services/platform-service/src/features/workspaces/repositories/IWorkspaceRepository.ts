@@ -21,10 +21,7 @@ export type ListWorkspacesFilter = {
 };
 
 export interface IWorkspaceRepository {
-  save(
-    entity: CreateWorkspaceEntity,
-    options?: WorkspaceRepositoryOptions,
-  ): Promise<Workspace>;
+  save(entity: CreateWorkspaceEntity, options?: WorkspaceRepositoryOptions): Promise<Workspace>;
   update(
     id: string,
     entity: UpdateWorkspaceEntity,

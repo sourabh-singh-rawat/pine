@@ -13,10 +13,7 @@ builder.queryFields((t) => ({
     },
     resolve: async (_root, args, ctx) => {
       const service = container.get<ISpaceService>(TYPES.SpaceService);
-      return service.list(
-        { workspaceId: args.workspaceId },
-        requireIdentityId(ctx),
-      );
+      return service.list({ workspaceId: args.workspaceId }, requireIdentityId(ctx));
     },
   }),
 }));

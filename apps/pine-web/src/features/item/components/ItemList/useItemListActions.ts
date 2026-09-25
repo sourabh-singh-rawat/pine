@@ -16,22 +16,14 @@ type UseItemListActionsArgs = {
   statusById: Map<string, string>;
 };
 
-export const useItemListActions = ({
-  itemId,
-  listId,
-  statusById,
-}: UseItemListActionsArgs) => {
+export const useItemListActions = ({ itemId, listId, statusById }: UseItemListActionsArgs) => {
   const queryClient = useQueryClient();
   const snackbar = useSnackbar();
   const deleteItemMutation = useDeleteItemMutation();
   const updateItemMutation = useUpdateItemMutation();
   const [priorityOverrides, setPriorityOverrides] = useState<Record<string, string>>({});
-  const [dueDateOverrides, setDueDateOverrides] = useState<
-    Record<string, string | null>
-  >({});
-  const [statusOverrides, setStatusOverrides] = useState<
-    Record<string, ItemStatusOverride>
-  >({});
+  const [dueDateOverrides, setDueDateOverrides] = useState<Record<string, string | null>>({});
+  const [statusOverrides, setStatusOverrides] = useState<Record<string, ItemStatusOverride>>({});
   const [nameOverrides, setNameOverrides] = useState<Record<string, string>>({});
 
   const invalidateItemLists = useCallback(async () => {

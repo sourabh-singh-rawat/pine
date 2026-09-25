@@ -1,10 +1,7 @@
 import { ALL_PERMISSIONS, permissionKey } from "../permissions";
 import type { Resource } from "../resources";
 
-export const permissionKeys = (
-  namespace: Resource,
-  permissions: readonly string[],
-): string[] => {
+export const permissionKeys = (namespace: Resource, permissions: readonly string[]): string[] => {
   const keys: string[] = [];
   const seen = new Set<string>();
   for (const permission of permissions) {

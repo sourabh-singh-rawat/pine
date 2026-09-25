@@ -1,7 +1,4 @@
-import {
-  requirePermission,
-  type IAuthorizationClient,
-} from "@pine/authorization";
+import { requirePermission, type IAuthorizationClient } from "@pine/authorization";
 import { UserNotFoundError } from "@pine/common";
 import { createCloudEvent, SpaceCreatedEvent } from "@pine/events";
 import type { IOutboxService } from "@pine/outbox";
@@ -67,9 +64,7 @@ export class SpaceService implements ISpaceService {
           name: space.name,
           createdById: space.createdById,
           createdAt: space.createdAt.toISOString(),
-          ...(space.updatedAt != null
-            ? { updatedAt: space.updatedAt.toISOString() }
-            : {}),
+          ...(space.updatedAt != null ? { updatedAt: space.updatedAt.toISOString() } : {}),
         },
       });
 

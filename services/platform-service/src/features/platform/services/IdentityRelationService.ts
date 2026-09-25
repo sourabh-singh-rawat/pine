@@ -38,21 +38,20 @@ export class IdentityRelationService implements IIdentityRelationService {
     );
 
     const subject = { namespace: IDENTITY, id: identityId };
-    const [platformRelationships, tenantRelationships, workspaceRelationships] =
-      await Promise.all([
-        this.authorizationClient.listRelationships({
-          namespace: "platform",
-          subject,
-        }),
-        this.authorizationClient.listRelationships({
-          namespace: "tenant",
-          subject,
-        }),
-        this.authorizationClient.listRelationships({
-          namespace: "workspace",
-          subject,
-        }),
-      ]);
+    const [platformRelationships, tenantRelationships, workspaceRelationships] = await Promise.all([
+      this.authorizationClient.listRelationships({
+        namespace: "platform",
+        subject,
+      }),
+      this.authorizationClient.listRelationships({
+        namespace: "tenant",
+        subject,
+      }),
+      this.authorizationClient.listRelationships({
+        namespace: "workspace",
+        subject,
+      }),
+    ]);
 
     return {
       identityId,

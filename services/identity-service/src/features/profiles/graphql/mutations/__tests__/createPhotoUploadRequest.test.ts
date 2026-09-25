@@ -56,43 +56,47 @@ describe("createPhotoUploadRequest mutation", () => {
         ) => Promise<unknown>)
       | undefined;
 
-    mutationFields.mockImplementation((fn: (t: {
-      field: (config: {
-        resolve: (
-          root: unknown,
-          args: {
-            input: {
-              filename: string;
-              contentType: string;
-              size: number;
-            };
+    mutationFields.mockImplementation(
+      (
+        fn: (t: {
+          field: (config: {
+            resolve: (
+              root: unknown,
+              args: {
+                input: {
+                  filename: string;
+                  contentType: string;
+                  size: number;
+                };
+              },
+              ctx: { identity: { id: string; authMethod: "access_token" | "session" } },
+            ) => Promise<unknown>;
+          }) => unknown;
+          arg: (opts: unknown) => unknown;
+        }) => unknown,
+      ) => {
+        const t = {
+          field: (config: {
+            resolve: (
+              root: unknown,
+              args: {
+                input: {
+                  filename: string;
+                  contentType: string;
+                  size: number;
+                };
+              },
+              ctx: { identity: { id: string; authMethod: "access_token" | "session" } },
+            ) => Promise<unknown>;
+          }) => {
+            resolve = config.resolve;
+            return config;
           },
-          ctx: { identity: { id: string; authMethod: "access_token" | "session" } },
-        ) => Promise<unknown>;
-      }) => unknown;
-      arg: (opts: unknown) => unknown;
-    }) => unknown) => {
-      const t = {
-        field: (config: {
-          resolve: (
-            root: unknown,
-            args: {
-              input: {
-                filename: string;
-                contentType: string;
-                size: number;
-              };
-            },
-            ctx: { identity: { id: string; authMethod: "access_token" | "session" } },
-          ) => Promise<unknown>;
-        }) => {
-          resolve = config.resolve;
-          return config;
-        },
-        arg: (opts: unknown) => opts,
-      };
-      return fn(t);
-    });
+          arg: (opts: unknown) => opts,
+        };
+        return fn(t);
+      },
+    );
 
     await import("@/features/profiles/graphql/inputs/CreatePhotoUploadRequestInput");
     await import("@/features/profiles/graphql/mutations/createPhotoUploadRequest");
@@ -123,16 +127,23 @@ describe("createPhotoUploadRequest mutation", () => {
   it("configures authScopes with identityRequired", async () => {
     let fieldConfig: unknown;
 
-    mutationFields.mockImplementation((fn: (t: { field: (config: unknown) => unknown; arg: (opts: unknown) => unknown }) => unknown) => {
-      const t = {
-        field: (config: unknown) => {
-          fieldConfig = config;
-          return config;
-        },
-        arg: (opts: unknown) => opts,
-      };
-      return fn(t);
-    });
+    mutationFields.mockImplementation(
+      (
+        fn: (t: {
+          field: (config: unknown) => unknown;
+          arg: (opts: unknown) => unknown;
+        }) => unknown,
+      ) => {
+        const t = {
+          field: (config: unknown) => {
+            fieldConfig = config;
+            return config;
+          },
+          arg: (opts: unknown) => opts,
+        };
+        return fn(t);
+      },
+    );
 
     await import("@/features/profiles/graphql/mutations/createPhotoUploadRequest");
 

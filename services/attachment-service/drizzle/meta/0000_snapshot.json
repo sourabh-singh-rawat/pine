@@ -95,12 +95,8 @@
           "name": "attachments_owner_id_identities_id_fk",
           "tableFrom": "attachments",
           "tableTo": "identities",
-          "columnsFrom": [
-            "owner_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["owner_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }

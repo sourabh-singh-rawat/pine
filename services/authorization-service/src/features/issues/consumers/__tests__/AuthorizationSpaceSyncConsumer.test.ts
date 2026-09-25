@@ -19,10 +19,7 @@ const createBroker = () => ({
 describe("AuthorizationSpaceSyncConsumer", () => {
   it("writes the space workspace and owner tuples when a space is created", async () => {
     const authorizationGraphProvider = createGraphProvider();
-    const consumer = new AuthorizationSpaceSyncConsumer(
-      createBroker(),
-      authorizationGraphProvider,
-    );
+    const consumer = new AuthorizationSpaceSyncConsumer(createBroker(), authorizationGraphProvider);
     const message = { ack: vi.fn() };
     const event = createCloudEvent({
       type: SpaceCreatedEvent.type,

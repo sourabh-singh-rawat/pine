@@ -21,8 +21,7 @@ const WEEKDAY_LABELS = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
 const startOfDay = (date: Date): Date =>
   new Date(date.getFullYear(), date.getMonth(), date.getDate());
 
-const startOfMonth = (date: Date): Date =>
-  new Date(date.getFullYear(), date.getMonth(), 1);
+const startOfMonth = (date: Date): Date => new Date(date.getFullYear(), date.getMonth(), 1);
 
 const addMonths = (date: Date, amount: number): Date =>
   new Date(date.getFullYear(), date.getMonth() + amount, 1);
@@ -61,9 +60,7 @@ export const Calendar = ({
 }: CalendarProps) => {
   const theme = useTheme();
   const m3 = theme.palette.mode === "dark" ? pinePaletteDark : pinePaletteLight;
-  const [internalMonth, setInternalMonth] = useState(() =>
-    startOfMonth(value ?? new Date()),
-  );
+  const [internalMonth, setInternalMonth] = useState(() => startOfMonth(value ?? new Date()));
   const visibleMonth = controlledMonth ? startOfMonth(controlledMonth) : internalMonth;
   const selected = value ? startOfDay(value) : null;
   const today = startOfDay(new Date());
@@ -174,9 +171,10 @@ export const Calendar = ({
                   ? (m3.primary ?? theme.palette.primary.main)
                   : "transparent",
                 fontWeight: isSelected || isToday ? 600 : 400,
-                outline: isToday && !isSelected
-                  ? `1px solid ${m3.outline ?? theme.palette.divider}`
-                  : "none",
+                outline:
+                  isToday && !isSelected
+                    ? `1px solid ${m3.outline ?? theme.palette.divider}`
+                    : "none",
                 outlineOffset: "-1px",
                 "&:hover": disabled
                   ? undefined

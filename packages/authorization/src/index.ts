@@ -94,12 +94,7 @@ export {
   workspaceTenantRelationship,
 } from "./relations";
 
-export {
-  permissionKeys,
-  withoutActions,
-  allPermissionKeys,
-  readPermissionKeys,
-} from "./utils";
+export { permissionKeys, withoutActions, allPermissionKeys, readPermissionKeys } from "./utils";
 
 export type { IAuthorizationClient } from "./client";
 export { HttpAuthorizationClient, requirePermission } from "./client";

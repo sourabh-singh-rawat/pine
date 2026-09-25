@@ -14,7 +14,9 @@ import type { Database } from "@/db";
 import type { IIdentityRepository } from "@/features/identities/repositories";
 
 @injectable()
-export class NotificationIdentitySyncConsumer extends Consumer<CloudEvent<IdentityEmailVerifiedData>> {
+export class NotificationIdentitySyncConsumer extends Consumer<
+  CloudEvent<IdentityEmailVerifiedData>
+> {
   readonly stream = Streams.IDENTITY;
   readonly consumer = "notification-identity-sync";
   readonly subjects = [IdentityEmailVerifiedEvent.type];

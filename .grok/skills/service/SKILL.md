@@ -29,12 +29,12 @@ features/<feature>/
 
 Drop the noun already on the type. Domain verbs — not repository `save` / `findById`.
 
-| Method | Meaning |
-| ------ | ------- |
-| `create` | business create (authz + validate + tx + outbox as needed) |
-| `getById` | one; **throws** not-found |
-| `list` / `listMine` | many |
-| `update` / `delete` | mutate |
+| Method              | Meaning                                                    |
+| ------------------- | ---------------------------------------------------------- |
+| `create`            | business create (authz + validate + tx + outbox as needed) |
+| `getById`           | one; **throws** not-found                                  |
+| `list` / `listMine` | many                                                       |
+| `update` / `delete` | mutate                                                     |
 
 ```ts
 export interface IWorkspaceService {
@@ -93,11 +93,11 @@ TYPES.WorkspaceService = Symbol.for("IWorkspaceService");
 container.bind<IWorkspaceService>(TYPES.WorkspaceService).to(WorkspaceService);
 ```
 
-| Transport | Call |
-| --------- | ---- |
-| GraphQL `createWorkspace` | `workspaceService.create(...)` |
-| GraphQL `getWorkspace` | `workspaceService.getById(...)` |
-| HTTP handler | same short verbs |
+| Transport                 | Call                            |
+| ------------------------- | ------------------------------- |
+| GraphQL `createWorkspace` | `workspaceService.create(...)`  |
+| GraphQL `getWorkspace`    | `workspaceService.getById(...)` |
+| HTTP handler              | same short verbs                |
 
 Resolvers and routes: one service call after mapping args.
 

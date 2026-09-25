@@ -24,9 +24,7 @@ export interface IItemAttachmentUploadRequestRepository {
   ) => Promise<ItemAttachmentUploadRequest | null>;
   update: (
     id: string,
-    entity: Partial<
-      Pick<ItemAttachmentUploadRequest, "status" | "attachmentId" | "completedAt">
-    >,
+    entity: Partial<Pick<ItemAttachmentUploadRequest, "status" | "attachmentId" | "completedAt">>,
     options?: ItemAttachmentUploadRequestRepositoryOptions,
   ) => Promise<ItemAttachmentUploadRequest>;
 }

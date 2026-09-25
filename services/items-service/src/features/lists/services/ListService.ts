@@ -1,7 +1,4 @@
-import {
-  requirePermission,
-  type IAuthorizationClient,
-} from "@pine/authorization";
+import { requirePermission, type IAuthorizationClient } from "@pine/authorization";
 import { ListNotFoundError, STATUS_TYPE, UserNotFoundError } from "@pine/common";
 import { createCloudEvent, ListCreatedEvent, ListUpdatedEvent } from "@pine/events";
 import type { IOutboxService } from "@pine/outbox";

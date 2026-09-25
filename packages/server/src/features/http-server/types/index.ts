@@ -1,8 +1,4 @@
-export type {
-  HttpIdentity,
-  HttpRequest,
-  HttpUploadedFile,
-} from "./HttpRequest";
+export type { HttpIdentity, HttpRequest, HttpUploadedFile } from "./HttpRequest";
 export type {
   HttpClearCookie,
   HttpResponse,

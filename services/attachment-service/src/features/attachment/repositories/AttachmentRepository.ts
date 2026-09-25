@@ -54,7 +54,12 @@ export class AttachmentRepository implements IAttachmentRepository {
     const [row] = await client
       .select()
       .from(AttachmentVersions)
-      .where(and(eq(AttachmentVersions.attachmentId, attachmentId), eq(AttachmentVersions.id, versionId)))
+      .where(
+        and(
+          eq(AttachmentVersions.attachmentId, attachmentId),
+          eq(AttachmentVersions.id, versionId),
+        ),
+      )
       .limit(1);
 
     return row ?? null;
@@ -107,6 +112,8 @@ export class AttachmentRepository implements IAttachmentRepository {
   }
 
   private isDbClient(tx: unknown): tx is DbClient {
-    return typeof tx === "object" && tx !== null && "insert" in tx && typeof tx.insert === "function";
+    return (
+      typeof tx === "object" && tx !== null && "insert" in tx && typeof tx.insert === "function"
+    );
   }
 }

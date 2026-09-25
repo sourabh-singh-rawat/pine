@@ -1,5 +1,10 @@
 export { CookieOptionsSchema, type CookieOptions } from "./CookieOptionsSchema";
-export { CorsOptionsSchema, CorsOriginSchema, type CorsOptions, type CorsOrigin } from "./CorsOptionsSchema";
+export {
+  CorsOptionsSchema,
+  CorsOriginSchema,
+  type CorsOptions,
+  type CorsOrigin,
+} from "./CorsOptionsSchema";
 export { HttpConfigOptionsSchema, type HttpConfigOptions } from "./HttpConfigOptionsSchema";
 export { HttpsOptionsSchema, type HttpsOptions } from "./HttpsOptionsSchema";
 export { HttpServerOptionsSchema, type HttpServerOptions } from "./HttpServerOptionsSchema";

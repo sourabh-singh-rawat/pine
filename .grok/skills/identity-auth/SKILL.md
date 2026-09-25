@@ -16,16 +16,16 @@ IdP stays behind interfaces. Canonical service: `identity-service`. UI: `identit
 
 ## Recipe
 
-| Problem | Feature folder | Provider |
-| ------- | -------------- | -------- |
-| Sign-in | `features/signin` | `ISessionProvider` |
-| Registration | `features/registration` | `IRegistrationProvider` |
-| Email verification | `features/verification` | `IVerificationProvider` |
-| Session / whoami | `features/session` | `ISessionProvider` + `IOAuthTokenProvider` |
-| Logout | `features/logout` | `ISessionProvider` |
-| OAuth authorize/consent/token | `features/oauth` | `IOAuthFlowProvider` / `IOAuthTokenProvider` / `IOAuthClientProvider` |
-| Current user | `features/me` | identity + profile services |
-| Admin identities | `features/admin` | `IIdentityAdminProvider` |
+| Problem                       | Feature folder          | Provider                                                              |
+| ----------------------------- | ----------------------- | --------------------------------------------------------------------- |
+| Sign-in                       | `features/signin`       | `ISessionProvider`                                                    |
+| Registration                  | `features/registration` | `IRegistrationProvider`                                               |
+| Email verification            | `features/verification` | `IVerificationProvider`                                               |
+| Session / whoami              | `features/session`      | `ISessionProvider` + `IOAuthTokenProvider`                            |
+| Logout                        | `features/logout`       | `ISessionProvider`                                                    |
+| OAuth authorize/consent/token | `features/oauth`        | `IOAuthFlowProvider` / `IOAuthTokenProvider` / `IOAuthClientProvider` |
+| Current user                  | `features/me`           | identity + profile services                                           |
+| Admin identities              | `features/admin`        | `IIdentityAdminProvider`                                              |
 
 Kratos: `integrations/identity/` (`KratosClient`, `Kratos*Provider`). Hydra: `integrations/oauth/` (`HydraClient`, `Hydra*Provider`). Services call `I*Provider` only. Map IdP ids → local identity ids via `IIdentityService.getIdByExternalId`.
 
@@ -33,12 +33,12 @@ HTTP: `http-route` (`signin`, `register`, `verifyEmail`, `getIdentityFromSession
 
 **Who resolves identity**
 
-| Process | How |
-| ------- | --- |
-| `api-gateway` | `HttpIdentityClient.resolveRequestIdentity` (Bearer or `accessToken` cookie → identity-service; else Kratos `session` cookie) |
-| Other services | `resolveIdentityFromHeaders` (`x-identity-id`, `x-identity-auth-method`) + `resolveTenantContextFromHeaders` (`x-tenant-id`, `x-workspace-id`) |
-| Resolvers / routes | `requireIdentityId(ctx)` / `requireIdentity(request)` from `@pine/identity` |
-| Call identity-service | `HttpIdentityClient` |
+| Process               | How                                                                                                                                            |
+| --------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| `api-gateway`         | `HttpIdentityClient.resolveRequestIdentity` (Bearer or `accessToken` cookie → identity-service; else Kratos `session` cookie)                  |
+| Other services        | `resolveIdentityFromHeaders` (`x-identity-id`, `x-identity-auth-method`) + `resolveTenantContextFromHeaders` (`x-tenant-id`, `x-workspace-id`) |
+| Resolvers / routes    | `requireIdentityId(ctx)` / `requireIdentity(request)` from `@pine/identity`                                                                    |
+| Call identity-service | `HttpIdentityClient`                                                                                                                           |
 
 Do not put feature routes or domain GraphQL on `api-gateway`. It federates subgraphs, proxies `/identity`, `/attachments`, `/authorization`, and attaches identity. `data-gateway` is a separate HTTP proxy — not identity.
 

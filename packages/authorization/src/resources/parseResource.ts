@@ -30,10 +30,12 @@ export const parseResource = (
 
 export const tryParseResource = (
   key: string,
-): {
-  namespace: Resource;
-  id: string;
-} | undefined => {
+):
+  | {
+      namespace: Resource;
+      id: string;
+    }
+  | undefined => {
   try {
     return parseResource(key);
   } catch (error) {

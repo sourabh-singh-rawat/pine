@@ -5,10 +5,7 @@ import type {
   DownloadAttachmentOptions,
   IAttachmentClient,
 } from "./IAttachmentClient";
-import {
-  CreateUploadTargetResponseSchema,
-  type CreateUploadTargetResponse,
-} from "./schemas";
+import { CreateUploadTargetResponseSchema, type CreateUploadTargetResponse } from "./schemas";
 
 export interface HttpAttachmentClientOptions {
   baseUrl: string;
@@ -31,14 +28,11 @@ export class HttpAttachmentClient implements IAttachmentClient {
       "x-identity-auth-method": options.authMethod ?? "session",
     };
 
-    const response = await fetch(
-      `${this.baseUrl}/internal/attachments/createUploadTarget`,
-      {
-        method: "POST",
-        headers,
-        body: JSON.stringify(options.input),
-      },
-    );
+    const response = await fetch(`${this.baseUrl}/internal/attachments/createUploadTarget`, {
+      method: "POST",
+      headers,
+      body: JSON.stringify(options.input),
+    });
 
     if (!response.ok) {
       throw new Error(
@@ -54,18 +48,14 @@ export class HttpAttachmentClient implements IAttachmentClient {
     return body;
   }
 
-  async downloadStream(
-    options: DownloadAttachmentOptions,
-  ): Promise<Readable> {
+  async downloadStream(options: DownloadAttachmentOptions): Promise<Readable> {
     const url = `${this.baseUrl}/internal/attachments/${options.attachmentId}/versions/${options.versionId}/content`;
 
     const response = await fetch(url);
     const body = response.body;
 
     if (!response.ok || !body) {
-      throw new Error(
-        `Failed to download attachment: ${response.statusText}`,
-      );
+      throw new Error(`Failed to download attachment: ${response.statusText}`);
     }
 
     return Readable.from(body);

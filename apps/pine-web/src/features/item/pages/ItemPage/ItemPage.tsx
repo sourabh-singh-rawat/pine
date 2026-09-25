@@ -59,11 +59,7 @@ export const ItemPage = () => {
       <Grid2 size={12}>
         <AppBar
           leading={
-            <IconButton
-              aria-label="Back to list"
-              onClick={handleBackToList}
-              disabled={!listId}
-            >
+            <IconButton aria-label="Back to list" onClick={handleBackToList} disabled={!listId}>
               <ArrowBack />
             </IconButton>
           }

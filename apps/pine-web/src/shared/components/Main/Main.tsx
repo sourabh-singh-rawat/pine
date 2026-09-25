@@ -2,10 +2,7 @@ import { useEffect, useLayoutEffect } from "react";
 import { useRouterState } from "@tanstack/react-router";
 
 import MuiBox from "@mui/material/Box";
-import {
-  useGetMyWorkspacePreferenceQuery,
-  useGetMyWorkspacesQuery,
-} from "@generated/gql";
+import { useGetMyWorkspacePreferenceQuery, useGetMyWorkspacesQuery } from "@generated/gql";
 import { useGetCurrentUserQuery } from "@generated/api/@tanstack/react-query.gen";
 import { toAuthUserFromMeResponse, useAuthStore } from "@features/auth";
 import { useWorkspaceStore } from "@features/workspace";
@@ -50,8 +47,7 @@ export function Main({ children }: MainProps) {
   }, [userQuery.data, userQuery.isError, userQuery.isSuccess, setCurrentUser]);
 
   useLayoutEffect(() => {
-    const preferenceReady =
-      workspacePreferenceQuery.isSuccess || workspacePreferenceQuery.isError;
+    const preferenceReady = workspacePreferenceQuery.isSuccess || workspacePreferenceQuery.isError;
     if (!preferenceReady) {
       return;
     }
@@ -85,8 +81,7 @@ export function Main({ children }: MainProps) {
 
   const isBootstrapping =
     userQuery.isPending ||
-    (userQuery.isSuccess &&
-      (workspacesQuery.isPending || workspacePreferenceQuery.isPending));
+    (userQuery.isSuccess && (workspacesQuery.isPending || workspacePreferenceQuery.isPending));
 
   return (
     <MuiBox width="100vw" height="100vh">

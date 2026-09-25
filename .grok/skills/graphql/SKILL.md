@@ -31,23 +31,23 @@ features/<domain>/graphql/
 
 Field name = filename. Keep the resource. New reads use `get*`, not `find*`.
 
-| Thing | Style | Example |
-| ----- | ----- | ------- |
-| Query (one) | `get{Resource}` | `getWorkspace` |
-| Query (many) | `get{Resources}` | `getWorkspaces` |
-| Query (caller) | `getMy{Resources}` | `getMyWorkspaces` |
-| Mutation | `create` / `update` / `delete{Resource}` | `createWorkspace` |
-| GraphQL type / input file | PascalCase | `CreateWorkspaceInput.ts` |
-| Query / mutation module | camelCase, one field per file | `getWorkspace.ts` |
+| Thing                     | Style                                    | Example                   |
+| ------------------------- | ---------------------------------------- | ------------------------- |
+| Query (one)               | `get{Resource}`                          | `getWorkspace`            |
+| Query (many)              | `get{Resources}`                         | `getWorkspaces`           |
+| Query (caller)            | `getMy{Resources}`                       | `getMyWorkspaces`         |
+| Mutation                  | `create` / `update` / `delete{Resource}` | `createWorkspace`         |
+| GraphQL type / input file | PascalCase                               | `CreateWorkspaceInput.ts` |
+| Query / mutation module   | camelCase, one field per file            | `getWorkspace.ts`         |
 
-| Field | Service |
-| ----- | ------- |
-| `createWorkspace` | `workspaceService.create(...)` |
-| `getWorkspace` | `workspaceService.getById(...)` |
-| `getWorkspaces` | `workspaceService.list(...)` |
+| Field             | Service                          |
+| ----------------- | -------------------------------- |
+| `createWorkspace` | `workspaceService.create(...)`   |
+| `getWorkspace`    | `workspaceService.getById(...)`  |
+| `getWorkspaces`   | `workspaceService.list(...)`     |
 | `getMyWorkspaces` | `workspaceService.listMine(...)` |
-| `updateWorkspace` | `workspaceService.update(...)` |
-| `deleteWorkspace` | `workspaceService.delete(...)` |
+| `updateWorkspace` | `workspaceService.update(...)`   |
+| `deleteWorkspace` | `workspaceService.delete(...)`   |
 
 Existing `findIssue` / `findProjects` / `findIdentities` stay until a dedicated schema rename. Do not mix `get` and `find` on the same resource.
 

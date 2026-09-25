@@ -1,8 +1,6 @@
 import type { GetChecklistsQuery } from "@generated/gql";
 
-type ChecklistRow = NonNullable<
-  NonNullable<GetChecklistsQuery["getChecklists"]>[number]
->;
+type ChecklistRow = NonNullable<NonNullable<GetChecklistsQuery["getChecklists"]>[number]>;
 type EntryRow = NonNullable<NonNullable<ChecklistRow["entries"]>[number]>;
 
 export type ChecklistEntryView = {
@@ -61,16 +59,13 @@ export const toChecklistView = (
     id: checklist.id,
     itemId: checklist.itemId,
     name: checklist.name,
-    completedCount:
-      typeof checklist.completedCount === "number" ? checklist.completedCount : 0,
+    completedCount: typeof checklist.completedCount === "number" ? checklist.completedCount : 0,
     totalCount: typeof checklist.totalCount === "number" ? checklist.totalCount : 0,
     entries,
   };
 };
 
-export const mapChecklists = (
-  rows: GetChecklistsQuery["getChecklists"],
-): ChecklistView[] =>
+export const mapChecklists = (rows: GetChecklistsQuery["getChecklists"]): ChecklistView[] =>
   (rows ?? [])
     .map(toChecklistView)
     .filter((checklist): checklist is ChecklistView => checklist !== null);

@@ -4,10 +4,7 @@ import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
-import {
-  useCreateWorkspaceMutation,
-  useGetWorkspacesQuery,
-} from "@generated/gql";
+import { useCreateWorkspaceMutation, useGetWorkspacesQuery } from "@generated/gql";
 import { PrimaryButton, SecondaryButton, TextField } from "@pine/ui";
 import { useForm } from "@tanstack/react-form";
 import { useQueryClient } from "@tanstack/react-query";

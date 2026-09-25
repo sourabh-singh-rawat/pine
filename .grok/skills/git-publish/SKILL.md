@@ -17,20 +17,20 @@ Repo operation. Stay in the parent session. Related: `open-pr`, `changeset-relea
 
 Integration branch is `dev`. Protected: `main`, `dev`, `release/*`.
 
-| Mode | Triggers | Runs through |
-| ---- | -------- | ------------ |
+| Mode                  | Triggers                                            | Runs through                                                                         |
+| --------------------- | --------------------------------------------------- | ------------------------------------------------------------------------------------ |
 | **Publish** (default) | `publish`, `ship it`, `git-publish`, `/git-publish` | branch → changeset (deployables only) → commit → push → PR → squash-merge → on `dev` |
-| **Commit/push only** | user says only `commit` and/or `push` | branch (if needed) → changeset (deployables only) → commit → push |
+| **Commit/push only**  | user says only `commit` and/or `push`               | branch (if needed) → changeset (deployables only) → commit → push                    |
 
-| Concern | Rule |
-| ------- | ---- |
-| Protected branches | Never commit directly on `main`, `dev`, `release/*` |
-| Feature / chore / fix | `feat/*`, `chore/*`, `fix/*` from `dev` |
-| Hotfix | `hotfix/*` from `main`; sync `main` → `dev` only when asked |
-| Commits | Conventional; one logical commit per change set |
-| Changeset | Deployable package bumps only; same commit; **0 or 1** (`changeset-release`) |
-| Secrets | Block on credential patterns |
-| Force push / `--no-verify` / `--no-gpg-sign` | Never without explicit confirmation |
+| Concern                                      | Rule                                                                         |
+| -------------------------------------------- | ---------------------------------------------------------------------------- |
+| Protected branches                           | Never commit directly on `main`, `dev`, `release/*`                          |
+| Feature / chore / fix                        | `feat/*`, `chore/*`, `fix/*` from `dev`                                      |
+| Hotfix                                       | `hotfix/*` from `main`; sync `main` → `dev` only when asked                  |
+| Commits                                      | Conventional; one logical commit per change set                              |
+| Changeset                                    | Deployable package bumps only; same commit; **0 or 1** (`changeset-release`) |
+| Secrets                                      | Block on credential patterns                                                 |
+| Force push / `--no-verify` / `--no-gpg-sign` | Never without explicit confirmation                                          |
 
 ## Recipe
 
@@ -56,12 +56,12 @@ git pull
 git switch -c feat/scope-verb-description
 ```
 
-| On | Work | Create |
-| -- | ---- | ------ |
-| `dev` | feature | `feat/…` |
-| `dev` | bug fix | `fix/…` |
-| `dev` | chore / docs / skills | `chore/…` |
-| `main` | production emergency | `hotfix/…` |
+| On     | Work                  | Create     |
+| ------ | --------------------- | ---------- |
+| `dev`  | feature               | `feat/…`   |
+| `dev`  | bug fix               | `fix/…`    |
+| `dev`  | chore / docs / skills | `chore/…`  |
+| `main` | production emergency  | `hotfix/…` |
 
 Already on a feature branch with only this work: keep it.
 
@@ -97,13 +97,13 @@ Stop on secret matches. Confirm unexpected lockfile changes. Public frontend pre
 
 User-supplied message wins. Otherwise derive from the staged diff: `type(scope): description` (lowercase, present tense).
 
-| Type | When |
-| ---- | ---- |
-| `feat` | new functionality |
-| `fix` | bug fix |
-| `refactor` | internal improvement |
-| `perf` | measurable performance |
-| `build` / `ci` | tooling / CI |
+| Type                      | When                     |
+| ------------------------- | ------------------------ |
+| `feat`                    | new functionality        |
+| `fix`                     | bug fix                  |
+| `refactor`                | internal improvement     |
+| `perf`                    | measurable performance   |
+| `build` / `ci`            | tooling / CI             |
 | `docs` / `test` / `chore` | docs, tests, maintenance |
 
 ```bash

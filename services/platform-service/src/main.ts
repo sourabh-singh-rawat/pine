@@ -47,9 +47,7 @@ const main = async () => {
   void container.get<IOutboxWorker>(TYPES.OutboxWorker).start();
   void container.get<IOutboxCleanupWorker>(TYPES.OutboxCleanupWorker).start();
   void container.get<PlatformIdentitySyncConsumer>(TYPES.PlatformIdentitySyncConsumer).start();
-  void container
-    .get<PlatformUserOnboardingConsumer>(TYPES.PlatformUserOnboardingConsumer)
-    .start();
+  void container.get<PlatformUserOnboardingConsumer>(TYPES.PlatformUserOnboardingConsumer).start();
 };
 
 main().catch((error) => {

@@ -5,7 +5,4 @@ import { getAttachmentVersionContent } from "./getAttachmentVersionContent";
 export * from "./getAttachmentContent";
 export * from "./getAttachmentVersionContent";
 
-export const attachmentRoutes: HttpRoute[] = [
-  getAttachmentContent,
-  getAttachmentVersionContent,
-];
+export const attachmentRoutes: HttpRoute[] = [getAttachmentContent, getAttachmentVersionContent];

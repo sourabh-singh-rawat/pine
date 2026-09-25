@@ -3,10 +3,7 @@ import { builder } from "@pine/server";
 import { TYPES, container } from "@/bootstrap";
 import type { IChecklistService } from "@/features/checklists/services";
 import { UpdateChecklistInput } from "../inputs/UpdateChecklistInput";
-import {
-  ChecklistObject,
-  toChecklistObjectShape,
-} from "../objects/ChecklistObject";
+import { ChecklistObject, toChecklistObjectShape } from "../objects/ChecklistObject";
 
 builder.mutationFields((t) => ({
   updateChecklist: t.field({

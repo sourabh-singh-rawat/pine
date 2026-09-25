@@ -85,9 +85,7 @@ describe("WorkspaceService", () => {
 
     const service = createService({ workspaceRepository, authorizationClient });
 
-    await expect(
-      service.list({ tenantId: "tenant-1" }, identityId),
-    ).resolves.toEqual([workspace]);
+    await expect(service.list({ tenantId: "tenant-1" }, identityId)).resolves.toEqual([workspace]);
     expect(authorizationClient.checkRelationship).toHaveBeenCalledWith({
       namespace: "tenant",
       object: "tenant-1",
@@ -112,9 +110,7 @@ describe("WorkspaceService", () => {
 
     const service = createService({ workspaceRepository, authorizationClient });
 
-    await expect(service.getById(workspace.id, identityId)).resolves.toEqual(
-      workspace,
-    );
+    await expect(service.getById(workspace.id, identityId)).resolves.toEqual(workspace);
     expect(authorizationClient.checkRelationship).toHaveBeenCalledWith({
       namespace: "workspace",
       object: workspace.id,
@@ -166,9 +162,9 @@ describe("WorkspaceService", () => {
 
     const service = createService({ workspaceRepository, authorizationClient });
 
-    await expect(
-      service.list({ tenantId: "tenant-1" }, identityId),
-    ).rejects.toBeInstanceOf(InsufficientPermissionError);
+    await expect(service.list({ tenantId: "tenant-1" }, identityId)).rejects.toBeInstanceOf(
+      InsufficientPermissionError,
+    );
     expect(workspaceRepository.findMany).not.toHaveBeenCalled();
   });
 
@@ -182,9 +178,9 @@ describe("WorkspaceService", () => {
 
     const service = createService({ workspaceRepository, tenantRepository });
 
-    await expect(
-      service.list({ tenantId: "missing" }, identityId),
-    ).rejects.toBeInstanceOf(TenantNotFoundError);
+    await expect(service.list({ tenantId: "missing" }, identityId)).rejects.toBeInstanceOf(
+      TenantNotFoundError,
+    );
     expect(workspaceRepository.findMany).not.toHaveBeenCalled();
   });
 
@@ -359,10 +355,7 @@ describe("WorkspaceService", () => {
     const service = createService({ workspaceRepository, tenantRepository });
 
     await expect(
-      service.create(
-        { tenantId: "missing", name: "Acme Corp", slug: "acme" },
-        identityId,
-      ),
+      service.create({ tenantId: "missing", name: "Acme Corp", slug: "acme" }, identityId),
     ).rejects.toBeInstanceOf(TenantNotFoundError);
     expect(workspaceRepository.save).not.toHaveBeenCalled();
   });
@@ -377,10 +370,7 @@ describe("WorkspaceService", () => {
     const service = createService({ workspaceRepository });
 
     await expect(
-      service.create(
-        { tenantId: "tenant-1", name: "Acme Corp", slug: "acme" },
-        identityId,
-      ),
+      service.create({ tenantId: "tenant-1", name: "Acme Corp", slug: "acme" }, identityId),
     ).rejects.toBeInstanceOf(WorkspaceSlugConflictError);
     expect(workspaceRepository.existsByNameInTenant).not.toHaveBeenCalled();
     expect(workspaceRepository.save).not.toHaveBeenCalled();
@@ -396,10 +386,7 @@ describe("WorkspaceService", () => {
     const service = createService({ workspaceRepository });
 
     await expect(
-      service.create(
-        { tenantId: "tenant-1", name: "Acme Corp", slug: "acme" },
-        identityId,
-      ),
+      service.create({ tenantId: "tenant-1", name: "Acme Corp", slug: "acme" }, identityId),
     ).rejects.toBeInstanceOf(WorkspaceNameConflictError);
     expect(workspaceRepository.save).not.toHaveBeenCalled();
   });
@@ -418,9 +405,9 @@ describe("WorkspaceService", () => {
 
     const service = createService({ workspaceRepository, authorizationClient });
 
-    await expect(
-      service.update("org-2", { parentWorkspaceId: null }, identityId),
-    ).resolves.toEqual(updated);
+    await expect(service.update("org-2", { parentWorkspaceId: null }, identityId)).resolves.toEqual(
+      updated,
+    );
     expect(authorizationClient.checkRelationship).toHaveBeenCalledWith({
       namespace: "workspace",
       object: "org-2",
@@ -434,10 +421,7 @@ describe("WorkspaceService", () => {
 
   it("rejects update when the parent would create a cycle", async () => {
     const workspaceRepository = {
-      findById: vi
-        .fn()
-        .mockResolvedValueOnce(workspace)
-        .mockResolvedValueOnce(childWorkspace),
+      findById: vi.fn().mockResolvedValueOnce(workspace).mockResolvedValueOnce(childWorkspace),
       update: vi.fn(),
     };
 
@@ -533,10 +517,7 @@ describe("WorkspaceService", () => {
       namespace: "workspace",
       subject: { namespace: "identity", id: identityId },
     });
-    expect(workspaceRepository.findByIds).toHaveBeenCalledWith([
-      workspace.id,
-      childWorkspace.id,
-    ]);
+    expect(workspaceRepository.findByIds).toHaveBeenCalledWith([workspace.id, childWorkspace.id]);
   });
 
   it("returns empty list if identity has no workspace relationships", async () => {

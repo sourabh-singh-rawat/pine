@@ -1,9 +1,6 @@
 import { HttpAuthorizationClient, type IAuthorizationClient } from "@pine/authorization";
 import type { IBroker } from "@pine/events";
-import {
-  resolveIdentityFromHeaders,
-  resolveTenantContextFromHeaders,
-} from "@pine/identity";
+import { resolveIdentityFromHeaders, resolveTenantContextFromHeaders } from "@pine/identity";
 import { createHttpServer, type IHttpServer } from "@pine/server";
 import { Container } from "inversify";
 import { readFileSync } from "node:fs";
@@ -15,11 +12,7 @@ import { ketoClient } from "@/bootstrap/keto-client";
 import { logger } from "@/bootstrap/logger";
 import { AuthorizationService, type IAuthorizationService } from "@/features/authorization";
 import { AuthorizationProfileSyncConsumer } from "@/features/identity";
-import {
-  AuthorizationItemSyncConsumer,
-  AuthorizationListSyncConsumer,
-  AuthorizationSpaceSyncConsumer,
-} from "@/features/issues";
+import { AuthorizationItemSyncConsumer, AuthorizationListSyncConsumer, AuthorizationSpaceSyncConsumer } from "@/features/issues";
 
 import {
   AuthorizationWorkspaceRelationSyncConsumer,
@@ -43,9 +36,7 @@ container.bind<IAuthorizationService>(TYPES.AuthorizationService).to(Authorizati
 container.bind<IAuthorizationClient>(TYPES.AuthorizationClient).toConstantValue(new HttpAuthorizationClient({ baseUrl: env.AUTHORIZATION_SERVICE_URL }));
 container.bind<AuthorizationTenantSyncConsumer>(TYPES.AuthorizationTenantSyncConsumer).to(AuthorizationTenantSyncConsumer);
 container.bind<AuthorizationWorkspaceSyncConsumer>(TYPES.AuthorizationWorkspaceSyncConsumer).to(AuthorizationWorkspaceSyncConsumer);
-container
-  .bind<AuthorizationWorkspaceRelationSyncConsumer>(TYPES.AuthorizationWorkspaceRelationSyncConsumer)
-  .to(AuthorizationWorkspaceRelationSyncConsumer);
+container.bind<AuthorizationWorkspaceRelationSyncConsumer>(TYPES.AuthorizationWorkspaceRelationSyncConsumer).to(AuthorizationWorkspaceRelationSyncConsumer);
 container.bind<AuthorizationTenantRelationSyncConsumer>(TYPES.AuthorizationTenantRelationSyncConsumer).to(AuthorizationTenantRelationSyncConsumer);
 container.bind<AuthorizationPlatformRelationSyncConsumer>(TYPES.AuthorizationPlatformRelationSyncConsumer).to(AuthorizationPlatformRelationSyncConsumer);
 container.bind<AuthorizationProfileSyncConsumer>(TYPES.AuthorizationProfileSyncConsumer).to(AuthorizationProfileSyncConsumer);

@@ -1,11 +1,5 @@
 export { Spring } from "./spring";
-export {
-  type Point,
-  SHAPE_COUNT,
-  getShapes,
-  lerpShapes,
-  getMorphedShape,
-} from "./shapes";
+export { type Point, SHAPE_COUNT, getShapes, lerpShapes, getMorphedShape } from "./shapes";
 export {
   M3Animator,
   type AnimatorState,

@@ -19,10 +19,7 @@ const createBroker = () => ({
 describe("AuthorizationItemSyncConsumer", () => {
   it("writes the item list and owner tuples when an item is created", async () => {
     const authorizationGraphProvider = createGraphProvider();
-    const consumer = new AuthorizationItemSyncConsumer(
-      createBroker(),
-      authorizationGraphProvider,
-    );
+    const consumer = new AuthorizationItemSyncConsumer(createBroker(), authorizationGraphProvider);
     const message = { ack: vi.fn() };
     const event = createCloudEvent({
       type: ItemCreatedEvent.type,

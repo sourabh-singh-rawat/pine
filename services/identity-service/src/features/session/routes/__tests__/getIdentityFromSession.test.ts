@@ -63,9 +63,9 @@ describe("getIdentityFromSession route", () => {
     const getIdentityFromSessionToken = vi.fn();
     get.mockReturnValue({ getIdentityFromSessionToken });
 
-    await expect(getIdentityFromSession.handler(httpRequest({ cookies: {} }))).rejects.toBeInstanceOf(
-      InvalidCredentialError,
-    );
+    await expect(
+      getIdentityFromSession.handler(httpRequest({ cookies: {} })),
+    ).rejects.toBeInstanceOf(InvalidCredentialError);
 
     expect(getIdentityFromSessionToken).not.toHaveBeenCalled();
   });

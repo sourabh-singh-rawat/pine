@@ -209,11 +209,7 @@ export class WorkspaceService implements IWorkspaceService {
     return buildWorkspaceForest(workspaces);
   }
 
-  async update(
-    id: string,
-    input: UpdateWorkspaceInput,
-    identityId: string,
-  ): Promise<Workspace> {
+  async update(id: string, input: UpdateWorkspaceInput, identityId: string): Promise<Workspace> {
     await requirePermission(this.authorizationClient, identityId, "update", `workspace:${id}`);
 
     const workspace = await this.workspaceRepository.findById(id);
@@ -253,9 +249,7 @@ export class WorkspaceService implements IWorkspaceService {
     }
 
     if (parentWorkspaceId === workspace.id) {
-      throw new InvalidParentWorkspaceError(
-        `Workspace cannot be its own parent: ${workspace.id}`,
-      );
+      throw new InvalidParentWorkspaceError(`Workspace cannot be its own parent: ${workspace.id}`);
     }
 
     const parent = await this.workspaceRepository.findById(parentWorkspaceId);

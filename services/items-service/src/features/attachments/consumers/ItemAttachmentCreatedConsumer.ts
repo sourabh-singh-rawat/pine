@@ -13,9 +13,7 @@ import { TYPES } from "@/bootstrap/container-types";
 import type { IItemAttachmentService } from "@/features/attachments/services";
 
 @injectable()
-export class ItemAttachmentCreatedConsumer extends Consumer<
-  CloudEvent<AttachmentCreatedData>
-> {
+export class ItemAttachmentCreatedConsumer extends Consumer<CloudEvent<AttachmentCreatedData>> {
   readonly stream = Streams.ATTACHMENT;
   readonly consumer = "items-item-attachment-sync";
   readonly subjects = [AttachmentCreatedEvent.type];
@@ -29,10 +27,7 @@ export class ItemAttachmentCreatedConsumer extends Consumer<
     super(broker.client);
   }
 
-  async onMessage(
-    message: JsMsg,
-    payload: CloudEvent<AttachmentCreatedData>,
-  ): Promise<void> {
+  async onMessage(message: JsMsg, payload: CloudEvent<AttachmentCreatedData>): Promise<void> {
     const event = validateEvent(AttachmentCreatedEvent, payload);
     const data = event.data;
 

@@ -8,21 +8,13 @@ export {
   type NewChecklistEntry,
   ChecklistEntries,
 } from "@/db/tables/ChecklistEntries";
-export {
-  type Checklist,
-  type NewChecklist,
-  Checklists,
-} from "@/db/tables/Checklists";
+export { type Checklist, type NewChecklist, Checklists } from "@/db/tables/Checklists";
 export {
   type ItemActivity,
   type NewItemActivity,
   ItemActivities,
 } from "@/db/tables/ItemActivities";
-export {
-  type ItemAssignee,
-  type NewItemAssignee,
-  ItemAssignees,
-} from "@/db/tables/ItemAssignees";
+export { type ItemAssignee, type NewItemAssignee, ItemAssignees } from "@/db/tables/ItemAssignees";
 export {
   type ItemAttachment,
   type NewItemAttachment,

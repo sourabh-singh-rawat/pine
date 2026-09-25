@@ -118,10 +118,7 @@ export class WorkspaceRepository implements IWorkspaceRepository {
   }
 
   async findMany(filter: ListWorkspacesFilter): Promise<Workspace[]> {
-    const conditions = [
-      eq(Workspaces.tenantId, filter.tenantId),
-      isNull(Workspaces.deletedAt),
-    ];
+    const conditions = [eq(Workspaces.tenantId, filter.tenantId), isNull(Workspaces.deletedAt)];
 
     if (filter.parentWorkspaceId === null) {
       conditions.push(isNull(Workspaces.parentWorkspaceId));

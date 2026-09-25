@@ -83,15 +83,9 @@ export const main = async (argv: readonly string[] = process.argv.slice(2)): Pro
   }
 
   if (!PROTECTED.has(current)) {
-    const switchTo = locals.includes("dev")
-      ? "dev"
-      : locals.includes("main")
-        ? "main"
-        : null;
+    const switchTo = locals.includes("dev") ? "dev" : locals.includes("main") ? "main" : null;
     if (switchTo === null) {
-      console.error(
-        "Need a local main or dev branch to switch to before deleting others.",
-      );
+      console.error("Need a local main or dev branch to switch to before deleting others.");
       return 1;
     }
     console.log(`Switching from ${current} to ${switchTo}`);

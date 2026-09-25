@@ -7,10 +7,7 @@ import { ATTACHMENT_SCAN_TYPE, MALWARE_ATTACHMENT_SCAN_STATUS } from "@/constant
 import type { AttachmentScan, DbClient } from "@/db";
 import type { IAttachmentScanRepository } from "@/features/attachment-scanner/repositories";
 import type { IMalwareScannerService } from "@/features/malware-scanner/services";
-import {
-  AttachmentScannerService,
-  type ScannerDatabase,
-} from "../AttachmentScannerService";
+import { AttachmentScannerService, type ScannerDatabase } from "../AttachmentScannerService";
 
 const toDbClient = (_val: unknown): _val is DbClient => true;
 const dummyTx: unknown = {};
@@ -75,7 +72,9 @@ describe("AttachmentScannerService", () => {
     };
 
     const outboxService: IOutboxService = {
-      schedule: vi.fn().mockResolvedValue({ id: "outbox-1" } as unknown as import("@pine/outbox").OutboxMessage),
+      schedule: vi
+        .fn()
+        .mockResolvedValue({ id: "outbox-1" } as unknown as import("@pine/outbox").OutboxMessage),
       claimBatch: vi.fn(),
       complete: vi.fn(),
       failed: vi.fn(),

@@ -11,4 +11,3 @@ export const GetAttachmentVersionContentParamsSchema = Type.Object(
 export type GetAttachmentVersionContentParams = Type.Static<
   typeof GetAttachmentVersionContentParamsSchema
 >;
-

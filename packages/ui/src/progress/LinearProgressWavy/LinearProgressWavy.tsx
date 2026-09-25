@@ -17,10 +17,7 @@ const DEFAULT_STOP_PX = 4;
 const FULL_AMPLITUDE_PROGRESS_MIN = 0.1;
 const FULL_AMPLITUDE_PROGRESS_MAX = 0.95;
 
-export type LinearProgressWavyProps = Omit<
-  BoxProps,
-  "children" | "color"
-> & {
+export type LinearProgressWavyProps = Omit<BoxProps, "children" | "color"> & {
   value?: number;
   strokeWidth?: number;
   color?: string;
@@ -34,19 +31,13 @@ export type LinearProgressWavyProps = Omit<
 };
 
 const determinateAmplitudeFactor = (progress: number): number => {
-  if (
-    progress <= FULL_AMPLITUDE_PROGRESS_MIN ||
-    progress >= FULL_AMPLITUDE_PROGRESS_MAX
-  ) {
+  if (progress <= FULL_AMPLITUDE_PROGRESS_MIN || progress >= FULL_AMPLITUDE_PROGRESS_MAX) {
     return 0;
   }
   return 1;
 };
 
-const resolveSegments = (
-  value: number | undefined,
-  elapsedMs: number,
-): LinearProgressSegment[] => {
+const resolveSegments = (value: number | undefined, elapsedMs: number): LinearProgressSegment[] => {
   if (value !== undefined) {
     const progress = Math.min(1, Math.max(0, value));
     return progress > 0 ? [{ start: 0, end: progress }] : [];
@@ -81,14 +72,11 @@ export const LinearProgressWavy = ({
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const containerRef = useRef<HTMLSpanElement | null>(null);
   const fillColor = color ?? theme.palette.primary.main;
-  const resolvedTrackColor =
-    trackColor ?? alpha(theme.palette.primary.main, 0.24);
+  const resolvedTrackColor = trackColor ?? alpha(theme.palette.primary.main, 0.24);
   const indeterminate = value === undefined;
   const resolvedWavelength =
     wavelength ??
-    (indeterminate
-      ? DEFAULT_INDETERMINATE_WAVELENGTH_PX
-      : DEFAULT_DETERMINATE_WAVELENGTH_PX);
+    (indeterminate ? DEFAULT_INDETERMINATE_WAVELENGTH_PX : DEFAULT_DETERMINATE_WAVELENGTH_PX);
   const resolvedWaveSpeed = waveSpeed ?? resolvedWavelength / 1.8;
   const height = strokeWidth + amplitude * 2;
 
@@ -175,21 +163,14 @@ export const LinearProgressWavy = ({
       }
 
       const segments = resolveSegments(next.value, elapsedMs);
-      const progress =
-        next.value === undefined
-          ? 0.5
-          : Math.min(1, Math.max(0, next.value ?? 0));
-      const ampFactor =
-        next.value === undefined ? 1 : determinateAmplitudeFactor(progress);
+      const progress = next.value === undefined ? 0.5 : Math.min(1, Math.max(0, next.value ?? 0));
+      const ampFactor = next.value === undefined ? 1 : determinateAmplitudeFactor(progress);
       const wavePhaseRad =
-        next.wavelength > 0
-          ? (waveDistancePx / next.wavelength) * Math.PI * 2
-          : 0;
+        next.wavelength > 0 ? (waveDistancePx / next.wavelength) * Math.PI * 2 : 0;
 
       const ctx = canvas.getContext("2d");
       if (ctx) {
-        const dpr =
-          typeof window !== "undefined" ? window.devicePixelRatio || 1 : 1;
+        const dpr = typeof window !== "undefined" ? window.devicePixelRatio || 1 : 1;
         ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
         drawWavyLinearProgress(ctx, cssWidth, next.height, {
           color: next.fillColor,
@@ -217,9 +198,7 @@ export const LinearProgressWavy = ({
   }, [height]);
 
   const ariaValue =
-    value === undefined
-      ? undefined
-      : Math.round(Math.min(100, Math.max(0, value * 100)));
+    value === undefined ? undefined : Math.round(Math.min(100, Math.max(0, value * 100)));
 
   return (
     <Box
@@ -240,10 +219,7 @@ export const LinearProgressWavy = ({
       }}
       {...rest}
     >
-      <canvas
-        ref={canvasRef}
-        style={{ display: "block", width: "100%", height }}
-      />
+      <canvas ref={canvasRef} style={{ display: "block", width: "100%", height }} />
     </Box>
   );
 };

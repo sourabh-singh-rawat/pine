@@ -100,19 +100,13 @@ export const workspaceTenantRelationship = (
   subject: { namespace: "tenant", id: tenantId },
 });
 
-export const spaceOwnerRelationship = (
-  spaceId: string,
-  identityId: string,
-): GraphRelationship => ({
+export const spaceOwnerRelationship = (spaceId: string, identityId: string): GraphRelationship => ({
   object: { namespace: "space", id: spaceId },
   relation: OWNER,
   subject: { namespace: IDENTITY, id: identityId },
 });
 
-export const spaceAdminRelationship = (
-  spaceId: string,
-  identityId: string,
-): GraphRelationship => ({
+export const spaceAdminRelationship = (spaceId: string, identityId: string): GraphRelationship => ({
   object: { namespace: "space", id: spaceId },
   relation: ADMIN,
   subject: { namespace: IDENTITY, id: identityId },
@@ -136,73 +130,49 @@ export const spaceWorkspaceRelationship = (
   subject: { namespace: "workspace", id: workspaceId },
 });
 
-export const listOwnerRelationship = (
-  listId: string,
-  identityId: string,
-): GraphRelationship => ({
+export const listOwnerRelationship = (listId: string, identityId: string): GraphRelationship => ({
   object: { namespace: "list", id: listId },
   relation: OWNER,
   subject: { namespace: IDENTITY, id: identityId },
 });
 
-export const listAdminRelationship = (
-  listId: string,
-  identityId: string,
-): GraphRelationship => ({
+export const listAdminRelationship = (listId: string, identityId: string): GraphRelationship => ({
   object: { namespace: "list", id: listId },
   relation: ADMIN,
   subject: { namespace: IDENTITY, id: identityId },
 });
 
-export const listMemberRelationship = (
-  listId: string,
-  identityId: string,
-): GraphRelationship => ({
+export const listMemberRelationship = (listId: string, identityId: string): GraphRelationship => ({
   object: { namespace: "list", id: listId },
   relation: MEMBER,
   subject: { namespace: IDENTITY, id: identityId },
 });
 
-export const listSpaceRelationship = (
-  listId: string,
-  spaceId: string,
-): GraphRelationship => ({
+export const listSpaceRelationship = (listId: string, spaceId: string): GraphRelationship => ({
   object: { namespace: "list", id: listId },
   relation: LIST_SPACE,
   subject: { namespace: "space", id: spaceId },
 });
 
-export const itemOwnerRelationship = (
-  itemId: string,
-  identityId: string,
-): GraphRelationship => ({
+export const itemOwnerRelationship = (itemId: string, identityId: string): GraphRelationship => ({
   object: { namespace: "item", id: itemId },
   relation: OWNER,
   subject: { namespace: IDENTITY, id: identityId },
 });
 
-export const itemAdminRelationship = (
-  itemId: string,
-  identityId: string,
-): GraphRelationship => ({
+export const itemAdminRelationship = (itemId: string, identityId: string): GraphRelationship => ({
   object: { namespace: "item", id: itemId },
   relation: ADMIN,
   subject: { namespace: IDENTITY, id: identityId },
 });
 
-export const itemMemberRelationship = (
-  itemId: string,
-  identityId: string,
-): GraphRelationship => ({
+export const itemMemberRelationship = (itemId: string, identityId: string): GraphRelationship => ({
   object: { namespace: "item", id: itemId },
   relation: MEMBER,
   subject: { namespace: IDENTITY, id: identityId },
 });
 
-export const itemListRelationship = (
-  itemId: string,
-  listId: string,
-): GraphRelationship => ({
+export const itemListRelationship = (itemId: string, listId: string): GraphRelationship => ({
   object: { namespace: "item", id: itemId },
   relation: ITEM_LIST,
   subject: { namespace: "list", id: listId },

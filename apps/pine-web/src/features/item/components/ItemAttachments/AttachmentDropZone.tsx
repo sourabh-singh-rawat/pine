@@ -9,11 +9,7 @@ interface AttachmentDropZoneProps {
   onFile: (file: File) => void;
 }
 
-export const AttachmentDropZone = ({
-  isPending,
-  onBrowse,
-  onFile,
-}: AttachmentDropZoneProps) => {
+export const AttachmentDropZone = ({ isPending, onBrowse, onFile }: AttachmentDropZoneProps) => {
   const theme = useTheme();
   const dragDepthRef = useRef(0);
   const [isDragActive, setIsDragActive] = useState(false);
@@ -76,9 +72,7 @@ export const AttachmentDropZone = ({
       tabIndex={isPending ? -1 : 0}
       aria-disabled={isPending}
       aria-label={
-        isPending
-          ? "Uploading attachment"
-          : "Drop a file to upload, or press Enter to browse"
+        isPending ? "Uploading attachment" : "Drop a file to upload, or press Enter to browse"
       }
       onClick={() => {
         if (!isPending) {
@@ -99,9 +93,7 @@ export const AttachmentDropZone = ({
         px: 2,
         py: 3,
         borderRadius: 2,
-        border: `1px dashed ${
-          isDragActive ? theme.palette.primary.main : theme.palette.divider
-        }`,
+        border: `1px dashed ${isDragActive ? theme.palette.primary.main : theme.palette.divider}`,
         bgcolor: isDragActive ? "action.selected" : "action.hover",
         cursor: isPending ? "progress" : "pointer",
         outline: "none",
@@ -120,10 +112,7 @@ export const AttachmentDropZone = ({
       {isPending ? (
         <ProgressCircularIndicator size={28} aria-label="Uploading attachment" />
       ) : (
-        <CloudUploadOutlined
-          color={isDragActive ? "primary" : "action"}
-          sx={{ fontSize: 32 }}
-        />
+        <CloudUploadOutlined color={isDragActive ? "primary" : "action"} sx={{ fontSize: 32 }} />
       )}
       <Stack spacing={0.25} alignItems="center">
         <Typography
@@ -133,11 +122,7 @@ export const AttachmentDropZone = ({
             color: isDragActive ? "primary.main" : "text.primary",
           }}
         >
-          {isPending
-            ? "Uploading…"
-            : isDragActive
-              ? "Drop to upload"
-              : "Drag and drop a file here"}
+          {isPending ? "Uploading…" : isDragActive ? "Drop to upload" : "Drag and drop a file here"}
         </Typography>
         {!isPending && !isDragActive && (
           <Typography variant="caption" color="text.secondary">

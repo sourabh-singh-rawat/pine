@@ -23,5 +23,4 @@ export const IdentityWorkspacePreferences = pgTable(
 );
 
 export type IdentityWorkspacePreference = typeof IdentityWorkspacePreferences.$inferSelect;
-export type NewIdentityWorkspacePreference =
-  typeof IdentityWorkspacePreferences.$inferInsert;
+export type NewIdentityWorkspacePreference = typeof IdentityWorkspacePreferences.$inferInsert;

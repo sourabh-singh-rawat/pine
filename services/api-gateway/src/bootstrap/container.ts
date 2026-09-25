@@ -43,12 +43,8 @@ container.bind<IHttpServer>(TYPES.HttpServer).toConstantValue(
       context: async (req) => {
         const tenantHeader = req.headers["x-tenant-id"];
         const workspaceHeader = req.headers["x-workspace-id"];
-        const tenantId =
-          typeof tenantHeader === "string" && tenantHeader.length > 0 ? tenantHeader : undefined;
-        const workspaceId =
-          typeof workspaceHeader === "string" && workspaceHeader.length > 0
-            ? workspaceHeader
-            : undefined;
+        const tenantId = typeof tenantHeader === "string" && tenantHeader.length > 0 ? tenantHeader : undefined;
+        const workspaceId = typeof workspaceHeader === "string" && workspaceHeader.length > 0 ? workspaceHeader : undefined;
 
         return {
           identityId: req.identity?.id,

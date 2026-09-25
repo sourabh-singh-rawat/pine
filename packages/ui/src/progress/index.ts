@@ -1,19 +1,7 @@
-export {
-  CircularProgressFlat,
-  type CircularProgressFlatProps,
-} from "./CircularProgressFlat";
-export {
-  CircularProgressWavy,
-  type CircularProgressWavyProps,
-} from "./CircularProgressWavy";
-export {
-  LinearProgressFlat,
-  type LinearProgressFlatProps,
-} from "./LinearProgressFlat";
-export {
-  LinearProgressWavy,
-  type LinearProgressWavyProps,
-} from "./LinearProgressWavy";
+export { CircularProgressFlat, type CircularProgressFlatProps } from "./CircularProgressFlat";
+export { CircularProgressWavy, type CircularProgressWavyProps } from "./CircularProgressWavy";
+export { LinearProgressFlat, type LinearProgressFlatProps } from "./LinearProgressFlat";
+export { LinearProgressWavy, type LinearProgressWavyProps } from "./LinearProgressWavy";
 
 export { CircularProgressFlat as ProgressCircular } from "./CircularProgressFlat";
 export type { CircularProgressFlatProps as ProgressCircularProps } from "./CircularProgressFlat";

@@ -48,7 +48,9 @@ export const packageVersionsAt = async (
 
   for (const relative of paths) {
     const raw =
-      commit === null ? readWorkingTreeFile(cwd, relative) : await gitShow(cwd, `${commit}:${relative}`);
+      commit === null
+        ? readWorkingTreeFile(cwd, relative)
+        : await gitShow(cwd, `${commit}:${relative}`);
     if (raw === null) {
       continue;
     }
@@ -83,9 +85,7 @@ const readWorkingTreeFile = (cwd: string, relative: string): string | null => {
   return readFileSync(full, "utf8");
 };
 
-const parsePackageJsonNameVersion = (
-  raw: string,
-): { name: string; version: string } | null => {
+const parsePackageJsonNameVersion = (raw: string): { name: string; version: string } | null => {
   try {
     const parsed: unknown = JSON.parse(raw);
     if (typeof parsed !== "object" || parsed === null) {

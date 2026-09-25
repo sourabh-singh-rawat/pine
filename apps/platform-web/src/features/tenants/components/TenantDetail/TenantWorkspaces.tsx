@@ -36,18 +36,17 @@ export const TenantWorkspaces = ({ tenantId }: TenantWorkspacesProps) => {
     if (!workspace.id) {
       continue;
     }
-    workspaceNameById.set(
-      workspace.id,
-      workspace.name ?? workspace.slug ?? workspace.id,
-    );
+    workspaceNameById.set(workspace.id, workspace.name ?? workspace.slug ?? workspace.id);
   }
 
   return (
     <Stack spacing={2}>
-      <Stack direction="row" spacing={2} sx={{ alignItems: "center", justifyContent: "space-between" }}>
-        <Typography color="text.secondary">
-          Workspaces that belong to this tenant.
-        </Typography>
+      <Stack
+        direction="row"
+        spacing={2}
+        sx={{ alignItems: "center", justifyContent: "space-between" }}
+      >
+        <Typography color="text.secondary">Workspaces that belong to this tenant.</Typography>
         <CreateWorkspaceModal tenantId={tenantId} />
       </Stack>
 

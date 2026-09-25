@@ -61,26 +61,14 @@ const parseSVGPath = (d: string): PathCmd[] => {
   return cmds;
 };
 
-const sampleCubic = (
-  p0: Point,
-  p1: Point,
-  p2: Point,
-  p3: Point,
-  steps: number,
-): Point[] => {
+const sampleCubic = (p0: Point, p1: Point, p2: Point, p3: Point, steps: number): Point[] => {
   const out: Point[] = [];
   for (let i = 1; i <= steps; i++) {
     const t = i / steps;
     const u = 1 - t;
     out.push([
-      u * u * u * p0[0] +
-        3 * u * u * t * p1[0] +
-        3 * u * t * t * p2[0] +
-        t * t * t * p3[0],
-      u * u * u * p0[1] +
-        3 * u * u * t * p1[1] +
-        3 * u * t * t * p2[1] +
-        t * t * t * p3[1],
+      u * u * u * p0[0] + 3 * u * u * t * p1[0] + 3 * u * t * t * p2[0] + t * t * t * p3[0],
+      u * u * u * p0[1] + 3 * u * u * t * p1[1] + 3 * u * t * t * p2[1] + t * t * t * p3[1],
     ]);
   }
   return out;

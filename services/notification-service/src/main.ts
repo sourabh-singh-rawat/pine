@@ -17,7 +17,9 @@ const main = async () => {
   await initializeDb();
   await broker.init();
 
-  void container.get<NotificationIdentitySyncConsumer>(TYPES.NotificationIdentitySyncConsumer).start();
+  void container
+    .get<NotificationIdentitySyncConsumer>(TYPES.NotificationIdentitySyncConsumer)
+    .start();
   logger.info("Notification service started");
 };
 

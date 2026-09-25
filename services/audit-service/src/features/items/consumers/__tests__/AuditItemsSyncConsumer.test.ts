@@ -15,17 +15,13 @@ const createDb = () => ({
   transaction: vi.fn(async (callback: (tx: object) => Promise<unknown>) => callback({})),
 });
 
-const createItemRepository = (
-  overrides: Partial<IItemRepository> = {},
-): IItemRepository => ({
+const createItemRepository = (overrides: Partial<IItemRepository> = {}): IItemRepository => ({
   upsert: vi.fn().mockResolvedValue({ id: "item-1" }),
   findById: vi.fn().mockResolvedValue(null),
   ...overrides,
 });
 
-const createSpaceRepository = (
-  overrides: Partial<ISpaceRepository> = {},
-): ISpaceRepository => ({
+const createSpaceRepository = (overrides: Partial<ISpaceRepository> = {}): ISpaceRepository => ({
   upsert: vi.fn().mockResolvedValue({ id: "space-1" }),
   findById: vi.fn().mockResolvedValue(null),
   ...overrides,

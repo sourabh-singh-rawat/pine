@@ -2,20 +2,14 @@ import { uuidv7 } from "@pine/common";
 import { eq } from "drizzle-orm";
 import { inject, injectable } from "inversify";
 import { TYPES } from "@/bootstrap/container-types";
-import {
-  type Database,
-  type ProfilePhotoUploadRequest,
-  ProfilePhotoUploadRequests,
-} from "@/db";
+import { type Database, type ProfilePhotoUploadRequest, ProfilePhotoUploadRequests } from "@/db";
 import type {
   IProfilePhotoUploadRequestRepository,
   ProfilePhotoUploadRequestRepositoryOptions,
 } from "@/features/profiles/repositories/IProfilePhotoUploadRequestRepository";
 
 @injectable()
-export class ProfilePhotoUploadRequestRepository
-  implements IProfilePhotoUploadRequestRepository
-{
+export class ProfilePhotoUploadRequestRepository implements IProfilePhotoUploadRequestRepository {
   constructor(@inject(TYPES.Database) private readonly db: Database) {}
 
   async save(
@@ -59,12 +53,7 @@ export class ProfilePhotoUploadRequestRepository
 
   async update(
     id: string,
-    entity: Partial<
-      Pick<
-        ProfilePhotoUploadRequest,
-        "status" | "attachmentId" | "completedAt"
-      >
-    >,
+    entity: Partial<Pick<ProfilePhotoUploadRequest, "status" | "attachmentId" | "completedAt">>,
     options?: ProfilePhotoUploadRequestRepositoryOptions,
   ): Promise<ProfilePhotoUploadRequest> {
     const client = this.client(options);
@@ -73,12 +62,8 @@ export class ProfilePhotoUploadRequestRepository
       .update(ProfilePhotoUploadRequests)
       .set({
         ...(entity.status !== undefined ? { status: entity.status } : {}),
-        ...(entity.attachmentId !== undefined
-          ? { attachmentId: entity.attachmentId }
-          : {}),
-        ...(entity.completedAt !== undefined
-          ? { completedAt: entity.completedAt }
-          : {}),
+        ...(entity.attachmentId !== undefined ? { attachmentId: entity.attachmentId } : {}),
+        ...(entity.completedAt !== undefined ? { completedAt: entity.completedAt } : {}),
       })
       .where(eq(ProfilePhotoUploadRequests.id, id))
       .returning();
