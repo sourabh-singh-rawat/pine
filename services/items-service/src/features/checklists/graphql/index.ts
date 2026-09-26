@@ -1,5 +1,6 @@
 import "./objects/ChecklistEntryObject";
 import "./objects/ChecklistObject";
+import "./objects/ChecklistCountsObject";
 import "./inputs/CreateChecklistInput";
 import "./inputs/UpdateChecklistInput";
 import "./inputs/CreateChecklistEntryInput";

@@ -1,6 +1,6 @@
 import { ItemStatus, ItemPriority, ServiceResponse } from "@pine/common";
 import type { StatusOption } from "@/db";
-import type { ChecklistSummary } from "@/features/checklists/repositories";
+import type { ChecklistCounts } from "@/features/checklists/repositories";
 import type { ItemWithHasChildren, ItemWithList } from "@/features/item/repositories";
 
 export interface CreateItemOptions {
@@ -40,6 +40,9 @@ export interface UpdateItemOptions {
 export interface ListItemsOptions {
   listId: string;
   userId: string;
+  first?: number | null;
+  statusId?: string | null;
+  after?: string | null;
 }
 
 export interface DeleteItemOptions {
@@ -48,12 +51,19 @@ export interface DeleteItemOptions {
 }
 
 export type ItemListItem = ItemWithHasChildren & {
-  checklists: ChecklistSummary[];
+  checklistCounts: Pick<ChecklistCounts, "completedCount" | "totalCount">;
+};
+
+export type ItemGroupPageInfo = {
+  hasNextPage: boolean;
+  endCursor: string | null;
 };
 
 export type ItemStatusGroup = {
   status: StatusOption;
   items: ItemListItem[];
+  pageInfo: ItemGroupPageInfo;
+  totalCount: number;
 };
 
 export interface IItemService {

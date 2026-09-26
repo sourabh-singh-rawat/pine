@@ -1,14 +1,16 @@
 import { uuidv7 } from "@pine/common";
-import { and, count, eq, inArray, isNull, sql } from "drizzle-orm";
+import { and, asc, count, eq, gt, inArray, isNull, or, sql } from "drizzle-orm";
 import { inject, injectable } from "inversify";
 import { TYPES } from "@/bootstrap/container-types";
 import { type Database, type Item, Items, Lists } from "@/db";
 import type {
   CreateItemEntity,
+  FindRootPageByStatusOptions,
   IItemRepository,
   ItemRepositoryOptions,
   ItemWithHasChildren,
   ItemWithList,
+  RootCountByStatus,
   UpdateItemEntity,
 } from "@/features/item/repositories/IItemRepository";
 
@@ -151,29 +153,67 @@ export class ItemRepository implements IItemRepository {
         ),
       );
 
-    if (roots.length === 0) {
-      return [];
-    }
+    return this.withHasChildren(roots, userId, options);
+  }
 
-    const rootIds = roots.map((root) => root.id);
-    const childParents = await client
-      .selectDistinct({ parentItemId: Items.parentItemId })
+  async findRootPageByStatus(
+    listId: string,
+    userId: string,
+    page: FindRootPageByStatusOptions,
+    options?: ItemRepositoryOptions,
+  ): Promise<ItemWithHasChildren[]> {
+    const client = this.client(options);
+    const seek = page.after
+      ? or(
+          gt(Items.name, page.after.name),
+          and(eq(Items.name, page.after.name), gt(Items.id, page.after.id)),
+        )
+      : undefined;
+
+    const roots = await client
+      .select()
       .from(Items)
       .where(
         and(
-          inArray(Items.parentItemId, rootIds),
+          eq(Items.listId, listId),
           eq(Items.createdById, userId),
+          eq(Items.statusId, page.statusId),
+          isNull(Items.parentItemId),
+          isNull(Items.deletedAt),
+          seek,
+        ),
+      )
+      .orderBy(asc(Items.name), asc(Items.id))
+      .limit(page.limit);
+
+    return this.withHasChildren(roots, userId, options);
+  }
+
+  async countRootsByListGrouped(
+    listId: string,
+    userId: string,
+    options?: ItemRepositoryOptions,
+  ): Promise<RootCountByStatus[]> {
+    const client = this.client(options);
+    const rows = await client
+      .select({
+        statusId: Items.statusId,
+        totalCount: count(),
+      })
+      .from(Items)
+      .where(
+        and(
+          eq(Items.listId, listId),
+          eq(Items.createdById, userId),
+          isNull(Items.parentItemId),
           isNull(Items.deletedAt),
         ),
-      );
+      )
+      .groupBy(Items.statusId);
 
-    const parentsWithChildren = new Set(
-      childParents.flatMap((row) => (row.parentItemId ? [row.parentItemId] : [])),
-    );
-
-    return roots.map((root) => ({
-      ...root,
-      hasChildren: parentsWithChildren.has(root.id),
+    return rows.map((row) => ({
+      statusId: row.statusId,
+      totalCount: Number(row.totalCount),
     }));
   }
 
@@ -224,6 +264,38 @@ export class ItemRepository implements IItemRepository {
       .returning({ id: Items.id });
 
     return updated.length;
+  }
+
+  private async withHasChildren(
+    roots: Item[],
+    userId: string,
+    options?: ItemRepositoryOptions,
+  ): Promise<ItemWithHasChildren[]> {
+    if (roots.length === 0) {
+      return [];
+    }
+
+    const client = this.client(options);
+    const rootIds = roots.map((root) => root.id);
+    const childParents = await client
+      .selectDistinct({ parentItemId: Items.parentItemId })
+      .from(Items)
+      .where(
+        and(
+          inArray(Items.parentItemId, rootIds),
+          eq(Items.createdById, userId),
+          isNull(Items.deletedAt),
+        ),
+      );
+
+    const parentsWithChildren = new Set(
+      childParents.flatMap((row) => (row.parentItemId ? [row.parentItemId] : [])),
+    );
+
+    return roots.map((root) => ({
+      ...root,
+      hasChildren: parentsWithChildren.has(root.id),
+    }));
   }
 
   private client(options?: ItemRepositoryOptions) {

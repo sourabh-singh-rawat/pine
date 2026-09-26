@@ -1,13 +1,10 @@
 import { builder } from "@pine/server";
-import type { StatusOption } from "@/db";
-import type { ItemListItem } from "@/features/item/services/IItemService";
+import type { ItemStatusGroup } from "@/features/item/services/IItemService";
 import { StatusObject } from "@/features/item-statuses/graphql/objects/StatusObject";
+import { ItemGroupPageInfoObject } from "./ItemGroupPageInfoObject";
 import { ItemObject } from "./ItemObject";
 
-export type ItemStatusGroupObjectShape = {
-  status: StatusOption;
-  items: ItemListItem[];
-};
+export type ItemStatusGroupObjectShape = ItemStatusGroup;
 
 export const ItemStatusGroupObject = builder
   .objectRef<ItemStatusGroupObjectShape>("ItemStatusGroupObject")
@@ -21,5 +18,10 @@ export const ItemStatusGroupObject = builder
         type: [ItemObject],
         resolve: (parent) => parent.items,
       }),
+      pageInfo: t.field({
+        type: ItemGroupPageInfoObject,
+        resolve: (parent) => parent.pageInfo,
+      }),
+      totalCount: t.exposeInt("totalCount"),
     }),
   });

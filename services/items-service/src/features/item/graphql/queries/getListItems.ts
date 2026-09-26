@@ -9,11 +9,14 @@ builder.queryFields((t) => ({
     type: [ItemStatusGroupObject],
     args: {
       listId: t.arg.string({ required: true }),
+      first: t.arg.int(),
+      statusId: t.arg.string(),
+      after: t.arg.string(),
     },
-    resolve: async (_root, { listId }, ctx) => {
+    resolve: async (_root, { listId, first, statusId, after }, ctx) => {
       const service = container.get<IItemService>(TYPES.ItemService);
       const userId = requireIdentityId(ctx);
-      return await service.list({ userId, listId });
+      return await service.list({ userId, listId, first, statusId, after });
     },
   }),
 }));

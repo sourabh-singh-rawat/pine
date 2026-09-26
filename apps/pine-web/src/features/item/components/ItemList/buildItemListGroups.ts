@@ -5,6 +5,9 @@ export type ItemListGroup = {
   statusId: string;
   statusName: string;
   rows: ItemRow[];
+  totalCount: number;
+  hasNextPage: boolean;
+  endCursor: string | null;
 };
 
 type ListItemGroupSource = {
@@ -13,6 +16,11 @@ type ListItemGroupSource = {
     name?: string | null;
   } | null;
   items?: Array<ItemSource | null> | null;
+  totalCount?: number | null;
+  pageInfo?: {
+    hasNextPage?: boolean | null;
+    endCursor?: string | null;
+  } | null;
 } | null;
 
 export const buildItemListGroups = (options: {
@@ -44,6 +52,9 @@ export const buildItemListGroups = (options: {
       statusId: status.id,
       statusName: status.name,
       rows: [],
+      totalCount: group.totalCount ?? 0,
+      hasNextPage: Boolean(group.pageInfo?.hasNextPage),
+      endCursor: group.pageInfo?.endCursor ?? null,
     });
   }
 

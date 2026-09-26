@@ -17,6 +17,7 @@ import { ItemStatusGroupSection } from "./ItemStatusGroupSection";
 import { sortItemRows, toItemRow } from "./mapItemRow";
 import { type ItemListProps, type ItemRow } from "./types";
 import { useItemListActions } from "./useItemListActions";
+import { useItemListLoadMore } from "./useItemListLoadMore";
 import { useItemListNesting } from "./useItemListNesting";
 
 const EMPTY_ROWS: ItemRow[] = [];
@@ -97,6 +98,8 @@ export const ItemList = ({ itemId, listId, style }: ItemListProps) => {
       enabled: enableNestedRows,
       listDataUpdatedAt: listItems.dataUpdatedAt,
     });
+
+  const { onLoadMore, loadingStatusId } = useItemListLoadMore(listId);
 
   const groups = useMemo(() => {
     if (itemId || !listId) {
@@ -225,8 +228,22 @@ export const ItemList = ({ itemId, listId, style }: ItemListProps) => {
               key={group.statusId}
               statusName={group.statusName}
               rows={group.rows}
+              totalCount={group.totalCount}
               enableNestedRows={enableNestedRows}
               showBorder={style?.showBorder}
+              hasNextPage={group.hasNextPage}
+              isLoadingMore={loadingStatusId === group.statusId}
+              onLoadMore={
+                group.hasNextPage && group.endCursor
+                  ? () => {
+                      const cursor = group.endCursor;
+                      if (!cursor) {
+                        return;
+                      }
+                      void onLoadMore(group.statusId, cursor);
+                    }
+                  : undefined
+              }
             />
           ))
         ) : (

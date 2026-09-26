@@ -145,10 +145,13 @@ export type GetItemQuery = { getItem: { id: string | null, description: string |
 
 export type GetListItemsQueryVariables = Exact<{
   listId: string;
+  first?: number | null | undefined;
+  statusId?: string | null | undefined;
+  after?: string | null | undefined;
 }>;
 
 
-export type GetListItemsQuery = { getListItems: Array<{ status: { id: string | null, name: string | null, orderIndex: number | null, color: string | null, type: string | null } | null, items: Array<{ description: string | null, id: string | null, name: string | null, statusId: string | null, priority: string | null, dueDate: unknown, hasChildren: boolean | null, checklists: Array<{ completedCount: number | null, totalCount: number | null }> | null }> | null }> | null };
+export type GetListItemsQuery = { getListItems: Array<{ totalCount: number | null, status: { id: string | null, name: string | null, orderIndex: number | null, color: string | null, type: string | null } | null, items: Array<{ description: string | null, id: string | null, name: string | null, statusId: string | null, priority: string | null, dueDate: unknown, hasChildren: boolean | null, checklistCounts: { completedCount: number | null, totalCount: number | null } | null }> | null, pageInfo: { hasNextPage: boolean | null, endCursor: string | null } | null }> | null };
 
 export type GetSubItemsQueryVariables = Exact<{
   input: Types.GetSubItemsInput;
@@ -810,8 +813,8 @@ useGetItemQuery.document = GetItemDocument;
 useGetItemQuery.getKey = (variables: GetItemQueryVariables) => ['GetItem', variables];
 
 export const GetListItemsDocument = new TypedDocumentString(`
-    query GetListItems($listId: String!) {
-  getListItems(listId: $listId) {
+    query GetListItems($listId: String!, $first: Int, $statusId: String, $after: String) {
+  getListItems(listId: $listId, first: $first, statusId: $statusId, after: $after) {
     status {
       id
       name
@@ -827,11 +830,16 @@ export const GetListItemsDocument = new TypedDocumentString(`
       priority
       dueDate
       hasChildren
-      checklists {
+      checklistCounts {
         completedCount
         totalCount
       }
     }
+    pageInfo {
+      hasNextPage
+      endCursor
+    }
+    totalCount
   }
 }
     `);

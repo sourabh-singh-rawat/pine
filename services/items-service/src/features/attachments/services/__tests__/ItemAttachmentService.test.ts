@@ -97,6 +97,8 @@ const createItemRepository = (overrides: Partial<IItemRepository> = {}): IItemRe
   findById: vi.fn().mockResolvedValue(item),
   findByIdForUser: vi.fn(),
   findRootsByList: vi.fn(),
+  findRootPageByStatus: vi.fn(),
+  countRootsByListGrouped: vi.fn(),
   findChildren: vi.fn(),
   countByStatusId: vi.fn().mockResolvedValue(0),
   reassignStatus: vi.fn().mockResolvedValue(0),
