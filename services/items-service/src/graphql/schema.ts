@@ -6,6 +6,6 @@ import "@/features/sub-items/graphql";
 import "@/features/attachments/graphql";
 import "@/features/checklists/graphql";
 import "@/features/spaces/graphql";
-import "@/features/status/graphql";
+import "@/features/item-statuses/graphql";
 
 export const schema = builder.toSchema({});

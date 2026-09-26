@@ -17,6 +17,10 @@
     "./api": {
       "types": "./src/api/index.ts",
       "default": "./src/api/index.ts"
+    },
+    "./constants": {
+      "types": "./src/constants/index.ts",
+      "default": "./src/constants/index.ts"
     }
   },
   "scripts": {

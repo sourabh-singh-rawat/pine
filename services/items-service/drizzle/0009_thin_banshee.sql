@@ -1,0 +1,1 @@
+ALTER TABLE "status_options" ADD COLUMN "color" text DEFAULT '#64748B' NOT NULL;

@@ -47,7 +47,7 @@ import {
 import { IItemAssigneeRepository, IItemRepository, IItemService, ItemAssigneeRepository, ItemRepository, ItemService } from "@/features/item";
 import { IListRepository, IListService, ListRepository, ListService } from "@/features/lists";
 import { ISpaceRepository, ISpaceService, SpaceRepository, SpaceService } from "@/features/spaces";
-import { IStatusRepository, IStatusService, StatusRepository, StatusService } from "@/features/status";
+import { IStatusRepository, IStatusService, StatusRepository, StatusService } from "@/features/item-statuses";
 import { ISubItemService, SubItemService } from "@/features/sub-items";
 
 export const container = new Container({ defaultScope: "Singleton" });

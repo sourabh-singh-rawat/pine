@@ -1,5 +1,5 @@
 import { uuidv7 } from "@pine/common";
-import { and, eq, inArray, isNull, sql } from "drizzle-orm";
+import { and, count, eq, inArray, isNull, sql } from "drizzle-orm";
 import { inject, injectable } from "inversify";
 import { TYPES } from "@/bootstrap/container-types";
 import { type Database, type Item, Items, Lists } from "@/db";
@@ -193,6 +193,37 @@ export class ItemRepository implements IItemRepository {
           isNull(Items.deletedAt),
         ),
       );
+  }
+
+  async countByStatusId(statusId: string, options?: ItemRepositoryOptions): Promise<number> {
+    const client = this.client(options);
+    const [row] = await client
+      .select({ value: count() })
+      .from(Items)
+      .where(and(eq(Items.statusId, statusId), isNull(Items.deletedAt)));
+
+    return row?.value ?? 0;
+  }
+
+  async reassignStatus(
+    fromStatusId: string,
+    toStatusId: string,
+    options?: ItemRepositoryOptions,
+  ): Promise<number> {
+    const client = this.client(options);
+    const now = new Date();
+
+    const updated = await client
+      .update(Items)
+      .set({
+        statusId: toStatusId,
+        updatedAt: now,
+        version: sql`${Items.version} + 1`,
+      })
+      .where(and(eq(Items.statusId, fromStatusId), isNull(Items.deletedAt)))
+      .returning({ id: Items.id });
+
+    return updated.length;
   }
 
   private client(options?: ItemRepositoryOptions) {
