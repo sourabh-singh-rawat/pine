@@ -30,6 +30,12 @@ export type AuditLogObject = {
   workspaceId?: Maybe<Scalars['String']['output']>;
 };
 
+export type ChecklistCountsObject = {
+  __typename?: 'ChecklistCountsObject';
+  completedCount?: Maybe<Scalars['Int']['output']>;
+  totalCount?: Maybe<Scalars['Int']['output']>;
+};
+
 export type ChecklistEntryObject = {
   __typename?: 'ChecklistEntryObject';
   checklistId?: Maybe<Scalars['String']['output']>;
@@ -248,8 +254,15 @@ export type ItemAttachmentUploadTargetObject = {
   url?: Maybe<Scalars['String']['output']>;
 };
 
+export type ItemGroupPageInfo = {
+  __typename?: 'ItemGroupPageInfo';
+  endCursor?: Maybe<Scalars['String']['output']>;
+  hasNextPage?: Maybe<Scalars['Boolean']['output']>;
+};
+
 export type ItemObject = {
   __typename?: 'ItemObject';
+  checklistCounts?: Maybe<ChecklistCountsObject>;
   checklists?: Maybe<Array<ChecklistObject>>;
   component?: Maybe<Scalars['String']['output']>;
   description?: Maybe<Scalars['String']['output']>;
@@ -268,7 +281,9 @@ export type ItemObject = {
 export type ItemStatusGroupObject = {
   __typename?: 'ItemStatusGroupObject';
   items?: Maybe<Array<ItemObject>>;
+  pageInfo?: Maybe<ItemGroupPageInfo>;
   status?: Maybe<StatusObject>;
+  totalCount?: Maybe<Scalars['Int']['output']>;
 };
 
 export type ListObject = {
@@ -676,7 +691,10 @@ export type QueryGetListArgs = {
 
 
 export type QueryGetListItemsArgs = {
+  after?: InputMaybe<Scalars['String']['input']>;
+  first?: InputMaybe<Scalars['Int']['input']>;
   listId: Scalars['String']['input'];
+  statusId?: InputMaybe<Scalars['String']['input']>;
 };
 
 

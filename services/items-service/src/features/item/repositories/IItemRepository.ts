@@ -38,6 +38,22 @@ export type ItemWithHasChildren = Item & {
   hasChildren: boolean;
 };
 
+export type RootPageCursor = {
+  name: string;
+  id: string;
+};
+
+export type FindRootPageByStatusOptions = {
+  statusId: string;
+  limit: number;
+  after?: RootPageCursor;
+};
+
+export type RootCountByStatus = {
+  statusId: string;
+  totalCount: number;
+};
+
 export interface IItemRepository {
   save(entity: CreateItemEntity, options?: ItemRepositoryOptions): Promise<Item>;
   update(
@@ -58,6 +74,17 @@ export interface IItemRepository {
     userId: string,
     options?: ItemRepositoryOptions,
   ): Promise<ItemWithHasChildren[]>;
+  findRootPageByStatus(
+    listId: string,
+    userId: string,
+    page: FindRootPageByStatusOptions,
+    options?: ItemRepositoryOptions,
+  ): Promise<ItemWithHasChildren[]>;
+  countRootsByListGrouped(
+    listId: string,
+    userId: string,
+    options?: ItemRepositoryOptions,
+  ): Promise<RootCountByStatus[]>;
   findChildren(
     parentItemId: string,
     userId: string,

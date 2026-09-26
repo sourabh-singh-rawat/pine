@@ -1,5 +1,5 @@
-query GetListItems($listId: String!) {
-  getListItems(listId: $listId) {
+query GetListItems($listId: String!, $first: Int, $statusId: String, $after: String) {
+  getListItems(listId: $listId, first: $first, statusId: $statusId, after: $after) {
     status {
       id
       name
@@ -15,10 +15,15 @@ query GetListItems($listId: String!) {
       priority
       dueDate
       hasChildren
-      checklists {
+      checklistCounts {
         completedCount
         totalCount
       }
     }
+    pageInfo {
+      hasNextPage
+      endCursor
+    }
+    totalCount
   }
 }

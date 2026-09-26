@@ -4,8 +4,8 @@ import { inject, injectable } from "inversify";
 import { TYPES } from "@/bootstrap/container-types";
 import { type Checklist, ChecklistEntries, Checklists, type Database } from "@/db";
 import type {
+  ChecklistCounts,
   ChecklistRepositoryOptions,
-  ChecklistSummary,
   CreateChecklistEntity,
   IChecklistRepository,
   UpdateChecklistEntity,
@@ -79,10 +79,10 @@ export class ChecklistRepository implements IChecklistRepository {
       .orderBy(asc(Checklists.createdAt));
   }
 
-  async findSummariesByItemIds(
+  async findCountsByItemIds(
     itemIds: string[],
     options?: ChecklistRepositoryOptions,
-  ): Promise<ChecklistSummary[]> {
+  ): Promise<ChecklistCounts[]> {
     if (itemIds.length === 0) {
       return [];
     }
@@ -90,13 +90,9 @@ export class ChecklistRepository implements IChecklistRepository {
     const client = this.client(options);
     const rows = await client
       .select({
-        id: Checklists.id,
         itemId: Checklists.itemId,
-        name: Checklists.name,
-        createdById: Checklists.createdById,
-        createdAt: Checklists.createdAt,
         totalCount: sql<number>`coalesce(count(${ChecklistEntries.id}), 0)::int`,
-        completedCount: sql<number>`coalesce(count(*) filter (where ${ChecklistEntries.completed} = true), 0)::int`,
+        completedCount: sql<number>`coalesce(count(${ChecklistEntries.id}) filter (where ${ChecklistEntries.completed} = true), 0)::int`,
       })
       .from(Checklists)
       .leftJoin(
@@ -104,21 +100,10 @@ export class ChecklistRepository implements IChecklistRepository {
         and(eq(ChecklistEntries.checklistId, Checklists.id), isNull(ChecklistEntries.deletedAt)),
       )
       .where(and(inArray(Checklists.itemId, itemIds), isNull(Checklists.deletedAt)))
-      .groupBy(
-        Checklists.id,
-        Checklists.itemId,
-        Checklists.name,
-        Checklists.createdById,
-        Checklists.createdAt,
-      )
-      .orderBy(asc(Checklists.createdAt));
+      .groupBy(Checklists.itemId);
 
     return rows.map((row) => ({
-      id: row.id,
       itemId: row.itemId,
-      name: row.name,
-      createdById: row.createdById,
-      createdAt: row.createdAt,
       totalCount: Number(row.totalCount),
       completedCount: Number(row.completedCount),
     }));
