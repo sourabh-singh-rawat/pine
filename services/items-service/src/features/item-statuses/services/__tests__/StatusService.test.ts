@@ -97,6 +97,7 @@ const createListRepository = (overrides: Partial<IListRepository> = {}): IListRe
 
 const createSpaceRepository = (overrides: Partial<ISpaceRepository> = {}): ISpaceRepository => ({
   save: vi.fn(),
+  update: vi.fn(),
   findById: vi.fn().mockResolvedValue(space),
   findMany: vi.fn(),
   ...overrides,

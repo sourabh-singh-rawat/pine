@@ -313,6 +313,7 @@ export type Mutation = {
   updateList?: Maybe<Scalars['String']['output']>;
   updateProfileGender?: Maybe<ProfileObject>;
   updateProfileName?: Maybe<ProfileObject>;
+  updateSpace?: Maybe<Scalars['String']['output']>;
   updateStatus?: Maybe<StatusObject>;
   updateWorkspace?: Maybe<WorkspaceObject>;
 };
@@ -511,6 +512,11 @@ export type MutationUpdateProfileGenderArgs = {
 
 export type MutationUpdateProfileNameArgs = {
   input: UpdateProfileNameInput;
+};
+
+
+export type MutationUpdateSpaceArgs = {
+  input: UpdateSpaceInput;
 };
 
 
@@ -827,6 +833,11 @@ export type UpdateProfileNameInput = {
   firstName: Scalars['String']['input'];
   lastName?: InputMaybe<Scalars['String']['input']>;
   middleName?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type UpdateSpaceInput = {
+  id: Scalars['String']['input'];
+  name: Scalars['String']['input'];
 };
 
 export type UpdateStatusInput = {

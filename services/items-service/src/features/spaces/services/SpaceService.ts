@@ -1,10 +1,10 @@
 import { requirePermission, type IAuthorizationClient } from "@pine/authorization";
 import { UserNotFoundError } from "@pine/common";
-import { createCloudEvent, SpaceCreatedEvent } from "@pine/events";
+import { createCloudEvent, SpaceCreatedEvent, SpaceUpdatedEvent } from "@pine/events";
 import type { IOutboxService } from "@pine/outbox";
 import { inject, injectable } from "inversify";
 import { TYPES } from "@/bootstrap/container-types";
-import type { Database, Space } from "@/db";
+import type { DbClient, Space } from "@/db";
 import type { IIdentityRepository } from "@/features/identities/repositories";
 import { SpaceNotFoundError } from "@/features/spaces/errors";
 import type { ISpaceRepository } from "@/features/spaces/repositories";
@@ -12,7 +12,12 @@ import type {
   CreateSpaceInput,
   ISpaceService,
   ListSpacesInput,
+  UpdateSpaceOptions,
 } from "@/features/spaces/services/ISpaceService";
+
+export type SpaceDatabase = {
+  transaction: <T>(callback: (tx: DbClient) => Promise<T>) => Promise<T>;
+};
 
 @injectable()
 export class SpaceService implements ISpaceService {
@@ -26,7 +31,7 @@ export class SpaceService implements ISpaceService {
     @inject(TYPES.OutboxService)
     private readonly outboxService: IOutboxService,
     @inject(TYPES.Database)
-    private readonly db: Database,
+    private readonly db: SpaceDatabase,
   ) {}
 
   async create(input: CreateSpaceInput, identityId: string): Promise<Space> {
@@ -58,14 +63,7 @@ export class SpaceService implements ISpaceService {
         schema: SpaceCreatedEvent.schema,
         source: "pine/items-service",
         subject: space.id,
-        data: {
-          id: space.id,
-          workspaceId: space.workspaceId,
-          name: space.name,
-          createdById: space.createdById,
-          createdAt: space.createdAt.toISOString(),
-          ...(space.updatedAt != null ? { updatedAt: space.updatedAt.toISOString() } : {}),
-        },
+        data: this.toSpaceEventData(space),
       });
 
       await this.outboxService.schedule(
@@ -109,5 +107,57 @@ export class SpaceService implements ISpaceService {
     );
 
     return this.spaceRepository.findMany({ workspaceId: input.workspaceId });
+  }
+
+  async update(options: UpdateSpaceOptions): Promise<void> {
+    const { id, name, identityId } = options;
+
+    const space = await this.spaceRepository.findById(id);
+    if (!space) {
+      throw new SpaceNotFoundError(`Space not found: ${id}`);
+    }
+
+    await requirePermission(
+      this.authorizationClient,
+      identityId,
+      "update",
+      `workspace:${space.workspaceId}`,
+    );
+
+    await this.db.transaction(async (tx) => {
+      const updatedSpace = await this.spaceRepository.update(id, { name }, { tx });
+
+      const event = createCloudEvent({
+        type: SpaceUpdatedEvent.type,
+        version: SpaceUpdatedEvent.version,
+        schema: SpaceUpdatedEvent.schema,
+        source: "pine/items-service",
+        subject: updatedSpace.id,
+        data: this.toSpaceEventData(updatedSpace),
+      });
+
+      await this.outboxService.schedule(
+        {
+          eventId: event.id,
+          eventType: event.type,
+          eventVersion: SpaceUpdatedEvent.version,
+          aggregateType: "space",
+          aggregateId: updatedSpace.id,
+          payload: event,
+        },
+        { tx },
+      );
+    });
+  }
+
+  private toSpaceEventData(space: Space) {
+    return {
+      id: space.id,
+      workspaceId: space.workspaceId,
+      name: space.name,
+      createdById: space.createdById,
+      createdAt: space.createdAt.toISOString(),
+      ...(space.updatedAt != null ? { updatedAt: space.updatedAt.toISOString() } : {}),
+    };
   }
 }
