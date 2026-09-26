@@ -63,4 +63,10 @@ export interface IItemRepository {
     userId: string,
     options?: ItemRepositoryOptions,
   ): Promise<Item[]>;
+  countByStatusId: (statusId: string, options?: ItemRepositoryOptions) => Promise<number>;
+  reassignStatus: (
+    fromStatusId: string,
+    toStatusId: string,
+    options?: ItemRepositoryOptions,
+  ) => Promise<number>;
 }

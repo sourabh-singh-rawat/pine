@@ -37,6 +37,8 @@ const createItemRepository = (overrides: Partial<IItemRepository> = {}): IItemRe
   findByIdForUser: vi.fn().mockResolvedValue(null),
   findRootsByList: vi.fn().mockResolvedValue([]),
   findChildren: vi.fn().mockResolvedValue([]),
+  countByStatusId: vi.fn().mockResolvedValue(0),
+  reassignStatus: vi.fn().mockResolvedValue(0),
   ...overrides,
 });
 

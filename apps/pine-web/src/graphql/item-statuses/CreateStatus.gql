@@ -1,0 +1,10 @@
+mutation CreateStatus($input: CreateStatusInput!) {
+  createStatus(input: $input) {
+    id
+    name
+    type
+    color
+    orderIndex
+    listId
+  }
+}

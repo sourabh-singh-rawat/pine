@@ -1,0 +1,3 @@
+mutation DeleteStatus($input: DeleteStatusInput!) {
+  deleteStatus(input: $input)
+}

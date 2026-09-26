@@ -64,6 +64,13 @@
       "when": 1790274074110,
       "tag": "0008_rename-project-id-to-list-id",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1790408982596,
+      "tag": "0009_thin_banshee",
+      "breakpoints": true
     }
   ]
 }
