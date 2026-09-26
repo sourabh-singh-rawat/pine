@@ -213,6 +213,13 @@ export type GetSpacesQueryVariables = Exact<{
 
 export type GetSpacesQuery = { getSpaces: Array<{ id: string | null, workspaceId: string | null, name: string | null, createdById: string | null, createdAt: unknown, updatedAt: unknown }> | null };
 
+export type UpdateSpaceMutationVariables = Exact<{
+  input: Types.UpdateSpaceInput;
+}>;
+
+
+export type UpdateSpaceMutation = { updateSpace: string | null };
+
 export type GetMyWorkspacePreferenceQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -1088,6 +1095,27 @@ export const useGetSpacesQuery = <
 useGetSpacesQuery.document = GetSpacesDocument;
 
 useGetSpacesQuery.getKey = (variables: GetSpacesQueryVariables) => ['GetSpaces', variables];
+
+export const UpdateSpaceDocument = new TypedDocumentString(`
+    mutation UpdateSpace($input: UpdateSpaceInput!) {
+  updateSpace(input: $input)
+}
+    `);
+
+export const useUpdateSpaceMutation = <
+      TError = unknown,
+      TContext = unknown
+    >(options?: UseMutationOptions<UpdateSpaceMutation, TError, UpdateSpaceMutationVariables, TContext>) => {
+    
+    return useMutation<UpdateSpaceMutation, TError, UpdateSpaceMutationVariables, TContext>(
+      {
+    mutationKey: ['UpdateSpace'],
+    mutationFn: (variables?: UpdateSpaceMutationVariables) => graphQLFetcher<UpdateSpaceMutation, UpdateSpaceMutationVariables>(UpdateSpaceDocument, variables)(),
+    ...options
+  }
+    )};
+
+useUpdateSpaceMutation.getKey = () => ['UpdateSpace'];
 
 export const GetMyWorkspacePreferenceDocument = new TypedDocumentString(`
     query GetMyWorkspacePreference {

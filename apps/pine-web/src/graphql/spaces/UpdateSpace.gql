@@ -1,0 +1,3 @@
+mutation UpdateSpace($input: UpdateSpaceInput!) {
+  updateSpace(input: $input)
+}

@@ -1,5 +1,5 @@
 import { uuidv7 } from "@pine/common";
-import { and, eq, isNull } from "drizzle-orm";
+import { and, eq, isNull, sql } from "drizzle-orm";
 import { inject, injectable } from "inversify";
 import { TYPES } from "@/bootstrap/container-types";
 import { type Database, type Space, Spaces } from "@/db";
@@ -8,6 +8,7 @@ import type {
   ISpaceRepository,
   ListSpacesFilter,
   SpaceRepositoryOptions,
+  UpdateSpaceEntity,
 } from "@/features/spaces/repositories/ISpaceRepository";
 
 @injectable()
@@ -31,6 +32,31 @@ export class SpaceRepository implements ISpaceRepository {
       .returning();
 
     return created;
+  }
+
+  async update(
+    id: string,
+    entity: UpdateSpaceEntity,
+    options?: SpaceRepositoryOptions,
+  ): Promise<Space> {
+    const client = this.client(options);
+    const now = new Date();
+
+    const [updated] = await client
+      .update(Spaces)
+      .set({
+        ...(entity.name !== undefined ? { name: entity.name } : {}),
+        updatedAt: now,
+        version: sql`${Spaces.version} + 1`,
+      })
+      .where(and(eq(Spaces.id, id), isNull(Spaces.deletedAt)))
+      .returning();
+
+    if (!updated) {
+      throw new Error(`Space not found for update: ${id}`);
+    }
+
+    return updated;
   }
 
   async findById(id: string, options?: SpaceRepositoryOptions): Promise<Space | null> {
