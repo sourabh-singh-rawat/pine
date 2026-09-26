@@ -4,14 +4,16 @@ import { createCloudEvent, ItemCreatedEvent, ItemUpdatedEvent } from "@pine/even
 import type { IOutboxService } from "@pine/outbox";
 import { inject, injectable } from "inversify";
 import { TYPES } from "@/bootstrap/container-types";
-import type { DbClient, Item } from "@/db";
+import type { DbClient, Item, StatusOption } from "@/db";
 import { ItemNotFoundError } from "@/features/item/errors";
 import type { IItemAssigneeRepository, IItemRepository } from "@/features/item/repositories";
+import type { IStatusRepository } from "@/features/item-statuses/repositories";
 import type {
   CreateItemOptions,
   DeleteItemOptions,
   GetItemOptions,
   IItemService,
+  ItemStatusGroup,
   ListItemsOptions,
   UpdateItemOptions,
 } from "./IItemService";
@@ -29,6 +31,8 @@ export class ItemService implements IItemService {
     private readonly itemRepository: IItemRepository,
     @inject(TYPES.ItemAssigneeRepository)
     private readonly itemAssigneeRepository: IItemAssigneeRepository,
+    @inject(TYPES.StatusRepository)
+    private readonly statusRepository: IStatusRepository,
     @inject(TYPES.OutboxService)
     private readonly outboxService: IOutboxService,
     @inject(TYPES.AuthorizationClient)
@@ -95,9 +99,14 @@ export class ItemService implements IItemService {
     });
   }
 
-  async list(options: ListItemsOptions) {
+  async list(options: ListItemsOptions): Promise<ItemStatusGroup[]> {
     const { listId, userId } = options;
-    return this.itemRepository.findRootsByList(listId, userId);
+    const [statuses, roots] = await Promise.all([
+      this.statusRepository.findByListId(listId),
+      this.itemRepository.findRootsByList(listId, userId),
+    ]);
+
+    return this.toStatusGroups(statuses, roots);
   }
 
   async getById(options: GetItemOptions) {
@@ -184,6 +193,30 @@ export class ItemService implements IItemService {
     if (!deleted) {
       throw new ItemNotFoundError(`Item not found: ${id}`);
     }
+  }
+
+  private toStatusGroups(
+    statuses: StatusOption[],
+    roots: Awaited<ReturnType<IItemRepository["findRootsByList"]>>,
+  ): ItemStatusGroup[] {
+    const itemsByStatusId = new Map<string, typeof roots>();
+
+    for (const status of statuses) {
+      itemsByStatusId.set(status.id, []);
+    }
+
+    for (const item of roots) {
+      const bucket = itemsByStatusId.get(item.statusId);
+      if (bucket) {
+        bucket.push(item);
+      }
+    }
+
+    return statuses.map((status) => {
+      const items = itemsByStatusId.get(status.id) ?? [];
+      items.sort((left, right) => left.name.localeCompare(right.name));
+      return { status, items };
+    });
   }
 
   private getStatuses() {
