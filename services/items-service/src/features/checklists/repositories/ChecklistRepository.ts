@@ -1,10 +1,11 @@
 import { uuidv7 } from "@pine/common";
-import { and, asc, eq, isNull, sql } from "drizzle-orm";
+import { and, asc, eq, inArray, isNull, sql } from "drizzle-orm";
 import { inject, injectable } from "inversify";
 import { TYPES } from "@/bootstrap/container-types";
-import { type Checklist, Checklists, type Database } from "@/db";
+import { type Checklist, ChecklistEntries, Checklists, type Database } from "@/db";
 import type {
   ChecklistRepositoryOptions,
+  ChecklistSummary,
   CreateChecklistEntity,
   IChecklistRepository,
   UpdateChecklistEntity,
@@ -76,6 +77,51 @@ export class ChecklistRepository implements IChecklistRepository {
       .from(Checklists)
       .where(and(eq(Checklists.itemId, itemId), isNull(Checklists.deletedAt)))
       .orderBy(asc(Checklists.createdAt));
+  }
+
+  async findSummariesByItemIds(
+    itemIds: string[],
+    options?: ChecklistRepositoryOptions,
+  ): Promise<ChecklistSummary[]> {
+    if (itemIds.length === 0) {
+      return [];
+    }
+
+    const client = this.client(options);
+    const rows = await client
+      .select({
+        id: Checklists.id,
+        itemId: Checklists.itemId,
+        name: Checklists.name,
+        createdById: Checklists.createdById,
+        createdAt: Checklists.createdAt,
+        totalCount: sql<number>`coalesce(count(${ChecklistEntries.id}), 0)::int`,
+        completedCount: sql<number>`coalesce(count(*) filter (where ${ChecklistEntries.completed} = true), 0)::int`,
+      })
+      .from(Checklists)
+      .leftJoin(
+        ChecklistEntries,
+        and(eq(ChecklistEntries.checklistId, Checklists.id), isNull(ChecklistEntries.deletedAt)),
+      )
+      .where(and(inArray(Checklists.itemId, itemIds), isNull(Checklists.deletedAt)))
+      .groupBy(
+        Checklists.id,
+        Checklists.itemId,
+        Checklists.name,
+        Checklists.createdById,
+        Checklists.createdAt,
+      )
+      .orderBy(asc(Checklists.createdAt));
+
+    return rows.map((row) => ({
+      id: row.id,
+      itemId: row.itemId,
+      name: row.name,
+      createdById: row.createdById,
+      createdAt: row.createdAt,
+      totalCount: Number(row.totalCount),
+      completedCount: Number(row.completedCount),
+    }));
   }
 
   async softDelete(id: string, options?: ChecklistRepositoryOptions): Promise<boolean> {

@@ -8,6 +8,7 @@ export type {
 } from "./IChecklistEntryRepository";
 export type {
   ChecklistRepositoryOptions,
+  ChecklistSummary,
   CreateChecklistEntity,
   IChecklistRepository,
   UpdateChecklistEntity,

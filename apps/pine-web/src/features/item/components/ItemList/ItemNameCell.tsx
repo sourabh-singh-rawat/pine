@@ -27,6 +27,8 @@ export interface ItemNameCellProps {
   showExpandGutter?: boolean;
   isExpanded?: boolean;
   isExpanding?: boolean;
+  checklistCompletedCount?: number;
+  checklistTotalCount?: number;
   onStartEditing: () => void;
   onFinishEditing: () => void;
   onSave: (nextName: string) => Promise<boolean>;
@@ -43,6 +45,8 @@ export const ItemNameCell = ({
   showExpandGutter = false,
   isExpanded = false,
   isExpanding = false,
+  checklistCompletedCount = 0,
+  checklistTotalCount = 0,
   onStartEditing,
   onFinishEditing,
   onSave,
@@ -275,7 +279,10 @@ export const ItemNameCell = ({
       >
         {name}
       </MuiLink>
-      <ItemChecklistCount itemId={itemId} />
+      <ItemChecklistCount
+        completedCount={checklistCompletedCount}
+        totalCount={checklistTotalCount}
+      />
     </Box>
   );
 };

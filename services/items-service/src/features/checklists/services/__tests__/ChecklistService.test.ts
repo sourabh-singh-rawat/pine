@@ -134,6 +134,7 @@ const createChecklistRepository = (
   update: vi.fn().mockResolvedValue(checklist),
   findById: vi.fn().mockResolvedValue(checklist),
   findByItemId: vi.fn().mockResolvedValue([checklist]),
+  findSummariesByItemIds: vi.fn().mockResolvedValue([]),
   softDelete: vi.fn().mockResolvedValue(true),
   ...overrides,
 });
