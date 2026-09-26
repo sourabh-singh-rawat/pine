@@ -250,6 +250,7 @@ export type ItemAttachmentUploadTargetObject = {
 
 export type ItemObject = {
   __typename?: 'ItemObject';
+  checklists?: Maybe<Array<ChecklistObject>>;
   component?: Maybe<Scalars['String']['output']>;
   description?: Maybe<Scalars['String']['output']>;
   dueDate?: Maybe<Scalars['DateTimeISO']['output']>;

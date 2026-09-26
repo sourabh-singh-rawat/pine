@@ -1,5 +1,6 @@
 import { ItemStatus, ItemPriority, ServiceResponse } from "@pine/common";
 import type { StatusOption } from "@/db";
+import type { ChecklistSummary } from "@/features/checklists/repositories";
 import type { ItemWithHasChildren, ItemWithList } from "@/features/item/repositories";
 
 export interface CreateItemOptions {
@@ -46,9 +47,13 @@ export interface DeleteItemOptions {
   userId: string;
 }
 
+export type ItemListItem = ItemWithHasChildren & {
+  checklists: ChecklistSummary[];
+};
+
 export type ItemStatusGroup = {
   status: StatusOption;
-  items: ItemWithHasChildren[];
+  items: ItemListItem[];
 };
 
 export interface IItemService {

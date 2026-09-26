@@ -5,6 +5,7 @@ import type { IOutboxService } from "@pine/outbox";
 import { inject, injectable } from "inversify";
 import { TYPES } from "@/bootstrap/container-types";
 import type { DbClient, Item, StatusOption } from "@/db";
+import type { ChecklistSummary, IChecklistRepository } from "@/features/checklists/repositories";
 import { ItemNotFoundError } from "@/features/item/errors";
 import type { IItemAssigneeRepository, IItemRepository } from "@/features/item/repositories";
 import type { IStatusRepository } from "@/features/item-statuses/repositories";
@@ -13,6 +14,7 @@ import type {
   DeleteItemOptions,
   GetItemOptions,
   IItemService,
+  ItemListItem,
   ItemStatusGroup,
   ListItemsOptions,
   UpdateItemOptions,
@@ -33,6 +35,8 @@ export class ItemService implements IItemService {
     private readonly itemAssigneeRepository: IItemAssigneeRepository,
     @inject(TYPES.StatusRepository)
     private readonly statusRepository: IStatusRepository,
+    @inject(TYPES.ChecklistRepository)
+    private readonly checklistRepository: IChecklistRepository,
     @inject(TYPES.OutboxService)
     private readonly outboxService: IOutboxService,
     @inject(TYPES.AuthorizationClient)
@@ -106,7 +110,16 @@ export class ItemService implements IItemService {
       this.itemRepository.findRootsByList(listId, userId),
     ]);
 
-    return this.toStatusGroups(statuses, roots);
+    const summaries = await this.checklistRepository.findSummariesByItemIds(
+      roots.map((root) => root.id),
+    );
+    const checklistsByItemId = this.groupSummariesByItemId(summaries);
+    const items: ItemListItem[] = roots.map((root) => ({
+      ...root,
+      checklists: checklistsByItemId.get(root.id) ?? [],
+    }));
+
+    return this.toStatusGroups(statuses, items);
   }
 
   async getById(options: GetItemOptions) {
@@ -195,11 +208,8 @@ export class ItemService implements IItemService {
     }
   }
 
-  private toStatusGroups(
-    statuses: StatusOption[],
-    roots: Awaited<ReturnType<IItemRepository["findRootsByList"]>>,
-  ): ItemStatusGroup[] {
-    const itemsByStatusId = new Map<string, typeof roots>();
+  private toStatusGroups(statuses: StatusOption[], roots: ItemListItem[]): ItemStatusGroup[] {
+    const itemsByStatusId = new Map<string, ItemListItem[]>();
 
     for (const status of statuses) {
       itemsByStatusId.set(status.id, []);
@@ -217,6 +227,19 @@ export class ItemService implements IItemService {
       items.sort((left, right) => left.name.localeCompare(right.name));
       return { status, items };
     });
+  }
+
+  private groupSummariesByItemId(summaries: ChecklistSummary[]): Map<string, ChecklistSummary[]> {
+    const checklistsByItemId = new Map<string, ChecklistSummary[]>();
+    for (const summary of summaries) {
+      const group = checklistsByItemId.get(summary.itemId);
+      if (group) {
+        group.push(summary);
+      } else {
+        checklistsByItemId.set(summary.itemId, [summary]);
+      }
+    }
+    return checklistsByItemId;
   }
 
   private getStatuses() {

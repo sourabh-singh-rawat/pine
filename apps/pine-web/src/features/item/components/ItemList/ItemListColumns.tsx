@@ -36,6 +36,8 @@ export const FLAT_COLUMNS = columnHelper.columns([
           depth={isNestedChild ? 1 : 0}
           hasChildren={row.original.hasChildren}
           isExpanded={row.original.isNestedExpanded}
+          checklistCompletedCount={row.original.checklistCompletedCount}
+          checklistTotalCount={row.original.checklistTotalCount}
         />
       );
     },

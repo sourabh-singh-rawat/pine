@@ -4,6 +4,7 @@ import { ItemCreatedEvent, ItemUpdatedEvent } from "@pine/events";
 import type { IOutboxService } from "@pine/outbox";
 import { describe, expect, it, vi } from "vitest";
 import type { DbClient, Item, StatusOption } from "@/db";
+import type { IChecklistRepository } from "@/features/checklists/repositories";
 import { ItemNotFoundError } from "@/features/item/errors";
 import type { IItemAssigneeRepository, IItemRepository } from "@/features/item/repositories";
 import type { IStatusRepository } from "@/features/item-statuses/repositories";
@@ -88,6 +89,18 @@ const createStatusRepository = (overrides: Partial<IStatusRepository> = {}): ISt
   ...overrides,
 });
 
+const createChecklistRepository = (
+  overrides: Partial<IChecklistRepository> = {},
+): IChecklistRepository => ({
+  save: vi.fn(),
+  update: vi.fn(),
+  findById: vi.fn(),
+  findByItemId: vi.fn().mockResolvedValue([]),
+  findSummariesByItemIds: vi.fn().mockResolvedValue([]),
+  softDelete: vi.fn(),
+  ...overrides,
+});
+
 const createOutboxService = (overrides: Partial<IOutboxService> = {}): IOutboxService => ({
   schedule: vi.fn().mockResolvedValue({ id: "outbox-1" }),
   claimBatch: vi.fn().mockResolvedValue([]),
@@ -127,6 +140,7 @@ const createService = (
     itemRepository?: IItemRepository;
     itemAssigneeRepository?: IItemAssigneeRepository;
     statusRepository?: IStatusRepository;
+    checklistRepository?: IChecklistRepository;
     outboxService?: IOutboxService;
     authorizationClient?: IAuthorizationClient;
   } = {},
@@ -136,6 +150,7 @@ const createService = (
     deps.itemRepository ?? createItemRepository(),
     deps.itemAssigneeRepository ?? createItemAssigneeRepository(),
     deps.statusRepository ?? createStatusRepository(),
+    deps.checklistRepository ?? createChecklistRepository(),
     deps.outboxService ?? createOutboxService(),
     deps.authorizationClient ?? createAuthorizationClient(),
   );
@@ -367,14 +382,40 @@ describe("ItemService", () => {
     const statusRepository = createStatusRepository({
       findByListId: vi.fn().mockResolvedValue([todoStatus, doneStatus]),
     });
-    const service = createService({ itemRepository, statusRepository });
+    const checklistSummary = {
+      id: "checklist-1",
+      itemId: "apple",
+      name: "Checklist",
+      createdById: "user-1",
+      createdAt: new Date("2026-01-01T00:00:00.000Z"),
+      completedCount: 1,
+      totalCount: 3,
+    };
+    const checklistRepository = createChecklistRepository({
+      findSummariesByItemIds: vi.fn().mockResolvedValue([checklistSummary]),
+    });
+    const service = createService({ itemRepository, statusRepository, checklistRepository });
 
     await expect(service.list({ listId: "list-1", userId: "user-1" })).resolves.toEqual([
       {
         status: todoStatus,
         items: [
-          { ...item, id: "apple", name: "Apple", statusId: "status-1", hasChildren: true },
-          { ...item, id: "zebra", name: "Zebra", statusId: "status-1", hasChildren: false },
+          {
+            ...item,
+            id: "apple",
+            name: "Apple",
+            statusId: "status-1",
+            hasChildren: true,
+            checklists: [checklistSummary],
+          },
+          {
+            ...item,
+            id: "zebra",
+            name: "Zebra",
+            statusId: "status-1",
+            hasChildren: false,
+            checklists: [],
+          },
         ],
       },
       {
@@ -385,5 +426,6 @@ describe("ItemService", () => {
 
     expect(itemRepository.findRootsByList).toHaveBeenCalledWith("list-1", "user-1");
     expect(statusRepository.findByListId).toHaveBeenCalledWith("list-1");
+    expect(checklistRepository.findSummariesByItemIds).toHaveBeenCalledWith(["zebra", "apple"]);
   });
 });

@@ -1,12 +1,12 @@
 import { builder } from "@pine/server";
 import type { StatusOption } from "@/db";
-import type { ItemWithHasChildren } from "@/features/item/repositories";
+import type { ItemListItem } from "@/features/item/services/IItemService";
 import { StatusObject } from "@/features/item-statuses/graphql/objects/StatusObject";
 import { ItemObject } from "./ItemObject";
 
 export type ItemStatusGroupObjectShape = {
   status: StatusOption;
-  items: ItemWithHasChildren[];
+  items: ItemListItem[];
 };
 
 export const ItemStatusGroupObject = builder

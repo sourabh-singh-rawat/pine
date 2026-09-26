@@ -15,6 +15,10 @@ query GetListItems($listId: String!) {
       priority
       dueDate
       hasChildren
+      checklists {
+        completedCount
+        totalCount
+      }
     }
   }
 }

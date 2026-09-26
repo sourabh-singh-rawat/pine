@@ -7,6 +7,29 @@ export type ItemSource = {
   priority?: string | null;
   dueDate?: unknown;
   hasChildren?: boolean | null;
+  checklists?: Array<{
+    completedCount?: number | null;
+    totalCount?: number | null;
+  } | null> | null;
+};
+
+const sumChecklistCounts = (
+  checklists: ItemSource["checklists"],
+): { completedCount: number; totalCount: number } => {
+  let completedCount = 0;
+  let totalCount = 0;
+  for (const checklist of checklists ?? []) {
+    if (!checklist) {
+      continue;
+    }
+    if (typeof checklist.completedCount === "number") {
+      completedCount += checklist.completedCount;
+    }
+    if (typeof checklist.totalCount === "number") {
+      totalCount += checklist.totalCount;
+    }
+  }
+  return { completedCount, totalCount };
 };
 
 export const toItemRow = (
@@ -28,6 +51,7 @@ export const toItemRow = (
   const priority = typeof item.priority === "string" ? item.priority : "";
   const name = options.nameOverrides[item.id] ?? item.name;
   const dueDate = typeof item.dueDate === "string" ? item.dueDate : null;
+  const checklistCounts = sumChecklistCounts(item.checklists);
 
   return {
     id: item.id,
@@ -39,6 +63,8 @@ export const toItemRow = (
     dueDate,
     hasChildren: Boolean(item.hasChildren),
     isNestedExpanded: options.isNestedExpanded ?? false,
+    checklistCompletedCount: checklistCounts.completedCount,
+    checklistTotalCount: checklistCounts.totalCount,
     children: options.children,
   };
 };
