@@ -1,4 +1,5 @@
 import { ItemStatus, ItemPriority, ServiceResponse } from "@pine/common";
+import type { StatusOption } from "@/db";
 import type { ItemWithHasChildren, ItemWithList } from "@/features/item/repositories";
 
 export interface CreateItemOptions {
@@ -45,10 +46,15 @@ export interface DeleteItemOptions {
   userId: string;
 }
 
+export type ItemStatusGroup = {
+  status: StatusOption;
+  items: ItemWithHasChildren[];
+};
+
 export interface IItemService {
   create(options: CreateItemOptions): Promise<string>;
   getById(options: GetItemOptions): Promise<ItemWithList | null>;
-  list(options: ListItemsOptions): Promise<ItemWithHasChildren[]>;
+  list(options: ListItemsOptions): Promise<ItemStatusGroup[]>;
   update(options: UpdateItemOptions): Promise<void>;
   delete(options: DeleteItemOptions): Promise<void>;
   getStatusList(): Promise<ServiceResponse<ItemStatus[]>>;

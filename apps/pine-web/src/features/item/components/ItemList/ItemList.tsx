@@ -8,10 +8,12 @@ import {
 import { memo, useCallback, useContext, useMemo, useState } from "react";
 import { useGetListItemsQuery, useGetSubItemsQuery } from "@generated/gql";
 import { StatusesContext } from "@shared/contexts/StatusesContext";
+import { buildItemListGroups } from "./buildItemListGroups";
 import { ItemRowActionsMenu } from "./ItemRowActionsMenu";
-import { FLAT_COLUMNS, getItemRowId, GROUPED_COLUMNS, STATUS_GROUPING } from "./ItemListColumns";
+import { FLAT_COLUMNS, getItemRowId } from "./ItemListColumns";
 import { ItemListLoader } from "./ItemListLoader";
 import { ItemListUiContext, type ItemListUiContextValue } from "./ItemListUiContext";
+import { ItemStatusGroupSection } from "./ItemStatusGroupSection";
 import { sortItemRows, toItemRow } from "./mapItemRow";
 import { type ItemListProps, type ItemRow } from "./types";
 import { useItemListActions } from "./useItemListActions";
@@ -22,7 +24,6 @@ const EMPTY_ROWS: ItemRow[] = [];
 type ItemListTableProps = {
   rows: ItemRow[];
   columns: ColumnDef<PineTableFeatures, ItemRow, unknown>[];
-  shouldGroup: boolean;
   enableNestedRows: boolean;
   showBorder?: boolean;
 };
@@ -30,7 +31,7 @@ type ItemListTableProps = {
 const getItemSubRows = (row: ItemRow) => row.children;
 
 const ItemListTable = memo(
-  ({ rows, columns, shouldGroup, enableNestedRows, showBorder }: ItemListTableProps) => (
+  ({ rows, columns, enableNestedRows, showBorder }: ItemListTableProps) => (
     <DataTable
       data={rows.length > 0 ? rows : EMPTY_ROWS}
       columns={columns}
@@ -38,15 +39,6 @@ const ItemListTable = memo(
       getSubRows={enableNestedRows ? getItemSubRows : undefined}
       ariaLabel="Items"
       showBorder={showBorder}
-      grouping={shouldGroup ? STATUS_GROUPING : undefined}
-      initialState={
-        shouldGroup
-          ? {
-              grouping: STATUS_GROUPING,
-              expanded: true,
-            }
-          : undefined
-      }
     />
   ),
 );
@@ -106,47 +98,49 @@ export const ItemList = ({ itemId, listId, style }: ItemListProps) => {
       listDataUpdatedAt: listItems.dataUpdatedAt,
     });
 
-  const rows = useMemo((): ItemRow[] => {
-    const source = itemId ? (subItems.data ?? []) : (listItems.data ?? []);
-    const mapped = source.flatMap((item) => {
-      if (!item) return [];
-      const isOpen = enableNestedRows && item.id ? expandedParentIds.has(item.id) : false;
-      const childSources = isOpen && item.id ? childrenByParentId[item.id] : undefined;
-      const children =
-        childSources === undefined
-          ? undefined
-          : sortItemRows(
-              childSources.flatMap((child) => {
-                const childRow = toItemRow(child, {
-                  statusById,
-                  statusOverrides,
-                  nameOverrides,
-                });
-                return childRow ? [childRow] : [];
-              }),
-            );
-      const row = toItemRow(item, {
-        statusById,
-        statusOverrides,
-        nameOverrides,
-        isNestedExpanded: isOpen,
-        children,
-      });
-      return row ? [row] : [];
+  const groups = useMemo(() => {
+    if (itemId || !listId) {
+      return null;
+    }
+    return buildItemListGroups({
+      sourceGroups: listItems.data ?? [],
+      statusById,
+      statusOverrides,
+      nameOverrides,
+      expandedParentIds,
+      enableNestedRows,
+      childrenByParentId,
     });
-
-    return sortItemRows(mapped);
   }, [
     childrenByParentId,
     enableNestedRows,
     expandedParentIds,
     itemId,
-    nameOverrides,
+    listId,
     listItems.data,
+    nameOverrides,
     statusById,
     statusOverrides,
-    subItems.data,
   ]);
+
+  const flatRows = useMemo((): ItemRow[] => {
+    if (!itemId) {
+      return EMPTY_ROWS;
+    }
+    const source = subItems.data ?? [];
+    const mapped = source.flatMap((item) => {
+      if (!item) {
+        return [];
+      }
+      const row = toItemRow(item, {
+        statusById,
+        statusOverrides,
+        nameOverrides,
+      });
+      return row ? [row] : [];
+    });
+    return sortItemRows(mapped);
+  }, [itemId, nameOverrides, statusById, statusOverrides, subItems.data]);
 
   const onStartEditing = useCallback((id: string) => {
     setEditingItemId(id);
@@ -180,9 +174,6 @@ export const ItemList = ({ itemId, listId, style }: ItemListProps) => {
     },
     [handleStatusChange],
   );
-
-  const shouldGroup = Boolean(listId);
-  const columns = shouldGroup ? GROUPED_COLUMNS : FLAT_COLUMNS;
 
   const uiValue = useMemo(
     (): ItemListUiContextValue => ({
@@ -228,14 +219,24 @@ export const ItemList = ({ itemId, listId, style }: ItemListProps) => {
   return (
     <ItemListUiContext.Provider value={uiValue}>
       <Box sx={{ scrollbarGutter: "stable" }}>
-        <ItemListTable
-          key={shouldGroup ? "grouped" : "flat"}
-          rows={rows}
-          columns={columns}
-          shouldGroup={shouldGroup}
-          enableNestedRows={enableNestedRows}
-          showBorder={style?.showBorder}
-        />
+        {groups ? (
+          groups.map((group) => (
+            <ItemStatusGroupSection
+              key={group.statusId}
+              statusName={group.statusName}
+              rows={group.rows}
+              enableNestedRows={enableNestedRows}
+              showBorder={style?.showBorder}
+            />
+          ))
+        ) : (
+          <ItemListTable
+            rows={flatRows}
+            columns={FLAT_COLUMNS}
+            enableNestedRows={false}
+            showBorder={style?.showBorder}
+          />
+        )}
       </Box>
       <ItemRowActionsMenu
         anchorPosition={menuAnchor?.position ?? null}

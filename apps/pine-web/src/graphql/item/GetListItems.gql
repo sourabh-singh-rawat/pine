@@ -1,11 +1,20 @@
 query GetListItems($listId: String!) {
   getListItems(listId: $listId) {
-    description
-    id
-    name
-    statusId
-    priority
-    dueDate
-    hasChildren
+    status {
+      id
+      name
+      orderIndex
+      color
+      type
+    }
+    items {
+      description
+      id
+      name
+      statusId
+      priority
+      dueDate
+      hasChildren
+    }
   }
 }

@@ -264,6 +264,12 @@ export type ItemObject = {
   subItems?: Maybe<Array<ItemObject>>;
 };
 
+export type ItemStatusGroupObject = {
+  __typename?: 'ItemStatusGroupObject';
+  items?: Maybe<Array<ItemObject>>;
+  status?: Maybe<StatusObject>;
+};
+
 export type ListObject = {
   __typename?: 'ListObject';
   id?: Maybe<Scalars['String']['output']>;
@@ -598,7 +604,7 @@ export type Query = {
   getItem?: Maybe<ItemObject>;
   getItemAttachments?: Maybe<Array<ItemAttachmentObject>>;
   getList?: Maybe<ListObject>;
-  getListItems?: Maybe<Array<ItemObject>>;
+  getListItems?: Maybe<Array<ItemStatusGroupObject>>;
   getLists?: Maybe<PaginatedListObject>;
   getMyTenants?: Maybe<Array<TenantObject>>;
   getMyWorkspacePreference?: Maybe<WorkspacePreferenceObject>;

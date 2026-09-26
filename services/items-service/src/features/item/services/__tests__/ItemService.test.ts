@@ -3,9 +3,10 @@ import { ITEM_PRIORITY } from "@pine/common";
 import { ItemCreatedEvent, ItemUpdatedEvent } from "@pine/events";
 import type { IOutboxService } from "@pine/outbox";
 import { describe, expect, it, vi } from "vitest";
-import type { DbClient, Item } from "@/db";
+import type { DbClient, Item, StatusOption } from "@/db";
 import { ItemNotFoundError } from "@/features/item/errors";
 import type { IItemAssigneeRepository, IItemRepository } from "@/features/item/repositories";
+import type { IStatusRepository } from "@/features/item-statuses/repositories";
 import { type ItemDatabase, ItemService } from "@/features/item/services/ItemService";
 
 const item: Item = {
@@ -49,6 +50,44 @@ const createItemAssigneeRepository = (
   ...overrides,
 });
 
+const todoStatus: StatusOption = {
+  id: "status-1",
+  name: "To Do",
+  type: "todo",
+  color: "#9E9E9E",
+  orderIndex: 0,
+  listId: "list-1",
+  version: 1,
+  createdAt: new Date("2026-01-01T00:00:00.000Z"),
+  updatedAt: null,
+  deletedAt: null,
+};
+
+const doneStatus: StatusOption = {
+  id: "status-2",
+  name: "Done",
+  type: "done",
+  color: "#4CAF50",
+  orderIndex: 1,
+  listId: "list-1",
+  version: 1,
+  createdAt: new Date("2026-01-01T00:00:00.000Z"),
+  updatedAt: null,
+  deletedAt: null,
+};
+
+const createStatusRepository = (overrides: Partial<IStatusRepository> = {}): IStatusRepository => ({
+  save: vi.fn(),
+  saveMany: vi.fn(),
+  update: vi.fn(),
+  findById: vi.fn(),
+  findByListId: vi.fn().mockResolvedValue([todoStatus, doneStatus]),
+  findMaxOrderIndex: vi.fn(),
+  softDelete: vi.fn(),
+  replaceOrderIndexes: vi.fn(),
+  ...overrides,
+});
+
 const createOutboxService = (overrides: Partial<IOutboxService> = {}): IOutboxService => ({
   schedule: vi.fn().mockResolvedValue({ id: "outbox-1" }),
   claimBatch: vi.fn().mockResolvedValue([]),
@@ -87,6 +126,7 @@ const createService = (
     db?: ItemDatabase;
     itemRepository?: IItemRepository;
     itemAssigneeRepository?: IItemAssigneeRepository;
+    statusRepository?: IStatusRepository;
     outboxService?: IOutboxService;
     authorizationClient?: IAuthorizationClient;
   } = {},
@@ -95,6 +135,7 @@ const createService = (
     deps.db ?? createDb(),
     deps.itemRepository ?? createItemRepository(),
     deps.itemAssigneeRepository ?? createItemAssigneeRepository(),
+    deps.statusRepository ?? createStatusRepository(),
     deps.outboxService ?? createOutboxService(),
     deps.authorizationClient ?? createAuthorizationClient(),
   );
@@ -315,18 +356,34 @@ describe("ItemService", () => {
     expect(itemRepository.softDelete).not.toHaveBeenCalled();
   });
 
-  it("returns list items with hasChildren from the repository", async () => {
+  it("returns list items grouped by status including empty groups", async () => {
     const roots = [
-      { ...item, id: "root-with-children", hasChildren: true },
-      { ...item, id: "root-without-children", hasChildren: false },
+      { ...item, id: "zebra", name: "Zebra", statusId: "status-1", hasChildren: false },
+      { ...item, id: "apple", name: "Apple", statusId: "status-1", hasChildren: true },
     ];
     const itemRepository = createItemRepository({
       findRootsByList: vi.fn().mockResolvedValue(roots),
     });
-    const service = createService({ itemRepository });
+    const statusRepository = createStatusRepository({
+      findByListId: vi.fn().mockResolvedValue([todoStatus, doneStatus]),
+    });
+    const service = createService({ itemRepository, statusRepository });
 
-    await expect(service.list({ listId: "list-1", userId: "user-1" })).resolves.toEqual(roots);
+    await expect(service.list({ listId: "list-1", userId: "user-1" })).resolves.toEqual([
+      {
+        status: todoStatus,
+        items: [
+          { ...item, id: "apple", name: "Apple", statusId: "status-1", hasChildren: true },
+          { ...item, id: "zebra", name: "Zebra", statusId: "status-1", hasChildren: false },
+        ],
+      },
+      {
+        status: doneStatus,
+        items: [],
+      },
+    ]);
 
     expect(itemRepository.findRootsByList).toHaveBeenCalledWith("list-1", "user-1");
+    expect(statusRepository.findByListId).toHaveBeenCalledWith("list-1");
   });
 });

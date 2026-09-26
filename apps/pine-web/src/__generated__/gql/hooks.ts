@@ -148,7 +148,7 @@ export type GetListItemsQueryVariables = Exact<{
 }>;
 
 
-export type GetListItemsQuery = { getListItems: Array<{ description: string | null, id: string | null, name: string | null, statusId: string | null, priority: string | null, dueDate: unknown, hasChildren: boolean | null }> | null };
+export type GetListItemsQuery = { getListItems: Array<{ status: { id: string | null, name: string | null, orderIndex: number | null, color: string | null, type: string | null } | null, items: Array<{ description: string | null, id: string | null, name: string | null, statusId: string | null, priority: string | null, dueDate: unknown, hasChildren: boolean | null }> | null }> | null };
 
 export type GetSubItemsQueryVariables = Exact<{
   input: Types.GetSubItemsInput;
@@ -812,13 +812,22 @@ useGetItemQuery.getKey = (variables: GetItemQueryVariables) => ['GetItem', varia
 export const GetListItemsDocument = new TypedDocumentString(`
     query GetListItems($listId: String!) {
   getListItems(listId: $listId) {
-    description
-    id
-    name
-    statusId
-    priority
-    dueDate
-    hasChildren
+    status {
+      id
+      name
+      orderIndex
+      color
+      type
+    }
+    items {
+      description
+      id
+      name
+      statusId
+      priority
+      dueDate
+      hasChildren
+    }
   }
 }
     `);
