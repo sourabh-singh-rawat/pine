@@ -141,6 +141,7 @@ describe("AttachmentService.securityStatus", () => {
             data: expect.objectContaining({
               id: "att-1",
               url: "http://127.0.0.1:4001/attachments/att-1",
+              contentType: "image/png",
               status: ATTACHMENT_STATUS.AVAILABLE,
               securityStatus: ATTACHMENT_SECURITY_STATUS.CLEAN,
             }),
@@ -167,6 +168,20 @@ describe("AttachmentService.securityStatus", () => {
         updatedAt: null,
       };
 
+      const existingVersion: AttachmentVersion = {
+        id: "ver-2",
+        attachmentId: "att-2",
+        versionNumber: 1,
+        filename: "test.png",
+        contentType: "image/png",
+        fileSize: 10,
+        sha256: "abc",
+        storageProvider: "seaweed",
+        storageObjectKey: "quarantine/workspace/org-1/att-2",
+        createdBy: "user-1",
+        createdAt: new Date(),
+      };
+
       const updated: Attachment = {
         ...existing,
         status: ATTACHMENT_STATUS.REJECTED,
@@ -175,6 +190,7 @@ describe("AttachmentService.securityStatus", () => {
       };
 
       vi.mocked(attachmentRepository.findById).mockResolvedValue(existing);
+      vi.mocked(attachmentRepository.findVersionById).mockResolvedValue(existingVersion);
       vi.mocked(attachmentRepository.updateStatus).mockResolvedValue(updated);
 
       const service = new AttachmentService(db, attachmentRepository, objectStorage, outboxService);
@@ -200,6 +216,7 @@ describe("AttachmentService.securityStatus", () => {
             type: AttachmentCreatedEvent.type,
             data: expect.objectContaining({
               id: "att-2",
+              contentType: "image/png",
               status: ATTACHMENT_STATUS.REJECTED,
               securityStatus: ATTACHMENT_SECURITY_STATUS.INFECTED,
               operationId: "upload-req-2",
@@ -227,6 +244,20 @@ describe("AttachmentService.securityStatus", () => {
         updatedAt: null,
       };
 
+      const existingVersion: AttachmentVersion = {
+        id: "ver-3",
+        attachmentId: "att-3",
+        versionNumber: 1,
+        filename: "doc.pdf",
+        contentType: "application/pdf",
+        fileSize: 10,
+        sha256: "abc",
+        storageProvider: "seaweed",
+        storageObjectKey: "quarantine/workspace/org-1/att-3",
+        createdBy: "user-1",
+        createdAt: new Date(),
+      };
+
       const updated: Attachment = {
         ...existing,
         status: ATTACHMENT_STATUS.REJECTED,
@@ -235,6 +266,7 @@ describe("AttachmentService.securityStatus", () => {
       };
 
       vi.mocked(attachmentRepository.findById).mockResolvedValue(existing);
+      vi.mocked(attachmentRepository.findVersionById).mockResolvedValue(existingVersion);
       vi.mocked(attachmentRepository.updateStatus).mockResolvedValue(updated);
 
       const service = new AttachmentService(db, attachmentRepository, objectStorage, outboxService);
@@ -257,6 +289,7 @@ describe("AttachmentService.securityStatus", () => {
           payload: expect.objectContaining({
             data: expect.objectContaining({
               id: "att-3",
+              contentType: "application/pdf",
               status: ATTACHMENT_STATUS.REJECTED,
               securityStatus: ATTACHMENT_SECURITY_STATUS.FAILED,
               operationId: "upload-req-3",

@@ -11,6 +11,7 @@ interface AttachmentCardProps {
   mimeType: string;
   sizeLabel: string;
   href: string;
+  previewHref?: string;
   isDeleting: boolean;
   onDelete: () => void;
 }
@@ -40,15 +41,18 @@ export const AttachmentCard = ({
   mimeType,
   sizeLabel,
   href,
+  previewHref,
   isDeleting,
   onDelete,
 }: AttachmentCardProps) => {
   const theme = useTheme();
+  const [useOriginalPreview, setUseOriginalPreview] = useState(!previewHref);
   const [imageFailed, setImageFailed] = useState(false);
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const isPdf = isPdfAttachment(mimeType, name);
   const showImage = isImageMimeType(mimeType) && !imageFailed;
   const lightboxKind: AttachmentLightboxKind | null = showImage ? "image" : isPdf ? "pdf" : null;
+  const imageSrc = useOriginalPreview || !previewHref ? href : previewHref;
 
   return (
     <Box
@@ -80,11 +84,16 @@ export const AttachmentCard = ({
           }}
         >
           <Box
+            key={imageSrc}
             component="img"
-            src={href}
+            src={imageSrc}
             alt={name}
             loading="lazy"
             onError={() => {
+              if (!useOriginalPreview && previewHref) {
+                setUseOriginalPreview(true);
+                return;
+              }
               setImageFailed(true);
             }}
             sx={{

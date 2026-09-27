@@ -12,6 +12,7 @@ export const TYPES = {
   OutboxCleanupWorker: Symbol.for("OutboxCleanupWorker"),
   AttachmentService: Symbol.for("AttachmentService"),
   AttachmentRepository: Symbol.for("IAttachmentRepository"),
+  AttachmentDerivativeService: Symbol.for("IAttachmentDerivativeService"),
   AttachmentUploadRepository: Symbol.for("IAttachmentUploadRepository"),
   AttachmentUploadService: Symbol.for("IAttachmentUploadService"),
   ObjectStorage: Symbol.for("IObjectStorage"),

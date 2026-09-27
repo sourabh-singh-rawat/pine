@@ -5,8 +5,8 @@ import { TYPES } from "@/bootstrap/container-types";
 import {
   StoreAttachmentDerivativeParamsSchema,
   StoreAttachmentDerivativeResponseSchema,
-} from "@/features/attachment/schemas";
-import type { IAttachmentService } from "@/features/attachment/services";
+} from "@/features/attachment-derivatives/schemas";
+import type { IAttachmentDerivativeService } from "@/features/attachment-derivatives/services";
 
 export const storeAttachmentDerivative: HttpRoute = {
   url: "/internal/attachments/:attachmentId/versions/:versionId/derivatives/:derivativeType",
@@ -53,9 +53,9 @@ export const storeAttachmentDerivative: HttpRoute = {
     const height = typeof rawHeight === "string" ? parseInt(rawHeight, 10) : undefined;
 
     const { container } = await import("@/bootstrap/container");
-    const service = container.get<IAttachmentService>(TYPES.AttachmentService);
+    const service = container.get<IAttachmentDerivativeService>(TYPES.AttachmentDerivativeService);
 
-    const derivative = await service.storeDerivative({
+    const derivative = await service.store({
       attachmentId,
       versionId,
       derivativeType,
