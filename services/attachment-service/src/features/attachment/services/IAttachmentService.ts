@@ -1,5 +1,5 @@
 import type { Readable } from "node:stream";
-import type { Attachment, AttachmentDerivative, DbClient } from "@/db";
+import type { Attachment, DbClient } from "@/db";
 import type { AttachmentScopeType } from "@/features/attachment/constants";
 
 export type CreateAttachmentFromUploadInput = {
@@ -40,21 +40,9 @@ export type UpdateSecurityStatusInput = {
   tx?: DbClient;
 };
 
-export type StoreDerivativeInput = {
-  attachmentId: string;
-  versionId: string;
-  derivativeType: "thumbnail" | "preview";
-  data: Buffer;
-  contentType: string;
-  width?: number;
-  height?: number;
-  tx?: DbClient;
-};
-
 export interface IAttachmentService {
   createFromUpload: (input: CreateAttachmentFromUploadInput) => Promise<Attachment>;
   delete: (options: DeleteAttachmentOptions) => Promise<void>;
   getContent: (input: GetAttachmentVersionContentInput) => Promise<AttachmentVersionContent>;
   updateSecurityStatus: (input: UpdateSecurityStatusInput) => Promise<Attachment | null>;
-  storeDerivative: (input: StoreDerivativeInput) => Promise<AttachmentDerivative>;
 }

@@ -19,7 +19,7 @@ const isImageMimeType = (mimeType: string | undefined): boolean => {
   return mimeType.startsWith("image/");
 };
 
-const resolveMimeType = (metadata?: Record<string, unknown>): string | undefined => {
+const resolveMimeTypeFromMetadata = (metadata?: Record<string, unknown>): string | undefined => {
   if (!metadata) {
     return undefined;
   }
@@ -32,6 +32,16 @@ const resolveMimeType = (metadata?: Record<string, unknown>): string | undefined
     return mimeType;
   }
   return undefined;
+};
+
+const resolveMimeType = (
+  contentType: string | undefined,
+  metadata?: Record<string, unknown>,
+): string | undefined => {
+  if (typeof contentType === "string" && contentType.length > 0) {
+    return contentType;
+  }
+  return resolveMimeTypeFromMetadata(metadata);
 };
 
 @injectable()
@@ -57,7 +67,7 @@ export class AttachmentImageCreatedConsumer extends Consumer<CloudEvent<Attachme
       return;
     }
 
-    const mimeType = resolveMimeType(data.metadata);
+    const mimeType = resolveMimeType(data.contentType, data.metadata);
 
     if (data.status === "AVAILABLE" && isImageMimeType(mimeType)) {
       await this.imageProcessingService.process({

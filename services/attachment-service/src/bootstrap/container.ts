@@ -24,6 +24,7 @@ import { db } from "@/bootstrap/db";
 import { env } from "@/bootstrap/env";
 import { logger } from "@/bootstrap/logger";
 import { AttachmentRepository, AttachmentService, IAttachmentRepository, IAttachmentService } from "@/features/attachment";
+import { AttachmentDerivativeService, type IAttachmentDerivativeService } from "@/features/attachment-derivatives";
 import { AttachmentUploadRepository, AttachmentUploadService, IAttachmentUploadRepository, IAttachmentUploadService } from "@/features/attachment-upload";
 import { AttachmentIdentitySyncConsumer, IIdentityRepository, IdentityRepository } from "@/features/identities";
 import { AttachmentTenantSyncConsumer, ITenantRepository, TenantRepository } from "@/features/tenants";
@@ -60,6 +61,7 @@ container.bind<IAttachmentUploadRepository>(TYPES.AttachmentUploadRepository).to
 container.bind<IObjectStorage>(TYPES.ObjectStorage).to(SeaweedObjectStorage);
 container.bind<IAttachmentUploadService>(TYPES.AttachmentUploadService).to(AttachmentUploadService);
 container.bind<IAttachmentService>(TYPES.AttachmentService).to(AttachmentService);
+container.bind<IAttachmentDerivativeService>(TYPES.AttachmentDerivativeService).to(AttachmentDerivativeService);
 container.bind<AttachmentIdentitySyncConsumer>(TYPES.AttachmentIdentitySyncConsumer).to(AttachmentIdentitySyncConsumer);
 container.bind<AttachmentTenantSyncConsumer>(TYPES.AttachmentTenantSyncConsumer).to(AttachmentTenantSyncConsumer);
 

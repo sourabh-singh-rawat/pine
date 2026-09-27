@@ -8,7 +8,12 @@ import {
 import { ProgressCircularIndicator } from "@pine/ui";
 import { useSnackbar } from "@shared";
 import { ITEM_ATTACHMENT_STATUS, isProcessingAttachmentStatus } from "../../constants";
-import { formatFileSize, getAttachmentUrl } from "../../utils";
+import {
+  formatFileSize,
+  getAttachmentDerivativeUrl,
+  getAttachmentUrl,
+  isImageMimeType,
+} from "../../utils";
 import { AttachmentCard } from "../AttachmentCard";
 import { AttachmentDropZone } from "../AttachmentDropZone";
 import { AttachmentFailedCard } from "../AttachmentFailedCard";
@@ -250,13 +255,19 @@ export const ItemAttachments = ({ itemId }: ItemAttachmentsProps) => {
                 );
               }
 
+              const href = getAttachmentUrl(attachment.attachmentId);
+              const previewHref = isImageMimeType(attachment.mimeType)
+                ? getAttachmentDerivativeUrl(attachment.attachmentId, "thumbnail")
+                : undefined;
+
               return (
                 <AttachmentCard
                   key={attachment.id}
                   name={attachment.name}
                   mimeType={attachment.mimeType}
                   sizeLabel={formatFileSize(attachment.size)}
-                  href={getAttachmentUrl(attachment.attachmentId)}
+                  href={href}
+                  previewHref={previewHref}
                   isDeleting={deletingId === attachment.id}
                   onDelete={() => {
                     void handleDelete(attachment.id);

@@ -3,8 +3,6 @@ import { NotFoundError, uuidv7 } from "@pine/common";
 import {
   type AttachmentCreatedData,
   AttachmentCreatedEvent,
-  type AttachmentDerivativeCreatedData,
-  AttachmentDerivativeCreatedEvent,
   type CloudEvent,
   createCloudEvent,
 } from "@pine/events";
@@ -12,7 +10,7 @@ import type { IOutboxService } from "@pine/outbox";
 import { inject, injectable } from "inversify";
 import { TYPES } from "@/bootstrap/container-types";
 import { env } from "@/bootstrap/env";
-import type { Attachment, AttachmentDerivative, DbClient } from "@/db";
+import type { Attachment, DbClient } from "@/db";
 import {
   ATTACHMENT_SECURITY_STATUS,
   type AttachmentSecurityStatus,
@@ -27,7 +25,6 @@ import type {
   DeleteAttachmentOptions,
   GetAttachmentVersionContentInput,
   IAttachmentService,
-  StoreDerivativeInput,
   UpdateSecurityStatusInput,
 } from "@/features/attachment/services/IAttachmentService";
 import type { IObjectStorage } from "@/integrations/storage";
@@ -134,21 +131,23 @@ export class AttachmentService implements IAttachmentService {
       const existing = await this.attachmentRepository.findById(input.id, { tx });
       if (!existing) return null;
 
-      if (securityStatus === ATTACHMENT_SECURITY_STATUS.CLEAN && existing.currentVersionId) {
-        const version = await this.attachmentRepository.findVersionById(
-          existing.id,
-          existing.currentVersionId,
-          { tx },
-        );
+      const version = existing.currentVersionId
+        ? await this.attachmentRepository.findVersionById(existing.id, existing.currentVersionId, {
+            tx,
+          })
+        : null;
 
-        if (version && version.storageObjectKey.startsWith(ATTACHMENT_STORAGE_ZONE.QUARANTINE)) {
-          const trustedKey = version.storageObjectKey.replace(
-            ATTACHMENT_STORAGE_ZONE.QUARANTINE,
-            ATTACHMENT_STORAGE_ZONE.TRUSTED,
-          );
-          await this.objectStorage.moveObject(version.storageObjectKey, trustedKey);
-          await this.attachmentRepository.updateVersionStorageKey(version.id, trustedKey, { tx });
-        }
+      if (
+        securityStatus === ATTACHMENT_SECURITY_STATUS.CLEAN &&
+        version &&
+        version.storageObjectKey.startsWith(ATTACHMENT_STORAGE_ZONE.QUARANTINE)
+      ) {
+        const trustedKey = version.storageObjectKey.replace(
+          ATTACHMENT_STORAGE_ZONE.QUARANTINE,
+          ATTACHMENT_STORAGE_ZONE.TRUSTED,
+        );
+        await this.objectStorage.moveObject(version.storageObjectKey, trustedKey);
+        await this.attachmentRepository.updateVersionStorageKey(version.id, trustedKey, { tx });
       }
 
       const updated = await this.attachmentRepository.updateStatus(
@@ -176,6 +175,7 @@ export class AttachmentService implements IAttachmentService {
             ...(updated.tenantId ? { tenantId: updated.tenantId } : {}),
             ...(updated.currentVersionId ? { currentVersionId: updated.currentVersionId } : {}),
             ...(updated.operationId ? { operationId: updated.operationId } : {}),
+            ...(version?.contentType ? { contentType: version.contentType } : {}),
             ...(updated.metadata ? { metadata: updated.metadata } : {}),
             status: updated.status,
             securityStatus: updated.securityStatus,
@@ -198,82 +198,6 @@ export class AttachmentService implements IAttachmentService {
       }
 
       return updated;
-    };
-
-    return input.tx ? execute(input.tx) : this.db.transaction(execute);
-  }
-
-  async storeDerivative(input: StoreDerivativeInput): Promise<AttachmentDerivative> {
-    const attachment = await this.attachmentRepository.findById(input.attachmentId);
-    if (!attachment) throw new NotFoundError("Attachment");
-
-    const version = await this.attachmentRepository.findVersionById(
-      input.attachmentId,
-      input.versionId,
-    );
-    if (!version) throw new NotFoundError("AttachmentVersion");
-
-    const derivativeId = uuidv7();
-    const storageObjectKey = `${ATTACHMENT_STORAGE_ZONE.TRUSTED}/${attachment.scopeType.toLowerCase()}/${attachment.scopeId}/${input.attachmentId}/derivatives/${input.derivativeType}`;
-
-    await this.objectStorage.putObject({
-      storageObjectKey,
-      contentType: input.contentType,
-      body: input.data,
-      contentLength: input.data.byteLength,
-    });
-
-    const execute = async (tx: DbClient): Promise<AttachmentDerivative> => {
-      const saved = await this.attachmentRepository.saveDerivative(
-        {
-          id: derivativeId,
-          attachmentId: input.attachmentId,
-          versionId: input.versionId,
-          derivativeType: input.derivativeType,
-          mimeType: input.contentType,
-          fileSize: input.data.byteLength,
-          width: input.width ?? 0,
-          height: input.height ?? 0,
-          storageProvider: "seaweed",
-          storageObjectKey,
-        },
-        { tx },
-      );
-
-      const event: CloudEvent<AttachmentDerivativeCreatedData> = createCloudEvent({
-        type: AttachmentDerivativeCreatedEvent.type,
-        version: AttachmentDerivativeCreatedEvent.version,
-        schema: AttachmentDerivativeCreatedEvent.schema,
-        source: "pine/attachment-service",
-        subject: saved.attachmentId,
-        data: {
-          derivativeId: saved.id,
-          attachmentId: saved.attachmentId,
-          versionId: saved.versionId,
-          derivativeType: input.derivativeType,
-          mimeType: saved.mimeType,
-          fileSize: saved.fileSize,
-          width: saved.width,
-          height: saved.height,
-          storageProvider: saved.storageProvider,
-          storageObjectKey: saved.storageObjectKey,
-          createdAt: saved.createdAt.toISOString(),
-        },
-      });
-
-      await this.outboxService.schedule(
-        {
-          eventId: event.id,
-          eventType: event.type,
-          eventVersion: AttachmentDerivativeCreatedEvent.version,
-          aggregateType: "attachment_derivative",
-          aggregateId: saved.id,
-          payload: event,
-        },
-        { tx },
-      );
-
-      return saved;
     };
 
     return input.tx ? execute(input.tx) : this.db.transaction(execute);
