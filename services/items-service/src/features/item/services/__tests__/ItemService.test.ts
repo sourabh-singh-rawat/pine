@@ -38,7 +38,7 @@ const createItemRepository = (overrides: Partial<IItemRepository> = {}): IItemRe
   update: vi.fn().mockResolvedValue(item),
   softDelete: vi.fn().mockResolvedValue(true),
   findById: vi.fn().mockResolvedValue(null),
-  findByIdForUser: vi.fn().mockResolvedValue(null),
+  findByIdWithList: vi.fn().mockResolvedValue(null),
   findRootsByList: vi.fn().mockResolvedValue([]),
   findRootPageByStatus: vi.fn().mockResolvedValue([]),
   findRootFirstPagesByList: vi.fn().mockResolvedValue([]),
@@ -228,31 +228,39 @@ describe("ItemService", () => {
     const updatedItem: Item = {
       ...item,
       name: "Fix login again",
-      updatedById: "user-1",
+      updatedById: "user-2",
       updatedAt: new Date("2026-01-02T00:00:00.000Z"),
       version: 2,
     };
     const itemRepository = createItemRepository({
+      findById: vi.fn().mockResolvedValue(item),
       update: vi.fn().mockResolvedValue(updatedItem),
     });
+    const authorizationClient = createAuthorizationClient();
     const outboxService = createOutboxService();
 
     const service = createService({
       itemRepository,
+      authorizationClient,
       outboxService,
     });
 
     await expect(
       service.update({
         itemId: "issue-1",
-        userId: "user-1",
+        userId: "user-2",
         name: "Fix login again",
       }),
     ).resolves.toBeUndefined();
 
+    expect(authorizationClient.checkRelationship).toHaveBeenCalledWith({
+      namespace: "list",
+      object: "list-1",
+      relation: "update",
+      subject: "identity:user-2",
+    });
     expect(itemRepository.update).toHaveBeenCalledWith(
       "issue-1",
-      "user-1",
       {
         name: "Fix login again",
         description: undefined,
@@ -262,7 +270,7 @@ describe("ItemService", () => {
         estimate: undefined,
         component: undefined,
         type: undefined,
-        updatedById: "user-1",
+        updatedById: "user-2",
       },
       { tx: {} },
     );
@@ -283,7 +291,7 @@ describe("ItemService", () => {
             listId: "list-1",
             createdAt: "2026-01-01T00:00:00.000Z",
             updatedAt: "2026-01-02T00:00:00.000Z",
-            updatedById: "user-1",
+            updatedById: "user-2",
             description: "Users cannot sign in",
             statusId: "status-1",
             priority: ITEM_PRIORITY.NORMAL,
@@ -293,6 +301,76 @@ describe("ItemService", () => {
       }),
       { tx: {} },
     );
+  });
+
+  it("throws ItemNotFoundError when updating a missing item", async () => {
+    const itemRepository = createItemRepository({
+      findById: vi.fn().mockResolvedValue(null),
+    });
+    const authorizationClient = createAuthorizationClient();
+    const service = createService({ itemRepository, authorizationClient });
+
+    await expect(
+      service.update({ itemId: "missing", userId: "user-1", name: "Nope" }),
+    ).rejects.toBeInstanceOf(ItemNotFoundError);
+    expect(authorizationClient.checkRelationship).not.toHaveBeenCalled();
+    expect(itemRepository.update).not.toHaveBeenCalled();
+  });
+
+  it("throws InsufficientPermissionError when update is not allowed", async () => {
+    const itemRepository = createItemRepository({
+      findById: vi.fn().mockResolvedValue(item),
+    });
+    const authorizationClient = createAuthorizationClient({
+      checkRelationship: vi.fn().mockResolvedValue(false),
+    });
+    const service = createService({ itemRepository, authorizationClient });
+
+    await expect(
+      service.update({ itemId: "issue-1", userId: "user-1", name: "Nope" }),
+    ).rejects.toBeInstanceOf(InsufficientPermissionError);
+    expect(itemRepository.update).not.toHaveBeenCalled();
+  });
+
+  it("authorizes create_item on the list before saving", async () => {
+    const authorizationClient = createAuthorizationClient();
+    const service = createService({ authorizationClient });
+
+    await service.create({
+      userId: "user-1",
+      listId: "list-1",
+      type: "task",
+      name: "Fix login",
+      assigneeIds: [],
+      statusId: "status-1",
+    });
+
+    expect(authorizationClient.checkRelationship).toHaveBeenCalledWith({
+      namespace: "list",
+      object: "list-1",
+      relation: "create_item",
+      subject: "identity:user-1",
+    });
+  });
+
+  it("throws InsufficientPermissionError when create_item is not allowed", async () => {
+    const itemRepository = createItemRepository();
+    const authorizationClient = createAuthorizationClient({
+      checkRelationship: vi.fn().mockResolvedValue(false),
+    });
+    const service = createService({ itemRepository, authorizationClient });
+
+    await expect(
+      service.create({
+        userId: "user-1",
+        listId: "list-1",
+        type: "task",
+        name: "Fix login",
+        assigneeIds: [],
+        statusId: "status-1",
+      }),
+    ).rejects.toBeInstanceOf(InsufficientPermissionError);
+    expect(itemRepository.save).not.toHaveBeenCalled();
   });
 
   it("saves assignees before scheduling ItemCreatedEvent", async () => {
@@ -426,7 +504,7 @@ describe("ItemService", () => {
       },
     ]);
 
-    expect(itemRepository.findRootFirstPagesByList).toHaveBeenCalledWith("list-1", "user-1", 51);
+    expect(itemRepository.findRootFirstPagesByList).toHaveBeenCalledWith("list-1", 51);
     expect(itemRepository.findRootPageByStatus).not.toHaveBeenCalled();
     expect(statusRepository.findByListId).toHaveBeenCalledWith("list-1");
     expect(checklistRepository.findCountsByItemIds).toHaveBeenCalledWith(["apple", "zebra"]);
@@ -450,7 +528,7 @@ describe("ItemService", () => {
       endCursor: encodeItemListCursor(second),
     });
     expect(groups[0]?.totalCount).toBe(3);
-    expect(itemRepository.findRootFirstPagesByList).toHaveBeenCalledWith("list-1", "user-1", 3);
+    expect(itemRepository.findRootFirstPagesByList).toHaveBeenCalledWith("list-1", 3);
     expect(itemRepository.findRootPageByStatus).not.toHaveBeenCalled();
   });
 
@@ -475,7 +553,7 @@ describe("ItemService", () => {
     expect(groups).toHaveLength(1);
     expect(groups[0]?.items.map((row) => row.id)).toEqual(["b", "c"]);
     expect(groups[0]?.pageInfo.hasNextPage).toBe(false);
-    expect(itemRepository.findRootPageByStatus).toHaveBeenCalledWith("list-1", "user-1", {
+    expect(itemRepository.findRootPageByStatus).toHaveBeenCalledWith("list-1", {
       statusId: "status-1",
       limit: 3,
       after: { name: "A", id: "a" },
@@ -502,5 +580,66 @@ describe("ItemService", () => {
         statusId: "missing",
       }),
     ).rejects.toBeInstanceOf(StatusNotFoundError);
+  });
+
+  it("authorizes list:read before listing items", async () => {
+    const authorizationClient = createAuthorizationClient();
+    const itemRepository = createItemRepository({
+      findRootFirstPagesByList: vi.fn().mockResolvedValue([]),
+      countRootsByListGrouped: vi.fn().mockResolvedValue([]),
+    });
+    const service = createService({ itemRepository, authorizationClient });
+
+    await service.list({ listId: "list-1", userId: "user-1" });
+
+    expect(authorizationClient.checkRelationship).toHaveBeenCalledWith({
+      namespace: "list",
+      object: "list-1",
+      relation: "read",
+      subject: "identity:user-1",
+    });
+  });
+
+  it("throws InsufficientPermissionError when list:read is not allowed", async () => {
+    const itemRepository = createItemRepository();
+    const authorizationClient = createAuthorizationClient({
+      checkRelationship: vi.fn().mockResolvedValue(false),
+    });
+    const service = createService({ itemRepository, authorizationClient });
+
+    await expect(service.list({ listId: "list-1", userId: "user-1" })).rejects.toBeInstanceOf(
+      InsufficientPermissionError,
+    );
+    expect(itemRepository.findRootFirstPagesByList).not.toHaveBeenCalled();
+  });
+
+  it("returns null from getById when the item is missing", async () => {
+    const itemRepository = createItemRepository({
+      findByIdWithList: vi.fn().mockResolvedValue(null),
+    });
+    const authorizationClient = createAuthorizationClient();
+    const service = createService({ itemRepository, authorizationClient });
+
+    await expect(service.getById({ userId: "user-1", itemId: "missing" })).resolves.toBeNull();
+    expect(authorizationClient.checkRelationship).not.toHaveBeenCalled();
+  });
+
+  it("authorizes list:read when loading an item by id", async () => {
+    const itemWithList = { ...item, list: { id: "list-1" } };
+    const itemRepository = createItemRepository({
+      findByIdWithList: vi.fn().mockResolvedValue(itemWithList),
+    });
+    const authorizationClient = createAuthorizationClient();
+    const service = createService({ itemRepository, authorizationClient });
+
+    await expect(service.getById({ userId: "user-1", itemId: "issue-1" })).resolves.toEqual(
+      itemWithList,
+    );
+    expect(authorizationClient.checkRelationship).toHaveBeenCalledWith({
+      namespace: "list",
+      object: "list-1",
+      relation: "read",
+      subject: "identity:user-1",
+    });
   });
 });

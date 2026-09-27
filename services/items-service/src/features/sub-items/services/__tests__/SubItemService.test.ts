@@ -1,3 +1,4 @@
+import { InsufficientPermissionError, type IAuthorizationClient } from "@pine/authorization";
 import { ITEM_PRIORITY } from "@pine/common";
 import { describe, expect, it, vi } from "vitest";
 import type { Item } from "@/db";
@@ -38,7 +39,7 @@ const createItemRepository = (overrides: Partial<IItemRepository> = {}): IItemRe
   update: vi.fn(),
   softDelete: vi.fn(),
   findById: vi.fn().mockResolvedValue(parentItem),
-  findByIdForUser: vi.fn(),
+  findByIdWithList: vi.fn(),
   findRootsByList: vi.fn(),
   findRootPageByStatus: vi.fn(),
   findRootFirstPagesByList: vi.fn(),
@@ -49,48 +50,74 @@ const createItemRepository = (overrides: Partial<IItemRepository> = {}): IItemRe
   ...overrides,
 });
 
-const createService = (deps: { itemRepository?: IItemRepository } = {}) =>
-  new SubItemService(deps.itemRepository ?? createItemRepository());
+const createAuthorizationClient = (
+  overrides: Partial<IAuthorizationClient> = {},
+): IAuthorizationClient => ({
+  checkRelationship: vi.fn().mockResolvedValue(true),
+  ensureRelationship: vi.fn().mockResolvedValue({ created: true }),
+  deleteRelationship: vi.fn().mockResolvedValue({ deleted: true }),
+  listRelationships: vi.fn().mockResolvedValue([]),
+  ...overrides,
+});
+
+const createService = (
+  deps: {
+    itemRepository?: IItemRepository;
+    authorizationClient?: IAuthorizationClient;
+  } = {},
+) =>
+  new SubItemService(
+    deps.itemRepository ?? createItemRepository(),
+    deps.authorizationClient ?? createAuthorizationClient(),
+  );
 
 describe("SubItemService.list", () => {
-  it("returns children for an owned parent", async () => {
+  it("returns children after authorizing list:read on the parent list", async () => {
     const itemRepository = createItemRepository();
-    const service = createService({ itemRepository });
+    const authorizationClient = createAuthorizationClient();
+    const service = createService({ itemRepository, authorizationClient });
 
     const result = await service.list({
-      userId: "user-1",
+      userId: "user-2",
       parentItemId: "parent-1",
     });
 
     expect(result).toEqual([childItem]);
     expect(itemRepository.findById).toHaveBeenCalledWith("parent-1");
-    expect(itemRepository.findChildren).toHaveBeenCalledWith("parent-1", "user-1");
+    expect(authorizationClient.checkRelationship).toHaveBeenCalledWith({
+      namespace: "list",
+      object: "list-1",
+      relation: "read",
+      subject: "identity:user-2",
+    });
+    expect(itemRepository.findChildren).toHaveBeenCalledWith("parent-1");
   });
 
   it("throws when the parent is missing", async () => {
+    const authorizationClient = createAuthorizationClient();
     const service = createService({
       itemRepository: createItemRepository({
         findById: vi.fn().mockResolvedValue(null),
       }),
+      authorizationClient,
     });
 
     await expect(
       service.list({ userId: "user-1", parentItemId: "missing" }),
     ).rejects.toBeInstanceOf(ItemNotFoundError);
+    expect(authorizationClient.checkRelationship).not.toHaveBeenCalled();
   });
 
-  it("throws when the parent belongs to another user", async () => {
-    const service = createService({
-      itemRepository: createItemRepository({
-        findById: vi.fn().mockResolvedValue({
-          ...parentItem,
-          createdById: "other-user",
-        }),
-      }),
+  it("throws InsufficientPermissionError when list:read is denied", async () => {
+    const itemRepository = createItemRepository();
+    const authorizationClient = createAuthorizationClient({
+      checkRelationship: vi.fn().mockResolvedValue(false),
     });
+    const service = createService({ itemRepository, authorizationClient });
 
     await expect(
       service.list({ userId: "user-1", parentItemId: "parent-1" }),
-    ).rejects.toBeInstanceOf(ItemNotFoundError);
+    ).rejects.toBeInstanceOf(InsufficientPermissionError);
+    expect(itemRepository.findChildren).not.toHaveBeenCalled();
   });
 });
