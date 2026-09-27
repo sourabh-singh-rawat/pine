@@ -1,5 +1,13 @@
 # @pine/data-gateway
 
+## 0.1.5
+
+### Patch Changes
+
+- Updated dependencies [4200ae7]
+  - @pine/common@1.2.0
+  - @pine/server@1.1.5
+
 ## 0.1.4
 
 ### Patch Changes

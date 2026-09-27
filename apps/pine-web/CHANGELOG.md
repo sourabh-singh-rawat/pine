@@ -1,5 +1,21 @@
 # @pine/pine-web
 
+## 0.10.0
+
+### Minor Changes
+
+- 4200ae7: feat(item-statuses): manage list statuses with drag reorder
+- 97f217e: feat(items): paginate list items per status with checklistCounts
+
+### Patch Changes
+
+- 6adfc37: feat(items): return status groups from getListItems
+- 7036672: feat(items): nest checklist counts on getListItems
+- 3899751: feat(pine-web): display checklist item progress count in item list view
+- fa8db3f: feat(spaces): add space settings rename
+- Updated dependencies [4200ae7]
+  - @pine/common@1.2.0
+
 ## 0.9.2
 
 ### Patch Changes

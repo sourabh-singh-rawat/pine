@@ -1,5 +1,11 @@
 # @pine/common
 
+## 1.2.0
+
+### Minor Changes
+
+- 4200ae7: feat(item-statuses): manage list statuses with drag reorder
+
 ## 1.1.0
 
 ### Minor Changes

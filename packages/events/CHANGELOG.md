@@ -1,5 +1,17 @@
 # @pine/events
 
+## 1.2.0
+
+### Minor Changes
+
+- fa8db3f: feat(spaces): add space settings rename
+
+### Patch Changes
+
+- Updated dependencies [4200ae7]
+  - @pine/common@1.2.0
+  - @pine/server@1.1.5
+
 ## 1.1.0
 
 ### Minor Changes
