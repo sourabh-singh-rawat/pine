@@ -1,6 +1,6 @@
 import Type from "typebox";
 
-export const ProfileCreatedDataSchema = Type.Object(
+export const ProfileNameUpdatedDataSchema = Type.Object(
   {
     id: Type.String(),
     identityId: Type.String(),
@@ -12,4 +12,4 @@ export const ProfileCreatedDataSchema = Type.Object(
   { additionalProperties: false },
 );
 
-export type ProfileCreatedData = Type.Static<typeof ProfileCreatedDataSchema>;
+export type ProfileNameUpdatedData = Type.Static<typeof ProfileNameUpdatedDataSchema>;

@@ -1,4 +1,4 @@
-import { eq, sql } from "drizzle-orm";
+import { and, eq, inArray, isNull, sql } from "drizzle-orm";
 import { inject, injectable } from "inversify";
 import { TYPES } from "@/bootstrap/container-types";
 import { type Database, type Identity, Identities } from "@/db";
@@ -59,7 +59,11 @@ export class IdentityRepository implements IIdentityRepository {
 
   findById = async (id: string, options?: IdentityRepositoryOptions): Promise<Identity | null> => {
     const client = options?.tx ?? this.db;
-    const [row] = await client.select().from(Identities).where(eq(Identities.id, id)).limit(1);
+    const [row] = await client
+      .select()
+      .from(Identities)
+      .where(and(eq(Identities.id, id), isNull(Identities.deletedAt)))
+      .limit(1);
 
     return row ?? null;
   };
@@ -72,9 +76,24 @@ export class IdentityRepository implements IIdentityRepository {
     const [row] = await client
       .select()
       .from(Identities)
-      .where(eq(Identities.identityId, identityId))
+      .where(and(eq(Identities.identityId, identityId), isNull(Identities.deletedAt)))
       .limit(1);
 
     return row ?? null;
+  };
+
+  findByIdentityIds = async (
+    identityIds: string[],
+    options?: IdentityRepositoryOptions,
+  ): Promise<Identity[]> => {
+    if (identityIds.length === 0) {
+      return [];
+    }
+
+    const client = options?.tx ?? this.db;
+    return client
+      .select()
+      .from(Identities)
+      .where(and(inArray(Identities.identityId, identityIds), isNull(Identities.deletedAt)));
   };
 }

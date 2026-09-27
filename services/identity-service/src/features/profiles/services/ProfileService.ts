@@ -6,6 +6,7 @@ import {
   ProfileCreatedEvent,
   ProfileDeletedEvent,
   ProfileGenderUpdatedEvent,
+  ProfileNameUpdatedEvent,
 } from "@pine/events";
 import type { IOutboxService } from "@pine/outbox";
 import { inject, injectable } from "inversify";
@@ -23,6 +24,24 @@ import type {
   UpdateNameOptions,
   UpdatePhotoOptions,
 } from "@/features/profiles/services/IProfileService";
+
+const buildFullName = (
+  firstName?: string | null,
+  middleName?: string | null,
+  lastName?: string | null,
+): string | null => {
+  const parts: string[] = [];
+  for (const part of [firstName, middleName, lastName]) {
+    const trimmed = part?.trim();
+    if (trimmed) {
+      parts.push(trimmed);
+    }
+  }
+  if (parts.length === 0) {
+    return null;
+  }
+  return parts.join(" ");
+};
 
 @injectable()
 export class ProfileService implements IProfileService {
@@ -54,6 +73,8 @@ export class ProfileService implements IProfileService {
         { tx },
       );
 
+      const fullName = buildFullName(profile.firstName, profile.middleName, profile.lastName);
+
       const event = createCloudEvent({
         type: ProfileCreatedEvent.type,
         version: ProfileCreatedEvent.version,
@@ -63,6 +84,10 @@ export class ProfileService implements IProfileService {
         data: {
           id: profile.id,
           identityId,
+          ...(fullName ? { fullName } : {}),
+          ...(profile.firstName ? { firstName: profile.firstName } : {}),
+          ...(profile.middleName ? { middleName: profile.middleName } : {}),
+          ...(profile.lastName ? { lastName: profile.lastName } : {}),
         },
       });
 
@@ -114,10 +139,48 @@ export class ProfileService implements IProfileService {
       `profile:${profile.id}`,
     );
 
-    return this.profileRepository.update(profile.id, {
-      firstName: options.firstName,
-      middleName: options.middleName ?? null,
-      lastName: options.lastName ?? null,
+    return this.db.transaction(async (tx) => {
+      const updated = await this.profileRepository.update(
+        profile.id,
+        {
+          firstName: options.firstName,
+          middleName: options.middleName ?? null,
+          lastName: options.lastName ?? null,
+        },
+        { tx },
+      );
+
+      const fullName = buildFullName(updated.firstName, updated.middleName, updated.lastName);
+
+      const event = createCloudEvent({
+        type: ProfileNameUpdatedEvent.type,
+        version: ProfileNameUpdatedEvent.version,
+        schema: ProfileNameUpdatedEvent.schema,
+        source: "pine/identity-service",
+        subject: updated.id,
+        data: {
+          id: updated.id,
+          identityId: options.identityId,
+          ...(fullName ? { fullName } : {}),
+          ...(updated.firstName ? { firstName: updated.firstName } : {}),
+          ...(updated.middleName ? { middleName: updated.middleName } : {}),
+          ...(updated.lastName ? { lastName: updated.lastName } : {}),
+        },
+      });
+
+      await this.outboxService.schedule(
+        {
+          eventId: event.id,
+          eventType: event.type,
+          eventVersion: ProfileNameUpdatedEvent.version,
+          aggregateType: "profile",
+          aggregateId: updated.id,
+          payload: event,
+        },
+        { tx },
+      );
+
+      return updated;
     });
   }
 

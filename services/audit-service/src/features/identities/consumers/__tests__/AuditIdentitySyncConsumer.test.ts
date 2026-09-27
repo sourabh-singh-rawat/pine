@@ -1,4 +1,9 @@
-import { createCloudEvent, IdentityEmailVerifiedEvent } from "@pine/events";
+import {
+  createCloudEvent,
+  IdentityEmailVerifiedEvent,
+  ProfileCreatedEvent,
+  ProfileNameUpdatedEvent,
+} from "@pine/events";
 import { describe, expect, it, vi } from "vitest";
 import type { IAuditLogRepository } from "@/features/audit";
 import { AuditIdentitySyncConsumer } from "@/features/identities/consumers/AuditIdentitySyncConsumer";
@@ -17,8 +22,10 @@ const createDb = () => ({
 const createIdentityRepository = (
   overrides: Partial<IIdentityRepository> = {},
 ): IIdentityRepository => ({
-  upsert: vi.fn().mockResolvedValue({ id: "user-1", displayName: "Ada Lovelace" }),
+  upsert: vi.fn().mockResolvedValue({ id: "user-1", fullName: "Ada Lovelace" }),
   findById: vi.fn().mockResolvedValue(null),
+  findByIdentityId: vi.fn().mockResolvedValue(null),
+  findByIdentityIds: vi.fn().mockResolvedValue([]),
   ...overrides,
 });
 
@@ -77,6 +84,82 @@ describe("AuditIdentitySyncConsumer", () => {
       }),
       { tx: expect.anything() },
     );
+    expect(message.ack).toHaveBeenCalled();
+  });
+
+  it("upserts identity names on ProfileCreatedEvent", async () => {
+    const identityRepository = createIdentityRepository();
+    const auditLogRepository = createAuditLogRepository();
+    const consumer = new AuditIdentitySyncConsumer(
+      createBroker(),
+      createDb(),
+      identityRepository,
+      auditLogRepository,
+    );
+
+    const message = { ack: vi.fn() };
+    const event = createCloudEvent({
+      type: ProfileCreatedEvent.type,
+      version: ProfileCreatedEvent.version,
+      schema: ProfileCreatedEvent.schema,
+      source: "pine/identity-service",
+      subject: "profile-1",
+      data: {
+        id: "profile-1",
+        identityId: "user-1",
+        fullName: "Ada Lovelace",
+        firstName: "Ada",
+        lastName: "Lovelace",
+      },
+    });
+
+    await consumer.onMessage(message, event);
+
+    expect(identityRepository.upsert).toHaveBeenCalledWith({
+      identityId: "user-1",
+      fullName: "Ada Lovelace",
+      firstName: "Ada",
+      middleName: null,
+      lastName: "Lovelace",
+    });
+    expect(auditLogRepository.save).not.toHaveBeenCalled();
+    expect(message.ack).toHaveBeenCalled();
+  });
+
+  it("upserts identity names on ProfileNameUpdatedEvent", async () => {
+    const identityRepository = createIdentityRepository();
+    const consumer = new AuditIdentitySyncConsumer(
+      createBroker(),
+      createDb(),
+      identityRepository,
+      createAuditLogRepository(),
+    );
+
+    const message = { ack: vi.fn() };
+    const event = createCloudEvent({
+      type: ProfileNameUpdatedEvent.type,
+      version: ProfileNameUpdatedEvent.version,
+      schema: ProfileNameUpdatedEvent.schema,
+      source: "pine/identity-service",
+      subject: "profile-1",
+      data: {
+        id: "profile-1",
+        identityId: "user-1",
+        fullName: "Grace Hopper",
+        firstName: "Grace",
+        lastName: "Hopper",
+      },
+    });
+
+    await consumer.onMessage(message, event);
+
+    expect(identityRepository.upsert).toHaveBeenCalledWith({
+      identityId: "user-1",
+      fullName: "Grace Hopper",
+      firstName: "Grace",
+      middleName: null,
+      lastName: "Hopper",
+    });
     expect(message.ack).toHaveBeenCalled();
   });
 });

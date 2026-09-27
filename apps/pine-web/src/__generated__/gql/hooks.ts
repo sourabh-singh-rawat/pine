@@ -127,21 +127,20 @@ export type DeleteItemMutationVariables = Exact<{
 
 export type DeleteItemMutation = { deleteItem: string | null };
 
-export type GetAuditLogsQueryVariables = Exact<{
-  entityType: string;
-  entityId: string;
-  workspaceId: string;
-}>;
-
-
-export type GetAuditLogsQuery = { getAuditLogs: Array<{ id: string | null, entityType: string | null, entityId: string | null, action: string | null, actorId: string | null, workspaceId: string | null, createdAt: unknown }> | null };
-
 export type GetItemQueryVariables = Exact<{
   id: string;
 }>;
 
 
 export type GetItemQuery = { getItem: { id: string | null, description: string | null, name: string | null, statusId: string | null, priority: string | null, dueDate: unknown, list: { id: string | null, name: string | null } | null, parentItem: { id: string | null, name: string | null } | null } | null };
+
+export type GetItemAuditLogsQueryVariables = Exact<{
+  itemId: string;
+  workspaceId: string;
+}>;
+
+
+export type GetItemAuditLogsQuery = { getItemAuditLogs: Array<{ id: string | null, entityType: string | null, entityId: string | null, action: string | null, actorId: string | null, workspaceId: string | null, createdAt: unknown, actor: { id: string | null, fullName: string | null, firstName: string | null, middleName: string | null, lastName: string | null, createdAt: unknown, updatedAt: unknown } | null }> | null };
 
 export type GetListItemsQueryVariables = Exact<{
   listId: string;
@@ -733,44 +732,6 @@ export const useDeleteItemMutation = <
 
 useDeleteItemMutation.getKey = () => ['DeleteItem'];
 
-export const GetAuditLogsDocument = new TypedDocumentString(`
-    query GetAuditLogs($entityType: String!, $entityId: String!, $workspaceId: String!) {
-  getAuditLogs(
-    entityType: $entityType
-    entityId: $entityId
-    workspaceId: $workspaceId
-  ) {
-    id
-    entityType
-    entityId
-    action
-    actorId
-    workspaceId
-    createdAt
-  }
-}
-    `);
-
-export const useGetAuditLogsQuery = <
-      TData = GetAuditLogsQuery,
-      TError = unknown
-    >(
-      variables: GetAuditLogsQueryVariables,
-      options?: Omit<UseQueryOptions<GetAuditLogsQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<GetAuditLogsQuery, TError, TData>['queryKey'] }
-    ) => {
-    
-    return useQuery<GetAuditLogsQuery, TError, TData>(
-      {
-    queryKey: ['GetAuditLogs', variables],
-    queryFn: graphQLFetcher<GetAuditLogsQuery, GetAuditLogsQueryVariables>(GetAuditLogsDocument, variables),
-    ...options
-  }
-    )};
-
-useGetAuditLogsQuery.document = GetAuditLogsDocument;
-
-useGetAuditLogsQuery.getKey = (variables: GetAuditLogsQueryVariables) => ['GetAuditLogs', variables];
-
 export const GetItemDocument = new TypedDocumentString(`
     query GetItem($id: String!) {
   getItem(id: $id) {
@@ -811,6 +772,49 @@ export const useGetItemQuery = <
 useGetItemQuery.document = GetItemDocument;
 
 useGetItemQuery.getKey = (variables: GetItemQueryVariables) => ['GetItem', variables];
+
+export const GetItemAuditLogsDocument = new TypedDocumentString(`
+    query GetItemAuditLogs($itemId: String!, $workspaceId: String!) {
+  getItemAuditLogs(itemId: $itemId, workspaceId: $workspaceId) {
+    id
+    entityType
+    entityId
+    action
+    actorId
+    actor {
+      id
+      fullName
+      firstName
+      middleName
+      lastName
+      createdAt
+      updatedAt
+    }
+    workspaceId
+    createdAt
+  }
+}
+    `);
+
+export const useGetItemAuditLogsQuery = <
+      TData = GetItemAuditLogsQuery,
+      TError = unknown
+    >(
+      variables: GetItemAuditLogsQueryVariables,
+      options?: Omit<UseQueryOptions<GetItemAuditLogsQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<GetItemAuditLogsQuery, TError, TData>['queryKey'] }
+    ) => {
+    
+    return useQuery<GetItemAuditLogsQuery, TError, TData>(
+      {
+    queryKey: ['GetItemAuditLogs', variables],
+    queryFn: graphQLFetcher<GetItemAuditLogsQuery, GetItemAuditLogsQueryVariables>(GetItemAuditLogsDocument, variables),
+    ...options
+  }
+    )};
+
+useGetItemAuditLogsQuery.document = GetItemAuditLogsDocument;
+
+useGetItemAuditLogsQuery.getKey = (variables: GetItemAuditLogsQueryVariables) => ['GetItemAuditLogs', variables];
 
 export const GetListItemsDocument = new TypedDocumentString(`
     query GetListItems($listId: String!, $first: Int, $statusId: String, $after: String) {

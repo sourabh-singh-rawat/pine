@@ -1,4 +1,5 @@
 export {
+  type AuditLogWithActor,
   type IAuditLogService,
   type ListAuditLogsInput,
 } from "@/features/audit/services/IAuditLogService";

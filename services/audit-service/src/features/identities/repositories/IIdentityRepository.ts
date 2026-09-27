@@ -18,4 +18,8 @@ export interface IIdentityRepository {
     identityId: string,
     options?: IdentityRepositoryOptions,
   ) => Promise<Identity | null>;
+  findByIdentityIds: (
+    identityIds: string[],
+    options?: IdentityRepositoryOptions,
+  ) => Promise<Identity[]>;
 }
