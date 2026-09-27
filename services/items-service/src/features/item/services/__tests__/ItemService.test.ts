@@ -41,6 +41,7 @@ const createItemRepository = (overrides: Partial<IItemRepository> = {}): IItemRe
   findByIdForUser: vi.fn().mockResolvedValue(null),
   findRootsByList: vi.fn().mockResolvedValue([]),
   findRootPageByStatus: vi.fn().mockResolvedValue([]),
+  findRootFirstPagesByList: vi.fn().mockResolvedValue([]),
   countRootsByListGrouped: vi.fn().mockResolvedValue([]),
   findChildren: vi.fn().mockResolvedValue([]),
   countByStatusId: vi.fn().mockResolvedValue(0),
@@ -379,12 +380,7 @@ describe("ItemService", () => {
     const apple = { ...item, id: "apple", name: "Apple", statusId: "status-1", hasChildren: true };
     const zebra = { ...item, id: "zebra", name: "Zebra", statusId: "status-1", hasChildren: false };
     const itemRepository = createItemRepository({
-      findRootPageByStatus: vi.fn().mockImplementation((_listId, _userId, page) => {
-        if (page.statusId === "status-1") {
-          return Promise.resolve([apple, zebra]);
-        }
-        return Promise.resolve([]);
-      }),
+      findRootFirstPagesByList: vi.fn().mockResolvedValue([apple, zebra]),
       countRootsByListGrouped: vi.fn().mockResolvedValue([{ statusId: "status-1", totalCount: 2 }]),
     });
     const statusRepository = createStatusRepository({
@@ -430,7 +426,8 @@ describe("ItemService", () => {
       },
     ]);
 
-    expect(itemRepository.findRootPageByStatus).toHaveBeenCalled();
+    expect(itemRepository.findRootFirstPagesByList).toHaveBeenCalledWith("list-1", "user-1", 51);
+    expect(itemRepository.findRootPageByStatus).not.toHaveBeenCalled();
     expect(statusRepository.findByListId).toHaveBeenCalledWith("list-1");
     expect(checklistRepository.findCountsByItemIds).toHaveBeenCalledWith(["apple", "zebra"]);
   });
@@ -440,12 +437,7 @@ describe("ItemService", () => {
     const second = { ...item, id: "b", name: "B", statusId: "status-1", hasChildren: false };
     const third = { ...item, id: "c", name: "C", statusId: "status-1", hasChildren: false };
     const itemRepository = createItemRepository({
-      findRootPageByStatus: vi.fn().mockImplementation((_listId, _userId, page) => {
-        if (page.statusId === "status-1") {
-          return Promise.resolve([first, second, third].slice(0, page.limit));
-        }
-        return Promise.resolve([]);
-      }),
+      findRootFirstPagesByList: vi.fn().mockResolvedValue([first, second, third]),
       countRootsByListGrouped: vi.fn().mockResolvedValue([{ statusId: "status-1", totalCount: 3 }]),
     });
     const service = createService({ itemRepository });
@@ -458,10 +450,8 @@ describe("ItemService", () => {
       endCursor: encodeItemListCursor(second),
     });
     expect(groups[0]?.totalCount).toBe(3);
-    expect(itemRepository.findRootPageByStatus).toHaveBeenCalledWith("list-1", "user-1", {
-      statusId: "status-1",
-      limit: 3,
-    });
+    expect(itemRepository.findRootFirstPagesByList).toHaveBeenCalledWith("list-1", "user-1", 3);
+    expect(itemRepository.findRootPageByStatus).not.toHaveBeenCalled();
   });
 
   it("loads the next page for a single status when after is provided", async () => {

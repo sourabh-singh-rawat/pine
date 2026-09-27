@@ -80,6 +80,12 @@ export interface IItemRepository {
     page: FindRootPageByStatusOptions,
     options?: ItemRepositoryOptions,
   ): Promise<ItemWithHasChildren[]>;
+  findRootFirstPagesByList(
+    listId: string,
+    userId: string,
+    limit: number,
+    options?: ItemRepositoryOptions,
+  ): Promise<ItemWithHasChildren[]>;
   countRootsByListGrouped(
     listId: string,
     userId: string,
