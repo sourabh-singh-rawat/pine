@@ -6,11 +6,14 @@ import type {
   IAttachmentClient,
   StoreDerivativeOptions,
   StoreDerivativeResult,
+  StoreMetadataOptions,
   UpdateSecurityStatusOptions,
 } from "./IAttachmentClient";
 import {
   CreateUploadTargetResponseSchema,
   type CreateUploadTargetResponse,
+  StoreAttachmentMetadataResultSchema,
+  type StoreAttachmentMetadataResult,
   StoreDerivativeResultSchema,
   UpdateSecurityStatusResultSchema,
   type UpdateSecurityStatusResult,
@@ -92,6 +95,32 @@ export class HttpAttachmentClient implements IAttachmentClient {
     const body: unknown = await response.json();
     if (!Value.Check(StoreDerivativeResultSchema, body)) {
       throw new Error("storeDerivative returned an invalid response body");
+    }
+
+    return body;
+  }
+
+  async storeMetadata(options: StoreMetadataOptions): Promise<StoreAttachmentMetadataResult> {
+    const url = `${this.baseUrl}/internal/attachments/${options.attachmentId}/versions/${options.versionId}/metadata`;
+
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(options.metadata),
+    });
+
+    if (!response.ok) {
+      throw new Error(
+        `/internal/attachments/${options.attachmentId}/versions/${options.versionId}/metadata failed with status ${response.status}`,
+      );
+    }
+
+    const body: unknown = await response.json();
+    if (!Value.Check(StoreAttachmentMetadataResultSchema, body)) {
+      throw new Error("storeMetadata returned an invalid response body");
     }
 
     return body;

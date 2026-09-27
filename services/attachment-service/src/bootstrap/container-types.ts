@@ -13,6 +13,8 @@ export const TYPES = {
   AttachmentService: Symbol.for("AttachmentService"),
   AttachmentRepository: Symbol.for("IAttachmentRepository"),
   AttachmentDerivativeService: Symbol.for("IAttachmentDerivativeService"),
+  AttachmentMetadataRepository: Symbol.for("IAttachmentMetadataRepository"),
+  AttachmentMetadataService: Symbol.for("IAttachmentMetadataService"),
   AttachmentUploadRepository: Symbol.for("IAttachmentUploadRepository"),
   AttachmentUploadService: Symbol.for("IAttachmentUploadService"),
   ObjectStorage: Symbol.for("IObjectStorage"),

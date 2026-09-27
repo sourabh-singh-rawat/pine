@@ -1,11 +1,4 @@
 import type { IAttachmentClient } from "@pine/attachment";
-import {
-  type AttachmentImageMetadataExtractedData,
-  AttachmentImageMetadataExtractedEvent,
-  type CloudEvent,
-  type IPublisher,
-  createCloudEvent,
-} from "@pine/events";
 import type { ILogger } from "@pine/server";
 import { inject, injectable } from "inversify";
 import sharp from "sharp";
@@ -36,8 +29,6 @@ export class MetadataProcessingService implements IMetadataProcessingService {
   constructor(
     @inject(TYPES.AttachmentClient)
     private readonly attachmentClient: IAttachmentClient,
-    @inject(TYPES.Publisher)
-    private readonly publisher: IPublisher,
     @inject(TYPES.Logger)
     private readonly logger: ILogger,
   ) {}
@@ -53,15 +44,10 @@ export class MetadataProcessingService implements IMetadataProcessingService {
     const buffer = await streamToBuffer(stream);
     const metadata = await sharp(buffer).metadata();
 
-    const event: CloudEvent<AttachmentImageMetadataExtractedData> = createCloudEvent({
-      type: AttachmentImageMetadataExtractedEvent.type,
-      version: AttachmentImageMetadataExtractedEvent.version,
-      schema: AttachmentImageMetadataExtractedEvent.schema,
-      source: "pine/attachment-image-processing-service",
-      subject: input.attachmentId,
-      data: {
-        attachmentId: input.attachmentId,
-        versionId: input.versionId,
+    await this.attachmentClient.storeMetadata({
+      attachmentId: input.attachmentId,
+      versionId: input.versionId,
+      metadata: {
         width: metadata.width,
         height: metadata.height,
         format: metadata.format,
@@ -74,10 +60,8 @@ export class MetadataProcessingService implements IMetadataProcessingService {
       },
     });
 
-    await this.publisher.send(event);
-
     this.logger.info(
-      `Extracted and published image metadata for: ${input.attachmentId} (${metadata.width ?? 0}x${metadata.height ?? 0})`,
+      `Extracted and stored image metadata for: ${input.attachmentId} (${metadata.width ?? 0}x${metadata.height ?? 0})`,
     );
   }
 }

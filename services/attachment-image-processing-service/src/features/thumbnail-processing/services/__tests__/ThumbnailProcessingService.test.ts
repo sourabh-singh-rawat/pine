@@ -39,6 +39,7 @@ describe("ThumbnailProcessingService", () => {
       createUploadTarget: vi.fn(),
       downloadStream,
       storeDerivative,
+      storeMetadata: vi.fn(),
       updateSecurityStatus: vi.fn(),
     };
 
@@ -84,6 +85,7 @@ describe("ThumbnailProcessingService", () => {
       createUploadTarget: vi.fn(),
       downloadStream: vi.fn(),
       storeDerivative: vi.fn(),
+      storeMetadata: vi.fn(),
       updateSecurityStatus: vi.fn(),
     };
 

@@ -9,14 +9,20 @@ configureTls({
 });
 
 import { broker, container, logger, TYPES } from "@/bootstrap";
-import { AttachmentImageCreatedConsumer } from "@/features/image-processing";
+import type { AttachmentImageMetadataConsumer } from "@/features/metadata-processing";
+import type { AttachmentImageThumbnailConsumer } from "@/features/thumbnail-processing";
 
 export { container } from "@/bootstrap";
 
 const main = async () => {
   await broker.init();
 
-  void container.get<AttachmentImageCreatedConsumer>(TYPES.AttachmentImageCreatedConsumer).start();
+  void container
+    .get<AttachmentImageThumbnailConsumer>(TYPES.AttachmentImageThumbnailConsumer)
+    .start();
+  void container
+    .get<AttachmentImageMetadataConsumer>(TYPES.AttachmentImageMetadataConsumer)
+    .start();
   logger.info("Attachment image processing service started");
 };
 

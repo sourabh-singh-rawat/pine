@@ -10,7 +10,7 @@ import {
 import { inject, injectable } from "inversify";
 import type { JsMsg } from "nats";
 import { TYPES } from "@/bootstrap/container-types";
-import type { IImageProcessingService } from "@/features/image-processing/services";
+import type { IMetadataProcessingService } from "@/features/metadata-processing/services";
 
 const isImageMimeType = (mimeType: string | undefined): boolean => {
   if (!mimeType) {
@@ -45,16 +45,16 @@ const resolveMimeType = (
 };
 
 @injectable()
-export class AttachmentImageCreatedConsumer extends Consumer<CloudEvent<AttachmentCreatedData>> {
+export class AttachmentImageMetadataConsumer extends Consumer<CloudEvent<AttachmentCreatedData>> {
   readonly stream = Streams.ATTACHMENT;
-  readonly consumer = "attachment-image-processing-created";
+  readonly consumer = "attachment-image-metadata-created";
   readonly subjects = [AttachmentCreatedEvent.type];
 
   constructor(
     @inject(TYPES.Broker)
     private readonly broker: IBroker,
-    @inject(TYPES.ImageProcessingService)
-    private readonly imageProcessingService: IImageProcessingService,
+    @inject(TYPES.MetadataProcessingService)
+    private readonly metadataProcessingService: IMetadataProcessingService,
   ) {
     super(broker.client);
   }
@@ -70,7 +70,7 @@ export class AttachmentImageCreatedConsumer extends Consumer<CloudEvent<Attachme
     const mimeType = resolveMimeType(data.contentType, data.metadata);
 
     if (data.status === "AVAILABLE" && isImageMimeType(mimeType)) {
-      await this.imageProcessingService.process({
+      await this.metadataProcessingService.process({
         attachmentId: data.id,
         versionId: data.currentVersionId ?? data.id,
         mimeType: mimeType ?? "",

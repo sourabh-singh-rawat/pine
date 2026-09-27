@@ -6,9 +6,8 @@ import { broker } from "@/bootstrap/broker";
 import { TYPES } from "@/bootstrap/container-types";
 import { env } from "@/bootstrap/env";
 import { logger } from "@/bootstrap/logger";
-import { AttachmentImageCreatedConsumer, ImageProcessingService, type IImageProcessingService } from "@/features/image-processing";
-import { MetadataProcessingService, type IMetadataProcessingService } from "@/features/metadata-processing";
-import { ThumbnailProcessingService, type IThumbnailProcessingService } from "@/features/thumbnail-processing";
+import { AttachmentImageMetadataConsumer, MetadataProcessingService, type IMetadataProcessingService } from "@/features/metadata-processing";
+import { AttachmentImageThumbnailConsumer, ThumbnailProcessingService, type IThumbnailProcessingService } from "@/features/thumbnail-processing";
 
 export const container = new Container({ defaultScope: "Singleton" });
 
@@ -25,5 +24,5 @@ container.bind<IAttachmentClient>(TYPES.AttachmentClient).toConstantValue(attach
 
 container.bind<IThumbnailProcessingService>(TYPES.ThumbnailProcessingService).to(ThumbnailProcessingService);
 container.bind<IMetadataProcessingService>(TYPES.MetadataProcessingService).to(MetadataProcessingService);
-container.bind<IImageProcessingService>(TYPES.ImageProcessingService).to(ImageProcessingService);
-container.bind<AttachmentImageCreatedConsumer>(TYPES.AttachmentImageCreatedConsumer).to(AttachmentImageCreatedConsumer);
+container.bind<AttachmentImageThumbnailConsumer>(TYPES.AttachmentImageThumbnailConsumer).to(AttachmentImageThumbnailConsumer);
+container.bind<AttachmentImageMetadataConsumer>(TYPES.AttachmentImageMetadataConsumer).to(AttachmentImageMetadataConsumer);
