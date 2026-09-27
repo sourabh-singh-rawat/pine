@@ -60,7 +60,7 @@ export const storeAttachmentDerivative: HttpRoute = {
       versionId,
       derivativeType,
       data: buffer,
-      contentType: contentType ?? "image/png",
+      contentType: contentType ?? "image/webp",
       width: Number.isNaN(width) ? undefined : width,
       height: Number.isNaN(height) ? undefined : height,
     });
