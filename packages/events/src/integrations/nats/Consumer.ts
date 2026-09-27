@@ -32,7 +32,11 @@ export abstract class Consumer<T> {
     const codec = JSONCodec<T>();
 
     for await (const message of messages) {
-      await this.onMessage(message, codec.decode(message.data));
+      try {
+        await this.onMessage(message, codec.decode(message.data));
+      } catch {
+        message.nak();
+      }
     }
   };
 

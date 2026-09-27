@@ -7,6 +7,7 @@ import type {
   CreateItemAttachmentEntity,
   IItemAttachmentRepository,
   ItemAttachmentRepositoryOptions,
+  UpdateItemAttachmentEntity,
 } from "@/features/attachments/repositories/IItemAttachmentRepository";
 
 @injectable()
@@ -25,7 +26,8 @@ export class ItemAttachmentRepository implements IItemAttachmentRepository {
       .values({
         id: entity.id ?? uuidv7(),
         itemId: entity.itemId,
-        attachmentId: entity.attachmentId,
+        attachmentId: entity.attachmentId ?? null,
+        status: entity.status,
         name: entity.name,
         originalName: entity.originalName,
         mimeType: entity.mimeType,
@@ -37,6 +39,32 @@ export class ItemAttachmentRepository implements IItemAttachmentRepository {
       .returning();
 
     return created;
+  }
+
+  async update(
+    id: string,
+    entity: UpdateItemAttachmentEntity,
+    options?: ItemAttachmentRepositoryOptions,
+  ): Promise<ItemAttachment | null> {
+    const client = this.client(options);
+    const now = new Date();
+
+    const [updated] = await client
+      .update(ItemAttachments)
+      .set({
+        ...(entity.attachmentId !== undefined ? { attachmentId: entity.attachmentId } : {}),
+        ...(entity.status !== undefined ? { status: entity.status } : {}),
+        ...(entity.name !== undefined ? { name: entity.name } : {}),
+        ...(entity.originalName !== undefined ? { originalName: entity.originalName } : {}),
+        ...(entity.mimeType !== undefined ? { mimeType: entity.mimeType } : {}),
+        ...(entity.size !== undefined ? { size: entity.size } : {}),
+        updatedAt: now,
+        version: sql`${ItemAttachments.version} + 1`,
+      })
+      .where(and(eq(ItemAttachments.id, id), isNull(ItemAttachments.deletedAt)))
+      .returning();
+
+    return updated ?? null;
   }
 
   async findById(

@@ -3,6 +3,7 @@ import { InsufficientPermissionError, type IAuthorizationClient } from "@pine/au
 import { ITEM_PRIORITY } from "@pine/common";
 import { describe, expect, it, vi } from "vitest";
 import type { Item, ItemAttachment, ItemAttachmentUploadRequest, List, Space } from "@/db";
+import { ITEM_ATTACHMENT_STATUS } from "@/features/attachments/constants";
 import {
   ItemAttachmentAlreadyLinkedError,
   ItemAttachmentNotFoundError,
@@ -12,7 +13,10 @@ import type {
   IItemAttachmentRepository,
   IItemAttachmentUploadRequestRepository,
 } from "@/features/attachments/repositories";
-import { ItemAttachmentService } from "@/features/attachments/services/ItemAttachmentService";
+import {
+  ItemAttachmentService,
+  type ItemAttachmentDatabase,
+} from "@/features/attachments/services/ItemAttachmentService";
 import { ItemNotFoundError } from "@/features/item/errors";
 import type { IItemRepository } from "@/features/item/repositories";
 import type { IListRepository } from "@/features/lists/repositories";
@@ -65,6 +69,23 @@ const attachmentLink: ItemAttachment = {
   id: "link-1",
   itemId: "item-1",
   attachmentId: "att-1",
+  status: ITEM_ATTACHMENT_STATUS.READY,
+  name: "screenshot.png",
+  originalName: "screenshot.png",
+  mimeType: "image/png",
+  size: 1024,
+  createdById: "user-1",
+  version: 1,
+  createdAt: new Date("2026-01-02T00:00:00.000Z"),
+  updatedAt: null,
+  deletedAt: null,
+};
+
+const pendingLink: ItemAttachment = {
+  id: "upload-req-1",
+  itemId: "item-1",
+  attachmentId: null,
+  status: ITEM_ATTACHMENT_STATUS.PENDING,
   name: "screenshot.png",
   originalName: "screenshot.png",
   mimeType: "image/png",
@@ -90,6 +111,10 @@ const uploadRequest: ItemAttachmentUploadRequest = {
   completedAt: null,
 };
 
+const createDatabase = (): ItemAttachmentDatabase => ({
+  transaction: vi.fn(async (callback) => callback({} as never)),
+});
+
 const createItemRepository = (overrides: Partial<IItemRepository> = {}): IItemRepository => ({
   save: vi.fn(),
   update: vi.fn(),
@@ -110,6 +135,11 @@ const createItemAttachmentRepository = (
   overrides: Partial<IItemAttachmentRepository> = {},
 ): IItemAttachmentRepository => ({
   save: vi.fn().mockResolvedValue(attachmentLink),
+  update: vi.fn().mockResolvedValue({
+    ...pendingLink,
+    attachmentId: "att-1",
+    status: ITEM_ATTACHMENT_STATUS.READY,
+  }),
   findById: vi.fn().mockResolvedValue(attachmentLink),
   findByItemId: vi.fn().mockResolvedValue([attachmentLink]),
   findByItemAndAttachment: vi.fn().mockResolvedValue(null),
@@ -170,6 +200,7 @@ const createAuthorizationClient = (
 
 const createService = (
   deps: {
+    db?: ItemAttachmentDatabase;
     itemRepository?: IItemRepository;
     itemAttachmentRepository?: IItemAttachmentRepository;
     itemAttachmentUploadRequestRepository?: IItemAttachmentUploadRequestRepository;
@@ -180,6 +211,7 @@ const createService = (
   } = {},
 ) =>
   new ItemAttachmentService(
+    deps.db ?? createDatabase(),
     deps.itemRepository ?? createItemRepository(),
     deps.itemAttachmentRepository ?? createItemAttachmentRepository(),
     deps.itemAttachmentUploadRequestRepository ?? createUploadRequestRepository(),
@@ -214,6 +246,7 @@ describe("ItemAttachmentService", () => {
     expect(itemAttachmentRepository.save).toHaveBeenCalledWith({
       itemId: "item-1",
       attachmentId: "att-1",
+      status: ITEM_ATTACHMENT_STATUS.READY,
       name: "screenshot.png",
       originalName: "screenshot.png",
       mimeType: "image/png",
@@ -335,12 +368,18 @@ describe("ItemAttachmentService", () => {
     expect(itemAttachmentRepository.save).not.toHaveBeenCalled();
   });
 
-  it("creates an upload request scoped to the workspace after authorizing create_list", async () => {
+  it("creates an upload request and pending attachment link after authorizing create_list", async () => {
+    const db = createDatabase();
     const uploadRequestRepository = createUploadRequestRepository();
+    const itemAttachmentRepository = createItemAttachmentRepository({
+      save: vi.fn().mockResolvedValue(pendingLink),
+    });
     const attachmentClient = createAttachmentClient();
     const authorizationClient = createAuthorizationClient();
     const service = createService({
+      db,
       itemAttachmentUploadRequestRepository: uploadRequestRepository,
+      itemAttachmentRepository,
       attachmentClient,
       authorizationClient,
     });
@@ -360,15 +399,38 @@ describe("ItemAttachmentService", () => {
       relation: "create_list",
       subject: "identity:user-1",
     });
-    expect(uploadRequestRepository.save).toHaveBeenCalledWith({
-      itemId: "item-1",
-      status: "pending",
-      name: "screenshot.png",
-      originalName: "screenshot.png",
-      mimeType: "image/png",
-      size: 1024,
-      createdById: "user-1",
-    });
+    expect(db.transaction).toHaveBeenCalled();
+    expect(uploadRequestRepository.save).toHaveBeenCalledWith(
+      expect.objectContaining({
+        itemId: "item-1",
+        status: "pending",
+        name: "screenshot.png",
+        originalName: "screenshot.png",
+        mimeType: "image/png",
+        size: 1024,
+        createdById: "user-1",
+      }),
+      expect.objectContaining({ tx: expect.anything() }),
+    );
+    expect(itemAttachmentRepository.save).toHaveBeenCalledWith(
+      expect.objectContaining({
+        itemId: "item-1",
+        attachmentId: null,
+        status: ITEM_ATTACHMENT_STATUS.PENDING,
+        name: "screenshot.png",
+        originalName: "screenshot.png",
+        mimeType: "image/png",
+        size: 1024,
+        createdById: "user-1",
+      }),
+      expect.objectContaining({ tx: expect.anything() }),
+    );
+
+    const savedUpload = vi.mocked(uploadRequestRepository.save).mock.calls[0]?.[0];
+    const savedLink = vi.mocked(itemAttachmentRepository.save).mock.calls[0]?.[0];
+    expect(savedUpload?.id).toEqual(savedLink?.id);
+    expect(typeof savedUpload?.id).toBe("string");
+
     expect(attachmentClient.createUploadTarget).toHaveBeenCalledWith({
       input: {
         scopeType: ATTACHMENT_SCOPE_TYPE.WORKSPACE,
@@ -376,25 +438,68 @@ describe("ItemAttachmentService", () => {
         filename: "screenshot.png",
         contentType: "image/png",
         size: 1024,
-        operationId: "upload-req-1",
+        operationId: savedUpload?.id,
         metadata: {
           itemId: "item-1",
-          uploadRequestId: "upload-req-1",
+          uploadRequestId: savedUpload?.id,
         },
       },
       identityId: "user-1",
       authMethod: "session",
     });
     expect(result).toEqual({
-      uploadRequestId: "upload-req-1",
+      uploadRequestId: savedUpload?.id,
       url: "https://localhost:4001/attachments/upload/upload-1",
       headers: { "Content-Type": "image/png" },
       expiresAt: "2026-01-02T00:15:00.000Z",
     });
   });
 
-  it("completes an upload by linking the attachment and marking the request completed", async () => {
-    const itemAttachmentRepository = createItemAttachmentRepository();
+  it("completes an upload by marking the pending link ready", async () => {
+    const itemAttachmentRepository = createItemAttachmentRepository({
+      findById: vi.fn().mockResolvedValue(pendingLink),
+      findByItemAndAttachment: vi.fn().mockResolvedValue(null),
+      update: vi.fn().mockResolvedValue({
+        ...pendingLink,
+        attachmentId: "att-1",
+        status: ITEM_ATTACHMENT_STATUS.READY,
+      }),
+    });
+    const uploadRequestRepository = createUploadRequestRepository();
+    const service = createService({
+      itemAttachmentRepository,
+      itemAttachmentUploadRequestRepository: uploadRequestRepository,
+    });
+
+    const result = await service.completeUpload({
+      uploadRequestId: "upload-req-1",
+      attachmentId: "att-1",
+    });
+
+    expect(itemAttachmentRepository.update).toHaveBeenCalledWith("upload-req-1", {
+      attachmentId: "att-1",
+      status: ITEM_ATTACHMENT_STATUS.READY,
+    });
+    expect(itemAttachmentRepository.save).not.toHaveBeenCalled();
+    expect(uploadRequestRepository.update).toHaveBeenCalledWith(
+      "upload-req-1",
+      expect.objectContaining({
+        status: "completed",
+        attachmentId: "att-1",
+      }),
+    );
+    expect(result).toEqual({
+      ...pendingLink,
+      attachmentId: "att-1",
+      status: ITEM_ATTACHMENT_STATUS.READY,
+    });
+  });
+
+  it("completes an upload by creating a ready link when no pending row exists", async () => {
+    const itemAttachmentRepository = createItemAttachmentRepository({
+      findById: vi.fn().mockResolvedValue(null),
+      findByItemAndAttachment: vi.fn().mockResolvedValue(null),
+    });
     const uploadRequestRepository = createUploadRequestRepository();
     const service = createService({
       itemAttachmentRepository,
@@ -409,6 +514,7 @@ describe("ItemAttachmentService", () => {
     expect(itemAttachmentRepository.save).toHaveBeenCalledWith({
       itemId: "item-1",
       attachmentId: "att-1",
+      status: ITEM_ATTACHMENT_STATUS.READY,
       name: "screenshot.png",
       originalName: "screenshot.png",
       mimeType: "image/png",
@@ -442,5 +548,6 @@ describe("ItemAttachmentService", () => {
       }),
     ).rejects.toBeInstanceOf(ItemAttachmentUploadRequestNotFoundError);
     expect(itemAttachmentRepository.save).not.toHaveBeenCalled();
+    expect(itemAttachmentRepository.update).not.toHaveBeenCalled();
   });
 });

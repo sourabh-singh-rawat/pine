@@ -116,7 +116,7 @@ export class AttachmentScannerService implements IAttachmentScannerService {
 
         return updated ?? scan;
       });
-    } catch (error) {
+    } catch {
       const durationMs = Date.now() - startTime;
       await this.db.transaction(async (tx) => {
         await this.scanRepository.updateResult(
@@ -161,7 +161,7 @@ export class AttachmentScannerService implements IAttachmentScannerService {
         );
       });
 
-      throw error;
+      return scan;
     }
   }
 }

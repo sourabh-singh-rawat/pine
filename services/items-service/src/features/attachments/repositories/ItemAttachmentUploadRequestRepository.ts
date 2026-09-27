@@ -27,7 +27,7 @@ export class ItemAttachmentUploadRequestRepository implements IItemAttachmentUpl
     const [created] = await client
       .insert(ItemAttachmentUploadRequests)
       .values({
-        id: uuidv7(),
+        id: entity.id ?? uuidv7(),
         itemId: entity.itemId,
         status: entity.status,
         name: entity.name,

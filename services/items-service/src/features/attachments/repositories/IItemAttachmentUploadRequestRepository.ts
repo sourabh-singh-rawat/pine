@@ -3,6 +3,7 @@ import type { DbClient, ItemAttachmentUploadRequest } from "@/db";
 export type ItemAttachmentUploadRequestRepositoryOptions = { tx?: DbClient };
 
 export type CreateItemAttachmentUploadRequestEntity = {
+  id?: string;
   itemId: string;
   status: string;
   name: string;

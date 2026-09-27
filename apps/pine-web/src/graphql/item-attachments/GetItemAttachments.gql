@@ -3,6 +3,7 @@ query GetItemAttachments($itemId: String!) {
     id
     itemId
     attachmentId
+    status
     name
     originalName
     mimeType

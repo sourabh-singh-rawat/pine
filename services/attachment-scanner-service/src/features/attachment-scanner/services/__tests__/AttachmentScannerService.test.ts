@@ -345,16 +345,15 @@ describe("AttachmentScannerService", () => {
       db,
     );
 
-    await expect(
-      service.scan({
-        attachmentId: "att-3",
-        versionId: "ver-3",
-        scopeType: "IDENTITY",
-        scopeId: "user-1",
-        tenantId: "tenant-1",
-      }),
-    ).rejects.toThrow("Network failure");
+    const result = await service.scan({
+      attachmentId: "att-3",
+      versionId: "ver-3",
+      scopeType: "IDENTITY",
+      scopeId: "user-1",
+      tenantId: "tenant-1",
+    });
 
+    expect(result).toEqual(mockScan);
     expect(scanRepository.updateResult).toHaveBeenCalledWith(
       "scan-3",
       expect.objectContaining({

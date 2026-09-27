@@ -39,10 +39,12 @@ services:
   clamav:
     image: clamav/clamav:latest
     restart: unless-stopped
+    entrypoint: ["/bin/sh", "/clamav-entrypoint.sh"]
     ports:
       - "3310:3310"
     volumes:
       - ../data/docker/clamav-data:/var/lib/clamav
+      - ./clamav/entrypoint.sh:/clamav-entrypoint.sh:ro
     deploy:
       resources:
         limits:

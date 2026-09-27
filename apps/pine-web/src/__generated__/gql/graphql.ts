@@ -250,6 +250,7 @@ export type ItemAttachmentObject = {
   name?: Maybe<Scalars['String']['output']>;
   originalName?: Maybe<Scalars['String']['output']>;
   size?: Maybe<Scalars['Int']['output']>;
+  status?: Maybe<Scalars['String']['output']>;
 };
 
 export type ItemAttachmentUploadHeaderObject = {
