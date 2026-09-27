@@ -4,8 +4,17 @@ import type {
   CreateUploadTargetOptions,
   DownloadAttachmentOptions,
   IAttachmentClient,
+  StoreDerivativeOptions,
+  StoreDerivativeResult,
+  UpdateSecurityStatusOptions,
 } from "./IAttachmentClient";
-import { CreateUploadTargetResponseSchema, type CreateUploadTargetResponse } from "./schemas";
+import {
+  CreateUploadTargetResponseSchema,
+  type CreateUploadTargetResponse,
+  StoreDerivativeResultSchema,
+  UpdateSecurityStatusResultSchema,
+  type UpdateSecurityStatusResult,
+} from "./schemas";
 
 export interface HttpAttachmentClientOptions {
   baseUrl: string;
@@ -59,5 +68,60 @@ export class HttpAttachmentClient implements IAttachmentClient {
     }
 
     return Readable.from(body);
+  }
+
+  async storeDerivative(options: StoreDerivativeOptions): Promise<StoreDerivativeResult> {
+    const url = `${this.baseUrl}/internal/attachments/${options.attachmentId}/versions/${options.versionId}/derivatives/${options.derivativeType}`;
+
+    const headers: Record<string, string> = {
+      "content-type": options.contentType,
+      ...(options.width !== undefined ? { "x-image-width": options.width.toString() } : {}),
+      ...(options.height !== undefined ? { "x-image-height": options.height.toString() } : {}),
+    };
+
+    const response = await fetch(url, {
+      method: "PUT",
+      headers,
+      body: new Uint8Array(options.data),
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to store derivative: ${response.statusText}`);
+    }
+
+    const body: unknown = await response.json();
+    if (!Value.Check(StoreDerivativeResultSchema, body)) {
+      throw new Error("storeDerivative returned an invalid response body");
+    }
+
+    return body;
+  }
+
+  async updateSecurityStatus(
+    options: UpdateSecurityStatusOptions,
+  ): Promise<UpdateSecurityStatusResult> {
+    const url = `${this.baseUrl}/internal/attachments/${options.attachmentId}/security-status`;
+
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ status: options.status }),
+    });
+
+    if (!response.ok) {
+      throw new Error(
+        `/internal/attachments/${options.attachmentId}/security-status failed with status ${response.status}`,
+      );
+    }
+
+    const body: unknown = await response.json();
+    if (!Value.Check(UpdateSecurityStatusResultSchema, body)) {
+      throw new Error("updateSecurityStatus returned an invalid response body");
+    }
+
+    return body;
   }
 }

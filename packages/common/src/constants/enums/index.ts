@@ -1,7 +1,6 @@
 export * from "./AppRoute";
 export * from "./Environment";
 export * from "./ItemPriority";
-export * from "./Queue";
 export * from "./StatusType";
 export * from "./email-verification-status";
 export * from "./email-verification-token-payload";

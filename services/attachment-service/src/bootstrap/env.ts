@@ -22,7 +22,6 @@ export const EnvSchema = Type.Object({
   PINE_WEB_URL: Type.String({ default: "https://localhost:3001" }),
   IDENTITY_WEB_URL: Type.String({ default: "https://localhost:3000" }),
   VITE_PLATFORM_WEB_URL: Type.String({ default: "https://localhost:3002" }),
-  REDIS_URL: Type.String({ default: "redis://localhost:6380" }),
   S3_ENDPOINT: Type.String({ default: "http://127.0.0.1:8333" }),
   S3_REGION: Type.String({ default: "us-east-1" }),
   S3_BUCKET: Type.String({ default: "attachments" }),

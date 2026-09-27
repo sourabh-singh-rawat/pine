@@ -12,8 +12,6 @@ import type { IHttpServer } from "@pine/server";
 import { bindHttpServer, broker, container, initializeDb, logger, TYPES } from "@/bootstrap";
 import { openApiOutputPath } from "@/bootstrap/container";
 import { writeSchemaToDist } from "@/bootstrap/graphql";
-import { startImageWorker } from "@/bootstrap/image-worker";
-import { AttachmentScannedConsumer } from "@/features/attachment";
 import { AttachmentIdentitySyncConsumer } from "@/features/identities";
 import { AttachmentTenantSyncConsumer } from "@/features/tenants";
 
@@ -38,8 +36,6 @@ const main = async () => {
   void container.get<IWorker>(TYPES.OutboxCleanupWorker).start();
   void container.get<AttachmentIdentitySyncConsumer>(TYPES.AttachmentIdentitySyncConsumer).start();
   void container.get<AttachmentTenantSyncConsumer>(TYPES.AttachmentTenantSyncConsumer).start();
-  void container.get<AttachmentScannedConsumer>(TYPES.AttachmentScannedConsumer).start();
-  startImageWorker();
 };
 
 main().catch((error) => {

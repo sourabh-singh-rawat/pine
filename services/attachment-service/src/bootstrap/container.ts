@@ -23,9 +23,7 @@ import { TYPES } from "@/bootstrap/container-types";
 import { db } from "@/bootstrap/db";
 import { env } from "@/bootstrap/env";
 import { logger } from "@/bootstrap/logger";
-import { imageProcessingQueue } from "@/bootstrap/queue";
-import { redisClient } from "@/bootstrap/redis-client";
-import { AttachmentRepository, AttachmentScannedConsumer, AttachmentService, IAttachmentRepository, IAttachmentService } from "@/features/attachment";
+import { AttachmentRepository, AttachmentService, IAttachmentRepository, IAttachmentService } from "@/features/attachment";
 import { AttachmentUploadRepository, AttachmentUploadService, IAttachmentUploadRepository, IAttachmentUploadService } from "@/features/attachment-upload";
 import { AttachmentIdentitySyncConsumer, IIdentityRepository, IdentityRepository } from "@/features/identities";
 import { AttachmentTenantSyncConsumer, ITenantRepository, TenantRepository } from "@/features/tenants";
@@ -40,8 +38,6 @@ const publisher = new NatsPublisher(broker);
 container.bind(TYPES.Database).toConstantValue(db);
 container.bind(TYPES.Logger).toConstantValue(logger);
 container.bind(TYPES.Broker).toConstantValue(broker);
-container.bind(TYPES.RedisClient).toConstantValue(redisClient);
-container.bind(TYPES.ImageProcessingQueue).toConstantValue(imageProcessingQueue);
 
 container.bind<IPublisher>(TYPES.Publisher).toConstantValue(publisher);
 container.bind<IOutboxRepository>(TYPES.OutboxRepository).toConstantValue(new OutboxRepository(db));
@@ -66,7 +62,6 @@ container.bind<IAttachmentUploadService>(TYPES.AttachmentUploadService).to(Attac
 container.bind<IAttachmentService>(TYPES.AttachmentService).to(AttachmentService);
 container.bind<AttachmentIdentitySyncConsumer>(TYPES.AttachmentIdentitySyncConsumer).to(AttachmentIdentitySyncConsumer);
 container.bind<AttachmentTenantSyncConsumer>(TYPES.AttachmentTenantSyncConsumer).to(AttachmentTenantSyncConsumer);
-container.bind<AttachmentScannedConsumer>(TYPES.AttachmentScannedConsumer).to(AttachmentScannedConsumer);
 
 export const bindHttpServer = async (): Promise<void> => {
   const { schema } = await import("@/graphql/schema");

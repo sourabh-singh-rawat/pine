@@ -1,19 +1,4 @@
 services:
-  redis:
-    image: redis:8.8.0
-    restart: unless-stopped
-    command: redis-server --appendonly yes --replica-read-only no --maxmemory 100mb --maxmemory-policy allkeys-lru
-    ports:
-      - 6380:6379
-    deploy:
-      resources:
-        limits:
-          cpus: "0.50"
-          memory: 64M
-        reservations:
-          cpus: "0.10"
-          memory: 32M
-
   nats:
     image: nats:2.14.3
     restart: unless-stopped
@@ -107,7 +92,6 @@ services:
       - POSTGRES_ISSUES_PASSWORD=${POSTGRES_ISSUES_PASSWORD}
       - POSTGRES_NOTIFICATION_PASSWORD=${POSTGRES_NOTIFICATION_PASSWORD}
       - POSTGRES_ATTACHMENT_PASSWORD=${POSTGRES_ATTACHMENT_PASSWORD}
-      - POSTGRES_ATTACHMENT_SCANNER_PASSWORD=${POSTGRES_ATTACHMENT_SCANNER_PASSWORD}
       - POSTGRES_AUDIT_PASSWORD=${POSTGRES_AUDIT_PASSWORD}
     ports:
       - 5555:80

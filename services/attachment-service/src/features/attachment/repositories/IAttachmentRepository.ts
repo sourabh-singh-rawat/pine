@@ -1,4 +1,11 @@
-import type { Attachment, AttachmentVersion, NewAttachment, NewAttachmentVersion } from "@/db";
+import type {
+  Attachment,
+  AttachmentDerivative,
+  AttachmentVersion,
+  NewAttachment,
+  NewAttachmentDerivative,
+  NewAttachmentVersion,
+} from "@/db";
 import type { AttachmentSecurityStatus, AttachmentStatus } from "@/features/attachment/constants";
 
 export type AttachmentRepositoryOptions = { tx?: unknown };
@@ -14,12 +21,22 @@ export interface IAttachmentRepository {
     entity: NewAttachmentVersion,
     options?: AttachmentRepositoryOptions,
   ) => Promise<AttachmentVersion>;
+  saveDerivative: (
+    entity: NewAttachmentDerivative,
+    options?: AttachmentRepositoryOptions,
+  ) => Promise<AttachmentDerivative>;
   findById: (id: string, options?: AttachmentRepositoryOptions) => Promise<Attachment | null>;
   findVersionById: (
     attachmentId: string,
     versionId: string,
     options?: AttachmentRepositoryOptions,
   ) => Promise<AttachmentVersion | null>;
+  findDerivative: (
+    attachmentId: string,
+    versionId: string,
+    derivativeType: string,
+    options?: AttachmentRepositoryOptions,
+  ) => Promise<AttachmentDerivative | null>;
   updateStatus: (
     id: string,
     input: UpdateAttachmentStatusInput,

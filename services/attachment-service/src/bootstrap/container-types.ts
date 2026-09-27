@@ -3,8 +3,6 @@ export const TYPES = {
   Logger: Symbol.for("Logger"),
   Broker: Symbol.for("Broker"),
   HttpServer: Symbol.for("IHttpServer"),
-  RedisClient: Symbol.for("RedisClient"),
-  ImageProcessingQueue: Symbol.for("ImageProcessingQueue"),
   Publisher: Symbol.for("Publisher"),
   OutboxRepository: Symbol.for("IOutboxRepository"),
   OutboxService: Symbol.for("IOutboxService"),
@@ -21,5 +19,4 @@ export const TYPES = {
   TenantRepository: Symbol.for("ITenantRepository"),
   AttachmentIdentitySyncConsumer: Symbol.for("AttachmentIdentitySyncConsumer"),
   AttachmentTenantSyncConsumer: Symbol.for("AttachmentTenantSyncConsumer"),
-  AttachmentScannedConsumer: Symbol.for("AttachmentScannedConsumer"),
 };
