@@ -1,5 +1,3 @@
-import type { AttachmentScan } from "@/db";
-
 export type ScanAttachmentInput = {
   attachmentId: string;
   versionId: string;
@@ -9,5 +7,5 @@ export type ScanAttachmentInput = {
 };
 
 export interface IAttachmentScannerService {
-  scan: (input: ScanAttachmentInput) => Promise<AttachmentScan>;
+  scan: (input: ScanAttachmentInput) => Promise<void>;
 }

@@ -24,25 +24,7 @@ const createBroker = (): IBroker => {
 describe("AttachmentQuarantinedConsumer", () => {
   it("calls attachment scanner service and acknowledges message", async () => {
     const scannerService: IAttachmentScannerService = {
-      scan: vi.fn().mockResolvedValue({
-        id: "scan-1",
-        attachmentId: "att-1",
-        versionId: "ver-1",
-        scopeType: "IDENTITY",
-        scopeId: "user-1",
-        tenantId: "tenant-1",
-        type: "MALWARE",
-        status: "PENDING",
-        scanner: null,
-        durationMs: null,
-        result: null,
-        metadata: null,
-        storageProvider: null,
-        storageObjectKey: null,
-        scannedAt: null,
-        createdAt: new Date(),
-        updatedAt: null,
-      }),
+      scan: vi.fn().mockResolvedValue(undefined),
     };
 
     const consumer = new AttachmentQuarantinedConsumer(createBroker(), scannerService);

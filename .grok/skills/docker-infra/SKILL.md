@@ -43,7 +43,6 @@ Confirm in active compose + `.env.example`.
 | 5433–5439   | Per-service Postgres (multi-db)  |
 | 5440        | Ory Postgres (kratos/hydra/keto) |
 | 4222 / 8222 | NATS client / monitor            |
-| 6380        | Redis (`REDIS_URL`)              |
 | 4433 / 4434 | Kratos public / admin            |
 | 4444 / 4445 | Hydra public / admin             |
 | 4466 / 4467 | Keto read / write                |

@@ -2,11 +2,11 @@
 name: workers
 description: >
   Background process kinds in Pine: outbox pollers, NATS consumers, dedicated
-  worker services, attachment BullMQ. Use when adding a worker, poll loop,
-  queue, or scanner-style service.
+  worker services. Use when adding a worker, poll loop,
+  or scanner-style service.
 when-to-use: >
-  worker, background job, poll loop, OutboxWorker, BullMQ, image-processing
-  queue, attachment-scanner, dedicated worker service
+  worker, background job, poll loop, OutboxWorker,
+  attachment-scanner, attachment-processing, dedicated worker service
 ---
 
 # Workers
@@ -17,8 +17,7 @@ Pick an existing kind. Do not invent a new queue for domain events. Related: `ou
 | ------------------------ | --------------------------------------------------- | ------------------------------------------------------------------------------- |
 | Outbox poller            | Publish events that were committed with a DB write  | `OutboxWorker` / `OutboxCleanupWorker` in the **same** service (`outbox`)       |
 | NATS consumer            | React to another service’s CloudEvent               | `features/<feature>/consumers/` (`events`)                                      |
-| Dedicated worker service | Work that should not sit on an HTTP/GraphQL process | `attachment-scanner-service` (DB + broker + outbox + consumers; no HTTP server) |
-| Redis queue              | Attachment image resize only                        | BullMQ `QUEUE.IMAGE_PROCESSING` in `attachment-service`                         |
+| Dedicated worker service | Work that should not sit on an HTTP/GraphQL process | `attachment-scanner-service`, `attachment-processing-service` (broker + consumers) |
 
 ## Recipe
 
@@ -26,11 +25,11 @@ Pick an existing kind. Do not invent a new queue for domain events. Related: `ou
 
 **Projection / side effect from an event:** `events` consumer, durable name `<service>-<purpose>`, `start()` after `broker.init()`.
 
-**CPU / IO that must scale separately:** dedicated service. Scanner shape: `initializeDb` → `broker.init()` → outbox workers → consumers (`attachment-scanner-service`). Consumer-only (no outbox) is valid — `notification-service`. No Fastify unless it truly needs HTTP.
+**CPU / IO that must scale separately:** dedicated service. Scanner shape: `initializeDb` → `broker.init()` → outbox workers → consumers (`attachment-scanner-service`). Consumer-only (no outbox) is valid — `notification-service`, `attachment-processing-service`. No Fastify unless it truly needs HTTP.
 
-**Image variants:** existing BullMQ worker in `attachment-service` `bootstrap/image-worker.ts` + `bootstrap/queue.ts`. Do not add a second Redis queue for platform/issues/identity events.
+**Image variants / processing:** dedicated consumer in `attachment-processing-service` (`AttachmentCreatedConsumer`).
 
-Start workers with `void worker.start()` (or `startImageWorker()`) from `main.ts` after dependencies are ready. Cluster: NATS consumers need `nats-consumer` charts (`k8s`); outbox pollers run inside the microservice process (no extra chart).
+Start workers with `void worker.start()` from `main.ts` after dependencies are ready. Cluster: NATS consumers need `nats-consumer` charts (`k8s`); outbox pollers run inside the microservice process (no extra chart).
 
 ## Anti-patterns
 
