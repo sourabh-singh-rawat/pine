@@ -1,5 +1,14 @@
 # @pine/pine-web
 
+## 0.10.1
+
+### Patch Changes
+
+- 1bc1a79: feat(audit): add getItemAuditLogs with actor identity
+- 72f985c: feat(ui): composable Modal parts for Add Item
+- Updated dependencies [72f985c]
+  - @pine/ui@0.3.1
+
 ## 0.10.0
 
 ### Minor Changes

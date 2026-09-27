@@ -1,5 +1,34 @@
 # Changelog
 
+## v2026.09.27.2
+
+### Minor
+
+- 1bc1a797: feat(audit): add getItemAuditLogs with actor identity — Sourabh Singh Rawat (`@pine/audit-service`, `@pine/events`, `@pine/identity-service`, `@pine/pine-web`, `@pine/platform-service`)
+- 9d2db596: feat(identities): project identityId and name columns across services — Sourabh Singh Rawat (`@pine/attachment-service`, `@pine/audit-service`, `@pine/events`, `@pine/identity-service`, `@pine/items-service`, `@pine/notification-service`, `@pine/platform-service`)
+
+### Patch
+
+- bd987f6c: fix(events): await NATS stream create before broker init — Sourabh Singh Rawat (`@pine/events`)
+- 45763f35: fix(items): authorize items with list-scoped keto — Sourabh Singh Rawat (`@pine/items-service`)
+- 7f947d21: perf(items): load first list pages with one window query — Sourabh Singh Rawat (`@pine/items-service`)
+- ebc7e522: fix(platform-web): align modal usage with onClose prop — Sourabh Singh Rawat (`@pine/platform-web`)
+- 72f985c9: feat(ui): composable Modal parts for Add Item — Sourabh Singh Rawat (`@pine/pine-web`, `@pine/ui`)
+
+### Packages
+
+- `@pine/attachment-service@0.6.0`
+- `@pine/audit-service@0.2.0`
+- `@pine/events@1.3.0`
+- `@pine/identity-service@0.7.0`
+- `@pine/identity-web@0.6.5`
+- `@pine/items-service@1.3.0`
+- `@pine/notification-service@0.5.0`
+- `@pine/pine-web@0.10.1`
+- `@pine/platform-service@0.6.0`
+- `@pine/platform-web@0.5.5`
+- `@pine/ui@0.3.1`
+
 ## v2026.09.27.1
 
 ### Minor
