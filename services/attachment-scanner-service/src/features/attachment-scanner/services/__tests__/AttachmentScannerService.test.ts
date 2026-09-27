@@ -11,6 +11,7 @@ describe("AttachmentScannerService", () => {
       createUploadTarget: vi.fn(),
       downloadStream: vi.fn().mockResolvedValue(stream),
       storeDerivative: vi.fn(),
+      storeMetadata: vi.fn(),
       updateSecurityStatus: vi.fn().mockResolvedValue({
         attachmentId: "att-1",
         status: "AVAILABLE",
@@ -55,6 +56,7 @@ describe("AttachmentScannerService", () => {
       createUploadTarget: vi.fn(),
       downloadStream: vi.fn().mockResolvedValue(stream),
       storeDerivative: vi.fn(),
+      storeMetadata: vi.fn(),
       updateSecurityStatus: vi.fn().mockResolvedValue({
         attachmentId: "att-2",
         status: "REJECTED",
@@ -93,6 +95,7 @@ describe("AttachmentScannerService", () => {
       createUploadTarget: vi.fn(),
       downloadStream: vi.fn().mockRejectedValue(new Error("Network failure")),
       storeDerivative: vi.fn(),
+      storeMetadata: vi.fn(),
       updateSecurityStatus: vi.fn().mockResolvedValue({
         attachmentId: "att-3",
         status: "REJECTED",
@@ -129,6 +132,7 @@ describe("AttachmentScannerService", () => {
       createUploadTarget: vi.fn(),
       downloadStream: vi.fn().mockResolvedValue(stream),
       storeDerivative: vi.fn(),
+      storeMetadata: vi.fn(),
       updateSecurityStatus: vi.fn().mockRejectedValue(new Error("attachment-service unavailable")),
     };
 
