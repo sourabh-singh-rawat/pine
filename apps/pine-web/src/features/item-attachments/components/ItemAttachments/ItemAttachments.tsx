@@ -7,15 +7,36 @@ import {
 } from "@generated/gql";
 import { ProgressCircularIndicator } from "@pine/ui";
 import { useSnackbar } from "@shared";
+import { ITEM_ATTACHMENT_STATUS, isProcessingAttachmentStatus } from "../../constants";
 import { formatFileSize, getAttachmentUrl } from "../../utils";
 import { AttachmentCard } from "../AttachmentCard";
 import { AttachmentDropZone } from "../AttachmentDropZone";
+import { AttachmentProcessingCard } from "../AttachmentProcessingCard";
 
 interface ItemAttachmentsProps {
   itemId: string;
 }
 
 const INITIAL_VISIBLE_ATTACHMENTS = 4;
+
+type AttachmentListItem = {
+  id: string;
+  attachmentId: string | null;
+  status: string;
+  name: string;
+  mimeType: string;
+  size: number | null;
+};
+
+const processingStatusLabel = (status: string): string => {
+  if (status === ITEM_ATTACHMENT_STATUS.SCANNING) {
+    return "Scanning…";
+  }
+  if (status === ITEM_ATTACHMENT_STATUS.FAILED) {
+    return "Scan failed";
+  }
+  return "Processing…";
+};
 
 export const ItemAttachments = ({ itemId }: ItemAttachmentsProps) => {
   const snackbar = useSnackbar();
@@ -28,20 +49,34 @@ export const ItemAttachments = ({ itemId }: ItemAttachmentsProps) => {
     { itemId },
     {
       enabled: Boolean(itemId),
-      select: (data) =>
+      refetchInterval: (query) => {
+        const rows = query.state.data?.getItemAttachments;
+        if (!Array.isArray(rows)) {
+          return false;
+        }
+        const hasProcessing = rows.some(
+          (attachment) =>
+            typeof attachment?.status === "string" &&
+            isProcessingAttachmentStatus(attachment.status),
+        );
+        return hasProcessing ? 2000 : false;
+      },
+      select: (data): AttachmentListItem[] =>
         (data.getItemAttachments ?? []).flatMap((attachment) => {
           if (
             !attachment ||
             typeof attachment.id !== "string" ||
-            typeof attachment.attachmentId !== "string" ||
-            typeof attachment.name !== "string"
+            typeof attachment.name !== "string" ||
+            typeof attachment.status !== "string"
           ) {
             return [];
           }
           return [
             {
               id: attachment.id,
-              attachmentId: attachment.attachmentId,
+              attachmentId:
+                typeof attachment.attachmentId === "string" ? attachment.attachmentId : null,
+              status: attachment.status,
               name: attachment.name,
               mimeType: typeof attachment.mimeType === "string" ? attachment.mimeType : "",
               size: typeof attachment.size === "number" ? attachment.size : null,
@@ -80,6 +115,8 @@ export const ItemAttachments = ({ itemId }: ItemAttachmentsProps) => {
         throw new Error("Missing upload target URL");
       }
 
+      await attachmentsQuery.refetch();
+
       const formData = new FormData();
       formData.append("file", file);
 
@@ -103,16 +140,7 @@ export const ItemAttachments = ({ itemId }: ItemAttachmentsProps) => {
       }
 
       snackbar.success("Attachment uploaded. It will appear after scanning.");
-
-      setTimeout(() => {
-        void attachmentsQuery.refetch();
-      }, 1000);
-      setTimeout(() => {
-        void attachmentsQuery.refetch();
-      }, 3000);
-      setTimeout(() => {
-        void attachmentsQuery.refetch();
-      }, 8000);
+      await attachmentsQuery.refetch();
     } catch (error) {
       snackbar.error(
         error instanceof Error ? error.message : "Could not upload attachment. Please try again.",
@@ -191,19 +219,46 @@ export const ItemAttachments = ({ itemId }: ItemAttachmentsProps) => {
               gap: 1.5,
             }}
           >
-            {visibleAttachments.map((attachment) => (
-              <AttachmentCard
-                key={attachment.id}
-                name={attachment.name}
-                mimeType={attachment.mimeType}
-                sizeLabel={formatFileSize(attachment.size)}
-                href={getAttachmentUrl(attachment.attachmentId)}
-                isDeleting={deletingId === attachment.id}
-                onDelete={() => {
-                  void handleDelete(attachment.id);
-                }}
-              />
-            ))}
+            {visibleAttachments.map((attachment) => {
+              if (
+                isProcessingAttachmentStatus(attachment.status) ||
+                attachment.status === ITEM_ATTACHMENT_STATUS.FAILED
+              ) {
+                return (
+                  <AttachmentProcessingCard
+                    key={attachment.id}
+                    name={attachment.name}
+                    sizeLabel={formatFileSize(attachment.size)}
+                    statusLabel={processingStatusLabel(attachment.status)}
+                  />
+                );
+              }
+
+              if (!attachment.attachmentId) {
+                return (
+                  <AttachmentProcessingCard
+                    key={attachment.id}
+                    name={attachment.name}
+                    sizeLabel={formatFileSize(attachment.size)}
+                    statusLabel="Processing…"
+                  />
+                );
+              }
+
+              return (
+                <AttachmentCard
+                  key={attachment.id}
+                  name={attachment.name}
+                  mimeType={attachment.mimeType}
+                  sizeLabel={formatFileSize(attachment.size)}
+                  href={getAttachmentUrl(attachment.attachmentId)}
+                  isDeleting={deletingId === attachment.id}
+                  onDelete={() => {
+                    void handleDelete(attachment.id);
+                  }}
+                />
+              );
+            })}
           </Box>
 
           {hasHiddenAttachments && (

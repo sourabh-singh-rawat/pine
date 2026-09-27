@@ -4,7 +4,8 @@ import { auditColumns, idColumn } from "@/db/columns";
 export const ItemAttachments = pgTable("item_attachments", {
   ...idColumn,
   itemId: uuid("item_id").notNull(),
-  attachmentId: uuid("attachment_id").notNull(),
+  attachmentId: uuid("attachment_id"),
+  status: text("status").notNull().default("READY"),
   name: text("name").notNull(),
   originalName: text("original_name").notNull(),
   mimeType: text("mime_type").notNull(),

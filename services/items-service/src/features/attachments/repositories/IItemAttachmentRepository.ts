@@ -5,7 +5,8 @@ export type ItemAttachmentRepositoryOptions = { tx?: DbClient };
 export type CreateItemAttachmentEntity = {
   id?: string;
   itemId: string;
-  attachmentId: string;
+  attachmentId?: string | null;
+  status: string;
   name: string;
   originalName: string;
   mimeType: string;
@@ -13,11 +14,20 @@ export type CreateItemAttachmentEntity = {
   createdById: string;
 };
 
+export type UpdateItemAttachmentEntity = Partial<
+  Pick<ItemAttachment, "attachmentId" | "status" | "name" | "originalName" | "mimeType" | "size">
+>;
+
 export interface IItemAttachmentRepository {
   save: (
     entity: CreateItemAttachmentEntity,
     options?: ItemAttachmentRepositoryOptions,
   ) => Promise<ItemAttachment>;
+  update: (
+    id: string,
+    entity: UpdateItemAttachmentEntity,
+    options?: ItemAttachmentRepositoryOptions,
+  ) => Promise<ItemAttachment | null>;
   findById: (
     id: string,
     options?: ItemAttachmentRepositoryOptions,

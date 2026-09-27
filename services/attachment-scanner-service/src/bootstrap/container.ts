@@ -58,7 +58,7 @@ container
 const clamClient = new ClamClient({
   host: env.CLAMAV_HOST,
   port: env.CLAMAV_PORT,
-  timeoutMs: 30000,
+  timeoutMs: env.CLAMAV_TIMEOUT_MS,
 });
 container.bind<ClamClient>(TYPES.ClamClient).toConstantValue(clamClient);
 

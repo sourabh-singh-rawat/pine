@@ -7,7 +7,8 @@ ItemAttachmentObject.implement({
   fields: (t) => ({
     id: t.exposeString("id"),
     itemId: t.exposeString("itemId"),
-    attachmentId: t.exposeString("attachmentId"),
+    attachmentId: t.exposeString("attachmentId", { nullable: true }),
+    status: t.exposeString("status"),
     name: t.exposeString("name"),
     originalName: t.exposeString("originalName"),
     mimeType: t.exposeString("mimeType"),

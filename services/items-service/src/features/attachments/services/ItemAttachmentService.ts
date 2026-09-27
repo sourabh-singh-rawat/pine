@@ -1,8 +1,10 @@
 import { requirePermission, type IAuthorizationClient } from "@pine/authorization";
 import { ATTACHMENT_SCOPE_TYPE, type IAttachmentClient } from "@pine/attachment";
+import { uuidv7 } from "@pine/common";
 import { inject, injectable } from "inversify";
 import { TYPES } from "@/bootstrap/container-types";
-import type { Item, ItemAttachment } from "@/db";
+import type { DbClient, Item, ItemAttachment } from "@/db";
+import { ITEM_ATTACHMENT_STATUS } from "@/features/attachments/constants";
 import {
   ItemAttachmentAlreadyLinkedError,
   ItemAttachmentNotFoundError,
@@ -27,9 +29,15 @@ import type {
   ListItemAttachmentsOptions,
 } from "./IItemAttachmentService";
 
+export type ItemAttachmentDatabase = {
+  transaction: <T>(callback: (tx: DbClient) => Promise<T>) => Promise<T>;
+};
+
 @injectable()
 export class ItemAttachmentService implements IItemAttachmentService {
   constructor(
+    @inject(TYPES.Database)
+    private readonly db: ItemAttachmentDatabase,
     @inject(TYPES.ItemRepository)
     private readonly itemRepository: IItemRepository,
     @inject(TYPES.ItemAttachmentRepository)
@@ -70,6 +78,7 @@ export class ItemAttachmentService implements IItemAttachmentService {
     return this.itemAttachmentRepository.save({
       itemId,
       attachmentId,
+      status: ITEM_ATTACHMENT_STATUS.READY,
       name,
       originalName,
       mimeType,
@@ -133,14 +142,37 @@ export class ItemAttachmentService implements IItemAttachmentService {
       `workspace:${workspaceId}`,
     );
 
-    const requestRecord = await this.itemAttachmentUploadRequestRepository.save({
-      itemId,
-      status: "pending",
-      name: filename,
-      originalName: filename,
-      mimeType: contentType,
-      size,
-      createdById: identityId,
+    const requestId = uuidv7();
+
+    await this.db.transaction(async (tx) => {
+      await this.itemAttachmentUploadRequestRepository.save(
+        {
+          id: requestId,
+          itemId,
+          status: "pending",
+          name: filename,
+          originalName: filename,
+          mimeType: contentType,
+          size,
+          createdById: identityId,
+        },
+        { tx },
+      );
+
+      await this.itemAttachmentRepository.save(
+        {
+          id: requestId,
+          itemId,
+          attachmentId: null,
+          status: ITEM_ATTACHMENT_STATUS.PENDING,
+          name: filename,
+          originalName: filename,
+          mimeType: contentType,
+          size,
+          createdById: identityId,
+        },
+        { tx },
+      );
     });
 
     const uploadTarget = await this.attachmentClient.createUploadTarget({
@@ -150,10 +182,10 @@ export class ItemAttachmentService implements IItemAttachmentService {
         filename,
         contentType,
         size,
-        operationId: requestRecord.id,
+        operationId: requestId,
         metadata: {
           itemId,
-          uploadRequestId: requestRecord.id,
+          uploadRequestId: requestId,
         },
       },
       identityId,
@@ -161,7 +193,7 @@ export class ItemAttachmentService implements IItemAttachmentService {
     });
 
     return {
-      uploadRequestId: requestRecord.id,
+      uploadRequestId: requestId,
       url: uploadTarget.url,
       headers: uploadTarget.headers,
       expiresAt: uploadTarget.expiresAt,
@@ -180,30 +212,48 @@ export class ItemAttachmentService implements IItemAttachmentService {
       );
     }
 
-    if (request.status === "completed") {
-      const existing = await this.itemAttachmentRepository.findByItemAndAttachment(
-        request.itemId,
-        attachmentId,
-      );
-      return existing;
-    }
-
-    const existing = await this.itemAttachmentRepository.findByItemAndAttachment(
+    const existingByAttachment = await this.itemAttachmentRepository.findByItemAndAttachment(
       request.itemId,
       attachmentId,
     );
-    if (existing) {
+    if (existingByAttachment) {
+      if (request.status !== "completed") {
+        await this.itemAttachmentUploadRequestRepository.update(uploadRequestId, {
+          status: "completed",
+          attachmentId,
+          completedAt: new Date(),
+        });
+      }
+      if (existingByAttachment.status !== ITEM_ATTACHMENT_STATUS.READY) {
+        const updated = await this.itemAttachmentRepository.update(existingByAttachment.id, {
+          attachmentId,
+          status: ITEM_ATTACHMENT_STATUS.READY,
+        });
+        return updated ?? existingByAttachment;
+      }
+      return existingByAttachment;
+    }
+
+    const pendingLink = await this.itemAttachmentRepository.findById(uploadRequestId);
+    if (pendingLink) {
+      const updated = await this.itemAttachmentRepository.update(uploadRequestId, {
+        attachmentId,
+        status: ITEM_ATTACHMENT_STATUS.READY,
+      });
+
       await this.itemAttachmentUploadRequestRepository.update(uploadRequestId, {
         status: "completed",
         attachmentId,
         completedAt: new Date(),
       });
-      return existing;
+
+      return updated;
     }
 
     const link = await this.itemAttachmentRepository.save({
       itemId: request.itemId,
       attachmentId,
+      status: ITEM_ATTACHMENT_STATUS.READY,
       name: request.name,
       originalName: request.originalName,
       mimeType: request.mimeType,

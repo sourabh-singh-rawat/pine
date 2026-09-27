@@ -19,6 +19,7 @@ export const EnvSchema = Type.Object({
   NATS_URL: Type.String({ default: "nats://localhost:4222" }),
   CLAMAV_HOST: Type.String({ default: "localhost" }),
   CLAMAV_PORT: Type.Number({ default: 3310 }),
+  CLAMAV_TIMEOUT_MS: Type.Number({ default: 600_000 }),
 });
 
 export type Env = Type.Static<typeof EnvSchema>;
