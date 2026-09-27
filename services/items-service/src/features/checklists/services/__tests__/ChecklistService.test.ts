@@ -119,7 +119,7 @@ const createItemRepository = (overrides: Partial<IItemRepository> = {}): IItemRe
   update: vi.fn(),
   softDelete: vi.fn(),
   findById: vi.fn().mockResolvedValue(item),
-  findByIdForUser: vi.fn(),
+  findByIdWithList: vi.fn(),
   findRootsByList: vi.fn(),
   findRootPageByStatus: vi.fn(),
   findRootFirstPagesByList: vi.fn(),
