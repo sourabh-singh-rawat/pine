@@ -7,6 +7,14 @@ export {
   type CreateUploadTargetResponse,
 } from "./CreateUploadTargetResponseSchema";
 export {
+  StoreAttachmentMetadataBodySchema,
+  type StoreAttachmentMetadataBody,
+} from "./StoreAttachmentMetadataBodySchema";
+export {
+  StoreAttachmentMetadataResultSchema,
+  type StoreAttachmentMetadataResult,
+} from "./StoreAttachmentMetadataResultSchema";
+export {
   StoreDerivativeResultSchema,
   type StoreDerivativeResult,
 } from "./StoreDerivativeResultSchema";

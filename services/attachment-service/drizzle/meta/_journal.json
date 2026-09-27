@@ -57,6 +57,13 @@
       "when": 1790524882576,
       "tag": "0007_tough_photon",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1790528409275,
+      "tag": "0008_clammy_menace",
+      "breakpoints": true
     }
   ]
 }

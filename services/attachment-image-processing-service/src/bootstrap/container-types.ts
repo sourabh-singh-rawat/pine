@@ -5,6 +5,6 @@ export const TYPES = {
   AttachmentClient: Symbol.for("AttachmentClient"),
   ThumbnailProcessingService: Symbol.for("ThumbnailProcessingService"),
   MetadataProcessingService: Symbol.for("MetadataProcessingService"),
-  ImageProcessingService: Symbol.for("ImageProcessingService"),
-  AttachmentImageCreatedConsumer: Symbol.for("AttachmentImageCreatedConsumer"),
+  AttachmentImageThumbnailConsumer: Symbol.for("AttachmentImageThumbnailConsumer"),
+  AttachmentImageMetadataConsumer: Symbol.for("AttachmentImageMetadataConsumer"),
 };

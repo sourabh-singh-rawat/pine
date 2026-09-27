@@ -25,6 +25,12 @@ import { env } from "@/bootstrap/env";
 import { logger } from "@/bootstrap/logger";
 import { AttachmentRepository, AttachmentService, IAttachmentRepository, IAttachmentService } from "@/features/attachment";
 import { AttachmentDerivativeService, type IAttachmentDerivativeService } from "@/features/attachment-derivatives";
+import {
+  AttachmentMetadataRepository,
+  AttachmentMetadataService,
+  type IAttachmentMetadataRepository,
+  type IAttachmentMetadataService,
+} from "@/features/attachment-metadatas";
 import { AttachmentUploadRepository, AttachmentUploadService, IAttachmentUploadRepository, IAttachmentUploadService } from "@/features/attachment-upload";
 import { AttachmentIdentitySyncConsumer, IIdentityRepository, IdentityRepository } from "@/features/identities";
 import { AttachmentTenantSyncConsumer, ITenantRepository, TenantRepository } from "@/features/tenants";
@@ -62,6 +68,8 @@ container.bind<IObjectStorage>(TYPES.ObjectStorage).to(SeaweedObjectStorage);
 container.bind<IAttachmentUploadService>(TYPES.AttachmentUploadService).to(AttachmentUploadService);
 container.bind<IAttachmentService>(TYPES.AttachmentService).to(AttachmentService);
 container.bind<IAttachmentDerivativeService>(TYPES.AttachmentDerivativeService).to(AttachmentDerivativeService);
+container.bind<IAttachmentMetadataRepository>(TYPES.AttachmentMetadataRepository).to(AttachmentMetadataRepository);
+container.bind<IAttachmentMetadataService>(TYPES.AttachmentMetadataService).to(AttachmentMetadataService);
 container.bind<AttachmentIdentitySyncConsumer>(TYPES.AttachmentIdentitySyncConsumer).to(AttachmentIdentitySyncConsumer);
 container.bind<AttachmentTenantSyncConsumer>(TYPES.AttachmentTenantSyncConsumer).to(AttachmentTenantSyncConsumer);
 

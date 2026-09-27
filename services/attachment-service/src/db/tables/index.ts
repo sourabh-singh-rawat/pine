@@ -5,6 +5,11 @@ export {
   AttachmentDerivatives,
 } from "@/db/tables/AttachmentDerivatives";
 export {
+  type AttachmentMetadata,
+  type NewAttachmentMetadata,
+  AttachmentMetadatas,
+} from "@/db/tables/AttachmentMetadatas";
+export {
   type AttachmentVersion,
   type NewAttachmentVersion,
   AttachmentVersions,

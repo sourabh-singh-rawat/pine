@@ -2,6 +2,8 @@ import type { Readable } from "node:stream";
 import type {
   CreateUploadTargetInput,
   CreateUploadTargetResponse,
+  StoreAttachmentMetadataBody,
+  StoreAttachmentMetadataResult,
   UpdateSecurityStatusBody,
   UpdateSecurityStatusResult,
 } from "./schemas";
@@ -43,10 +45,17 @@ export interface UpdateSecurityStatusOptions {
   status: UpdateSecurityStatusBody["status"];
 }
 
+export interface StoreMetadataOptions {
+  attachmentId: string;
+  versionId: string;
+  metadata: StoreAttachmentMetadataBody;
+}
+
 export interface IAttachmentClient {
   createUploadTarget: (options: CreateUploadTargetOptions) => Promise<CreateUploadTargetResponse>;
   downloadStream: (options: DownloadAttachmentOptions) => Promise<Readable>;
   storeDerivative: (options: StoreDerivativeOptions) => Promise<StoreDerivativeResult>;
+  storeMetadata: (options: StoreMetadataOptions) => Promise<StoreAttachmentMetadataResult>;
   updateSecurityStatus: (
     options: UpdateSecurityStatusOptions,
   ) => Promise<UpdateSecurityStatusResult>;
