@@ -1,5 +1,19 @@
 # @pine/audit-service
 
+## 0.2.0
+
+### Minor Changes
+
+- 1bc1a79: feat(audit): add getItemAuditLogs with actor identity
+- 9d2db59: feat(identities): project identityId and name columns across services
+
+### Patch Changes
+
+- Updated dependencies [1bc1a79]
+- Updated dependencies [bd987f6]
+- Updated dependencies [9d2db59]
+  - @pine/events@1.3.0
+
 ## 0.1.1
 
 ### Patch Changes

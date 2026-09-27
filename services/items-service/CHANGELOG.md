@@ -1,5 +1,20 @@
 # @pine/items-service
 
+## 1.3.0
+
+### Minor Changes
+
+- 9d2db59: feat(identities): project identityId and name columns across services
+
+### Patch Changes
+
+- 45763f3: fix(items): authorize items with list-scoped keto
+- 7f947d2: perf(items): load first list pages with one window query
+- Updated dependencies [1bc1a79]
+- Updated dependencies [bd987f6]
+- Updated dependencies [9d2db59]
+  - @pine/events@1.3.0
+
 ## 1.2.0
 
 ### Minor Changes

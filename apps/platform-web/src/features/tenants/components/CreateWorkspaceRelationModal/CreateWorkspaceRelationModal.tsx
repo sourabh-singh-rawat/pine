@@ -48,11 +48,11 @@ export const CreateWorkspaceRelationModal = ({
       >
         <Add fontSize="small" />
       </IconButton>
-      <Modal open={open} handleClose={handleClose}>
+      <Modal open={open} onClose={handleClose}>
         <ModalHeader
           title="Create workspace relation"
           subtitle="Assign an identity to this workspace with a graph relation."
-          handleClose={handleClose}
+          onClose={handleClose}
         />
         <ModalBody>
           <CreateWorkspaceRelationForm

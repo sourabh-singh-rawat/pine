@@ -48,11 +48,11 @@ export const CreateWorkspaceModal = ({
       >
         <Add fontSize="small" />
       </IconButton>
-      <Modal open={open} handleClose={handleClose}>
+      <Modal open={open} onClose={handleClose}>
         <ModalHeader
           title="Create workspace"
           subtitle="Add an workspace to this tenant."
-          handleClose={handleClose}
+          onClose={handleClose}
         />
         <ModalBody>
           <CreateWorkspaceForm

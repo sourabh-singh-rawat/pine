@@ -56,40 +56,26 @@ export type RootCountByStatus = {
 
 export interface IItemRepository {
   save(entity: CreateItemEntity, options?: ItemRepositoryOptions): Promise<Item>;
-  update(
-    id: string,
-    userId: string,
-    entity: UpdateItemEntity,
-    options?: ItemRepositoryOptions,
-  ): Promise<Item>;
+  update(id: string, entity: UpdateItemEntity, options?: ItemRepositoryOptions): Promise<Item>;
   softDelete(id: string, options?: ItemRepositoryOptions): Promise<boolean>;
   findById(id: string, options?: ItemRepositoryOptions): Promise<Item | null>;
-  findByIdForUser(
-    id: string,
-    userId: string,
-    options?: ItemRepositoryOptions,
-  ): Promise<ItemWithList | null>;
-  findRootsByList(
-    listId: string,
-    userId: string,
-    options?: ItemRepositoryOptions,
-  ): Promise<ItemWithHasChildren[]>;
+  findByIdWithList(id: string, options?: ItemRepositoryOptions): Promise<ItemWithList | null>;
+  findRootsByList(listId: string, options?: ItemRepositoryOptions): Promise<ItemWithHasChildren[]>;
   findRootPageByStatus(
     listId: string,
-    userId: string,
     page: FindRootPageByStatusOptions,
+    options?: ItemRepositoryOptions,
+  ): Promise<ItemWithHasChildren[]>;
+  findRootFirstPagesByList(
+    listId: string,
+    limit: number,
     options?: ItemRepositoryOptions,
   ): Promise<ItemWithHasChildren[]>;
   countRootsByListGrouped(
     listId: string,
-    userId: string,
     options?: ItemRepositoryOptions,
   ): Promise<RootCountByStatus[]>;
-  findChildren(
-    parentItemId: string,
-    userId: string,
-    options?: ItemRepositoryOptions,
-  ): Promise<Item[]>;
+  findChildren(parentItemId: string, options?: ItemRepositoryOptions): Promise<Item[]>;
   countByStatusId: (statusId: string, options?: ItemRepositoryOptions) => Promise<number>;
   reassignStatus: (
     fromStatusId: string,

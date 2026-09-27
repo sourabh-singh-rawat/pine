@@ -2,6 +2,7 @@ import { GraphQLSchema } from "graphql";
 import { builder } from "@pine/server";
 
 import "@/features/audit/graphql";
+import "@/features/identities/graphql";
 
 const withoutEmptyMutation = (schema: GraphQLSchema): GraphQLSchema => {
   const mutationType = schema.getMutationType();

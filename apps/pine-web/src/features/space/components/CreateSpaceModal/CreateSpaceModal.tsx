@@ -21,10 +21,7 @@ export const CreateSpaceModal = ({ disabled = false }: CreateSpaceModalProps) =>
     }
     setOpen(true);
   };
-  const handleClose = (e?: MouseEvent | object) => {
-    if (e && "stopPropagation" in e && typeof e.stopPropagation === "function") {
-      e.stopPropagation();
-    }
+  const onClose = () => {
     setOpen(false);
   };
 
@@ -42,14 +39,14 @@ export const CreateSpaceModal = ({ disabled = false }: CreateSpaceModalProps) =>
       >
         <Add fontSize="small" />
       </IconButton>
-      <Modal open={open} handleClose={handleClose}>
+      <Modal open={open} onClose={onClose}>
         <ModalHeader
           title="Create Space"
           subtitle="A Space groups related work in a workspace."
-          handleClose={handleClose}
+          onClose={onClose}
         />
         <ModalBody>
-          <SpaceForm onSuccess={() => setOpen(false)} />
+          <SpaceForm onSuccess={onClose} />
         </ModalBody>
       </Modal>
     </>

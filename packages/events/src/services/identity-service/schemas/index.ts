@@ -9,3 +9,7 @@ export {
   ProfileGenderUpdatedDataSchema,
   type ProfileGenderUpdatedData,
 } from "./ProfileGenderUpdatedDataSchema";
+export {
+  ProfileNameUpdatedDataSchema,
+  type ProfileNameUpdatedData,
+} from "./ProfileNameUpdatedDataSchema";

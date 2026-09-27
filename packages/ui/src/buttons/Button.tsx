@@ -26,9 +26,10 @@ export interface ButtonProps {
   onClick?: (e: MouseEvent<HTMLButtonElement>) => void;
   isDisabled?: boolean;
   sx?: MuiButtonProps["sx"];
+  form?: string;
 }
 
-export function Button({
+export const Button = ({
   type = "button",
   label,
   size = "medium",
@@ -39,7 +40,8 @@ export function Button({
   isDisabled,
   sx,
   color,
-}: ButtonProps) {
+  form,
+}: ButtonProps) => {
   return (
     <StyledButton
       type={type}
@@ -52,10 +54,11 @@ export function Button({
       disabled={isDisabled}
       disableRipple
       sx={sx}
+      form={form}
     >
       {label}
     </StyledButton>
   );
-}
+};
 
 export default Button;

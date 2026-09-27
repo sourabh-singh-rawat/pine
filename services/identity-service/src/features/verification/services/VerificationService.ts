@@ -50,7 +50,10 @@ export class VerificationService implements IVerificationService {
       data: {
         emailVerificationStatus: EMAIL_VERIFICATION_STATUS.VERIFIED,
         userId: identityId,
-        ...(displayName ? { displayName } : {}),
+        ...(displayName ? { displayName, fullName: displayName } : {}),
+        ...(profile?.firstName ? { firstName: profile.firstName } : {}),
+        ...(profile?.middleName ? { middleName: profile.middleName } : {}),
+        ...(profile?.lastName ? { lastName: profile.lastName } : {}),
         ...(profile?.photoUrl ? { photoUrl: profile.photoUrl } : {}),
       },
     });

@@ -1,5 +1,18 @@
 # @pine/attachment-service
 
+## 0.6.0
+
+### Minor Changes
+
+- 9d2db59: feat(identities): project identityId and name columns across services
+
+### Patch Changes
+
+- Updated dependencies [1bc1a79]
+- Updated dependencies [bd987f6]
+- Updated dependencies [9d2db59]
+  - @pine/events@1.3.0
+
 ## 0.5.3
 
 ### Patch Changes

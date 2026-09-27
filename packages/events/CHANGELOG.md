@@ -1,5 +1,16 @@
 # @pine/events
 
+## 1.3.0
+
+### Minor Changes
+
+- 1bc1a79: feat(audit): add getItemAuditLogs with actor identity
+- 9d2db59: feat(identities): project identityId and name columns across services
+
+### Patch Changes
+
+- bd987f6: fix(events): await NATS stream create before broker init
+
 ## 1.2.0
 
 ### Minor Changes

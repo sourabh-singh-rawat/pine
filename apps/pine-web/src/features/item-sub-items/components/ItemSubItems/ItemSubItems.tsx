@@ -1,5 +1,6 @@
 import { Stack, Typography } from "@mui/material";
-import { ItemList, ItemModal } from "@features/item";
+import { ItemList } from "@features/item";
+import { AddSubItemModal } from "../AddSubItemModal";
 
 type ItemSubItemsProps = {
   listId: string;
@@ -13,7 +14,7 @@ export const ItemSubItems = ({ listId, itemId }: ItemSubItemsProps) => {
         <Typography variant="body1" fontWeight="600">
           Sub Items
         </Typography>
-        <ItemModal listId={listId} />
+        <AddSubItemModal listId={listId} parentItemId={itemId} />
       </Stack>
       <ItemList itemId={itemId} style={{ showBorder: true }} />
     </Stack>

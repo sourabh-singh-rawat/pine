@@ -1,5 +1,13 @@
 # @pine/platform-web
 
+## 0.5.5
+
+### Patch Changes
+
+- ebc7e52: fix(platform-web): align modal usage with onClose prop
+- Updated dependencies [72f985c]
+  - @pine/ui@0.3.1
+
 ## 0.5.4
 
 ### Patch Changes

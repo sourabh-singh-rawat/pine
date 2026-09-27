@@ -71,6 +71,13 @@
       "when": 1790408982596,
       "tag": "0009_thin_banshee",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1790493895995,
+      "tag": "0010_funny_sleepwalker",
+      "breakpoints": true
     }
   ]
 }

@@ -5,7 +5,11 @@ import { IdentityService } from "@/features/identities/services/IdentityService"
 
 const identity = {
   id: "identity-1",
-  displayName: "Ada Lovelace",
+  identityId: "user-1",
+  fullName: "Ada Lovelace",
+  firstName: "Ada",
+  middleName: null,
+  lastName: "Lovelace",
   createdAt: new Date("2026-01-01T00:00:00.000Z"),
   updatedAt: null,
   deletedAt: null,

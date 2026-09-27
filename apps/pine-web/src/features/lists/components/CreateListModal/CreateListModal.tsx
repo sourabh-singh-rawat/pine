@@ -22,10 +22,7 @@ export const CreateListModal = ({ spaceId, disabled = false }: CreateListModalPr
     }
     setOpen(true);
   };
-  const handleClose = (e?: MouseEvent | object) => {
-    if (e && "stopPropagation" in e && typeof e.stopPropagation === "function") {
-      e.stopPropagation();
-    }
+  const onClose = () => {
     setOpen(false);
   };
 
@@ -43,14 +40,14 @@ export const CreateListModal = ({ spaceId, disabled = false }: CreateListModalPr
       >
         <Add fontSize="small" />
       </IconButton>
-      <Modal open={open} handleClose={handleClose}>
+      <Modal open={open} onClose={onClose}>
         <ModalHeader
           title="Create List"
           subtitle="A List is a container for items."
-          handleClose={handleClose}
+          onClose={onClose}
         />
         <ModalBody>
-          <ListForm spaceId={spaceId} onSuccess={() => setOpen(false)} />
+          <ListForm spaceId={spaceId} onSuccess={onClose} />
         </ModalBody>
       </Modal>
     </>

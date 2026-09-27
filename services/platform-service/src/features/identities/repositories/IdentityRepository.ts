@@ -18,12 +18,17 @@ export class IdentityRepository implements IIdentityRepository {
   ): Promise<Identity> => {
     const client = this.client(options);
     const now = new Date();
+    const fullName = entity.fullName ?? entity.displayName ?? null;
 
     const [created] = await client
       .insert(Identities)
       .values({
-        id: entity.id,
-        displayName: entity.displayName ?? null,
+        id: entity.identityId,
+        identityId: entity.identityId,
+        fullName,
+        firstName: entity.firstName ?? null,
+        middleName: entity.middleName ?? null,
+        lastName: entity.lastName ?? null,
         createdAt: now,
         version: 1,
       })
@@ -38,29 +43,51 @@ export class IdentityRepository implements IIdentityRepository {
   ): Promise<Identity> => {
     const client = this.client(options);
     const now = new Date();
+    const fullName = entity.fullName ?? entity.displayName ?? null;
 
     const [inserted] = await client
       .insert(Identities)
       .values({
-        id: entity.id,
-        displayName: entity.displayName ?? null,
+        id: entity.identityId,
+        identityId: entity.identityId,
+        fullName,
+        firstName: entity.firstName ?? null,
+        middleName: entity.middleName ?? null,
+        lastName: entity.lastName ?? null,
         createdAt: now,
         version: 1,
       })
-      .onConflictDoNothing({ target: Identities.id })
+      .onConflictDoNothing({ target: Identities.identityId })
       .returning();
 
     if (inserted) {
       return inserted;
     }
 
-    const existing = await this.findById(entity.id, options);
+    const existing = await this.findByIdentityId(entity.identityId, options);
     if (!existing) {
-      throw new Error(`Identity not found after conflict: ${entity.id}`);
+      throw new Error(`Identity not found after conflict: ${entity.identityId}`);
     }
 
-    if (entity.displayName !== undefined && entity.displayName !== existing.displayName) {
-      return this.update(entity.id, { displayName: entity.displayName }, options);
+    const targetFullName = entity.fullName !== undefined ? entity.fullName : entity.displayName;
+    const hasNewFullName = targetFullName !== undefined && targetFullName !== existing.fullName;
+    const hasNewFirstName =
+      entity.firstName !== undefined && entity.firstName !== existing.firstName;
+    const hasNewMiddleName =
+      entity.middleName !== undefined && entity.middleName !== existing.middleName;
+    const hasNewLastName = entity.lastName !== undefined && entity.lastName !== existing.lastName;
+
+    if (hasNewFullName || hasNewFirstName || hasNewMiddleName || hasNewLastName) {
+      return this.update(
+        existing.id,
+        {
+          fullName: targetFullName,
+          firstName: entity.firstName,
+          middleName: entity.middleName,
+          lastName: entity.lastName,
+        },
+        options,
+      );
     }
 
     return existing;
@@ -68,7 +95,9 @@ export class IdentityRepository implements IIdentityRepository {
 
   update = async (
     id: string,
-    entity: Partial<Pick<Identity, "displayName" | "deletedAt">>,
+    entity: Partial<
+      Pick<Identity, "fullName" | "firstName" | "middleName" | "lastName" | "deletedAt">
+    >,
     options?: IdentityRepositoryOptions,
   ): Promise<Identity> => {
     const client = this.client(options);
@@ -77,7 +106,10 @@ export class IdentityRepository implements IIdentityRepository {
     const [updated] = await client
       .update(Identities)
       .set({
-        ...(entity.displayName !== undefined ? { displayName: entity.displayName } : {}),
+        ...(entity.fullName !== undefined ? { fullName: entity.fullName } : {}),
+        ...(entity.firstName !== undefined ? { firstName: entity.firstName } : {}),
+        ...(entity.middleName !== undefined ? { middleName: entity.middleName } : {}),
+        ...(entity.lastName !== undefined ? { lastName: entity.lastName } : {}),
         ...(entity.deletedAt !== undefined ? { deletedAt: entity.deletedAt } : {}),
         updatedAt: now,
         version: sql`${Identities.version} + 1`,
@@ -97,12 +129,34 @@ export class IdentityRepository implements IIdentityRepository {
     return identity != null;
   };
 
+  existsByIdentityId = async (
+    identityId: string,
+    options?: IdentityRepositoryOptions,
+  ): Promise<boolean> => {
+    const identity = await this.findByIdentityId(identityId, options);
+    return identity != null;
+  };
+
   findById = async (id: string, options?: IdentityRepositoryOptions): Promise<Identity | null> => {
     const client = this.client(options);
     const [row] = await client
       .select()
       .from(Identities)
       .where(and(eq(Identities.id, id), isNull(Identities.deletedAt)))
+      .limit(1);
+
+    return row ?? null;
+  };
+
+  findByIdentityId = async (
+    identityId: string,
+    options?: IdentityRepositoryOptions,
+  ): Promise<Identity | null> => {
+    const client = this.client(options);
+    const [row] = await client
+      .select()
+      .from(Identities)
+      .where(and(eq(Identities.identityId, identityId), isNull(Identities.deletedAt)))
       .limit(1);
 
     return row ?? null;

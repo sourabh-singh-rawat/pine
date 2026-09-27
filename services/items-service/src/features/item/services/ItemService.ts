@@ -51,6 +51,13 @@ export class ItemService implements IItemService {
     const { userId, assigneeIds, parentItemId, estimate, component, statusId, priority, ...input } =
       options;
 
+    await requirePermission(
+      this.authorizationClient,
+      userId,
+      "create_item",
+      `list:${input.listId}`,
+    );
+
     return this.db.transaction(async (tx) => {
       if (parentItemId) {
         const parentItem = await this.itemRepository.findById(parentItemId, { tx });
@@ -115,6 +122,8 @@ export class ItemService implements IItemService {
       throw new ListItemsValidationError("statusId is required when after is provided");
     }
 
+    await requirePermission(this.authorizationClient, userId, "read", `list:${listId}`);
+
     const statuses = await this.statusRepository.findByListId(listId);
 
     if (statusId) {
@@ -124,43 +133,72 @@ export class ItemService implements IItemService {
       }
 
       const cursor = after ? decodeItemListCursor(after) : undefined;
-      const page = await this.itemRepository.findRootPageByStatus(listId, userId, {
+      const page = await this.itemRepository.findRootPageByStatus(listId, {
         statusId,
         limit: first + 1,
         after: cursor,
       });
-      const counts = await this.itemRepository.countRootsByListGrouped(listId, userId);
+      const counts = await this.itemRepository.countRootsByListGrouped(listId);
       const totalCount = counts.find((row) => row.statusId === statusId)?.totalCount ?? 0;
       const { items, pageInfo } = await this.toPageItems(page, first);
 
       return [{ status, items, pageInfo, totalCount }];
     }
 
-    const counts = await this.itemRepository.countRootsByListGrouped(listId, userId);
+    const counts = await this.itemRepository.countRootsByListGrouped(listId);
     const totalByStatusId = new Map(counts.map((row) => [row.statusId, row.totalCount]));
 
-    const pages = await Promise.all(
-      statuses.map(async (status) => {
-        const page = await this.itemRepository.findRootPageByStatus(listId, userId, {
-          statusId: status.id,
-          limit: first + 1,
-        });
-        const { items, pageInfo } = await this.toPageItems(page, first);
-        return {
-          status,
-          items,
-          pageInfo,
-          totalCount: totalByStatusId.get(status.id) ?? 0,
-        };
-      }),
-    );
+    const allRoots = await this.itemRepository.findRootFirstPagesByList(listId, first + 1);
+    const rootsByStatusId = new Map<string, typeof allRoots>();
+    for (const root of allRoots) {
+      const group = rootsByStatusId.get(root.statusId);
+      if (group) {
+        group.push(root);
+      } else {
+        rootsByStatusId.set(root.statusId, [root]);
+      }
+    }
 
-    return pages;
+    const pageGroups = statuses.map((status) => {
+      const page = rootsByStatusId.get(status.id) ?? [];
+      const hasNextPage = page.length > first;
+      const roots = hasNextPage ? page.slice(0, first) : page;
+      return {
+        status,
+        roots,
+        hasNextPage,
+        totalCount: totalByStatusId.get(status.id) ?? 0,
+      };
+    });
+
+    const checklistCounts = await this.checklistRepository.findCountsByItemIds(
+      pageGroups.flatMap((group) => group.roots.map((root) => root.id)),
+    );
+    const countsByItemId = this.groupCountsByItemId(checklistCounts);
+
+    return pageGroups.map(({ status, roots, hasNextPage, totalCount }) => {
+      const items: ItemListItem[] = roots.map((root) => ({
+        ...root,
+        checklistCounts: countsByItemId.get(root.id) ?? { completedCount: 0, totalCount: 0 },
+      }));
+      const last = items[items.length - 1];
+      const pageInfo: ItemGroupPageInfo = {
+        hasNextPage,
+        endCursor: last ? encodeItemListCursor(last) : null,
+      };
+      return { status, items, pageInfo, totalCount };
+    });
   }
 
   async getById(options: GetItemOptions) {
     const { userId, itemId } = options;
-    return this.itemRepository.findByIdForUser(itemId, userId);
+    const item = await this.itemRepository.findByIdWithList(itemId);
+    if (!item) {
+      return null;
+    }
+
+    await requirePermission(this.authorizationClient, userId, "read", `list:${item.listId}`);
+    return item;
   }
 
   async getStatusList() {
@@ -187,10 +225,16 @@ export class ItemService implements IItemService {
       type,
     } = options;
 
+    const existing = await this.itemRepository.findById(itemId);
+    if (!existing) {
+      throw new ItemNotFoundError(`Item not found: ${itemId}`);
+    }
+
+    await requirePermission(this.authorizationClient, userId, "update", `list:${existing.listId}`);
+
     await this.db.transaction(async (tx) => {
       const updatedItem = await this.itemRepository.update(
         itemId,
-        userId,
         {
           name,
           description,

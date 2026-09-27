@@ -1,5 +1,17 @@
 import { uuidv7 } from "@pine/common";
-import { and, asc, count, eq, gt, inArray, isNull, or, sql } from "drizzle-orm";
+import {
+  and,
+  asc,
+  count,
+  eq,
+  getTableColumns,
+  gt,
+  inArray,
+  isNull,
+  lte,
+  or,
+  sql,
+} from "drizzle-orm";
 import { inject, injectable } from "inversify";
 import { TYPES } from "@/bootstrap/container-types";
 import { type Database, type Item, Items, Lists } from "@/db";
@@ -47,7 +59,6 @@ export class ItemRepository implements IItemRepository {
 
   async update(
     id: string,
-    userId: string,
     entity: UpdateItemEntity,
     options?: ItemRepositoryOptions,
   ): Promise<Item> {
@@ -69,7 +80,7 @@ export class ItemRepository implements IItemRepository {
         updatedAt: now,
         version: sql`${Items.version} + 1`,
       })
-      .where(and(eq(Items.id, id), eq(Items.createdById, userId), isNull(Items.deletedAt)))
+      .where(and(eq(Items.id, id), isNull(Items.deletedAt)))
       .returning();
 
     if (!updated) {
@@ -107,9 +118,8 @@ export class ItemRepository implements IItemRepository {
     return row ?? null;
   }
 
-  async findByIdForUser(
+  async findByIdWithList(
     id: string,
-    userId: string,
     options?: ItemRepositoryOptions,
   ): Promise<ItemWithList | null> {
     const client = this.client(options);
@@ -120,14 +130,7 @@ export class ItemRepository implements IItemRepository {
       })
       .from(Items)
       .innerJoin(Lists, eq(Items.listId, Lists.id))
-      .where(
-        and(
-          eq(Items.id, id),
-          eq(Items.createdById, userId),
-          isNull(Items.deletedAt),
-          isNull(Lists.deletedAt),
-        ),
-      )
+      .where(and(eq(Items.id, id), isNull(Items.deletedAt), isNull(Lists.deletedAt)))
       .limit(1);
 
     if (!row) return null;
@@ -137,28 +140,19 @@ export class ItemRepository implements IItemRepository {
 
   async findRootsByList(
     listId: string,
-    userId: string,
     options?: ItemRepositoryOptions,
   ): Promise<ItemWithHasChildren[]> {
     const client = this.client(options);
     const roots = await client
       .select()
       .from(Items)
-      .where(
-        and(
-          eq(Items.listId, listId),
-          eq(Items.createdById, userId),
-          isNull(Items.parentItemId),
-          isNull(Items.deletedAt),
-        ),
-      );
+      .where(and(eq(Items.listId, listId), isNull(Items.parentItemId), isNull(Items.deletedAt)));
 
-    return this.withHasChildren(roots, userId, options);
+    return this.withHasChildren(roots, options);
   }
 
   async findRootPageByStatus(
     listId: string,
-    userId: string,
     page: FindRootPageByStatusOptions,
     options?: ItemRepositoryOptions,
   ): Promise<ItemWithHasChildren[]> {
@@ -176,7 +170,6 @@ export class ItemRepository implements IItemRepository {
       .where(
         and(
           eq(Items.listId, listId),
-          eq(Items.createdById, userId),
           eq(Items.statusId, page.statusId),
           isNull(Items.parentItemId),
           isNull(Items.deletedAt),
@@ -186,12 +179,44 @@ export class ItemRepository implements IItemRepository {
       .orderBy(asc(Items.name), asc(Items.id))
       .limit(page.limit);
 
-    return this.withHasChildren(roots, userId, options);
+    return this.withHasChildren(roots, options);
+  }
+
+  async findRootFirstPagesByList(
+    listId: string,
+    limit: number,
+    options?: ItemRepositoryOptions,
+  ): Promise<ItemWithHasChildren[]> {
+    const client = this.client(options);
+    const ranked = client
+      .select({
+        ...getTableColumns(Items),
+        rowNum: sql<number>`row_number() over (
+          partition by ${Items.statusId}
+          order by ${Items.name} asc, ${Items.id} asc
+        )`.as("row_num"),
+      })
+      .from(Items)
+      .where(and(eq(Items.listId, listId), isNull(Items.parentItemId), isNull(Items.deletedAt)))
+      .as("ranked_items");
+
+    const rows = await client
+      .select()
+      .from(ranked)
+      .where(lte(ranked.rowNum, limit))
+      .orderBy(asc(ranked.statusId), asc(ranked.name), asc(ranked.id));
+
+    const items = rows.map((row) => {
+      const { rowNum, ...item } = row;
+      void rowNum;
+      return item;
+    });
+
+    return this.withHasChildren(items, options);
   }
 
   async countRootsByListGrouped(
     listId: string,
-    userId: string,
     options?: ItemRepositoryOptions,
   ): Promise<RootCountByStatus[]> {
     const client = this.client(options);
@@ -201,14 +226,7 @@ export class ItemRepository implements IItemRepository {
         totalCount: count(),
       })
       .from(Items)
-      .where(
-        and(
-          eq(Items.listId, listId),
-          eq(Items.createdById, userId),
-          isNull(Items.parentItemId),
-          isNull(Items.deletedAt),
-        ),
-      )
+      .where(and(eq(Items.listId, listId), isNull(Items.parentItemId), isNull(Items.deletedAt)))
       .groupBy(Items.statusId);
 
     return rows.map((row) => ({
@@ -217,22 +235,12 @@ export class ItemRepository implements IItemRepository {
     }));
   }
 
-  async findChildren(
-    parentItemId: string,
-    userId: string,
-    options?: ItemRepositoryOptions,
-  ): Promise<Item[]> {
+  async findChildren(parentItemId: string, options?: ItemRepositoryOptions): Promise<Item[]> {
     const client = this.client(options);
     return client
       .select()
       .from(Items)
-      .where(
-        and(
-          eq(Items.parentItemId, parentItemId),
-          eq(Items.createdById, userId),
-          isNull(Items.deletedAt),
-        ),
-      );
+      .where(and(eq(Items.parentItemId, parentItemId), isNull(Items.deletedAt)));
   }
 
   async countByStatusId(statusId: string, options?: ItemRepositoryOptions): Promise<number> {
@@ -268,7 +276,6 @@ export class ItemRepository implements IItemRepository {
 
   private async withHasChildren(
     roots: Item[],
-    userId: string,
     options?: ItemRepositoryOptions,
   ): Promise<ItemWithHasChildren[]> {
     if (roots.length === 0) {
@@ -280,13 +287,7 @@ export class ItemRepository implements IItemRepository {
     const childParents = await client
       .selectDistinct({ parentItemId: Items.parentItemId })
       .from(Items)
-      .where(
-        and(
-          inArray(Items.parentItemId, rootIds),
-          eq(Items.createdById, userId),
-          isNull(Items.deletedAt),
-        ),
-      );
+      .where(and(inArray(Items.parentItemId, rootIds), isNull(Items.deletedAt)));
 
     const parentsWithChildren = new Set(
       childParents.flatMap((row) => (row.parentItemId ? [row.parentItemId] : [])),

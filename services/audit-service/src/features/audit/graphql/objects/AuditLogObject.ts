@@ -1,7 +1,8 @@
 import { builder } from "@pine/server";
-import type { AuditLog } from "@/db";
+import type { AuditLogWithActor } from "@/features/audit/services";
+import { AuditIdentityObject } from "@/features/identities/graphql/objects/AuditIdentityObject";
 
-export const AuditLogObject = builder.objectRef<AuditLog>("AuditLogObject");
+export const AuditLogObject = builder.objectRef<AuditLogWithActor>("AuditLogObject");
 
 AuditLogObject.implement({
   fields: (t) => ({
@@ -10,6 +11,11 @@ AuditLogObject.implement({
     entityId: t.exposeString("entityId"),
     action: t.exposeString("action"),
     actorId: t.exposeString("actorId", { nullable: true }),
+    actor: t.field({
+      type: AuditIdentityObject,
+      nullable: true,
+      resolve: (log) => log.actor,
+    }),
     workspaceId: t.exposeString("workspaceId", { nullable: true }),
     tenantId: t.exposeString("tenantId", { nullable: true }),
     createdAt: t.expose("createdAt", { type: "DateTimeISO" }),

@@ -92,7 +92,10 @@ export class AdminService implements IAdminService {
             data: {
               emailVerificationStatus: EMAIL_VERIFICATION_STATUS.VERIFIED,
               userId: identity.id,
-              ...(displayName ? { displayName } : {}),
+              ...(displayName ? { displayName, fullName: displayName } : {}),
+              ...(options.firstName ? { firstName: options.firstName } : {}),
+              ...(options.middleName ? { middleName: options.middleName } : {}),
+              ...(options.lastName ? { lastName: options.lastName } : {}),
             },
           });
 

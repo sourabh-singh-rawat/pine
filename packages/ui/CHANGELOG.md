@@ -1,5 +1,11 @@
 # @pine/ui
 
+## 0.3.1
+
+### Patch Changes
+
+- 72f985c: feat(ui): composable Modal parts for Add Item
+
 ## 0.3.0
 
 ### Minor Changes
