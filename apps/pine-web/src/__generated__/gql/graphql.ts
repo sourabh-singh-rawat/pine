@@ -17,9 +17,21 @@ export type Scalars = {
   link__Import: { input: unknown; output: unknown; }
 };
 
+export type AuditIdentityObject = {
+  __typename?: 'AuditIdentityObject';
+  createdAt?: Maybe<Scalars['DateTimeISO']['output']>;
+  firstName?: Maybe<Scalars['String']['output']>;
+  fullName?: Maybe<Scalars['String']['output']>;
+  id?: Maybe<Scalars['String']['output']>;
+  lastName?: Maybe<Scalars['String']['output']>;
+  middleName?: Maybe<Scalars['String']['output']>;
+  updatedAt?: Maybe<Scalars['DateTimeISO']['output']>;
+};
+
 export type AuditLogObject = {
   __typename?: 'AuditLogObject';
   action?: Maybe<Scalars['String']['output']>;
+  actor?: Maybe<AuditIdentityObject>;
   actorId?: Maybe<Scalars['String']['output']>;
   createdAt?: Maybe<Scalars['DateTimeISO']['output']>;
   entityId?: Maybe<Scalars['String']['output']>;
@@ -576,7 +588,12 @@ export type PlatformIdentityObject = {
   __typename?: 'PlatformIdentityObject';
   createdAt?: Maybe<Scalars['DateTimeISO']['output']>;
   displayName?: Maybe<Scalars['String']['output']>;
+  firstName?: Maybe<Scalars['String']['output']>;
+  fullName?: Maybe<Scalars['String']['output']>;
   id?: Maybe<Scalars['String']['output']>;
+  identityId?: Maybe<Scalars['String']['output']>;
+  lastName?: Maybe<Scalars['String']['output']>;
+  middleName?: Maybe<Scalars['String']['output']>;
   updatedAt?: Maybe<Scalars['DateTimeISO']['output']>;
 };
 
@@ -619,6 +636,7 @@ export type Query = {
   getIdentityRelations?: Maybe<IdentityRelationsObject>;
   getItem?: Maybe<ItemObject>;
   getItemAttachments?: Maybe<Array<ItemAttachmentObject>>;
+  getItemAuditLogs?: Maybe<Array<AuditLogObject>>;
   getList?: Maybe<ListObject>;
   getListItems?: Maybe<Array<ItemStatusGroupObject>>;
   getLists?: Maybe<PaginatedListObject>;
@@ -682,6 +700,12 @@ export type QueryGetItemArgs = {
 
 export type QueryGetItemAttachmentsArgs = {
   itemId: Scalars['String']['input'];
+};
+
+
+export type QueryGetItemAuditLogsArgs = {
+  itemId: Scalars['String']['input'];
+  workspaceId: Scalars['String']['input'];
 };
 
 

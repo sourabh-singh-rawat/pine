@@ -1,7 +1,12 @@
 import { ATTACHMENT_SCOPE_TYPE } from "@pine/attachment";
 import { InsufficientPermissionError } from "@pine/authorization";
 import { UserProfileAlreadyExistsError, UserProfileNotFoundError } from "@pine/common";
-import { ProfileCreatedEvent, ProfileDeletedEvent, ProfileGenderUpdatedEvent } from "@pine/events";
+import {
+  ProfileCreatedEvent,
+  ProfileDeletedEvent,
+  ProfileGenderUpdatedEvent,
+  ProfileNameUpdatedEvent,
+} from "@pine/events";
 import { describe, expect, it, vi } from "vitest";
 import { ProfileGender } from "@/features/profiles/constants";
 import { ProfileService } from "@/features/profiles/services/ProfileService";
@@ -112,6 +117,9 @@ describe("ProfileService", () => {
           data: {
             id: "profile-1",
             identityId: "identity-1",
+            fullName: "Ada Lovelace",
+            firstName: "Ada",
+            lastName: "Lovelace",
           },
         }),
       }),
@@ -265,14 +273,16 @@ describe("ProfileService", () => {
       findById: vi.fn(),
     };
     const authorizationClient = allowAuthorizationClient();
+    const outboxService = createOutbox();
+    const db = createDb();
 
     const service = new ProfileService(
       profileRepository,
       createPhotoUploadRequestRepo(),
       authorizationClient,
       createAttachmentClient(),
-      createOutbox(),
-      createDb(),
+      outboxService,
+      db,
     );
 
     const result = await service.updateName({
@@ -288,11 +298,36 @@ describe("ProfileService", () => {
       subject: "identity:identity-1",
     });
     expect(profileRepository.findByIdentityId).toHaveBeenCalledWith("identity-1");
-    expect(profileRepository.update).toHaveBeenCalledWith("profile-1", {
-      firstName: "Grace",
-      middleName: null,
-      lastName: "Hopper",
-    });
+    expect(db.transaction).toHaveBeenCalledOnce();
+    expect(profileRepository.update).toHaveBeenCalledWith(
+      "profile-1",
+      {
+        firstName: "Grace",
+        middleName: null,
+        lastName: "Hopper",
+      },
+      { tx: {} },
+    );
+    expect(outboxService.schedule).toHaveBeenCalledWith(
+      expect.objectContaining({
+        eventType: ProfileNameUpdatedEvent.type,
+        eventVersion: ProfileNameUpdatedEvent.version,
+        aggregateType: "profile",
+        aggregateId: "profile-1",
+        payload: expect.objectContaining({
+          type: ProfileNameUpdatedEvent.type,
+          subject: "profile-1",
+          data: {
+            id: "profile-1",
+            identityId: "identity-1",
+            fullName: "Grace Hopper",
+            firstName: "Grace",
+            lastName: "Hopper",
+          },
+        }),
+      }),
+      { tx: {} },
+    );
     expect(result).toEqual(updated);
   });
 

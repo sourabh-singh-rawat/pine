@@ -1,11 +1,20 @@
 import { Stack, Typography, useTheme } from "@mui/material";
-import { useGetAuditLogsQuery } from "@generated/gql";
+import { useGetItemAuditLogsQuery } from "@generated/gql";
 import { ProgressCircularIndicator } from "@pine/ui";
 import { useWorkspaceStore } from "@features/workspace/store";
 
 interface ItemActivityProps {
   itemId: string;
 }
+
+type ActorLabelSource = {
+  actorId?: string | null;
+  actor?: {
+    fullName?: string | null;
+    firstName?: string | null;
+    lastName?: string | null;
+  } | null;
+};
 
 const formatAction = (action: string): string => {
   if (action.length === 0) {
@@ -28,18 +37,37 @@ const formatTimestamp = (value: unknown): string => {
   });
 };
 
+const formatActorLabel = (log: ActorLabelSource): string => {
+  const fullName = log.actor?.fullName?.trim();
+  if (fullName) {
+    return `by ${fullName}`;
+  }
+
+  const firstName = log.actor?.firstName?.trim() ?? "";
+  const lastName = log.actor?.lastName?.trim() ?? "";
+  const combinedName = `${firstName} ${lastName}`.trim();
+  if (combinedName.length > 0) {
+    return `by ${combinedName}`;
+  }
+
+  if (log.actorId) {
+    return "by unknown user";
+  }
+
+  return "by unknown";
+};
+
 export const ItemActivity = ({ itemId }: ItemActivityProps) => {
   const theme = useTheme();
   const workspaceId = useWorkspaceStore((state) => state.currentWorkspace?.id);
-  const auditLogsQuery = useGetAuditLogsQuery(
+  const auditLogsQuery = useGetItemAuditLogsQuery(
     {
-      entityType: "item",
-      entityId: itemId,
+      itemId,
       workspaceId: workspaceId ?? "",
     },
     {
       enabled: Boolean(workspaceId) && Boolean(itemId),
-      select: (data) => data.getAuditLogs ?? [],
+      select: (data) => data.getItemAuditLogs ?? [],
     },
   );
 
@@ -88,7 +116,7 @@ export const ItemActivity = ({ itemId }: ItemActivityProps) => {
               {formatAction(log.action ?? "")}
             </Typography>
             <Typography variant="body2" color="text.secondary" sx={{ flex: 1 }}>
-              {log.actorId ? `by ${log.actorId}` : "by unknown"}
+              {formatActorLabel(log)}
             </Typography>
             <Typography variant="body2" color="text.secondary">
               {formatTimestamp(log.createdAt)}
