@@ -12,9 +12,10 @@ export interface PrimaryButtonProps {
   onClick?: (e: unknown) => void;
   isDisabled?: boolean;
   loading?: boolean;
+  form?: string;
 }
 
-export function PrimaryButton({
+export const PrimaryButton = ({
   label,
   size,
   type = "button",
@@ -23,7 +24,8 @@ export function PrimaryButton({
   onClick,
   isDisabled,
   loading,
-}: PrimaryButtonProps) {
+  form,
+}: PrimaryButtonProps) => {
   return (
     <Button
       label={label}
@@ -33,8 +35,9 @@ export function PrimaryButton({
       startIcon={loading ? <CircularProgress size={12} /> : startIcon}
       endIcon={endIcon}
       isDisabled={isDisabled || loading}
+      form={form}
     />
   );
-}
+};
 
 export default PrimaryButton;

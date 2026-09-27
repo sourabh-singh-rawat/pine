@@ -69,11 +69,11 @@ export const SpaceSettingsModal = ({
   };
 
   return (
-    <Modal open={open} handleClose={onClose}>
+    <Modal open={open} onClose={onClose}>
       <ModalHeader
         title="Space settings"
         subtitle="Update how this space appears in the sidebar."
-        handleClose={onClose}
+        onClose={onClose}
       />
       <ModalBody>
         <Stack spacing={2}>

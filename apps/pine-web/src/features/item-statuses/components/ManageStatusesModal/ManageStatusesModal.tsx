@@ -216,11 +216,11 @@ export const ManageStatusesModal = ({
     .map((status) => ({ id: status.id, name: status.name }));
 
   return (
-    <Modal open={open} handleClose={onClose}>
+    <Modal open={open} onClose={onClose}>
       <ModalHeader
         title="Manage statuses"
         subtitle={`Customize the workflow for ${listName}.`}
-        handleClose={onClose}
+        onClose={onClose}
       />
       <ModalBody>
         {statusesQuery.isLoading ? (

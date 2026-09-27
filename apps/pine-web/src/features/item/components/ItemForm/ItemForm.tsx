@@ -4,16 +4,18 @@ import dayjs from "dayjs";
 import { SubmitHandler, useForm } from "react-hook-form";
 import type { CreateItemInput } from "@generated/gql/graphql";
 import { useCreateItemMutation } from "@generated/gql";
-import { DatePicker, PrimaryButton, TextField, useSnackbar } from "@shared";
+import { DatePicker, TextField, useSnackbar } from "@shared";
 import { ItemPrioritySelector } from "../ItemPrioritySelector";
 import { ItemStatusSelector } from "../ItemStatusSelector";
 
 interface ItemFormProps {
   listId: string;
   parentItemId?: string;
+  formId: string;
+  onSuccess?: () => void;
 }
 
-export const ItemForm = ({ listId, parentItemId }: ItemFormProps) => {
+export const ItemForm = ({ listId, parentItemId, formId, onSuccess }: ItemFormProps) => {
   const messageBar = useSnackbar();
   const createItemMutation = useCreateItemMutation();
 
@@ -60,13 +62,19 @@ export const ItemForm = ({ listId, parentItemId }: ItemFormProps) => {
         },
       });
       messageBar.success("Item created successfully");
+      onSuccess?.();
     } catch (error) {
       messageBar.error(error instanceof Error ? error.message : "Failed to create item");
     }
   };
 
   return (
-    <MuiContainer component="form" onSubmit={form.handleSubmit(onSubmit)} disableGutters>
+    <MuiContainer
+      id={formId}
+      component="form"
+      onSubmit={form.handleSubmit(onSubmit)}
+      disableGutters
+    >
       <Grid2 container spacing={2}>
         <Grid2 size={12}>
           <TextField form={form} name="name" label="Name" placeholder="Name" />
@@ -108,9 +116,6 @@ export const ItemForm = ({ listId, parentItemId }: ItemFormProps) => {
         </Grid2>
         <Grid2 size={12}>
           <TextField form={form} name="component" label="Component" placeholder="Component name" />
-        </Grid2>
-        <Grid2 size={6}>
-          <PrimaryButton label="Create Item" type="submit" />
         </Grid2>
       </Grid2>
     </MuiContainer>
