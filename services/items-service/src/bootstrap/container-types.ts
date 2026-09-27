@@ -5,9 +5,9 @@ export const TYPES = {
   Publisher: Symbol.for("Publisher"),
   OutboxRepository: Symbol.for("IOutboxRepository"),
   OutboxService: Symbol.for("IOutboxService"),
-  OutboxWorker: Symbol.for("IOutboxWorker"),
+  OutboxWorker: Symbol.for("OutboxWorker"),
   OutboxCleanupService: Symbol.for("IOutboxCleanupService"),
-  OutboxCleanupWorker: Symbol.for("IOutboxCleanupWorker"),
+  OutboxCleanupWorker: Symbol.for("OutboxCleanupWorker"),
   RetryPolicy: Symbol.for("IRetryPolicy"),
   HttpServer: Symbol.for("IHttpServer"),
   IdentityRepository: Symbol.for("IIdentityRepository"),
@@ -31,4 +31,5 @@ export const TYPES = {
   AttachmentClient: Symbol.for("IAttachmentClient"),
   ItemsIdentitySyncConsumer: Symbol.for("ItemsIdentitySyncConsumer"),
   ItemAttachmentCreatedConsumer: Symbol.for("ItemAttachmentCreatedConsumer"),
+  ItemAttachmentSweepWorker: Symbol.for("ItemAttachmentSweepWorker"),
 } as const;

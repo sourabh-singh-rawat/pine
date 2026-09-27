@@ -1,10 +1,15 @@
+import type { IWorker } from "@pine/common";
 import { setTimeout as sleep } from "node:timers/promises";
 import type { IOutboxCleanupService } from "../services";
-import type { IOutboxCleanupWorker, OutboxCleanupWorkerOptions } from "./IOutboxCleanupWorker";
+
+export type OutboxCleanupWorkerOptions = {
+  pollIntervalMs?: number;
+  errorDelayMs?: number;
+};
 
 const DEFAULT_POLL_INTERVAL_MS = 60 * 60 * 1_000;
 
-export class OutboxCleanupWorker implements IOutboxCleanupWorker {
+export class OutboxCleanupWorker implements IWorker {
   private readonly pollIntervalMs: number;
   private readonly errorDelayMs: number;
   private running = false;

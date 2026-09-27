@@ -28,6 +28,7 @@ export const EnvSchema = Type.Object({
   S3_BUCKET: Type.String({ default: "attachments" }),
   S3_ACCESS_KEY: Type.String({ default: "seaweed" }),
   S3_SECRET_KEY: Type.String({ default: "seaweed" }),
+  ATTACHMENT_UPLOAD_MAX_BYTES: Type.Number({ default: 52_428_800 }),
 });
 
 export type Env = Type.Static<typeof EnvSchema>;
@@ -35,7 +36,8 @@ export type Env = Type.Static<typeof EnvSchema>;
 const parseEnv = (): Env => {
   const withDefaults = Value.Default(EnvSchema, { ...process.env });
   const cleaned = Value.Clean(EnvSchema, withDefaults);
-  return Value.Parse(EnvSchema, cleaned);
+  const converted = Value.Convert(EnvSchema, cleaned);
+  return Value.Parse(EnvSchema, converted);
 };
 
 export const env = parseEnv();

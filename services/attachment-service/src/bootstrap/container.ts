@@ -1,3 +1,4 @@
+import type { IWorker } from "@pine/common";
 import { NatsPublisher, type IPublisher } from "@pine/events";
 import { resolveIdentityFromHeaders, resolveTenantContextFromHeaders } from "@pine/identity";
 import {
@@ -8,11 +9,9 @@ import {
   OutboxService,
   OutboxWorker,
   type IOutboxCleanupService,
-  type IOutboxCleanupWorker,
   type IOutboxPublisher,
   type IOutboxRepository,
   type IOutboxService,
-  type IOutboxWorker,
   type IRetryPolicy,
 } from "@pine/outbox";
 import { createGraphQLServer, createHttpServer, type IHttpServer } from "@pine/server";
@@ -51,14 +50,12 @@ container
   .bind<IOutboxService>(TYPES.OutboxService)
   .toConstantValue(new OutboxService(container.get<IOutboxRepository>(TYPES.OutboxRepository), container.get<IRetryPolicy>(TYPES.RetryPolicy)));
 container
-  .bind<IOutboxWorker>(TYPES.OutboxWorker)
+  .bind<IWorker>(TYPES.OutboxWorker)
   .toConstantValue(new OutboxWorker(container.get<IOutboxService>(TYPES.OutboxService), publisher satisfies IOutboxPublisher));
 container
   .bind<IOutboxCleanupService>(TYPES.OutboxCleanupService)
   .toConstantValue(new OutboxCleanupService(container.get<IOutboxRepository>(TYPES.OutboxRepository)));
-container
-  .bind<IOutboxCleanupWorker>(TYPES.OutboxCleanupWorker)
-  .toConstantValue(new OutboxCleanupWorker(container.get<IOutboxCleanupService>(TYPES.OutboxCleanupService)));
+container.bind<IWorker>(TYPES.OutboxCleanupWorker).toConstantValue(new OutboxCleanupWorker(container.get<IOutboxCleanupService>(TYPES.OutboxCleanupService)));
 
 container.bind<IIdentityRepository>(TYPES.IdentityRepository).to(IdentityRepository);
 container.bind<ITenantRepository>(TYPES.TenantRepository).to(TenantRepository);
@@ -95,7 +92,8 @@ export const bindHttpServer = async (): Promise<void> => {
         origin: [env.PINE_WEB_URL, env.IDENTITY_WEB_URL, env.VITE_PLATFORM_WEB_URL],
         methods: ["GET", "HEAD", "PUT", "POST", "DELETE", "PATCH", "OPTIONS"],
       },
-      multipart: { fileSize: 32000000 },
+      bodyLimit: env.ATTACHMENT_UPLOAD_MAX_BYTES,
+      multipart: { fileSize: env.ATTACHMENT_UPLOAD_MAX_BYTES },
       openapi: {
         info: {
           title: "Attachment Service",
