@@ -46,11 +46,11 @@ export const CreatePlatformRelationModal = ({
       >
         <Add fontSize="small" />
       </IconButton>
-      <Modal open={open} handleClose={handleClose}>
+      <Modal open={open} onClose={handleClose}>
         <ModalHeader
           title="Create platform relation"
           subtitle="Assign an identity to the platform graph."
-          handleClose={handleClose}
+          onClose={handleClose}
         />
         <ModalBody>
           <CreatePlatformRelationForm

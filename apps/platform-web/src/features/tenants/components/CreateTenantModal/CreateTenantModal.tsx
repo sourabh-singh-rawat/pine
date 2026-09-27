@@ -46,11 +46,11 @@ export const CreateTenantModal = ({
       >
         <Add fontSize="small" />
       </IconButton>
-      <Modal open={open} handleClose={handleClose}>
+      <Modal open={open} onClose={handleClose}>
         <ModalHeader
           title="Create tenant"
           subtitle="Add a new tenant to the platform."
-          handleClose={handleClose}
+          onClose={handleClose}
         />
         <ModalBody>
           <CreateTenantForm

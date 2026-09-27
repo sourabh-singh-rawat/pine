@@ -48,11 +48,11 @@ export const CreateTenantRelationModal = ({
       >
         <Add fontSize="small" />
       </IconButton>
-      <Modal open={open} handleClose={handleClose}>
+      <Modal open={open} onClose={handleClose}>
         <ModalHeader
           title="Create tenant relation"
           subtitle="Assign an identity to this tenant with a graph relation."
-          handleClose={handleClose}
+          onClose={handleClose}
         />
         <ModalBody>
           <CreateTenantRelationForm
