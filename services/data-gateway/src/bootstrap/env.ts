@@ -8,6 +8,7 @@ export const EnvSchema = Type.Object({
   DATA_GATEWAY_TLS_CERT_PATH: Type.String({ minLength: 1 }),
   CA_CERT_PATH: Type.String({ minLength: 1 }),
   ATTACHMENT_SERVICE_URL: Type.String({ default: "https://127.0.0.1:5003" }),
+  ATTACHMENT_UPLOAD_MAX_BYTES: Type.Number({ default: 52_428_800 }),
   IDENTITY_WEB_URL: Type.String({ default: "https://localhost:3000" }),
   PINE_WEB_URL: Type.String({ default: "https://localhost:3001" }),
   VITE_PLATFORM_WEB_URL: Type.String({ default: "https://localhost:3002" }),
@@ -24,7 +25,8 @@ export const listenPortFromUrl = (url: string): number => {
 const parseEnv = (): Env => {
   const withDefaults = Value.Default(EnvSchema, { ...process.env });
   const cleaned = Value.Clean(EnvSchema, withDefaults);
-  return Value.Parse(EnvSchema, cleaned);
+  const converted = Value.Convert(EnvSchema, cleaned);
+  return Value.Parse(EnvSchema, converted);
 };
 
 export const env = parseEnv();

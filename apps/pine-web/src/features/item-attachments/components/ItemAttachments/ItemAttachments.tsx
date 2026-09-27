@@ -11,6 +11,7 @@ import { ITEM_ATTACHMENT_STATUS, isProcessingAttachmentStatus } from "../../cons
 import { formatFileSize, getAttachmentUrl } from "../../utils";
 import { AttachmentCard } from "../AttachmentCard";
 import { AttachmentDropZone } from "../AttachmentDropZone";
+import { AttachmentFailedCard } from "../AttachmentFailedCard";
 import { AttachmentProcessingCard } from "../AttachmentProcessingCard";
 
 interface ItemAttachmentsProps {
@@ -23,19 +24,10 @@ type AttachmentListItem = {
   id: string;
   attachmentId: string | null;
   status: string;
+  processingLabel: string | null;
   name: string;
   mimeType: string;
   size: number | null;
-};
-
-const processingStatusLabel = (status: string): string => {
-  if (status === ITEM_ATTACHMENT_STATUS.SCANNING) {
-    return "Scanning…";
-  }
-  if (status === ITEM_ATTACHMENT_STATUS.FAILED) {
-    return "Scan failed";
-  }
-  return "Processing…";
 };
 
 export const ItemAttachments = ({ itemId }: ItemAttachmentsProps) => {
@@ -77,6 +69,10 @@ export const ItemAttachments = ({ itemId }: ItemAttachmentsProps) => {
               attachmentId:
                 typeof attachment.attachmentId === "string" ? attachment.attachmentId : null,
               status: attachment.status,
+              processingLabel:
+                typeof attachment.processing?.label === "string"
+                  ? attachment.processing.label
+                  : null,
               name: attachment.name,
               mimeType: typeof attachment.mimeType === "string" ? attachment.mimeType : "",
               size: typeof attachment.size === "number" ? attachment.size : null,
@@ -99,6 +95,7 @@ export const ItemAttachments = ({ itemId }: ItemAttachmentsProps) => {
 
   const uploadFile = async (file: File) => {
     setIsUploading(true);
+    let uploadRequestId: string | null = null;
 
     try {
       const result = await createUploadRequestMutation.mutateAsync({
@@ -111,6 +108,9 @@ export const ItemAttachments = ({ itemId }: ItemAttachmentsProps) => {
       });
 
       const target = result.createItemAttachmentUploadRequest;
+      if (typeof target?.uploadRequestId === "string") {
+        uploadRequestId = target.uploadRequestId;
+      }
       if (!target?.url) {
         throw new Error("Missing upload target URL");
       }
@@ -142,6 +142,10 @@ export const ItemAttachments = ({ itemId }: ItemAttachmentsProps) => {
       snackbar.success("Attachment uploaded. It will appear after scanning.");
       await attachmentsQuery.refetch();
     } catch (error) {
+      if (uploadRequestId !== null) {
+        await deleteAttachmentMutation.mutateAsync({ id: uploadRequestId }).catch(() => undefined);
+        await attachmentsQuery.refetch();
+      }
       snackbar.error(
         error instanceof Error ? error.message : "Could not upload attachment. Please try again.",
       );
@@ -220,27 +224,28 @@ export const ItemAttachments = ({ itemId }: ItemAttachmentsProps) => {
             }}
           >
             {visibleAttachments.map((attachment) => {
-              if (
-                isProcessingAttachmentStatus(attachment.status) ||
-                attachment.status === ITEM_ATTACHMENT_STATUS.FAILED
-              ) {
+              if (attachment.status === ITEM_ATTACHMENT_STATUS.FAILED) {
                 return (
-                  <AttachmentProcessingCard
+                  <AttachmentFailedCard
                     key={attachment.id}
                     name={attachment.name}
                     sizeLabel={formatFileSize(attachment.size)}
-                    statusLabel={processingStatusLabel(attachment.status)}
+                    statusLabel={attachment.processingLabel ?? "Scan failed"}
+                    isDeleting={deletingId === attachment.id}
+                    onDelete={() => {
+                      void handleDelete(attachment.id);
+                    }}
                   />
                 );
               }
 
-              if (!attachment.attachmentId) {
+              if (isProcessingAttachmentStatus(attachment.status) || !attachment.attachmentId) {
                 return (
                   <AttachmentProcessingCard
                     key={attachment.id}
                     name={attachment.name}
                     sizeLabel={formatFileSize(attachment.size)}
-                    statusLabel="Processing…"
+                    statusLabel={attachment.processingLabel ?? "Processing…"}
                   />
                 );
               }

@@ -34,7 +34,7 @@ export type GetItemAttachmentsQueryVariables = Exact<{
 }>;
 
 
-export type GetItemAttachmentsQuery = { getItemAttachments: Array<{ id: string | null, itemId: string | null, attachmentId: string | null, status: string | null, name: string | null, originalName: string | null, mimeType: string | null, size: number | null, createdById: string | null, createdAt: unknown }> | null };
+export type GetItemAttachmentsQuery = { getItemAttachments: Array<{ id: string | null, itemId: string | null, attachmentId: string | null, status: string | null, name: string | null, originalName: string | null, mimeType: string | null, size: number | null, createdById: string | null, createdAt: unknown, processing: { label: string | null } | null }> | null };
 
 export type CreateChecklistMutationVariables = Exact<{
   input: Types.CreateChecklistInput;
@@ -337,6 +337,9 @@ export const GetItemAttachmentsDocument = new TypedDocumentString(`
     itemId
     attachmentId
     status
+    processing {
+      label
+    }
     name
     originalName
     mimeType

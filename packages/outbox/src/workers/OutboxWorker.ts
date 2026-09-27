@@ -1,14 +1,20 @@
+import type { IWorker } from "@pine/common";
 import { setTimeout as sleep } from "node:timers/promises";
 import type { OutboxMessage } from "../db";
 import { OutboxInvalidPayloadError } from "../errors";
 import type { IOutboxService } from "../services";
 import type { IOutboxPublisher } from "./IOutboxPublisher";
-import type { IOutboxWorker, OutboxWorkerOptions } from "./IOutboxWorker";
+
+export type OutboxWorkerOptions = {
+  batchSize?: number;
+  pollIntervalMs?: number;
+  errorDelayMs?: number;
+};
 
 const DEFAULT_BATCH_SIZE = 50;
 const DEFAULT_POLL_INTERVAL_MS = 1_000;
 
-export class OutboxWorker implements IOutboxWorker {
+export class OutboxWorker implements IWorker {
   private readonly batchSize: number;
   private readonly pollIntervalMs: number;
   private readonly errorDelayMs: number;
@@ -24,7 +30,7 @@ export class OutboxWorker implements IOutboxWorker {
     this.errorDelayMs = options?.errorDelayMs ?? this.pollIntervalMs;
   }
 
-  tick = async (): Promise<number> => {
+  tick = async (_signal?: AbortSignal): Promise<number> => {
     const messages = await this.outboxService.claimBatch(this.batchSize);
     if (messages.length === 0) return 0;
 

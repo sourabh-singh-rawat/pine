@@ -350,15 +350,15 @@ describe("AttachmentService", () => {
       expect(result).toBe(updated);
     });
 
-    it("updates status to REJECTED and INFECTED when scan is infected without moving object or scheduling created event", async () => {
+    it("updates status to REJECTED and INFECTED when scan is infected and schedules created event", async () => {
       const existing: Attachment = {
         id: "att-2",
         scopeType: ATTACHMENT_SCOPE_TYPE.WORKSPACE,
         scopeId: "org-1",
         tenantId: "tenant-1",
         currentVersionId: "ver-2",
-        operationId: null,
-        metadata: null,
+        operationId: "upload-req-2",
+        metadata: { uploadRequestId: "upload-req-2" },
         status: ATTACHMENT_STATUS.QUARANTINED,
         securityStatus: ATTACHMENT_SECURITY_STATUS.PENDING,
         createdBy: "user-1",
@@ -389,18 +389,35 @@ describe("AttachmentService", () => {
         },
         { tx: mockTx },
       );
-      expect(outboxService.schedule).not.toHaveBeenCalled();
+      expect(outboxService.schedule).toHaveBeenCalledWith(
+        expect.objectContaining({
+          eventType: AttachmentCreatedEvent.type,
+          eventVersion: AttachmentCreatedEvent.version,
+          aggregateType: "attachment",
+          aggregateId: "att-2",
+          payload: expect.objectContaining({
+            type: AttachmentCreatedEvent.type,
+            data: expect.objectContaining({
+              id: "att-2",
+              status: ATTACHMENT_STATUS.REJECTED,
+              securityStatus: ATTACHMENT_SECURITY_STATUS.INFECTED,
+              operationId: "upload-req-2",
+            }),
+          }),
+        }),
+        { tx: mockTx },
+      );
       expect(result).toBe(updated);
     });
 
-    it("updates status to REJECTED and FAILED when scan fails without moving object or scheduling created event", async () => {
+    it("updates status to REJECTED and FAILED when scan fails and schedules created event", async () => {
       const existing: Attachment = {
         id: "att-3",
         scopeType: ATTACHMENT_SCOPE_TYPE.WORKSPACE,
         scopeId: "org-1",
         tenantId: "tenant-1",
         currentVersionId: "ver-3",
-        operationId: null,
+        operationId: "upload-req-3",
         metadata: null,
         status: ATTACHMENT_STATUS.QUARANTINED,
         securityStatus: ATTACHMENT_SECURITY_STATUS.PENDING,
@@ -432,7 +449,21 @@ describe("AttachmentService", () => {
         },
         { tx: mockTx },
       );
-      expect(outboxService.schedule).not.toHaveBeenCalled();
+      expect(outboxService.schedule).toHaveBeenCalledWith(
+        expect.objectContaining({
+          eventType: AttachmentCreatedEvent.type,
+          aggregateId: "att-3",
+          payload: expect.objectContaining({
+            data: expect.objectContaining({
+              id: "att-3",
+              status: ATTACHMENT_STATUS.REJECTED,
+              securityStatus: ATTACHMENT_SECURITY_STATUS.FAILED,
+              operationId: "upload-req-3",
+            }),
+          }),
+        }),
+        { tx: mockTx },
+      );
       expect(result).toBe(updated);
     });
   });

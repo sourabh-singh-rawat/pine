@@ -4,6 +4,9 @@ query GetItemAttachments($itemId: String!) {
     itemId
     attachmentId
     status
+    processing {
+      label
+    }
     name
     originalName
     mimeType

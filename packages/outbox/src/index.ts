@@ -34,11 +34,5 @@ export type {
 } from "./services";
 export { OutboxCleanupService, OutboxService } from "./services";
 
-export type {
-  IOutboxCleanupWorker,
-  IOutboxPublisher,
-  IOutboxWorker,
-  OutboxCleanupWorkerOptions,
-  OutboxWorkerOptions,
-} from "./workers";
+export type { IOutboxPublisher, OutboxCleanupWorkerOptions, OutboxWorkerOptions } from "./workers";
 export { OutboxCleanupWorker, OutboxWorker } from "./workers";

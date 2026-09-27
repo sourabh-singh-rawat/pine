@@ -1,4 +1,5 @@
 import { HttpAttachmentClient, type IAttachmentClient } from "@pine/attachment";
+import type { IWorker } from "@pine/common";
 import { NatsPublisher, type IPublisher } from "@pine/events";
 import {
   ExponentialBackoffPolicy,
@@ -8,11 +9,9 @@ import {
   OutboxService,
   OutboxWorker,
   type IOutboxCleanupService,
-  type IOutboxCleanupWorker,
   type IOutboxPublisher,
   type IOutboxRepository,
   type IOutboxService,
-  type IOutboxWorker,
   type IRetryPolicy,
 } from "@pine/outbox";
 import { Container } from "inversify";
@@ -46,14 +45,12 @@ container
   .bind<IOutboxService>(TYPES.OutboxService)
   .toConstantValue(new OutboxService(container.get<IOutboxRepository>(TYPES.OutboxRepository), container.get<IRetryPolicy>(TYPES.RetryPolicy)));
 container
-  .bind<IOutboxWorker>(TYPES.OutboxWorker)
+  .bind<IWorker>(TYPES.OutboxWorker)
   .toConstantValue(new OutboxWorker(container.get<IOutboxService>(TYPES.OutboxService), publisher satisfies IOutboxPublisher));
 container
   .bind<IOutboxCleanupService>(TYPES.OutboxCleanupService)
   .toConstantValue(new OutboxCleanupService(container.get<IOutboxRepository>(TYPES.OutboxRepository)));
-container
-  .bind<IOutboxCleanupWorker>(TYPES.OutboxCleanupWorker)
-  .toConstantValue(new OutboxCleanupWorker(container.get<IOutboxCleanupService>(TYPES.OutboxCleanupService)));
+container.bind<IWorker>(TYPES.OutboxCleanupWorker).toConstantValue(new OutboxCleanupWorker(container.get<IOutboxCleanupService>(TYPES.OutboxCleanupService)));
 
 const clamClient = new ClamClient({
   host: env.CLAMAV_HOST,

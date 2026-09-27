@@ -1,5 +1,6 @@
 import { HttpAttachmentClient, type IAttachmentClient } from "@pine/attachment";
 import { HttpAuthorizationClient, type IAuthorizationClient } from "@pine/authorization";
+import type { IWorker } from "@pine/common";
 import { NatsPublisher, type IPublisher } from "@pine/events";
 import { resolveIdentityFromHeaders, resolveTenantContextFromHeaders } from "@pine/identity";
 import { createGraphQLServer, createHttpServer, type IHttpServer } from "@pine/server";
@@ -11,11 +12,9 @@ import {
   OutboxService,
   OutboxWorker,
   type IOutboxCleanupService,
-  type IOutboxCleanupWorker,
   type IOutboxPublisher,
   type IOutboxRepository,
   type IOutboxService,
-  type IOutboxWorker,
   type IRetryPolicy,
 } from "@pine/outbox";
 import { Container } from "inversify";
@@ -34,8 +33,9 @@ import {
   ItemAttachmentCreatedConsumer,
   ItemAttachmentRepository,
   ItemAttachmentService,
+  ItemAttachmentSweepWorker,
   ItemAttachmentUploadRequestRepository,
-} from "@/features/attachments";
+} from "@/features/item-attachments";
 import {
   ChecklistEntryRepository,
   ChecklistRepository,
@@ -62,14 +62,12 @@ container
   .bind<IOutboxService>(TYPES.OutboxService)
   .toConstantValue(new OutboxService(container.get<IOutboxRepository>(TYPES.OutboxRepository), container.get<IRetryPolicy>(TYPES.RetryPolicy)));
 container
-  .bind<IOutboxWorker>(TYPES.OutboxWorker)
+  .bind<IWorker>(TYPES.OutboxWorker)
   .toConstantValue(new OutboxWorker(container.get<IOutboxService>(TYPES.OutboxService), container.get<IPublisher>(TYPES.Publisher) as IOutboxPublisher));
 container
   .bind<IOutboxCleanupService>(TYPES.OutboxCleanupService)
   .toConstantValue(new OutboxCleanupService(container.get<IOutboxRepository>(TYPES.OutboxRepository)));
-container
-  .bind<IOutboxCleanupWorker>(TYPES.OutboxCleanupWorker)
-  .toConstantValue(new OutboxCleanupWorker(container.get<IOutboxCleanupService>(TYPES.OutboxCleanupService)));
+container.bind<IWorker>(TYPES.OutboxCleanupWorker).toConstantValue(new OutboxCleanupWorker(container.get<IOutboxCleanupService>(TYPES.OutboxCleanupService)));
 
 container.bind<IIdentityRepository>(TYPES.IdentityRepository).to(IdentityRepository);
 container.bind<IItemRepository>(TYPES.ItemRepository).to(ItemRepository);
@@ -90,6 +88,9 @@ container.bind<ISpaceRepository>(TYPES.SpaceRepository).to(SpaceRepository);
 container.bind<ISpaceService>(TYPES.SpaceService).to(SpaceService);
 container.bind<IAuthorizationClient>(TYPES.AuthorizationClient).toConstantValue(new HttpAuthorizationClient({ baseUrl: env.AUTHORIZATION_SERVICE_URL }));
 container.bind<IAttachmentClient>(TYPES.AttachmentClient).toConstantValue(new HttpAttachmentClient({ baseUrl: env.ATTACHMENT_SERVICE_URL }));
+container
+  .bind<IWorker>(TYPES.ItemAttachmentSweepWorker)
+  .toConstantValue(new ItemAttachmentSweepWorker(container.get<IItemAttachmentService>(TYPES.ItemAttachmentService)));
 container.bind<ItemsIdentitySyncConsumer>(TYPES.ItemsIdentitySyncConsumer).to(ItemsIdentitySyncConsumer);
 container.bind<ItemAttachmentCreatedConsumer>(TYPES.ItemAttachmentCreatedConsumer).to(ItemAttachmentCreatedConsumer);
 

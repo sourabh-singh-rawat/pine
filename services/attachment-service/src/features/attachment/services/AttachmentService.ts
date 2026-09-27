@@ -170,7 +170,11 @@ export class AttachmentService implements IAttachmentService {
         { tx },
       );
 
-      if (updated && updated.status === ATTACHMENT_STATUS.AVAILABLE) {
+      if (
+        updated &&
+        (updated.status === ATTACHMENT_STATUS.AVAILABLE ||
+          updated.status === ATTACHMENT_STATUS.REJECTED)
+      ) {
         const event: CloudEvent<AttachmentCreatedData> = createCloudEvent({
           type: AttachmentCreatedEvent.type,
           version: AttachmentCreatedEvent.version,

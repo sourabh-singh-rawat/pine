@@ -7,6 +7,8 @@ export const AttachmentQuarantinedDataSchema = Type.Object(
     scopeId: Type.String(),
     tenantId: Type.Optional(Type.String()),
     currentVersionId: Type.Optional(Type.String()),
+    operationId: Type.Optional(Type.String()),
+    metadata: Type.Optional(Type.Record(Type.String(), Type.Unknown())),
     status: Type.String(),
     securityStatus: Type.String(),
     createdBy: Type.String(),
