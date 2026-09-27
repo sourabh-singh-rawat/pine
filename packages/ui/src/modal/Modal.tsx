@@ -6,7 +6,6 @@ import { alpha, useTheme } from "@mui/material/styles";
 import type { ReactNode } from "react";
 import { pinePaletteDark, pinePaletteLight } from "../theme/color";
 import { pineMotion } from "../theme/motion";
-import { pineShape } from "../theme/shape";
 
 export interface ModalProps {
   open: boolean;
@@ -15,13 +14,17 @@ export interface ModalProps {
 }
 
 const enterMs = pineMotion.duration.medium4;
-const exitMs = pineMotion.duration.short4;
+const exitMs = pineMotion.duration.medium2;
+const enterEasing = pineMotion.easing.emphasizedDecelerate;
+const exitEasing = pineMotion.easing.emphasizedAccelerate;
+
+const dialogCornerRadius = "28px";
+const dialogMinWidth = 280;
+const dialogMaxWidth = 560;
 
 export const Modal = ({ children, open, onClose }: ModalProps) => {
   const theme = useTheme();
   const m3 = theme.palette.mode === "dark" ? pinePaletteDark : pinePaletteLight;
-  const paperRadius =
-    theme.shape.borderRadiusExtraLargeIncreased ?? pineShape.borderRadiusExtraLargeIncreased;
 
   return (
     <MuiModal
@@ -45,41 +48,42 @@ export const Modal = ({ children, open, onClose }: ModalProps) => {
         in={open}
         timeout={{ enter: enterMs, exit: exitMs }}
         easing={{
-          enter: pineMotion.easing.emphasizedDecelerate,
-          exit: pineMotion.easing.emphasizedAccelerate,
+          enter: enterEasing,
+          exit: exitEasing,
         }}
       >
         <Box
           tabIndex={-1}
           sx={{
-            bgcolor: m3.surfaceContainerHigh,
-            color: m3.onSurface,
-            p: 3,
-            minWidth: theme.spacing(35),
-            maxWidth: theme.spacing(70),
-            width: "100%",
-            maxHeight: "90vh",
-            display: "flex",
-            flexDirection: "column",
-            overflow: "hidden",
-            mx: 2,
-            borderRadius: paperRadius,
-            boxShadow: "none",
             outline: "none",
-            transform: open ? "scale(1)" : "scale(0.94)",
-            transition: theme.transitions.create("transform", {
-              duration: open ? enterMs : exitMs,
-              easing: open
-                ? pineMotion.easing.emphasizedDecelerate
-                : pineMotion.easing.emphasizedAccelerate,
-            }),
-            "@media (prefers-reduced-motion: reduce)": {
-              transform: "none",
-              transition: "none",
-            },
+            mx: 2,
+            width: "100%",
+            maxWidth: dialogMaxWidth,
+            minWidth: dialogMinWidth,
           }}
         >
-          {children}
+          <Box
+            sx={{
+              bgcolor: m3.surfaceContainerHigh,
+              color: m3.onSurface,
+              p: "24px",
+              width: "100%",
+              maxHeight: "90vh",
+              display: "flex",
+              flexDirection: "column",
+              overflow: "hidden",
+              borderRadius: dialogCornerRadius,
+              boxShadow: "none",
+              transform: open ? "scale(1)" : "scale(0.94)",
+              transition: `transform ${open ? enterMs : exitMs}ms ${open ? enterEasing : exitEasing}`,
+              "@media (prefers-reduced-motion: reduce)": {
+                transform: "none",
+                transition: "none",
+              },
+            }}
+          >
+            {children}
+          </Box>
         </Box>
       </Fade>
     </MuiModal>

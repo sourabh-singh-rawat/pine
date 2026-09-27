@@ -17,10 +17,14 @@ export const ModalHeader = ({ title, subtitle, onClose }: ModalHeaderProps) => {
   const m3 = theme.palette.mode === "dark" ? pinePaletteDark : pinePaletteLight;
 
   return (
-    <Box sx={{ flexShrink: 0, mb: subtitle ? 2 : 0 }}>
-      <Stack spacing={2}>
+    <Box sx={{ flexShrink: 0 }}>
+      <Stack spacing="16px">
         <Stack direction="row" alignItems="flex-start" justifyContent="space-between" spacing={1}>
-          <Typography variant="headlineSmall" component="h2" sx={{ color: m3.onSurface, pr: 1 }}>
+          <Typography
+            variant="headlineSmall"
+            component="h2"
+            sx={{ color: m3.onSurface, pr: 1, textAlign: "start" }}
+          >
             {title}
           </Typography>
           <IconButton
@@ -30,15 +34,17 @@ export const ModalHeader = ({ title, subtitle, onClose }: ModalHeaderProps) => {
             aria-label="Close"
             size="small"
             sx={{
+              width: 40,
+              height: 40,
               color: m3.onSurfaceVariant,
               "&:hover": { backgroundColor: theme.palette.action.hover },
             }}
           >
-            <Close fontSize="small" />
+            <Close sx={{ fontSize: 24 }} />
           </IconButton>
         </Stack>
         {subtitle ? (
-          <Typography variant="bodyMedium" sx={{ color: m3.onSurfaceVariant }}>
+          <Typography variant="bodyMedium" sx={{ color: m3.onSurfaceVariant, textAlign: "start" }}>
             {subtitle}
           </Typography>
         ) : null}

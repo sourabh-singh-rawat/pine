@@ -9,10 +9,10 @@ export const ModalFooter = ({ children }: ModalFooterProps) => {
   return (
     <Stack
       direction="row"
-      spacing={1}
+      spacing="8px"
       justifyContent="flex-end"
       alignItems="center"
-      sx={{ flexShrink: 0, pt: 1 }}
+      sx={{ flexShrink: 0 }}
     >
       {children}
     </Stack>

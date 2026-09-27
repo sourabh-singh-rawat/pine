@@ -12,8 +12,8 @@ export const ModalBody = ({ children }: ModalBodyProps) => {
         flex: "1 1 auto",
         minHeight: 0,
         overflowY: "auto",
-        pt: 2,
-        pb: 3,
+        pt: "16px",
+        pb: "24px",
       }}
     >
       {children}
