@@ -44,7 +44,10 @@ export const buildItemListGroups = (options: {
 
   const buckets = new Map<string, ItemListGroup>();
   for (const group of sourceGroups) {
-    const status = group?.status;
+    if (!group) {
+      continue;
+    }
+    const status = group.status;
     if (!status?.id || !status.name) {
       continue;
     }
