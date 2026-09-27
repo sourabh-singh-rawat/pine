@@ -14,6 +14,7 @@ import {
 import { useNavigate } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import type { ChangeEvent, FormEvent, KeyboardEvent, MouseEvent } from "react";
+import { ItemChecklistCount } from "@features/item-checklists";
 import { useSnackbar } from "@shared";
 
 export interface ItemNameCellProps {
@@ -26,6 +27,8 @@ export interface ItemNameCellProps {
   showExpandGutter?: boolean;
   isExpanded?: boolean;
   isExpanding?: boolean;
+  checklistCompletedCount?: number;
+  checklistTotalCount?: number;
   onStartEditing: () => void;
   onFinishEditing: () => void;
   onSave: (nextName: string) => Promise<boolean>;
@@ -42,6 +45,8 @@ export const ItemNameCell = ({
   showExpandGutter = false,
   isExpanded = false,
   isExpanding = false,
+  checklistCompletedCount = 0,
+  checklistTotalCount = 0,
   onStartEditing,
   onFinishEditing,
   onSave,
@@ -274,6 +279,10 @@ export const ItemNameCell = ({
       >
         {name}
       </MuiLink>
+      <ItemChecklistCount
+        completedCount={checklistCompletedCount}
+        totalCount={checklistTotalCount}
+      />
     </Box>
   );
 };

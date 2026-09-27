@@ -57,6 +57,6 @@ export default defineConfig({
     https: readDevTls("pine-web"),
   },
   optimizeDeps: {
-    include: ["@pine/common"],
+    include: ["@pine/common/constants"],
   },
 });

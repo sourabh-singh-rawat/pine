@@ -9,7 +9,7 @@ import type { IIdentityRepository } from "@/features/identities/repositories";
 import type { IListRepository } from "@/features/lists/repositories";
 import { SpaceNotFoundError } from "@/features/spaces/errors";
 import type { ISpaceRepository } from "@/features/spaces/repositories";
-import type { IStatusService } from "@/features/status/services/IStatusService";
+import type { IStatusService } from "@/features/item-statuses/services/IStatusService";
 import type {
   CreateListOptions,
   GetListOptions,
@@ -65,13 +65,33 @@ export class ListService implements IListService {
         { tx },
       );
 
-      await this.statusService.createOptions({
+      await this.statusService.seedForList({
         listId: savedList.id,
         statuses: [
-          { name: "To Do", type: STATUS_TYPE.NOT_STARTED, orderIndex: 0 },
-          { name: "In Progress", type: STATUS_TYPE.ACTIVE, orderIndex: 1 },
-          { name: "Done", type: STATUS_TYPE.COMPLETED, orderIndex: 2 },
-          { name: "Cancelled", type: STATUS_TYPE.CLOSED, orderIndex: 3 },
+          {
+            name: "To Do",
+            type: STATUS_TYPE.NOT_STARTED,
+            color: "#64748B",
+            orderIndex: 0,
+          },
+          {
+            name: "In Progress",
+            type: STATUS_TYPE.ACTIVE,
+            color: "#2563EB",
+            orderIndex: 1,
+          },
+          {
+            name: "Done",
+            type: STATUS_TYPE.CLOSED,
+            color: "#16A34A",
+            orderIndex: 2,
+          },
+          {
+            name: "Cancelled",
+            type: STATUS_TYPE.CLOSED,
+            color: "#DC2626",
+            orderIndex: 3,
+          },
         ],
         tx,
       });

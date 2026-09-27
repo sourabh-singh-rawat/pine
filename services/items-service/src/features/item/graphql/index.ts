@@ -1,5 +1,7 @@
 import "@/features/lists/graphql/objects/ListObject";
+import "@/features/item-statuses/graphql/objects/StatusObject";
 import "./objects/ItemObject";
+import "./objects/ItemStatusGroupObject";
 import "./inputs/CreateItemInput";
 import "./inputs/UpdateItemInput";
 import "./queries/getItem";

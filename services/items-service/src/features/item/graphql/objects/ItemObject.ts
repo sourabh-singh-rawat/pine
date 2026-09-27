@@ -1,5 +1,16 @@
+import { requireIdentityId } from "@pine/identity";
 import { builder } from "@pine/server";
+import { TYPES, container } from "@/bootstrap";
 import type { Item, List } from "@/db";
+import {
+  ChecklistCountsObject,
+  type ChecklistCountsObjectShape,
+} from "@/features/checklists/graphql/objects/ChecklistCountsObject";
+import {
+  ChecklistObject,
+  toChecklistObjectShape,
+} from "@/features/checklists/graphql/objects/ChecklistObject";
+import type { IChecklistService } from "@/features/checklists/services";
 import { ListObject } from "@/features/lists/graphql/objects/ListObject";
 
 type ItemObjectShape = Item & {
@@ -7,6 +18,7 @@ type ItemObjectShape = Item & {
   parentItem?: Item | null;
   subItems?: Item[] | null;
   hasChildren?: boolean;
+  checklistCounts?: ChecklistCountsObjectShape;
 };
 
 export const ItemObject = builder.objectRef<ItemObjectShape>("ItemObject");
@@ -39,6 +51,22 @@ ItemObject.implement({
     }),
     hasChildren: t.boolean({
       resolve: (parent) => parent.hasChildren ?? false,
+    }),
+    checklistCounts: t.field({
+      type: ChecklistCountsObject,
+      nullable: true,
+      resolve: (parent) => parent.checklistCounts ?? null,
+    }),
+    checklists: t.field({
+      type: [ChecklistObject],
+      resolve: async (parent, _args, ctx) => {
+        const service = container.get<IChecklistService>(TYPES.ChecklistService);
+        const rows = await service.list({
+          itemId: parent.id,
+          identityId: requireIdentityId(ctx),
+        });
+        return rows.map(toChecklistObjectShape);
+      },
     }),
     estimate: t.exposeInt("estimate", { nullable: true }),
     component: t.exposeString("component", { nullable: true }),

@@ -1,5 +1,23 @@
 # @pine/items-service
 
+## 1.2.0
+
+### Minor Changes
+
+- 6adfc37: feat(items): return status groups from getListItems
+- 4200ae7: feat(item-statuses): manage list statuses with drag reorder
+- 97f217e: feat(items): paginate list items per status with checklistCounts
+- 7036672: feat(items): nest checklist counts on getListItems
+- fa8db3f: feat(spaces): add space settings rename
+
+### Patch Changes
+
+- Updated dependencies [4200ae7]
+- Updated dependencies [fa8db3f]
+  - @pine/common@1.2.0
+  - @pine/events@1.2.0
+  - @pine/server@1.1.5
+
 ## 1.1.0
 
 ### Minor Changes

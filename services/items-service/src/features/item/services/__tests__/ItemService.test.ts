@@ -3,10 +3,14 @@ import { ITEM_PRIORITY } from "@pine/common";
 import { ItemCreatedEvent, ItemUpdatedEvent } from "@pine/events";
 import type { IOutboxService } from "@pine/outbox";
 import { describe, expect, it, vi } from "vitest";
-import type { DbClient, Item } from "@/db";
-import { ItemNotFoundError } from "@/features/item/errors";
+import type { DbClient, Item, StatusOption } from "@/db";
+import type { IChecklistRepository } from "@/features/checklists/repositories";
+import { ItemNotFoundError, ListItemsValidationError } from "@/features/item/errors";
 import type { IItemAssigneeRepository, IItemRepository } from "@/features/item/repositories";
+import { StatusNotFoundError } from "@/features/item-statuses/errors";
+import type { IStatusRepository } from "@/features/item-statuses/repositories";
 import { type ItemDatabase, ItemService } from "@/features/item/services/ItemService";
+import { encodeItemListCursor } from "@/features/item/services/itemListCursor";
 
 const item: Item = {
   id: "issue-1",
@@ -36,7 +40,11 @@ const createItemRepository = (overrides: Partial<IItemRepository> = {}): IItemRe
   findById: vi.fn().mockResolvedValue(null),
   findByIdForUser: vi.fn().mockResolvedValue(null),
   findRootsByList: vi.fn().mockResolvedValue([]),
+  findRootPageByStatus: vi.fn().mockResolvedValue([]),
+  countRootsByListGrouped: vi.fn().mockResolvedValue([]),
   findChildren: vi.fn().mockResolvedValue([]),
+  countByStatusId: vi.fn().mockResolvedValue(0),
+  reassignStatus: vi.fn().mockResolvedValue(0),
   ...overrides,
 });
 
@@ -44,6 +52,56 @@ const createItemAssigneeRepository = (
   overrides: Partial<IItemAssigneeRepository> = {},
 ): IItemAssigneeRepository => ({
   saveMany: vi.fn().mockResolvedValue([]),
+  ...overrides,
+});
+
+const todoStatus: StatusOption = {
+  id: "status-1",
+  name: "To Do",
+  type: "todo",
+  color: "#9E9E9E",
+  orderIndex: 0,
+  listId: "list-1",
+  version: 1,
+  createdAt: new Date("2026-01-01T00:00:00.000Z"),
+  updatedAt: null,
+  deletedAt: null,
+};
+
+const doneStatus: StatusOption = {
+  id: "status-2",
+  name: "Done",
+  type: "done",
+  color: "#4CAF50",
+  orderIndex: 1,
+  listId: "list-1",
+  version: 1,
+  createdAt: new Date("2026-01-01T00:00:00.000Z"),
+  updatedAt: null,
+  deletedAt: null,
+};
+
+const createStatusRepository = (overrides: Partial<IStatusRepository> = {}): IStatusRepository => ({
+  save: vi.fn(),
+  saveMany: vi.fn(),
+  update: vi.fn(),
+  findById: vi.fn(),
+  findByListId: vi.fn().mockResolvedValue([todoStatus, doneStatus]),
+  findMaxOrderIndex: vi.fn(),
+  softDelete: vi.fn(),
+  replaceOrderIndexes: vi.fn(),
+  ...overrides,
+});
+
+const createChecklistRepository = (
+  overrides: Partial<IChecklistRepository> = {},
+): IChecklistRepository => ({
+  save: vi.fn(),
+  update: vi.fn(),
+  findById: vi.fn(),
+  findByItemId: vi.fn().mockResolvedValue([]),
+  findCountsByItemIds: vi.fn().mockResolvedValue([]),
+  softDelete: vi.fn(),
   ...overrides,
 });
 
@@ -85,6 +143,8 @@ const createService = (
     db?: ItemDatabase;
     itemRepository?: IItemRepository;
     itemAssigneeRepository?: IItemAssigneeRepository;
+    statusRepository?: IStatusRepository;
+    checklistRepository?: IChecklistRepository;
     outboxService?: IOutboxService;
     authorizationClient?: IAuthorizationClient;
   } = {},
@@ -93,6 +153,8 @@ const createService = (
     deps.db ?? createDb(),
     deps.itemRepository ?? createItemRepository(),
     deps.itemAssigneeRepository ?? createItemAssigneeRepository(),
+    deps.statusRepository ?? createStatusRepository(),
+    deps.checklistRepository ?? createChecklistRepository(),
     deps.outboxService ?? createOutboxService(),
     deps.authorizationClient ?? createAuthorizationClient(),
   );
@@ -313,18 +375,142 @@ describe("ItemService", () => {
     expect(itemRepository.softDelete).not.toHaveBeenCalled();
   });
 
-  it("returns list items with hasChildren from the repository", async () => {
-    const roots = [
-      { ...item, id: "root-with-children", hasChildren: true },
-      { ...item, id: "root-without-children", hasChildren: false },
-    ];
+  it("returns list items grouped by status including empty groups", async () => {
+    const apple = { ...item, id: "apple", name: "Apple", statusId: "status-1", hasChildren: true };
+    const zebra = { ...item, id: "zebra", name: "Zebra", statusId: "status-1", hasChildren: false };
     const itemRepository = createItemRepository({
-      findRootsByList: vi.fn().mockResolvedValue(roots),
+      findRootPageByStatus: vi.fn().mockImplementation((_listId, _userId, page) => {
+        if (page.statusId === "status-1") {
+          return Promise.resolve([apple, zebra]);
+        }
+        return Promise.resolve([]);
+      }),
+      countRootsByListGrouped: vi.fn().mockResolvedValue([{ statusId: "status-1", totalCount: 2 }]),
+    });
+    const statusRepository = createStatusRepository({
+      findByListId: vi.fn().mockResolvedValue([todoStatus, doneStatus]),
+    });
+    const checklistCounts = {
+      itemId: "apple",
+      completedCount: 1,
+      totalCount: 3,
+    };
+    const checklistRepository = createChecklistRepository({
+      findCountsByItemIds: vi.fn().mockResolvedValue([checklistCounts]),
+    });
+    const service = createService({ itemRepository, statusRepository, checklistRepository });
+
+    await expect(service.list({ listId: "list-1", userId: "user-1" })).resolves.toEqual([
+      {
+        status: todoStatus,
+        items: [
+          {
+            ...apple,
+            checklistCounts: { completedCount: 1, totalCount: 3 },
+          },
+          {
+            ...zebra,
+            checklistCounts: { completedCount: 0, totalCount: 0 },
+          },
+        ],
+        pageInfo: {
+          hasNextPage: false,
+          endCursor: encodeItemListCursor(zebra),
+        },
+        totalCount: 2,
+      },
+      {
+        status: doneStatus,
+        items: [],
+        pageInfo: {
+          hasNextPage: false,
+          endCursor: null,
+        },
+        totalCount: 0,
+      },
+    ]);
+
+    expect(itemRepository.findRootPageByStatus).toHaveBeenCalled();
+    expect(statusRepository.findByListId).toHaveBeenCalledWith("list-1");
+    expect(checklistRepository.findCountsByItemIds).toHaveBeenCalledWith(["apple", "zebra"]);
+  });
+
+  it("truncates each status group to first and exposes hasNextPage", async () => {
+    const first = { ...item, id: "a", name: "A", statusId: "status-1", hasChildren: false };
+    const second = { ...item, id: "b", name: "B", statusId: "status-1", hasChildren: false };
+    const third = { ...item, id: "c", name: "C", statusId: "status-1", hasChildren: false };
+    const itemRepository = createItemRepository({
+      findRootPageByStatus: vi.fn().mockImplementation((_listId, _userId, page) => {
+        if (page.statusId === "status-1") {
+          return Promise.resolve([first, second, third].slice(0, page.limit));
+        }
+        return Promise.resolve([]);
+      }),
+      countRootsByListGrouped: vi.fn().mockResolvedValue([{ statusId: "status-1", totalCount: 3 }]),
     });
     const service = createService({ itemRepository });
 
-    await expect(service.list({ listId: "list-1", userId: "user-1" })).resolves.toEqual(roots);
+    const groups = await service.list({ listId: "list-1", userId: "user-1", first: 2 });
 
-    expect(itemRepository.findRootsByList).toHaveBeenCalledWith("list-1", "user-1");
+    expect(groups[0]?.items.map((row) => row.id)).toEqual(["a", "b"]);
+    expect(groups[0]?.pageInfo).toEqual({
+      hasNextPage: true,
+      endCursor: encodeItemListCursor(second),
+    });
+    expect(groups[0]?.totalCount).toBe(3);
+    expect(itemRepository.findRootPageByStatus).toHaveBeenCalledWith("list-1", "user-1", {
+      statusId: "status-1",
+      limit: 3,
+    });
+  });
+
+  it("loads the next page for a single status when after is provided", async () => {
+    const second = { ...item, id: "b", name: "B", statusId: "status-1", hasChildren: false };
+    const third = { ...item, id: "c", name: "C", statusId: "status-1", hasChildren: false };
+    const after = encodeItemListCursor({ name: "A", id: "a" });
+    const itemRepository = createItemRepository({
+      findRootPageByStatus: vi.fn().mockResolvedValue([second, third]),
+      countRootsByListGrouped: vi.fn().mockResolvedValue([{ statusId: "status-1", totalCount: 3 }]),
+    });
+    const service = createService({ itemRepository });
+
+    const groups = await service.list({
+      listId: "list-1",
+      userId: "user-1",
+      statusId: "status-1",
+      after,
+      first: 2,
+    });
+
+    expect(groups).toHaveLength(1);
+    expect(groups[0]?.items.map((row) => row.id)).toEqual(["b", "c"]);
+    expect(groups[0]?.pageInfo.hasNextPage).toBe(false);
+    expect(itemRepository.findRootPageByStatus).toHaveBeenCalledWith("list-1", "user-1", {
+      statusId: "status-1",
+      limit: 3,
+      after: { name: "A", id: "a" },
+    });
+  });
+
+  it("rejects after without statusId", async () => {
+    const service = createService();
+    await expect(
+      service.list({
+        listId: "list-1",
+        userId: "user-1",
+        after: encodeItemListCursor({ name: "A", id: "a" }),
+      }),
+    ).rejects.toBeInstanceOf(ListItemsValidationError);
+  });
+
+  it("rejects unknown statusId", async () => {
+    const service = createService();
+    await expect(
+      service.list({
+        listId: "list-1",
+        userId: "user-1",
+        statusId: "missing",
+      }),
+    ).rejects.toBeInstanceOf(StatusNotFoundError);
   });
 });

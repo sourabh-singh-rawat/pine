@@ -1,0 +1,10 @@
+mutation UpdateStatus($input: UpdateStatusInput!) {
+  updateStatus(input: $input) {
+    id
+    name
+    type
+    color
+    orderIndex
+    listId
+  }
+}

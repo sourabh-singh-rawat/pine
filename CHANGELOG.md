@@ -1,5 +1,29 @@
 # Changelog
 
+## v2026.09.27.1
+
+### Minor
+
+- 6adfc379: feat(items): return status groups from getListItems — Sourabh Singh Rawat (`@pine/items-service`, `@pine/pine-web`)
+- 4200ae7c: feat(item-statuses): manage list statuses with drag reorder — Sourabh Singh Rawat (`@pine/common`, `@pine/items-service`, `@pine/pine-web`)
+- 97f217ed: feat(items): paginate list items per status with checklistCounts — Sourabh Singh Rawat (`@pine/items-service`, `@pine/pine-web`)
+- 7036672e: feat(items): nest checklist counts on getListItems — Sourabh Singh Rawat (`@pine/items-service`, `@pine/pine-web`)
+- fa8db3fc: feat(spaces): add space settings rename — Sourabh Singh Rawat (`@pine/events`, `@pine/items-service`, `@pine/pine-web`)
+
+### Patch
+
+- 38997519: feat(pine-web): display checklist item progress count in item list view — Sourabh Singh Rawat (`@pine/pine-web`)
+
+### Packages
+
+- `@pine/api-gateway@0.4.5`
+- `@pine/common@1.2.0`
+- `@pine/data-gateway@0.1.5`
+- `@pine/events@1.2.0`
+- `@pine/items-service@1.2.0`
+- `@pine/pine-web@0.10.0`
+- `@pine/server@1.1.5`
+
 ## v2026.09.25.3
 
 ### Patch

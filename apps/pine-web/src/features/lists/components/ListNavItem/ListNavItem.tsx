@@ -1,6 +1,7 @@
 import EditOutlined from "@mui/icons-material/EditOutlined";
 import FolderOutlined from "@mui/icons-material/FolderOutlined";
 import MoreVert from "@mui/icons-material/MoreVert";
+import TuneOutlined from "@mui/icons-material/TuneOutlined";
 import {
   Box,
   IconButton,
@@ -15,6 +16,7 @@ import { useRef, useState } from "react";
 import { useGetListQuery, useGetListsQuery, useUpdateListMutation } from "@generated/gql";
 import { Menu, MenuItem, MenuItemIcon, type MenuAnchorPosition } from "@pine/ui";
 import { useSnackbar } from "@shared";
+import { ManageStatusesModal } from "../../../item-statuses";
 import { useListStore } from "../../store";
 
 const ListNavItemLink = createLink(ListItemButton);
@@ -40,6 +42,7 @@ export const ListNavItem = ({ listId, name, spaceId, nested = false }: ListNavIt
   const [menuAnchor, setMenuAnchor] = useState<MenuAnchorPosition | null>(null);
   const [isRenaming, setIsRenaming] = useState(false);
   const [renameValue, setRenameValue] = useState(name);
+  const [statusesModalOpen, setStatusesModalOpen] = useState(false);
 
   const persistCurrentList = (nextName: string) => {
     const next = { id: listId, name: nextName, spaceId };
@@ -57,6 +60,11 @@ export const ListNavItem = ({ listId, name, spaceId, nested = false }: ListNavIt
     skipBlurSaveRef.current = false;
     setRenameValue(name);
     setIsRenaming(true);
+  };
+
+  const openStatusesModal = () => {
+    closeMenu();
+    setStatusesModalOpen(true);
   };
 
   const cancelRename = () => {
@@ -202,7 +210,21 @@ export const ListNavItem = ({ listId, name, spaceId, nested = false }: ListNavIt
           </MenuItemIcon>
           Rename
         </MenuItem>
+        <MenuItem onClick={openStatusesModal}>
+          <MenuItemIcon>
+            <TuneOutlined fontSize="small" />
+          </MenuItemIcon>
+          Statuses
+        </MenuItem>
       </Menu>
+      <ManageStatusesModal
+        listId={listId}
+        listName={name}
+        open={statusesModalOpen}
+        onClose={() => {
+          setStatusesModalOpen(false);
+        }}
+      />
     </Box>
   );
 };

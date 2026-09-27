@@ -5,16 +5,24 @@ import type { IOutboxService } from "@pine/outbox";
 import { inject, injectable } from "inversify";
 import { TYPES } from "@/bootstrap/container-types";
 import type { DbClient, Item } from "@/db";
-import { ItemNotFoundError } from "@/features/item/errors";
+import type { ChecklistCounts, IChecklistRepository } from "@/features/checklists/repositories";
+import { ItemNotFoundError, ListItemsValidationError } from "@/features/item/errors";
 import type { IItemAssigneeRepository, IItemRepository } from "@/features/item/repositories";
+import { clampListItemsFirst } from "@/features/item/utils";
+import { StatusNotFoundError } from "@/features/item-statuses/errors";
+import type { IStatusRepository } from "@/features/item-statuses/repositories";
 import type {
   CreateItemOptions,
   DeleteItemOptions,
   GetItemOptions,
   IItemService,
+  ItemGroupPageInfo,
+  ItemListItem,
+  ItemStatusGroup,
   ListItemsOptions,
   UpdateItemOptions,
 } from "./IItemService";
+import { decodeItemListCursor, encodeItemListCursor } from "./itemListCursor";
 
 export type ItemDatabase = {
   transaction: <T>(callback: (tx: DbClient) => Promise<T>) => Promise<T>;
@@ -29,6 +37,10 @@ export class ItemService implements IItemService {
     private readonly itemRepository: IItemRepository,
     @inject(TYPES.ItemAssigneeRepository)
     private readonly itemAssigneeRepository: IItemAssigneeRepository,
+    @inject(TYPES.StatusRepository)
+    private readonly statusRepository: IStatusRepository,
+    @inject(TYPES.ChecklistRepository)
+    private readonly checklistRepository: IChecklistRepository,
     @inject(TYPES.OutboxService)
     private readonly outboxService: IOutboxService,
     @inject(TYPES.AuthorizationClient)
@@ -95,9 +107,55 @@ export class ItemService implements IItemService {
     });
   }
 
-  async list(options: ListItemsOptions) {
-    const { listId, userId } = options;
-    return this.itemRepository.findRootsByList(listId, userId);
+  async list(options: ListItemsOptions): Promise<ItemStatusGroup[]> {
+    const { listId, userId, statusId, after } = options;
+    const first = clampListItemsFirst(options.first);
+
+    if (after && !statusId) {
+      throw new ListItemsValidationError("statusId is required when after is provided");
+    }
+
+    const statuses = await this.statusRepository.findByListId(listId);
+
+    if (statusId) {
+      const status = statuses.find((row) => row.id === statusId);
+      if (!status) {
+        throw new StatusNotFoundError(`Status not found: ${statusId}`);
+      }
+
+      const cursor = after ? decodeItemListCursor(after) : undefined;
+      const page = await this.itemRepository.findRootPageByStatus(listId, userId, {
+        statusId,
+        limit: first + 1,
+        after: cursor,
+      });
+      const counts = await this.itemRepository.countRootsByListGrouped(listId, userId);
+      const totalCount = counts.find((row) => row.statusId === statusId)?.totalCount ?? 0;
+      const { items, pageInfo } = await this.toPageItems(page, first);
+
+      return [{ status, items, pageInfo, totalCount }];
+    }
+
+    const counts = await this.itemRepository.countRootsByListGrouped(listId, userId);
+    const totalByStatusId = new Map(counts.map((row) => [row.statusId, row.totalCount]));
+
+    const pages = await Promise.all(
+      statuses.map(async (status) => {
+        const page = await this.itemRepository.findRootPageByStatus(listId, userId, {
+          statusId: status.id,
+          limit: first + 1,
+        });
+        const { items, pageInfo } = await this.toPageItems(page, first);
+        return {
+          status,
+          items,
+          pageInfo,
+          totalCount: totalByStatusId.get(status.id) ?? 0,
+        };
+      }),
+    );
+
+    return pages;
   }
 
   async getById(options: GetItemOptions) {
@@ -184,6 +242,42 @@ export class ItemService implements IItemService {
     if (!deleted) {
       throw new ItemNotFoundError(`Item not found: ${id}`);
     }
+  }
+
+  private async toPageItems(
+    page: Awaited<ReturnType<IItemRepository["findRootPageByStatus"]>>,
+    first: number,
+  ): Promise<{ items: ItemListItem[]; pageInfo: ItemGroupPageInfo }> {
+    const hasNextPage = page.length > first;
+    const roots = hasNextPage ? page.slice(0, first) : page;
+    const counts = await this.checklistRepository.findCountsByItemIds(roots.map((root) => root.id));
+    const countsByItemId = this.groupCountsByItemId(counts);
+    const items: ItemListItem[] = roots.map((root) => ({
+      ...root,
+      checklistCounts: countsByItemId.get(root.id) ?? { completedCount: 0, totalCount: 0 },
+    }));
+    const last = items[items.length - 1];
+    const pageInfo: ItemGroupPageInfo = {
+      hasNextPage,
+      endCursor: last ? encodeItemListCursor(last) : null,
+    };
+    return { items, pageInfo };
+  }
+
+  private groupCountsByItemId(
+    counts: ChecklistCounts[],
+  ): Map<string, Pick<ChecklistCounts, "completedCount" | "totalCount">> {
+    const countsByItemId = new Map<
+      string,
+      Pick<ChecklistCounts, "completedCount" | "totalCount">
+    >();
+    for (const row of counts) {
+      countsByItemId.set(row.itemId, {
+        completedCount: row.completedCount,
+        totalCount: row.totalCount,
+      });
+    }
+    return countsByItemId;
   }
 
   private getStatuses() {

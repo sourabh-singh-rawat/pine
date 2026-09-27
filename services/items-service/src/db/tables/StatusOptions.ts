@@ -5,6 +5,7 @@ export const StatusOptions = pgTable("status_options", {
   ...idColumn,
   name: text("name").notNull(),
   type: text("type").notNull(),
+  color: text("color").notNull().default("#64748B"),
   orderIndex: integer("order_index").notNull(),
   listId: uuid("list_id").notNull(),
   ...auditColumns,

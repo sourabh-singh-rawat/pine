@@ -2,5 +2,9 @@ query FindStatuses($input: FindStatusesOptions!) {
   findStatuses(input: $input) {
     id
     name
+    type
+    color
+    orderIndex
+    listId
   }
 }

@@ -1,9 +1,10 @@
 import { uuidv7 } from "@pine/common";
-import { and, asc, eq, isNull, sql } from "drizzle-orm";
+import { and, asc, eq, inArray, isNull, sql } from "drizzle-orm";
 import { inject, injectable } from "inversify";
 import { TYPES } from "@/bootstrap/container-types";
-import { type Checklist, Checklists, type Database } from "@/db";
+import { type Checklist, ChecklistEntries, Checklists, type Database } from "@/db";
 import type {
+  ChecklistCounts,
   ChecklistRepositoryOptions,
   CreateChecklistEntity,
   IChecklistRepository,
@@ -76,6 +77,36 @@ export class ChecklistRepository implements IChecklistRepository {
       .from(Checklists)
       .where(and(eq(Checklists.itemId, itemId), isNull(Checklists.deletedAt)))
       .orderBy(asc(Checklists.createdAt));
+  }
+
+  async findCountsByItemIds(
+    itemIds: string[],
+    options?: ChecklistRepositoryOptions,
+  ): Promise<ChecklistCounts[]> {
+    if (itemIds.length === 0) {
+      return [];
+    }
+
+    const client = this.client(options);
+    const rows = await client
+      .select({
+        itemId: Checklists.itemId,
+        totalCount: sql<number>`coalesce(count(${ChecklistEntries.id}), 0)::int`,
+        completedCount: sql<number>`coalesce(count(${ChecklistEntries.id}) filter (where ${ChecklistEntries.completed} = true), 0)::int`,
+      })
+      .from(Checklists)
+      .leftJoin(
+        ChecklistEntries,
+        and(eq(ChecklistEntries.checklistId, Checklists.id), isNull(ChecklistEntries.deletedAt)),
+      )
+      .where(and(inArray(Checklists.itemId, itemIds), isNull(Checklists.deletedAt)))
+      .groupBy(Checklists.itemId);
+
+    return rows.map((row) => ({
+      itemId: row.itemId,
+      totalCount: Number(row.totalCount),
+      completedCount: Number(row.completedCount),
+    }));
   }
 
   async softDelete(id: string, options?: ChecklistRepositoryOptions): Promise<boolean> {

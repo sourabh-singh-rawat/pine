@@ -1,11 +1,29 @@
-query GetListItems($listId: String!) {
-  getListItems(listId: $listId) {
-    description
-    id
-    name
-    statusId
-    priority
-    dueDate
-    hasChildren
+query GetListItems($listId: String!, $first: Int, $statusId: String, $after: String) {
+  getListItems(listId: $listId, first: $first, statusId: $statusId, after: $after) {
+    status {
+      id
+      name
+      orderIndex
+      color
+      type
+    }
+    items {
+      description
+      id
+      name
+      statusId
+      priority
+      dueDate
+      hasChildren
+      checklistCounts {
+        completedCount
+        totalCount
+      }
+    }
+    pageInfo {
+      hasNextPage
+      endCursor
+    }
+    totalCount
   }
 }

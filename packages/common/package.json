@@ -1,7 +1,7 @@
 {
   "$schema": "https://json.schemastore.org/package.json",
   "name": "@pine/common",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "private": "true",
   "description": "",
   "keywords": [],
@@ -17,6 +17,10 @@
     "./api": {
       "types": "./src/api/index.ts",
       "default": "./src/api/index.ts"
+    },
+    "./constants": {
+      "types": "./src/constants/index.ts",
+      "default": "./src/constants/index.ts"
     }
   },
   "scripts": {

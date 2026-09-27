@@ -121,7 +121,11 @@ const createItemRepository = (overrides: Partial<IItemRepository> = {}): IItemRe
   findById: vi.fn().mockResolvedValue(item),
   findByIdForUser: vi.fn(),
   findRootsByList: vi.fn(),
+  findRootPageByStatus: vi.fn(),
+  countRootsByListGrouped: vi.fn(),
   findChildren: vi.fn(),
+  countByStatusId: vi.fn().mockResolvedValue(0),
+  reassignStatus: vi.fn().mockResolvedValue(0),
   ...overrides,
 });
 
@@ -132,6 +136,7 @@ const createChecklistRepository = (
   update: vi.fn().mockResolvedValue(checklist),
   findById: vi.fn().mockResolvedValue(checklist),
   findByItemId: vi.fn().mockResolvedValue([checklist]),
+  findCountsByItemIds: vi.fn().mockResolvedValue([]),
   softDelete: vi.fn().mockResolvedValue(true),
   ...overrides,
 });
@@ -161,6 +166,7 @@ const createListRepository = (overrides: Partial<IListRepository> = {}): IListRe
 
 const createSpaceRepository = (overrides: Partial<ISpaceRepository> = {}): ISpaceRepository => ({
   save: vi.fn(),
+  update: vi.fn(),
   findById: vi.fn().mockResolvedValue(space),
   findMany: vi.fn(),
   ...overrides,

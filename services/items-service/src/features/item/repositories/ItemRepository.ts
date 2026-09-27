@@ -1,14 +1,16 @@
 import { uuidv7 } from "@pine/common";
-import { and, eq, inArray, isNull, sql } from "drizzle-orm";
+import { and, asc, count, eq, gt, inArray, isNull, or, sql } from "drizzle-orm";
 import { inject, injectable } from "inversify";
 import { TYPES } from "@/bootstrap/container-types";
 import { type Database, type Item, Items, Lists } from "@/db";
 import type {
   CreateItemEntity,
+  FindRootPageByStatusOptions,
   IItemRepository,
   ItemRepositoryOptions,
   ItemWithHasChildren,
   ItemWithList,
+  RootCountByStatus,
   UpdateItemEntity,
 } from "@/features/item/repositories/IItemRepository";
 
@@ -151,10 +153,129 @@ export class ItemRepository implements IItemRepository {
         ),
       );
 
+    return this.withHasChildren(roots, userId, options);
+  }
+
+  async findRootPageByStatus(
+    listId: string,
+    userId: string,
+    page: FindRootPageByStatusOptions,
+    options?: ItemRepositoryOptions,
+  ): Promise<ItemWithHasChildren[]> {
+    const client = this.client(options);
+    const seek = page.after
+      ? or(
+          gt(Items.name, page.after.name),
+          and(eq(Items.name, page.after.name), gt(Items.id, page.after.id)),
+        )
+      : undefined;
+
+    const roots = await client
+      .select()
+      .from(Items)
+      .where(
+        and(
+          eq(Items.listId, listId),
+          eq(Items.createdById, userId),
+          eq(Items.statusId, page.statusId),
+          isNull(Items.parentItemId),
+          isNull(Items.deletedAt),
+          seek,
+        ),
+      )
+      .orderBy(asc(Items.name), asc(Items.id))
+      .limit(page.limit);
+
+    return this.withHasChildren(roots, userId, options);
+  }
+
+  async countRootsByListGrouped(
+    listId: string,
+    userId: string,
+    options?: ItemRepositoryOptions,
+  ): Promise<RootCountByStatus[]> {
+    const client = this.client(options);
+    const rows = await client
+      .select({
+        statusId: Items.statusId,
+        totalCount: count(),
+      })
+      .from(Items)
+      .where(
+        and(
+          eq(Items.listId, listId),
+          eq(Items.createdById, userId),
+          isNull(Items.parentItemId),
+          isNull(Items.deletedAt),
+        ),
+      )
+      .groupBy(Items.statusId);
+
+    return rows.map((row) => ({
+      statusId: row.statusId,
+      totalCount: Number(row.totalCount),
+    }));
+  }
+
+  async findChildren(
+    parentItemId: string,
+    userId: string,
+    options?: ItemRepositoryOptions,
+  ): Promise<Item[]> {
+    const client = this.client(options);
+    return client
+      .select()
+      .from(Items)
+      .where(
+        and(
+          eq(Items.parentItemId, parentItemId),
+          eq(Items.createdById, userId),
+          isNull(Items.deletedAt),
+        ),
+      );
+  }
+
+  async countByStatusId(statusId: string, options?: ItemRepositoryOptions): Promise<number> {
+    const client = this.client(options);
+    const [row] = await client
+      .select({ value: count() })
+      .from(Items)
+      .where(and(eq(Items.statusId, statusId), isNull(Items.deletedAt)));
+
+    return row?.value ?? 0;
+  }
+
+  async reassignStatus(
+    fromStatusId: string,
+    toStatusId: string,
+    options?: ItemRepositoryOptions,
+  ): Promise<number> {
+    const client = this.client(options);
+    const now = new Date();
+
+    const updated = await client
+      .update(Items)
+      .set({
+        statusId: toStatusId,
+        updatedAt: now,
+        version: sql`${Items.version} + 1`,
+      })
+      .where(and(eq(Items.statusId, fromStatusId), isNull(Items.deletedAt)))
+      .returning({ id: Items.id });
+
+    return updated.length;
+  }
+
+  private async withHasChildren(
+    roots: Item[],
+    userId: string,
+    options?: ItemRepositoryOptions,
+  ): Promise<ItemWithHasChildren[]> {
     if (roots.length === 0) {
       return [];
     }
 
+    const client = this.client(options);
     const rootIds = roots.map((root) => root.id);
     const childParents = await client
       .selectDistinct({ parentItemId: Items.parentItemId })
@@ -175,24 +296,6 @@ export class ItemRepository implements IItemRepository {
       ...root,
       hasChildren: parentsWithChildren.has(root.id),
     }));
-  }
-
-  async findChildren(
-    parentItemId: string,
-    userId: string,
-    options?: ItemRepositoryOptions,
-  ): Promise<Item[]> {
-    const client = this.client(options);
-    return client
-      .select()
-      .from(Items)
-      .where(
-        and(
-          eq(Items.parentItemId, parentItemId),
-          eq(Items.createdById, userId),
-          isNull(Items.deletedAt),
-        ),
-      );
   }
 
   private client(options?: ItemRepositoryOptions) {

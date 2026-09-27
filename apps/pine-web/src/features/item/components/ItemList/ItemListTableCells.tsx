@@ -38,12 +38,16 @@ export const ItemNameTableCell = ({
   depth,
   hasChildren,
   isExpanded,
+  checklistCompletedCount,
+  checklistTotalCount,
 }: {
   itemId: string;
   name: string;
   depth: number;
   hasChildren: boolean;
   isExpanded: boolean;
+  checklistCompletedCount: number;
+  checklistTotalCount: number;
 }) => {
   const ui = useContext(ItemListUiContext);
   if (!ui) return name;
@@ -59,6 +63,8 @@ export const ItemNameTableCell = ({
       isExpanding={ui.expandingItemIds.has(itemId)}
       isEditing={ui.editingItemId === itemId}
       isSaving={ui.isSaving}
+      checklistCompletedCount={checklistCompletedCount}
+      checklistTotalCount={checklistTotalCount}
       onStartEditing={() => ui.onStartEditing(itemId)}
       onFinishEditing={() => ui.onFinishEditing(itemId)}
       onSave={async (nextName) => ui.onSaveName(itemId, nextName)}

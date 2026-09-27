@@ -21,6 +21,8 @@ export type ItemRow = {
   dueDate?: string | null;
   hasChildren: boolean;
   isNestedExpanded: boolean;
+  checklistCompletedCount: number;
+  checklistTotalCount: number;
   children?: ItemRow[];
 };
 

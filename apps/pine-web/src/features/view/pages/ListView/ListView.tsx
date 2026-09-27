@@ -21,11 +21,15 @@ export const ListView = () => {
   const statusesQuery = useFindStatusesQuery(
     { input: { listId: listId! } },
     {
-      select: (data) =>
-        (data.findStatuses ?? []).filter(
-          (status): status is { id: string; name: string } =>
-            Boolean(status.id) && Boolean(status.name),
-        ),
+      select: (data) => {
+        const mapped: StatusOption[] = [];
+        for (const status of data.findStatuses ?? []) {
+          if (status.id && status.name) {
+            mapped.push({ id: status.id, name: status.name });
+          }
+        }
+        return mapped;
+      },
       enabled: Boolean(listId),
     },
   );

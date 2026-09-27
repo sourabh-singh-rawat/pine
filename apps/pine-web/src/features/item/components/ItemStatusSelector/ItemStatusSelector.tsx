@@ -56,10 +56,12 @@ export const ItemStatusSelector = <T extends FieldValues>({
                 <Select
                   name={field.name}
                   value={field.value}
-                  options={(statuses || []).filter(
-                    (status): status is { id: string; name: string } =>
-                      Boolean(status.id) && Boolean(status.name),
-                  )}
+                  options={(statuses || []).flatMap((status) => {
+                    if (!status.id || !status.name) {
+                      return [];
+                    }
+                    return [{ id: status.id, name: status.name }];
+                  })}
                   onChange={(e) => {
                     const nextValue = e.target.value;
                     if (typeof nextValue !== "string" || !nextValue) return;
