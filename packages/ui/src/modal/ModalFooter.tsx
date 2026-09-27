@@ -1,24 +1,22 @@
 import Stack from "@mui/material/Stack";
-import { PrimaryButton } from "../buttons/PrimaryButton";
-import { SecondaryButton } from "../buttons/SecondaryButton";
+import type { ReactNode } from "react";
 
 export interface ModalFooterProps {
-  handleClose: () => void;
-  submitLabel?: string;
-  cancelLabel?: string;
+  children: ReactNode;
 }
 
-export function ModalFooter({
-  handleClose,
-  submitLabel = "Create",
-  cancelLabel = "Cancel",
-}: ModalFooterProps) {
+export const ModalFooter = ({ children }: ModalFooterProps) => {
   return (
-    <Stack direction="row-reverse" spacing={1} sx={{ mt: 2 }}>
-      <PrimaryButton type="submit" label={submitLabel} />
-      <SecondaryButton label={cancelLabel} onClick={handleClose} />
+    <Stack
+      direction="row"
+      spacing={1}
+      justifyContent="flex-end"
+      alignItems="center"
+      sx={{ flexShrink: 0, pt: 1 }}
+    >
+      {children}
     </Stack>
   );
-}
+};
 
 export default ModalFooter;

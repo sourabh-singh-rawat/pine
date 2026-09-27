@@ -4,29 +4,33 @@ import IconButton from "@mui/material/IconButton";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import { useTheme } from "@mui/material/styles";
-import type { MouseEvent } from "react";
+import { pinePaletteDark, pinePaletteLight } from "../theme/color";
 
 export interface ModalHeaderProps {
   title: string;
   subtitle?: string;
-  handleClose: (e: MouseEvent<HTMLButtonElement>) => void;
+  onClose: () => void;
 }
 
-export function ModalHeader({ title, subtitle, handleClose }: ModalHeaderProps) {
+export const ModalHeader = ({ title, subtitle, onClose }: ModalHeaderProps) => {
   const theme = useTheme();
+  const m3 = theme.palette.mode === "dark" ? pinePaletteDark : pinePaletteLight;
 
   return (
-    <Box sx={{ mb: 2 }}>
-      <Stack spacing={1}>
+    <Box sx={{ flexShrink: 0, mb: subtitle ? 2 : 0 }}>
+      <Stack spacing={2}>
         <Stack direction="row" alignItems="flex-start" justifyContent="space-between" spacing={1}>
-          <Typography variant="h5" component="h2" fontWeight="bold">
+          <Typography variant="headlineSmall" component="h2" sx={{ color: m3.onSurface, pr: 1 }}>
             {title}
           </Typography>
           <IconButton
-            onClick={handleClose}
+            onClick={() => {
+              onClose();
+            }}
             aria-label="Close"
             size="small"
             sx={{
+              color: m3.onSurfaceVariant,
               "&:hover": { backgroundColor: theme.palette.action.hover },
             }}
           >
@@ -34,13 +38,13 @@ export function ModalHeader({ title, subtitle, handleClose }: ModalHeaderProps) 
           </IconButton>
         </Stack>
         {subtitle ? (
-          <Typography variant="body1" color="text.secondary">
+          <Typography variant="bodyMedium" sx={{ color: m3.onSurfaceVariant }}>
             {subtitle}
           </Typography>
         ) : null}
       </Stack>
     </Box>
   );
-}
+};
 
 export default ModalHeader;
