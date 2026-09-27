@@ -1,5 +1,15 @@
 # @pine/attachment
 
+## 0.4.0
+
+### Minor Changes
+
+- 71ab521: feat(attachments): add image processing service and HTTP scan callback
+
+### Patch Changes
+
+- c378794: feat(attachments): store image metadata in attachment service
+
 ## 0.3.0
 
 ### Minor Changes

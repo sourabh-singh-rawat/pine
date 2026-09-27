@@ -1,5 +1,21 @@
 # @pine/events
 
+## 1.4.0
+
+### Minor Changes
+
+- 71ab521: feat(attachments): add image processing service and HTTP scan callback
+
+### Patch Changes
+
+- b095dfc: feat(attachments): serve thumbnail derivatives on attachment cards
+- 98a6750: feat(items): set attachment SCANNING/FAILED, sweep stuck, fail UX
+- faed029: feat(items): show processing skeleton while attachments scan
+- Updated dependencies [71ab521]
+- Updated dependencies [98a6750]
+  - @pine/common@1.2.1
+  - @pine/server@1.1.6
+
 ## 1.3.0
 
 ### Minor Changes

@@ -1,5 +1,12 @@
 # @pine/common
 
+## 1.2.1
+
+### Patch Changes
+
+- 71ab521: feat(attachments): add image processing service and HTTP scan callback
+- 98a6750: feat(items): set attachment SCANNING/FAILED, sweep stuck, fail UX
+
 ## 1.2.0
 
 ### Minor Changes

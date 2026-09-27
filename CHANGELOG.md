@@ -1,5 +1,36 @@
 # Changelog
 
+## v2026.09.28.1
+
+### Minor
+
+- 71ab521b: feat(attachments): add image processing service and HTTP scan callback — Sourabh Singh Rawat (`@pine/attachment`, `@pine/attachment-image-processing-service`, `@pine/attachment-scanner-service`, `@pine/attachment-service`, `@pine/common`, `@pine/events`)
+- 98a67509: feat(items): set attachment SCANNING/FAILED, sweep stuck, fail UX — Sourabh Singh Rawat (`@pine/attachment-scanner-service`, `@pine/attachment-service`, `@pine/common`, `@pine/data-gateway`, `@pine/events`, `@pine/identity-service`, `@pine/items-service`, `@pine/outbox`, `@pine/pine-web`, `@pine/platform-service`, `@pine/server`)
+- faed0294: feat(items): show processing skeleton while attachments scan — Sourabh Singh Rawat (`@pine/attachment-scanner-service`, `@pine/events`, `@pine/items-service`, `@pine/pine-web`)
+
+### Patch
+
+- c3787949: feat(attachments): store image metadata in attachment service — Sourabh Singh Rawat (`@pine/attachment`, `@pine/attachment-image-processing-service`, `@pine/attachment-service`)
+- 81f7d2e8: feat(attachments): switch thumbnail derivatives to lossy webp — Sourabh Singh Rawat (`@pine/attachment-image-processing-service`, `@pine/attachment-service`)
+- b095dfc2: feat(attachments): serve thumbnail derivatives on attachment cards — Sourabh Singh Rawat (`@pine/attachment-image-processing-service`, `@pine/attachment-service`, `@pine/events`, `@pine/pine-web`)
+
+### Packages
+
+- `@pine/api-gateway@0.4.6`
+- `@pine/attachment@0.4.0`
+- `@pine/attachment-image-processing-service@0.1.0`
+- `@pine/attachment-scanner-service@0.1.4`
+- `@pine/attachment-service@0.6.1`
+- `@pine/common@1.2.1`
+- `@pine/data-gateway@0.1.6`
+- `@pine/events@1.4.0`
+- `@pine/identity-service@0.7.1`
+- `@pine/items-service@1.4.0`
+- `@pine/outbox@0.1.5`
+- `@pine/pine-web@0.10.2`
+- `@pine/platform-service@0.6.1`
+- `@pine/server@1.1.6`
+
 ## v2026.09.27.2
 
 ### Minor
