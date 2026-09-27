@@ -19,14 +19,7 @@ export const ModalHeader = ({ title, subtitle, onClose }: ModalHeaderProps) => {
   return (
     <Box sx={{ flexShrink: 0 }}>
       <Stack spacing="16px">
-        <Stack direction="row" alignItems="flex-start" justifyContent="space-between" spacing={1}>
-          <Typography
-            variant="headlineSmall"
-            component="h2"
-            sx={{ color: m3.onSurface, pr: 1, textAlign: "start" }}
-          >
-            {title}
-          </Typography>
+        <Stack direction="row" alignItems="flex-start" spacing={1}>
           <IconButton
             onClick={() => {
               onClose();
@@ -36,12 +29,20 @@ export const ModalHeader = ({ title, subtitle, onClose }: ModalHeaderProps) => {
             sx={{
               width: 40,
               height: 40,
+              ml: -1,
               color: m3.onSurfaceVariant,
               "&:hover": { backgroundColor: theme.palette.action.hover },
             }}
           >
             <Close sx={{ fontSize: 24 }} />
           </IconButton>
+          <Typography
+            variant="headlineSmall"
+            component="h2"
+            sx={{ color: m3.onSurface, pt: "6px", textAlign: "start", flex: 1, minWidth: 0 }}
+          >
+            {title}
+          </Typography>
         </Stack>
         {subtitle ? (
           <Typography variant="bodyMedium" sx={{ color: m3.onSurfaceVariant, textAlign: "start" }}>

@@ -13,8 +13,8 @@ export interface ModalProps {
   children: ReactNode;
 }
 
-const enterMs = pineMotion.duration.medium4;
-const exitMs = pineMotion.duration.medium2;
+const enterMs = pineMotion.duration.short4;
+const exitMs = pineMotion.duration.short3;
 const enterEasing = pineMotion.easing.emphasizedDecelerate;
 const exitEasing = pineMotion.easing.emphasizedAccelerate;
 
