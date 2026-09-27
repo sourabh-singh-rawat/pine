@@ -8,12 +8,7 @@ import {
 import { ProgressCircularIndicator } from "@pine/ui";
 import { useSnackbar } from "@shared";
 import { ITEM_ATTACHMENT_STATUS, isProcessingAttachmentStatus } from "../../constants";
-import {
-  formatFileSize,
-  getAttachmentDerivativeUrl,
-  getAttachmentUrl,
-  isImageMimeType,
-} from "../../utils";
+import { formatFileSize } from "../../utils";
 import { AttachmentCard } from "../AttachmentCard";
 import { AttachmentDropZone } from "../AttachmentDropZone";
 import { AttachmentFailedCard } from "../AttachmentFailedCard";
@@ -33,6 +28,8 @@ type AttachmentListItem = {
   name: string;
   mimeType: string;
   size: number | null;
+  url: string | null;
+  previewUrl: string | null;
 };
 
 export const ItemAttachments = ({ itemId }: ItemAttachmentsProps) => {
@@ -81,6 +78,8 @@ export const ItemAttachments = ({ itemId }: ItemAttachmentsProps) => {
               name: attachment.name,
               mimeType: typeof attachment.mimeType === "string" ? attachment.mimeType : "",
               size: typeof attachment.size === "number" ? attachment.size : null,
+              url: typeof attachment.url === "string" ? attachment.url : null,
+              previewUrl: typeof attachment.previewUrl === "string" ? attachment.previewUrl : null,
             },
           ];
         }),
@@ -255,10 +254,9 @@ export const ItemAttachments = ({ itemId }: ItemAttachmentsProps) => {
                 );
               }
 
-              const href = getAttachmentUrl(attachment.attachmentId);
-              const previewHref = isImageMimeType(attachment.mimeType)
-                ? getAttachmentDerivativeUrl(attachment.attachmentId, "thumbnail")
-                : undefined;
+              if (!attachment.url) {
+                return null;
+              }
 
               return (
                 <AttachmentCard
@@ -266,8 +264,8 @@ export const ItemAttachments = ({ itemId }: ItemAttachmentsProps) => {
                   name={attachment.name}
                   mimeType={attachment.mimeType}
                   sizeLabel={formatFileSize(attachment.size)}
-                  href={href}
-                  previewHref={previewHref}
+                  href={attachment.url}
+                  previewHref={attachment.previewUrl ?? undefined}
                   isDeleting={deletingId === attachment.id}
                   onDelete={() => {
                     void handleDelete(attachment.id);

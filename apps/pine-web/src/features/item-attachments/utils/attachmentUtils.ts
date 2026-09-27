@@ -11,27 +11,6 @@ export const formatFileSize = (size: number | null | undefined): string => {
   return `${(size / (1024 * 1024)).toFixed(1)} MB`;
 };
 
-const getDataGatewayBaseUrl = (): string => {
-  const base =
-    import.meta.env.VITE_DATA_GATEWAY_URL ??
-    import.meta.env.VITE_API_BASE_URL ??
-    "https://localhost:4001";
-  return base.replace(/\/$/, "");
-};
-
-export type AttachmentDerivativeType = "thumbnail" | "preview";
-
-export const getAttachmentUrl = (attachmentId: string): string => {
-  return `${getDataGatewayBaseUrl()}/attachments/${attachmentId}`;
-};
-
-export const getAttachmentDerivativeUrl = (
-  attachmentId: string,
-  derivativeType: AttachmentDerivativeType,
-): string => {
-  return `${getDataGatewayBaseUrl()}/attachments/${attachmentId}/derivatives/${derivativeType}`;
-};
-
 export const isImageMimeType = (mimeType: string): boolean =>
   mimeType.toLowerCase().startsWith("image/");
 

@@ -2,6 +2,7 @@ import { builder } from "@pine/server";
 import type { ItemAttachment } from "@/db";
 import { ITEM_ATTACHMENT_STATUS } from "@/features/item-attachments/constants";
 import { getItemAttachmentProcessingLabel } from "@/features/item-attachments/utils";
+import { env } from "@/bootstrap/env";
 import {
   ItemAttachmentProcessingObject,
   type ItemAttachmentProcessingObjectShape,
@@ -15,6 +16,10 @@ const toProcessing = (status: string): ItemAttachmentProcessingObjectShape | nul
   }
   return { label: getItemAttachmentProcessingLabel(status) };
 };
+
+const isImageMimeType = (mimeType: string): boolean => mimeType.toLowerCase().startsWith("image/");
+
+const getBaseDataGatewayUrl = (): string => env.DATA_GATEWAY_PUBLIC_URL.replace(/\/$/, "");
 
 ItemAttachmentObject.implement({
   fields: (t) => ({
@@ -33,5 +38,21 @@ ItemAttachmentObject.implement({
     size: t.exposeInt("size", { nullable: true }),
     createdById: t.exposeString("createdById"),
     createdAt: t.expose("createdAt", { type: "DateTimeISO" }),
+    url: t.field({
+      type: "String",
+      nullable: true,
+      resolve: (parent) =>
+        parent.attachmentId
+          ? `${getBaseDataGatewayUrl()}/attachments/${parent.attachmentId}`
+          : null,
+    }),
+    previewUrl: t.field({
+      type: "String",
+      nullable: true,
+      resolve: (parent) =>
+        parent.attachmentId && isImageMimeType(parent.mimeType)
+          ? `${getBaseDataGatewayUrl()}/attachments/${parent.attachmentId}/derivatives/thumbnail`
+          : null,
+    }),
   }),
 });
