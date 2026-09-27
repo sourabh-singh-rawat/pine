@@ -29,10 +29,10 @@ describe("ThumbnailProcessingService", () => {
       attachmentId: "att-100",
       versionId: "ver-100",
       derivativeType: "thumbnail",
-      mimeType: "image/png",
+      mimeType: "image/webp",
       fileSize: 100,
-      width: 250,
-      height: 188,
+      width: 256,
+      height: 192,
     });
 
     const attachmentClient: IAttachmentClient = {
@@ -62,7 +62,7 @@ describe("ThumbnailProcessingService", () => {
         attachmentId: "att-100",
         versionId: "ver-100",
         derivativeType: "thumbnail",
-        contentType: "image/png",
+        contentType: "image/webp",
       }),
     );
     expect(storeDerivative).toHaveBeenCalledWith(
@@ -70,7 +70,7 @@ describe("ThumbnailProcessingService", () => {
         attachmentId: "att-100",
         versionId: "ver-100",
         derivativeType: "preview",
-        contentType: "image/png",
+        contentType: "image/webp",
       }),
     );
   });
@@ -110,13 +110,23 @@ describe("ThumbnailProcessingService", () => {
     const preview = results.find((r) => r.sizeName === "preview");
 
     expect(thumbnail).toBeDefined();
-    expect(thumbnail?.width).toBeLessThanOrEqual(250);
-    expect(thumbnail?.height).toBeLessThanOrEqual(250);
+    expect(thumbnail?.width).toBeLessThanOrEqual(256);
+    expect(thumbnail?.height).toBeLessThanOrEqual(256);
     expect(thumbnail?.buffer).toBeDefined();
+
+    if (thumbnail?.buffer) {
+      const metadata = await sharp(thumbnail.buffer).metadata();
+      expect(metadata.format).toBe("webp");
+    }
 
     expect(preview).toBeDefined();
     expect(preview?.width).toBeLessThanOrEqual(1200);
     expect(preview?.height).toBeLessThanOrEqual(1200);
     expect(preview?.buffer).toBeDefined();
+
+    if (preview?.buffer) {
+      const metadata = await sharp(preview.buffer).metadata();
+      expect(metadata.format).toBe("webp");
+    }
   });
 });

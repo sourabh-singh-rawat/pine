@@ -57,7 +57,7 @@ export class ThumbnailProcessingService implements IThumbnailProcessingService {
           versionId: input.versionId,
           derivativeType: derivative.sizeName,
           data: derivative.buffer,
-          contentType: "image/png",
+          contentType: "image/webp",
           width: derivative.width,
           height: derivative.height,
         });
@@ -75,11 +75,14 @@ export class ThumbnailProcessingService implements IThumbnailProcessingService {
     return Promise.all(
       sizeNames.map(async (sizeName) => {
         const config = THUMBNAIL_SIZES[sizeName];
-        const resized = sharp(input).resize(config.width, config.height, {
-          fit: "inside",
-          withoutEnlargement: true,
-        });
-        const buffer = await resized.png().toBuffer();
+        const resized = sharp(input)
+          .rotate()
+          .resize(config.width, config.height, {
+            fit: "inside",
+            withoutEnlargement: true,
+          })
+          .toColorspace("srgb");
+        const buffer = await resized.webp({ quality: 80, effort: 4 }).toBuffer();
         const metadata = await sharp(buffer).metadata();
 
         return {
