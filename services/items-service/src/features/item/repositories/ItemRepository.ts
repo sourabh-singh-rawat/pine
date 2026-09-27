@@ -1,5 +1,17 @@
 import { uuidv7 } from "@pine/common";
-import { and, asc, count, eq, gt, inArray, isNull, or, sql } from "drizzle-orm";
+import {
+  and,
+  asc,
+  count,
+  eq,
+  getTableColumns,
+  gt,
+  inArray,
+  isNull,
+  lte,
+  or,
+  sql,
+} from "drizzle-orm";
 import { inject, injectable } from "inversify";
 import { TYPES } from "@/bootstrap/container-types";
 import { type Database, type Item, Items, Lists } from "@/db";
@@ -187,6 +199,47 @@ export class ItemRepository implements IItemRepository {
       .limit(page.limit);
 
     return this.withHasChildren(roots, userId, options);
+  }
+
+  async findRootFirstPagesByList(
+    listId: string,
+    userId: string,
+    limit: number,
+    options?: ItemRepositoryOptions,
+  ): Promise<ItemWithHasChildren[]> {
+    const client = this.client(options);
+    const ranked = client
+      .select({
+        ...getTableColumns(Items),
+        rowNum: sql<number>`row_number() over (
+          partition by ${Items.statusId}
+          order by ${Items.name} asc, ${Items.id} asc
+        )`.as("row_num"),
+      })
+      .from(Items)
+      .where(
+        and(
+          eq(Items.listId, listId),
+          eq(Items.createdById, userId),
+          isNull(Items.parentItemId),
+          isNull(Items.deletedAt),
+        ),
+      )
+      .as("ranked_items");
+
+    const rows = await client
+      .select()
+      .from(ranked)
+      .where(lte(ranked.rowNum, limit))
+      .orderBy(asc(ranked.statusId), asc(ranked.name), asc(ranked.id));
+
+    const items = rows.map((row) => {
+      const { rowNum, ...item } = row;
+      void rowNum;
+      return item;
+    });
+
+    return this.withHasChildren(items, userId, options);
   }
 
   async countRootsByListGrouped(
