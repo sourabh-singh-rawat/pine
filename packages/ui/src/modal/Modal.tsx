@@ -66,7 +66,9 @@ export const Modal = ({ children, open, onClose }: ModalProps) => {
             sx={{
               bgcolor: m3.surfaceContainerHigh,
               color: m3.onSurface,
-              p: "24px",
+              pt: "16px",
+              px: "24px",
+              pb: "24px",
               width: "100%",
               maxHeight: "90vh",
               display: "flex",

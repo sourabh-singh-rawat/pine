@@ -18,37 +18,40 @@ export const ModalHeader = ({ title, subtitle, onClose }: ModalHeaderProps) => {
 
   return (
     <Box sx={{ flexShrink: 0 }}>
-      <Stack spacing="16px">
-        <Stack direction="row" alignItems="flex-start" spacing={1}>
-          <IconButton
-            onClick={() => {
-              onClose();
-            }}
-            aria-label="Close"
-            size="small"
-            sx={{
-              width: 40,
-              height: 40,
-              ml: -1,
-              color: m3.onSurfaceVariant,
-              "&:hover": { backgroundColor: theme.palette.action.hover },
-            }}
-          >
-            <Close sx={{ fontSize: 24 }} />
-          </IconButton>
+      <Stack direction="row" alignItems="flex-start" spacing="16px">
+        <IconButton
+          onClick={() => {
+            onClose();
+          }}
+          aria-label="Close"
+          size="small"
+          sx={{
+            width: 40,
+            height: 40,
+            flexShrink: 0,
+            color: m3.onSurfaceVariant,
+            "&:hover": { backgroundColor: theme.palette.action.hover },
+          }}
+        >
+          <Close sx={{ fontSize: 24 }} />
+        </IconButton>
+        <Stack spacing="16px" sx={{ flex: 1, minWidth: 0, pt: "4px" }}>
           <Typography
             variant="headlineSmall"
             component="h2"
-            sx={{ color: m3.onSurface, pt: "6px", textAlign: "start", flex: 1, minWidth: 0 }}
+            sx={{ color: m3.onSurface, textAlign: "start" }}
           >
             {title}
           </Typography>
+          {subtitle ? (
+            <Typography
+              variant="bodyMedium"
+              sx={{ color: m3.onSurfaceVariant, textAlign: "start" }}
+            >
+              {subtitle}
+            </Typography>
+          ) : null}
         </Stack>
-        {subtitle ? (
-          <Typography variant="bodyMedium" sx={{ color: m3.onSurfaceVariant, textAlign: "start" }}>
-            {subtitle}
-          </Typography>
-        ) : null}
       </Stack>
     </Box>
   );
