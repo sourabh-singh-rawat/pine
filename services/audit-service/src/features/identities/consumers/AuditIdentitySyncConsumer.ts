@@ -2,11 +2,9 @@ import {
   type CloudEvent,
   type IBroker,
   type IdentityEmailVerifiedData,
-  type UserRegisteredData,
   Streams,
   Consumer,
   IdentityEmailVerifiedEvent,
-  UserRegisteredEvent,
   validateEvent,
 } from "@pine/events";
 import { inject, injectable } from "inversify";
@@ -17,12 +15,10 @@ import type { IAuditLogRepository } from "@/features/audit";
 import type { IIdentityRepository } from "@/features/identities/repositories";
 
 @injectable()
-export class AuditIdentitySyncConsumer extends Consumer<
-  CloudEvent<UserRegisteredData | IdentityEmailVerifiedData>
-> {
+export class AuditIdentitySyncConsumer extends Consumer<CloudEvent<IdentityEmailVerifiedData>> {
   readonly stream = Streams.IDENTITY;
   readonly consumer = "audit-identity-sync";
-  readonly subjects = [UserRegisteredEvent.type, IdentityEmailVerifiedEvent.type];
+  readonly subjects = [IdentityEmailVerifiedEvent.type];
 
   constructor(
     @inject(TYPES.Broker)
@@ -39,59 +35,48 @@ export class AuditIdentitySyncConsumer extends Consumer<
 
   onMessage = async (
     message: JsMsg,
-    payload: CloudEvent<UserRegisteredData | IdentityEmailVerifiedData>,
+    payload: CloudEvent<IdentityEmailVerifiedData>,
   ): Promise<void> => {
-    if (payload.type === UserRegisteredEvent.type) {
-      const event = validateEvent(UserRegisteredEvent, payload);
-      const data = event.data;
-      if (!data) {
-        message.ack();
-        return;
-      }
-
-      await this.db.transaction(async (tx) => {
-        await this.auditLogRepository.save(
-          {
-            entityType: "identity",
-            entityId: data.userId,
-            action: "registered",
-            actorId: data.userId,
-            payload: { ...data },
-          },
-          { tx },
-        );
-      });
-
+    const event = validateEvent(IdentityEmailVerifiedEvent, payload);
+    const data = event.data;
+    if (!data) {
       message.ack();
       return;
     }
 
-    if (payload.type === IdentityEmailVerifiedEvent.type) {
-      const event = validateEvent(IdentityEmailVerifiedEvent, payload);
-      const data = event.data;
-      if (!data) {
-        message.ack();
-        return;
-      }
+    const nameParts = (data.displayName ?? "").trim().split(/\s+/);
+    const fallbackFirstName = nameParts[0] || null;
+    const fallbackLastName = nameParts.length > 1 ? nameParts.slice(1).join(" ") : null;
 
-      await this.db.transaction(async (tx) => {
-        await this.identityRepository.upsert(
-          { id: data.userId, displayName: data.displayName ?? null },
-          { tx },
-        );
-        await this.auditLogRepository.save(
-          {
-            entityType: "identity",
-            entityId: data.userId,
-            action: "email_verified",
-            actorId: data.userId,
-            payload: { ...data },
-          },
-          { tx },
-        );
-      });
+    const firstName = data.firstName ?? fallbackFirstName;
+    const middleName = data.middleName ?? null;
+    const lastName = data.lastName ?? fallbackLastName;
 
-      message.ack();
-    }
+    const fullName = data.fullName ?? data.displayName ?? null;
+
+    await this.db.transaction(async (tx) => {
+      await this.identityRepository.upsert(
+        {
+          identityId: data.userId,
+          fullName,
+          firstName,
+          middleName,
+          lastName,
+        },
+        { tx },
+      );
+      await this.auditLogRepository.save(
+        {
+          entityType: "identity",
+          entityId: data.userId,
+          action: "email_verified",
+          actorId: data.userId,
+          payload: { ...data },
+        },
+        { tx },
+      );
+    });
+
+    message.ack();
   };
 }

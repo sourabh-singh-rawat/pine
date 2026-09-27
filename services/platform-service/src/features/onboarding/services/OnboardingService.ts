@@ -58,7 +58,7 @@ export class OnboardingService implements IOnboardingService {
     const tenantSlug = personalTenantSlug(identityId);
 
     return this.db.transaction(async (tx) => {
-      await this.identityRepository.upsert({ id: identityId }, { tx });
+      await this.identityRepository.upsert({ identityId }, { tx });
 
       const existingTenant = await this.tenantRepository.findBySlug(tenantSlug, { tx });
       if (existingTenant) {

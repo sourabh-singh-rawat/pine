@@ -41,11 +41,24 @@ export class PlatformIdentitySyncConsumer extends Consumer<CloudEvent<IdentityEm
       return;
     }
 
+    const nameParts = (data.displayName ?? "").trim().split(/\s+/);
+    const fallbackFirstName = nameParts[0] || null;
+    const fallbackLastName = nameParts.length > 1 ? nameParts.slice(1).join(" ") : null;
+
+    const firstName = data.firstName ?? fallbackFirstName;
+    const middleName = data.middleName ?? null;
+    const lastName = data.lastName ?? fallbackLastName;
+
+    const fullName = data.fullName ?? data.displayName;
+
     await this.db.transaction(async (tx) => {
       await this.identityRepository.upsert(
         {
-          id: data.userId,
-          ...(data.displayName !== undefined ? { displayName: data.displayName } : {}),
+          identityId: data.userId,
+          ...(fullName !== undefined ? { fullName } : {}),
+          ...(firstName !== null ? { firstName } : {}),
+          ...(middleName !== null ? { middleName } : {}),
+          ...(lastName !== null ? { lastName } : {}),
         },
         { tx },
       );

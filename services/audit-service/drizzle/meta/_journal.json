@@ -8,6 +8,20 @@
       "when": 1789920262471,
       "tag": "0000_unknown_reaper",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1790493894213,
+      "tag": "0001_amazing_namora",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1790580000001,
+      "tag": "0002_repair_identities_full_name",
+      "breakpoints": true
     }
   ]
 }

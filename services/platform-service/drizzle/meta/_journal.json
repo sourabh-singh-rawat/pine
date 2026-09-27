@@ -43,6 +43,20 @@
       "when": 1789150701698,
       "tag": "0005_rename-organization-to-workspace",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1790493895679,
+      "tag": "0006_overconfident_the_phantom",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1790580000000,
+      "tag": "0007_repair_identities_full_name",
+      "breakpoints": true
     }
   ]
 }
