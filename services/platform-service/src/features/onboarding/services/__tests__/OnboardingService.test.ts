@@ -110,7 +110,7 @@ describe("OnboardingService", () => {
       created: true,
     });
 
-    expect(identityRepository.upsert).toHaveBeenCalledWith({ id: identityId }, { tx: {} });
+    expect(identityRepository.upsert).toHaveBeenCalledWith({ identityId }, { tx: {} });
     expect(tenantRepository.save).toHaveBeenCalledWith(
       {
         name: "Personal",
@@ -220,7 +220,7 @@ describe("OnboardingService", () => {
       created: false,
     });
 
-    expect(identityRepository.upsert).toHaveBeenCalledWith({ id: identityId }, { tx: {} });
+    expect(identityRepository.upsert).toHaveBeenCalledWith({ identityId }, { tx: {} });
     expect(tenantRepository.save).not.toHaveBeenCalled();
     expect(workspaceRepository.save).not.toHaveBeenCalled();
     expect(authorizationClient.ensureRelationship).not.toHaveBeenCalled();

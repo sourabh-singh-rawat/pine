@@ -37,12 +37,12 @@ export class NotificationIdentitySyncConsumer extends Consumer<
     const { userId } = event.data!;
 
     await this.db.transaction(async (tx) => {
-      const exists = await this.identityRepository.existsById(userId, { tx });
+      const exists = await this.identityRepository.existsByIdentityId(userId, { tx });
       if (exists) {
         return;
       }
 
-      await this.identityRepository.save({ id: userId }, { tx });
+      await this.identityRepository.save({ identityId: userId }, { tx });
     });
 
     message.ack();

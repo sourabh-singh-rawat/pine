@@ -3,8 +3,12 @@ import type { DbClient, Identity } from "@/db";
 export type IdentityRepositoryOptions = { tx?: DbClient };
 
 export type CreateIdentityEntity = {
-  id: string;
+  identityId: string;
+  fullName?: string | null;
   displayName?: string | null;
+  firstName?: string | null;
+  middleName?: string | null;
+  lastName?: string | null;
 };
 
 export interface IIdentityRepository {
@@ -12,10 +16,17 @@ export interface IIdentityRepository {
   upsert: (entity: CreateIdentityEntity, options?: IdentityRepositoryOptions) => Promise<Identity>;
   update: (
     id: string,
-    entity: Partial<Pick<Identity, "displayName" | "deletedAt">>,
+    entity: Partial<
+      Pick<Identity, "fullName" | "firstName" | "middleName" | "lastName" | "deletedAt">
+    >,
     options?: IdentityRepositoryOptions,
   ) => Promise<Identity>;
   existsById: (id: string, options?: IdentityRepositoryOptions) => Promise<boolean>;
+  existsByIdentityId: (identityId: string, options?: IdentityRepositoryOptions) => Promise<boolean>;
   findById: (id: string, options?: IdentityRepositoryOptions) => Promise<Identity | null>;
+  findByIdentityId: (
+    identityId: string,
+    options?: IdentityRepositoryOptions,
+  ) => Promise<Identity | null>;
   findAll: () => Promise<Identity[]>;
 }
