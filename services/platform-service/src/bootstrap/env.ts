@@ -1,4 +1,5 @@
 import { ENVIRONMENT } from "@pine/common";
+import { loadSecretsSync } from "@pine/security";
 import Type from "typebox";
 import Value from "typebox/value";
 
@@ -18,7 +19,6 @@ export const EnvSchema = Type.Object({
   AUTHORIZATION_SERVICE_URL: Type.String({ default: "https://127.0.0.1:5006" }),
   PLATFORM_DATABASE_URL: Type.String({ minLength: 1 }),
   NATS_URL: Type.String({ default: "nats://localhost:4222" }),
-  JWT_SECRET: Type.String({ minLength: 1 }),
   PINE_WEB_URL: Type.String({ default: "https://localhost:3001" }),
   IDENTITY_WEB_URL: Type.String({ default: "https://localhost:3000" }),
   VITE_PLATFORM_WEB_URL: Type.String({ default: "https://localhost:3002" }),
@@ -28,6 +28,7 @@ export const EnvSchema = Type.Object({
 export type Env = Type.Static<typeof EnvSchema>;
 
 const parseEnv = (): Env => {
+  loadSecretsSync({ app: "platform" });
   const withDefaults = Value.Default(EnvSchema, { ...process.env });
   const cleaned = Value.Clean(EnvSchema, withDefaults);
   return Value.Parse(EnvSchema, cleaned);

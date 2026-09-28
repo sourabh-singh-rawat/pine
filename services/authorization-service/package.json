@@ -35,7 +35,6 @@
     "@pine/events": "workspace:^",
     "@pine/identity": "workspace:^",
     "@pine/observability": "workspace:*",
-    "@pine/security": "workspace:^",
     "@pine/server": "workspace:^",
     "http-status-codes": "^2.3.0",
     "inversify": "8.2.2",

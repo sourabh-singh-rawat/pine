@@ -112,7 +112,7 @@ export const bindHttpServer = async (): Promise<void> => {
         requestCert: true,
         rejectUnauthorized: true,
       },
-      cookie: { secret: env.JWT_SECRET },
+      cookie: {},
       hooks: {
         onRequest: [resolveIdentityFromHeaders, resolveTenantContextFromHeaders],
       },

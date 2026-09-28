@@ -1,0 +1,26 @@
+{
+  "ui": true,
+  "cluster_addr": "https://127.0.0.1:8201",
+  "api_addr": "https://openbao.localhost",
+
+  "storage": {
+    "raft": {
+      "path": "/openbao/data",
+      "node_id": "openbao-1"
+    }
+  },
+
+  "listener": [
+    {
+      "tcp": {
+        "address": "0.0.0.0:8200",
+        "tls_cert_file": "/openbao/tls/openbao/openbao.crt",
+        "tls_key_file": "/openbao/tls/openbao/openbao.key"
+      }
+    }
+  ],
+  "telemetry": {
+    "statsite_address": "127.0.0.1:8125",
+    "disable_hostname": true
+  }
+}
