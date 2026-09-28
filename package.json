@@ -32,7 +32,6 @@
     "setup": "tsx tools/scripts/setup/setup.ts --restart",
     "setup:restart": "tsx tools/scripts/setup/setup.ts --restart",
     "setup:skip-docker": "tsx tools/scripts/setup/setup.ts --skip-docker",
-    "openbao:bootstrap": "tsx --env-file=.env tools/scripts/openbao/bootstrap.ts",
     "client": "turbo run dev --filter=@pine/pine-web",
     "web": "turbo run dev --filter=@pine/pine-web",
     "pine-web": "turbo run dev --filter=@pine/pine-web",
@@ -83,7 +82,6 @@
   "devDependencies": {
     "@apollo/rover": "^0.41.0",
     "@changesets/cli": "^3.0.2",
-    "@pine/security": "workspace:*",
     "@redocly/cli": "^2.40.0",
     "@types/node": "^26.1.1",
     "js-tiktoken": "^1.0.21",
