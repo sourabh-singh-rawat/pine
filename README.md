@@ -171,9 +171,6 @@ The Issue Tracker is a Web Application that tracks issues in a project. Once ins
      STORAGE_BUCKET={YOUR FIREBASE STORAGE BUCKET NAME}
      GOOGLE_APPLICATION_CREDENTIALS_PATH={PATH TO YOUR FIREBASE SERVICE ACCOUNT KEY}
 
-     # JWT Configuration
-     JWT_SECRET={RANDOM STRING OF YOUR CHOICE}
-
      # Sendgrid Configuration
      SENDGRID_API_KEY=[YOUR SEND GRID API KEY]
    ```

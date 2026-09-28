@@ -24,6 +24,7 @@ const services = [
   "identity-web",
   "pine-web",
   "platform-web",
+  "openbao",
 ];
 
 const runOpenSsl = (args: readonly string[]): void => {

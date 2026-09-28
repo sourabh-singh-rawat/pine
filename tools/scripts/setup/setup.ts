@@ -195,6 +195,9 @@ const main = (): void => {
     env: { GRANT_PLATFORM_ADMIN_IDENTITY_ID: identityId },
   });
 
+  console.log("setup: bootstrapping openbao");
+  runPnpm(["openbao:bootstrap"]);
+
   console.log("setup: completed");
 };
 

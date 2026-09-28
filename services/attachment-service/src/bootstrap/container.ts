@@ -91,7 +91,7 @@ export const bindHttpServer = async (): Promise<void> => {
         requestCert: true,
         rejectUnauthorized: true,
       },
-      cookie: { secret: env.JWT_SECRET },
+      cookie: {},
       cors: {
         credentials: true,
         origin: [env.PINE_WEB_URL, env.IDENTITY_WEB_URL, env.VITE_PLATFORM_WEB_URL],

@@ -99,7 +99,7 @@ export const bindHttpServer = async (): Promise<void> => {
         requestCert: true,
         rejectUnauthorized: true,
       },
-      cookie: { secret: env.JWT_SECRET },
+      cookie: {},
       openapi: {
         info: {
           title: "Platform Service",
