@@ -34,7 +34,6 @@
   "dependencies": {
     "@pine/common": "workspace:^",
     "@pine/events": "workspace:^",
-    "@pine/security": "workspace:^",
     "@pine/server": "workspace:^",
     "drizzle-orm": "0.45.2",
     "inversify": "8.2.2",

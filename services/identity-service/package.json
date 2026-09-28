@@ -43,7 +43,6 @@
     "@pine/identity": "workspace:^",
     "@pine/observability": "workspace:*",
     "@pine/outbox": "workspace:^",
-    "@pine/security": "workspace:^",
     "@pine/server": "workspace:^",
     "@pothos/core": "^4.13.1",
     "@pothos/plugin-scope-auth": "^4.1.7",

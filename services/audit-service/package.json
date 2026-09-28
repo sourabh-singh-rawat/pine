@@ -37,7 +37,6 @@
     "@pine/errors": "workspace:*",
     "@pine/events": "workspace:^",
     "@pine/identity": "workspace:*",
-    "@pine/security": "workspace:^",
     "@pine/server": "workspace:^",
     "@pothos/core": "^4.13.1",
     "drizzle-orm": "0.45.2",

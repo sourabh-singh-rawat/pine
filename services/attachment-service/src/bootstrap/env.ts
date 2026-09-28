@@ -1,5 +1,4 @@
 import { ENVIRONMENT } from "@pine/common";
-import { loadSecretsSync } from "@pine/security";
 import Type from "typebox";
 import Value from "typebox/value";
 
@@ -33,7 +32,6 @@ export const EnvSchema = Type.Object({
 export type Env = Type.Static<typeof EnvSchema>;
 
 const parseEnv = (): Env => {
-  loadSecretsSync({ app: "attachment" });
   const withDefaults = Value.Default(EnvSchema, { ...process.env });
   const cleaned = Value.Clean(EnvSchema, withDefaults);
   const converted = Value.Convert(EnvSchema, cleaned);

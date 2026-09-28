@@ -17,28 +17,6 @@ services:
         reservations:
           cpus: "0.05"
           memory: 32M
-  openbao:
-    image: openbao/openbao
-    restart: unless-stopped
-    ports:
-      - 8200:8200
-    volumes:
-      - ./openbao/config.json:/openbao/config/openbao.json:ro
-      - ../data/openbao-data:/openbao/data
-      - ../../.local/tls:/openbao/tls:ro
-    command:
-      - server
-      - -config=/openbao/config/openbao.json
-    cap_drop:
-      - ALL
-    deploy:
-      resources:
-        limits:
-          cpus: "1.00"
-          memory: 512M
-        reservations:
-          cpus: "0.10"
-          memory: 64M
   nats:
     image: nats:2.14.3
     restart: unless-stopped
