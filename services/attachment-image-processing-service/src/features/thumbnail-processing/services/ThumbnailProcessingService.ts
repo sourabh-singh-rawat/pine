@@ -82,7 +82,7 @@ export class ThumbnailProcessingService implements IThumbnailProcessingService {
             withoutEnlargement: true,
           })
           .toColorspace("srgb");
-        const buffer = await resized.avif({ quality: 60, effort: 4 }).toBuffer();
+        const buffer = await resized.avif({ quality: 60, effort: 1 }).toBuffer();
         const metadata = await sharp(buffer).metadata();
 
         return {

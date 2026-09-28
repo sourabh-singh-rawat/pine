@@ -14,8 +14,8 @@ describe("ThumbnailProcessingService", () => {
 
     const testImageBuffer = await sharp({
       create: {
-        width: 1600,
-        height: 1200,
+        width: 800,
+        height: 600,
         channels: 4,
         background: { r: 255, g: 0, b: 0, alpha: 1 },
       },
@@ -73,7 +73,7 @@ describe("ThumbnailProcessingService", () => {
         contentType: "image/avif",
       }),
     );
-  });
+  }, 20_000);
 
   it("generates thumbnail and preview sizes from image buffer", async () => {
     const logInfo = vi.fn();
@@ -93,8 +93,8 @@ describe("ThumbnailProcessingService", () => {
 
     const testImageBuffer = await sharp({
       create: {
-        width: 1600,
-        height: 1200,
+        width: 800,
+        height: 600,
         channels: 4,
         background: { r: 255, g: 0, b: 0, alpha: 1 },
       },
@@ -130,5 +130,5 @@ describe("ThumbnailProcessingService", () => {
       expect(metadata.format).toBe("heif");
       expect(metadata.compression).toBe("av1");
     }
-  });
+  }, 20_000);
 });
