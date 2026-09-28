@@ -57,7 +57,7 @@ export class ThumbnailProcessingService implements IThumbnailProcessingService {
           versionId: input.versionId,
           derivativeType: derivative.sizeName,
           data: derivative.buffer,
-          contentType: "image/webp",
+          contentType: "image/avif",
           width: derivative.width,
           height: derivative.height,
         });
@@ -82,7 +82,7 @@ export class ThumbnailProcessingService implements IThumbnailProcessingService {
             withoutEnlargement: true,
           })
           .toColorspace("srgb");
-        const buffer = await resized.webp({ quality: 80, effort: 4 }).toBuffer();
+        const buffer = await resized.avif({ quality: 60, effort: 4 }).toBuffer();
         const metadata = await sharp(buffer).metadata();
 
         return {

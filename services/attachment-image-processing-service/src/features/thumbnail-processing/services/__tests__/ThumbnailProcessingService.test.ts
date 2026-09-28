@@ -29,7 +29,7 @@ describe("ThumbnailProcessingService", () => {
       attachmentId: "att-100",
       versionId: "ver-100",
       derivativeType: "thumbnail",
-      mimeType: "image/webp",
+      mimeType: "image/avif",
       fileSize: 100,
       width: 256,
       height: 192,
@@ -62,7 +62,7 @@ describe("ThumbnailProcessingService", () => {
         attachmentId: "att-100",
         versionId: "ver-100",
         derivativeType: "thumbnail",
-        contentType: "image/webp",
+        contentType: "image/avif",
       }),
     );
     expect(storeDerivative).toHaveBeenCalledWith(
@@ -70,7 +70,7 @@ describe("ThumbnailProcessingService", () => {
         attachmentId: "att-100",
         versionId: "ver-100",
         derivativeType: "preview",
-        contentType: "image/webp",
+        contentType: "image/avif",
       }),
     );
   });
@@ -116,7 +116,8 @@ describe("ThumbnailProcessingService", () => {
 
     if (thumbnail?.buffer) {
       const metadata = await sharp(thumbnail.buffer).metadata();
-      expect(metadata.format).toBe("webp");
+      expect(metadata.format).toBe("heif");
+      expect(metadata.compression).toBe("av1");
     }
 
     expect(preview).toBeDefined();
@@ -126,7 +127,8 @@ describe("ThumbnailProcessingService", () => {
 
     if (preview?.buffer) {
       const metadata = await sharp(preview.buffer).metadata();
-      expect(metadata.format).toBe("webp");
+      expect(metadata.format).toBe("heif");
+      expect(metadata.compression).toBe("av1");
     }
   });
 });
