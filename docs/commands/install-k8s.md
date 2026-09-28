@@ -31,46 +31,9 @@ helm install identity-postgres ./k8s/postgres --values ./k8s/postgres/values.yam
 helm install issue-tracker-postgres ./k8s/postgres --values ./k8s/postgres/values.yaml
 ```
 
-## Helm release for Nats Controller
+## NATS (JetStream server + streams)
 
-```powershell
-kubectl apply -f https://github.com/nats-io/nack/releases/latest/download/crds.yml
-helm repo add nats https://nats-io.github.io/k8s/helm/charts/
-helm install nats nats/nats --values ./k8s/nats/values.yaml
-helm install nack nats/nack --set jetstream.nats.url=nats://nats:4222
-```
-
-## Create Nats Streams and Consumers
-
-```powershell
-# Streams
-helm install email-stream ./k8s/nats-stream --set streamName=email
-helm install project-stream ./k8s/nats-stream --set streamName=project
-helm install issue-stream ./k8s/nats-stream --set streamName=issue
-helm install user-stream ./k8s/nats-stream --set streamName=user
-helm install workspace-stream ./k8s/nats-stream --set streamName=workspace
-
-# Consumers
-# User
-helm install user-created-consumer ./k8s/nats-consumer --values ./k8s/nats-consumer/values/user.created.yaml
-helm install user-updated-consumer ./k8s/nats-consumer --values ./k8s/nats-consumer/values/user.updated.yaml
-
-# Project
-helm install project-created-consumer ./k8s/nats-consumer --values ./k8s/nats-consumer/values/project.created.yaml
-helm install project-updated-consumer ./k8s/nats-consumer --values ./k8s/nats-consumer/values/project.updated.yaml
-helm install project-member-created-consumer ./k8s/nats-consumer --values ./k8s/nats-consumer/values/project.member-created.yaml
-
-# Issue
-helm install issue-created-consumer ./k8s/nats-consumer --values ./k8s/nats-consumer/values/issue.created.yaml
-
-# Email
-helm install email-created-consumer ./k8s/nats-consumer --values ./k8s/nats-consumer/values/email.created.yaml
-
-# Workspace
-helm install workspace-created-consumer ./k8s/nats-consumer --values ./k8s/nats-consumer/values/workspace.created.yaml
-helm install workspace-updated-consumer ./k8s/nats-consumer --values ./k8s/nats-consumer/values/workspace.updated.yaml
-helm install workspace-invite-created-consumer ./k8s/nats-consumer --values ./k8s/nats-consumer/values/workspace.invite.yaml
-```
+One-liners: [`infra/k8s/nats/README.md`](../../infra/k8s/nats/README.md) — Helm NATS + nack + Stream CRs (`kubectl apply -k ./k8s/nats/`). Laptop: `pnpm nats:streams`.
 
 ## Use google DNS
 

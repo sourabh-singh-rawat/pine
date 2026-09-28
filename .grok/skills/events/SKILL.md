@@ -19,13 +19,13 @@ Prefer `outbox.schedule` for events that must commit with a DB write (`outbox`).
 ## Recipe — publish
 
 ```ts
-new NatsBroker({ servers, streams: ["platform"], logger })
+new NatsBroker({ servers, logger })
 
 TYPES.Publisher → new NatsPublisher(broker)
 TYPES.Broker → broker
 ```
 
-Broker `streams` is the streams **this process creates**. Consumers can listen to streams they do not own.
+Streams are a **deployment** concern (`infra/k8s/nats/` Stream CRs, laptop `pnpm nats:streams`). Brokers only connect. Consumers may listen to streams their process does not publish to.
 
 ```ts
 const event = createCloudEvent({
@@ -46,9 +46,9 @@ New event:
 1. TypeBox schema under `packages/events/src/services/<service>/schemas/`
 2. `defineEvent({ type, version, schema })` next to it
 3. Add a `Streams` value only when the first type token is new
-4. Publish via outbox (`service`) or `publisher.send`
-5. Consumer class + DI + `start()` after `broker.init()`
-6. Cluster: `nats-stream` / `nats-consumer` (`k8s`) when deploying
+4. Add/update the Stream CR under `infra/k8s/nats/` (and laptop `pnpm nats:streams` list)
+5. Publish via outbox (`service`) or `publisher.send`
+6. Consumer class + DI + `start()` after `broker.init()`
 
 ## Recipe — consumer
 
@@ -115,6 +115,7 @@ Purpose is the projection, not one durable per event verb. One durable name per 
 - Durable names owned by the producing service
 - Skipping `validateEvent` / ack
 - Inventing a `notification` (or other) stream that is not on `Streams`
+- Creating streams inside app/bootstrap code (`NatsBroker` / `ensureStream`)
 - Import `@pine/event-bus`
 
 ## Done when
@@ -122,4 +123,4 @@ Purpose is the projection, not one durable per event verb. One durable name per 
 - `defineEvent` + TypeBox schema exist before publish
 - Consumer extends `Consumer`, uses `Streams.*` + `SomeEvent.type`, `validateEvent`, ack
 - Durable name is inline, service-local, started from `main.ts`
-- Cluster stream/consumer charts updated when deploying (`k8s`)
+- New stream names exist in `infra/k8s/nats/` (and the laptop ensure script) before apps publish

@@ -1,0 +1,17 @@
+apiVersion: external-secrets.io/v1
+kind: ExternalSecret
+metadata:
+  name: notification
+spec:
+  refreshInterval: 1m
+  secretStoreRef:
+    name: openbao
+    kind: SecretStore
+  target:
+    name: notification-secrets
+    creationPolicy: Owner
+  data:
+    - secretKey: POSTGRES_NOTIFICATION_PASSWORD
+      remoteRef:
+        key: pine/notification
+        property: postgres_notification_password

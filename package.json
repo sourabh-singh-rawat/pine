@@ -64,6 +64,7 @@
     "schemas:compose": "tsx tools/scripts/schemas/compose-schemas.ts",
     "schemas:watch": "tsx tools/scripts/schemas/compose-schemas.ts --watch",
     "tls:generate": "tsx infra/tls/generate-dev-certs.ts",
+    "nats:streams": "pnpm --filter @pine/events exec tsx ../../tools/scripts/nats/ensure-streams.ts",
     "changeset": "changeset",
     "changeset:version": "changeset version && pnpm changelog:root",
     "changeset:release": "changeset publish",
