@@ -9,7 +9,7 @@ SKIP_LOGIN=0
 FILTERS=()
 
 usage() {
-  echo "Usage: OCIR_REGION_KEY=iad OCIR_NAMESPACE=<ns> $0 [--service name]... [--skip-push] [--skip-login]" >&2
+  echo "Usage: OCIR_REGION_KEY=bom OCIR_NAMESPACE=<object-storage-ns> $0 [--service name]... [--skip-push] [--skip-login]" >&2
   exit 1
 }
 
@@ -39,11 +39,11 @@ while [[ $# -gt 0 ]]; do
 done
 
 if [[ -z "$REGION_KEY" ]]; then
-  echo "Set OCIR_REGION_KEY (e.g. iad, phx, fra)." >&2
+  echo "Set OCIR_REGION_KEY (e.g. bom for Mumbai, iad for Ashburn, phx, fra)." >&2
   exit 1
 fi
 if [[ -z "$NAMESPACE" ]]; then
-  echo "Set OCIR_NAMESPACE (OCI Object Storage namespace / tenancy namespace)." >&2
+  echo "Set OCIR_NAMESPACE to the tenancy Object Storage namespace (Tenancy details in OCI Console)." >&2
   exit 1
 fi
 
