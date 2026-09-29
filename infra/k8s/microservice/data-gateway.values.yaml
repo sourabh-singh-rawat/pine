@@ -1,0 +1,28 @@
+name: data-gateway
+
+replicaCount: 1
+
+image:
+  repository: pine/data-gateway
+  tag: "0.1.0"
+  pullPolicy: IfNotPresent
+
+service:
+  enabled: true
+  port: 4001
+  targetPort: 4001
+
+secretRefs: []
+
+tls:
+  enabled: true
+  secretName: data-gateway-tls
+  mountPath: /certs
+
+env:
+  NODE_ENV: production
+  DATA_GATEWAY_URL: https://data-gateway.pine.svc:4001
+  ATTACHMENT_SERVICE_URL: https://attachment.pine.svc:5003
+  DATA_GATEWAY_TLS_KEY_PATH: /certs/tls.key
+  DATA_GATEWAY_TLS_CERT_PATH: /certs/tls.crt
+  CA_CERT_PATH: /certs/ca.crt

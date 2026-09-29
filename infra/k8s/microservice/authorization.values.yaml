@@ -1,0 +1,30 @@
+name: authorization
+
+replicaCount: 1
+
+image:
+  repository: pine/authorization-service
+  tag: "0.1.0"
+  pullPolicy: IfNotPresent
+
+service:
+  enabled: true
+  port: 5006
+  targetPort: 5006
+
+secretRefs: []
+
+tls:
+  enabled: true
+  secretName: authorization-tls
+  mountPath: /certs
+
+env:
+  NODE_ENV: production
+  NATS_URL: nats://nats.nats.svc:4222
+  AUTHORIZATION_SERVICE_URL: https://authorization.pine.svc:5006
+  KETO_READ_URL: http://keto-read.pine.svc:4466
+  KETO_WRITE_URL: http://keto-write.pine.svc:4467
+  AUTHORIZATION_SERVICE_TLS_KEY_PATH: /certs/tls.key
+  AUTHORIZATION_SERVICE_TLS_CERT_PATH: /certs/tls.crt
+  CA_CERT_PATH: /certs/ca.crt

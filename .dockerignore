@@ -1,24 +1,30 @@
-# Include any files or directories that you don't want to be copied to your
-# container here (e.g., local build artifacts, temporary files, etc.).
-#
-# For more help, visit the .dockerignore file reference guide at
-# https://docs.docker.com/go/build-context-dockerignore/
-
 **/.classpath
 **/.dockerignore
 **/.env
+**/.env.*
 **/.git
+**/.gitattributes
 **/.gitignore
 **/.project
 **/.settings
 **/.toolstarget
+**/.turbo
 **/.vs
 **/.vscode
+**/.idea
 **/.next
 **/.cache
+**/.changeset
+**/.grok
 **/*.*proj.user
 **/*.dbmdl
 **/*.jfm
+**/*.md
+**/*.test.ts
+**/*.spec.ts
+**/__tests__
+**/__mocks__
+**/__generated__
 **/charts
 **/compose*
 **/Dockerfile*
@@ -29,9 +35,17 @@
 **/values.dev.yaml
 **/build
 **/dist
+**/coverage
+**/vitest.config.*
 LICENSE
-README.md
-**/docs
-**/k8s
-**/openapi
-**/clients
+apps
+infra
+tools/apollo
+tools/cli
+tools/oxlint
+tools/redocly
+tools/scaffold
+tools/schemas
+docs
+openapi
+clients

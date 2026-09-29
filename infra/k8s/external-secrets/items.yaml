@@ -1,0 +1,17 @@
+apiVersion: external-secrets.io/v1
+kind: ExternalSecret
+metadata:
+  name: items
+spec:
+  refreshInterval: 1m
+  secretStoreRef:
+    name: openbao
+    kind: SecretStore
+  target:
+    name: items-secrets
+    creationPolicy: Owner
+  data:
+    - secretKey: POSTGRES_ISSUES_PASSWORD
+      remoteRef:
+        key: pine/items
+        property: postgres_issues_password

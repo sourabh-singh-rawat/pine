@@ -1,0 +1,17 @@
+apiVersion: external-secrets.io/v1
+kind: ExternalSecret
+metadata:
+  name: audit
+spec:
+  refreshInterval: 1m
+  secretStoreRef:
+    name: openbao
+    kind: SecretStore
+  target:
+    name: audit-secrets
+    creationPolicy: Owner
+  data:
+    - secretKey: POSTGRES_AUDIT_PASSWORD
+      remoteRef:
+        key: pine/audit
+        property: postgres_audit_password

@@ -1,0 +1,6 @@
+apiVersion: v2
+name: microservice
+description: Thin Deployment + Service chart for Pine Node microservices
+type: application
+version: 0.3.0
+appVersion: "0.3.0"

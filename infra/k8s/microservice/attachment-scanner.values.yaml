@@ -1,0 +1,28 @@
+name: attachment-scanner
+
+replicaCount: 1
+
+image:
+  repository: pine/attachment-scanner-service
+  tag: "0.1.0"
+  pullPolicy: IfNotPresent
+
+service:
+  enabled: false
+
+secretRefs: []
+
+tls:
+  enabled: true
+  secretName: attachment-scanner-tls
+  mountPath: /certs
+
+env:
+  NODE_ENV: production
+  NATS_URL: nats://nats.nats.svc:4222
+  ATTACHMENT_SERVICE_URL: https://attachment.pine.svc:5003
+  CLAMAV_HOST: clamav.pine.svc
+  CLAMAV_PORT: "3310"
+  ATTACHMENT_SCANNER_SERVICE_TLS_KEY_PATH: /certs/tls.key
+  ATTACHMENT_SCANNER_SERVICE_TLS_CERT_PATH: /certs/tls.crt
+  CA_CERT_PATH: /certs/ca.crt

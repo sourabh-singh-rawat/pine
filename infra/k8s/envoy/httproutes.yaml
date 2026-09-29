@@ -20,6 +20,7 @@ spec:
               replacePrefixMatch: /
       backendRefs:
         - name: api-gateway
+          namespace: pine
           port: 4000
 ---
 apiVersion: gateway.networking.k8s.io/v1
@@ -44,4 +45,5 @@ spec:
               replacePrefixMatch: /
       backendRefs:
         - name: data-gateway
+          namespace: pine
           port: 4001

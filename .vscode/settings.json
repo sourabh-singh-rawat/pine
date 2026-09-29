@@ -1,4 +1,9 @@
 {
+  "files.associations": {
+    "**/infra/k8s/**/templates/*.yaml": "helm",
+    "**/infra/k8s/**/templates/*.yml": "helm",
+    "**/infra/k8s/**/templates/*.tpl": "helm"
+  },
   "task.quickOpen.detail": true,
   "task.quickOpen.skip": false,
   "debug.openDebug": "openOnDebugBreak",
@@ -14,10 +19,7 @@
       "${workspaceFolder}/tools/**",
       "!**/node_modules/**"
     ],
-    "skipFiles": [
-      "<node_internals>/**",
-      "**/node_modules/**"
-    ]
+    "skipFiles": ["<node_internals>/**", "**/node_modules/**"]
   },
   "terminal.integrated.tabs.hideCondition": "never",
   "files.watcherExclude": {

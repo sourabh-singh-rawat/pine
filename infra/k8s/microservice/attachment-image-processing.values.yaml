@@ -1,0 +1,26 @@
+name: attachment-image-processing
+
+replicaCount: 1
+
+image:
+  repository: pine/attachment-image-processing-service
+  tag: "0.1.0"
+  pullPolicy: IfNotPresent
+
+service:
+  enabled: false
+
+secretRefs: []
+
+tls:
+  enabled: true
+  secretName: attachment-image-processing-tls
+  mountPath: /certs
+
+env:
+  NODE_ENV: production
+  NATS_URL: nats://nats.nats.svc:4222
+  ATTACHMENT_SERVICE_URL: https://attachment.pine.svc:5003
+  ATTACHMENT_IMAGE_PROCESSING_SERVICE_TLS_KEY_PATH: /certs/tls.key
+  ATTACHMENT_IMAGE_PROCESSING_SERVICE_TLS_CERT_PATH: /certs/tls.crt
+  CA_CERT_PATH: /certs/ca.crt

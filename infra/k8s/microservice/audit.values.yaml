@@ -1,0 +1,30 @@
+name: audit
+
+replicaCount: 1
+
+image:
+  repository: pine/audit-service
+  tag: "0.1.0"
+  pullPolicy: IfNotPresent
+
+service:
+  enabled: true
+  port: 5007
+  targetPort: 5007
+
+secretRefs:
+  - audit-secrets
+
+tls:
+  enabled: true
+  secretName: audit-tls
+  mountPath: /certs
+
+env:
+  NODE_ENV: production
+  NATS_URL: nats://nats.nats.svc:4222
+  AUDIT_SERVICE_URL: https://audit.pine.svc:5007
+  AUTHORIZATION_SERVICE_URL: https://authorization.pine.svc:5006
+  AUDIT_SERVICE_TLS_KEY_PATH: /certs/tls.key
+  AUDIT_SERVICE_TLS_CERT_PATH: /certs/tls.crt
+  CA_CERT_PATH: /certs/ca.crt

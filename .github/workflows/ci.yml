@@ -29,14 +29,13 @@ jobs:
         with:
           fetch-depth: 0
 
-      # package.json packageManager is pnpm@11.x — let the action read it
       - name: Install pnpm
         uses: pnpm/action-setup@v4
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: "26.10.0"
           cache: pnpm
 
       - name: Install dependencies
