@@ -1,0 +1,26 @@
+name: notification
+
+replicaCount: 1
+
+image:
+  repository: pine/notification-service
+  tag: "0.1.0"
+  pullPolicy: IfNotPresent
+
+service:
+  enabled: false
+
+secretRefs:
+  - notification-secrets
+
+tls:
+  enabled: true
+  secretName: notification-tls
+  mountPath: /certs
+
+env:
+  NODE_ENV: production
+  NATS_URL: nats://nats.nats.svc:4222
+  NOTIFICATION_SERVICE_TLS_KEY_PATH: /certs/tls.key
+  NOTIFICATION_SERVICE_TLS_CERT_PATH: /certs/tls.crt
+  CA_CERT_PATH: /certs/ca.crt

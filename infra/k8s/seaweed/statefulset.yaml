@@ -1,0 +1,78 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: seaweedfs
+  labels:
+    app.kubernetes.io/name: seaweedfs
+    app.kubernetes.io/part-of: pine
+spec:
+  serviceName: seaweedfs
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: seaweedfs
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: seaweedfs
+        app.kubernetes.io/part-of: pine
+    spec:
+      containers:
+        - name: seaweedfs
+          image: chrislusf/seaweedfs:3.97
+          args:
+            - server
+            - -dir=/data
+            - -ip.bind=0.0.0.0
+            - -master.port=9333
+            - -volume.port=8080
+            - -filer
+            - -s3
+            - -s3.port=8333
+          ports:
+            - name: s3
+              containerPort: 8333
+            - name: filer
+              containerPort: 8888
+            - name: master
+              containerPort: 9333
+            - name: volume
+              containerPort: 8080
+          volumeMounts:
+            - name: data
+              mountPath: /data
+          readinessProbe:
+            httpGet:
+              path: /
+              port: s3
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            timeoutSeconds: 3
+            failureThreshold: 12
+          livenessProbe:
+            httpGet:
+              path: /
+              port: s3
+            initialDelaySeconds: 15
+            periodSeconds: 20
+            timeoutSeconds: 3
+            failureThreshold: 3
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: "500m"
+              memory: 512Mi
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+        labels:
+          app.kubernetes.io/name: seaweedfs
+          app.kubernetes.io/part-of: pine
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 5Gi

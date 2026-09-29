@@ -65,6 +65,7 @@
     "schemas:watch": "tsx tools/scripts/schemas/compose-schemas.ts --watch",
     "tls:generate": "tsx infra/tls/generate-dev-certs.ts",
     "nats:streams": "pnpm --filter @pine/events exec tsx ../../tools/scripts/nats/ensure-streams.ts",
+    "images:push:ocir": "bash ./tools/scripts/oci/push-images.sh",
     "changeset": "changeset",
     "changeset:version": "changeset version && pnpm changelog:root",
     "changeset:release": "changeset publish",
@@ -95,8 +96,8 @@
     "typescript": "7.0.2"
   },
   "engines": {
-    "node": ">=20.13.1",
-    "pnpm": ">=9.0.4"
+    "node": ">=26.10.0",
+    "pnpm": ">=12.6.0"
   },
-  "packageManager": "pnpm@11.21.0"
+  "packageManager": "pnpm@12.6.0"
 }

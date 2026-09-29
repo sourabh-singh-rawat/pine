@@ -1,0 +1,56 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: seaweedfs-bucket-init
+  labels:
+    app.kubernetes.io/name: seaweedfs
+    app.kubernetes.io/part-of: pine
+    app.kubernetes.io/component: bucket-init
+spec:
+  backoffLimit: 12
+  ttlSecondsAfterFinished: 600
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: seaweedfs
+        app.kubernetes.io/part-of: pine
+        app.kubernetes.io/component: bucket-init
+    spec:
+      restartPolicy: OnFailure
+      containers:
+        - name: ensure-bucket
+          image: curlimages/curl:8.12.1
+          env:
+            - name: S3_ENDPOINT
+              value: http://seaweedfs.pine.svc:8333
+            - name: S3_BUCKET
+              value: attachments
+          command:
+            - /bin/sh
+            - -c
+            - |
+              set -eu
+              bucket="${S3_BUCKET}"
+              endpoint="${S3_ENDPOINT}"
+              echo "waiting for S3 at ${endpoint}"
+              i=0
+              while [ "$i" -lt 60 ]; do
+                if curl -sf -o /dev/null "${endpoint}/"; then
+                  break
+                fi
+                i=$((i + 1))
+                sleep 2
+              done
+              curl -sf -o /dev/null "${endpoint}/"
+              echo "ensuring S3 bucket '${bucket}'"
+              status="$(curl -s -o /tmp/create-bucket.xml -w "%{http_code}" -X PUT "${endpoint}/${bucket}")"
+              echo "CreateBucket HTTP ${status}"
+              if [ "${status}" != "200" ] && [ "${status}" != "409" ]; then
+                cat /tmp/create-bucket.xml
+                exit 1
+              fi
+              head_status="$(curl -s -o /dev/null -w "%{http_code}" -I "${endpoint}/${bucket}")"
+              echo "HeadBucket HTTP ${head_status}"
+              if [ "${head_status}" != "200" ]; then
+                exit 1
+              fi

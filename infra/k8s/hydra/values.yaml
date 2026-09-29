@@ -1,0 +1,92 @@
+fullnameOverride: hydra
+
+image:
+  tag: v26.2.0
+
+hydra:
+  dev: true
+  automigration:
+    enabled: true
+    type: job
+  config:
+    dsn: ""
+    serve:
+      cookies:
+        same_site_mode: Lax
+      public:
+        cors:
+          enabled: true
+          allowed_origins:
+            - https://localhost:3000
+            - https://localhost:3001
+            - https://localhost:3002
+          allowed_methods:
+            - POST
+            - GET
+            - PUT
+            - PATCH
+            - DELETE
+          allowed_headers:
+            - Authorization
+            - Content-Type
+          exposed_headers:
+            - Content-Type
+    urls:
+      self:
+        issuer: http://hydra-public.pine.svc:4444/
+      consent: https://localhost:3000/consent
+      login: https://localhost:3000/signin
+      logout: https://localhost:3000/logout
+      device:
+        verification: https://localhost:3000/device/verify
+        success: https://localhost:3000/device/success
+    secrets:
+      system:
+        - PLEASE-CHANGE-ME-I-AM-VERY-INSECURE
+    oidc:
+      subject_identifiers:
+        supported_types:
+          - pairwise
+          - public
+        pairwise:
+          salt: PLEASE-CHANGE-ME-I-AM-VERY-INSECURE
+    log:
+      level: debug
+      format: text
+      leak_sensitive_values: true
+    strategies:
+      access_token: jwt
+      scope: exact
+
+deployment:
+  extraEnv:
+    - name: DSN
+      valueFrom:
+        secretKeyRef:
+          name: hydra-dsn
+          key: dsn
+  automigration:
+    extraEnv:
+      - name: DSN
+        valueFrom:
+          secretKeyRef:
+            name: hydra-dsn
+            key: dsn
+  resources:
+    requests:
+      cpu: 100m
+      memory: 64Mi
+    limits:
+      cpu: 500m
+      memory: 256Mi
+
+job:
+  extraEnv:
+    - name: DSN
+      valueFrom:
+        secretKeyRef:
+          name: hydra-dsn
+          key: dsn
+
+maester:
+  enabled: true

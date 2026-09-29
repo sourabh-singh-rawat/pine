@@ -1,0 +1,33 @@
+name: ""
+
+replicaCount: 1
+
+image:
+  registry: ""
+  repository: pine/example
+  tag: "0.1.0"
+  pullPolicy: IfNotPresent
+
+imagePullSecrets: []
+
+service:
+  enabled: true
+  port: 5000
+  targetPort: 5000
+
+secretRefs: []
+
+env: {}
+
+tls:
+  enabled: false
+  secretName: ""
+  mountPath: /certs
+
+resources: {}
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
