@@ -3,7 +3,7 @@ kind: PostgresCluster
 metadata:
   name: audit
 spec:
-  postgresVersion: 16
+  postgresVersion: 18
   users:
     - name: audit
       databases:

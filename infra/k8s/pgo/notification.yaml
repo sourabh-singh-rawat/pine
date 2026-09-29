@@ -3,7 +3,7 @@ kind: PostgresCluster
 metadata:
   name: notification
 spec:
-  postgresVersion: 16
+  postgresVersion: 18
   users:
     - name: notification
       databases:

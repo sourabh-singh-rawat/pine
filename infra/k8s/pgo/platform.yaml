@@ -3,7 +3,7 @@ kind: PostgresCluster
 metadata:
   name: platform
 spec:
-  postgresVersion: 16
+  postgresVersion: 18
   users:
     - name: platform
       databases:

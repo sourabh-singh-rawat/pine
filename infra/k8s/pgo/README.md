@@ -39,7 +39,7 @@ PGO writes `{cluster}-pguser-{user}` Secrets. Do not invent passwords before clu
 
 Copy passwords into OpenBao once: [`../openbao/README.md`](../openbao/README.md). Then ESO: [`../external-secrets/README.md`](../external-secrets/README.md). Deployments `envFrom` `*-secrets` only.
 
-Defaults: Postgres 16, `1Gi` data + `1Gi` backup, single instance, API `v1` (CPK 6.x). Use `v1beta1` only on PGO 5.x.
+Defaults: Postgres 18, `1Gi` data + `1Gi` backup, single instance, API `v1` (CPK 6.x). Use `v1beta1` only on PGO 5.x.
 
 ```powershell
 kubectl delete -f ./k8s/pgo/ -n pine
