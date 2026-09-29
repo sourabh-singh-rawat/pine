@@ -45,7 +45,7 @@ infra/k8s/
 
 Install order (details and commands in the runbook): set `CLUSTER_NAME` / `PUBLIC_IP` / `PATH` / `KUBECONFIG` per cluster → OCI Ampere + Oracle Linux 9 + k3s (disable Traefik, keep firewalld) → Envoy → pine → OpenBao → PGO (incl. `ory` + schema grants) → OpenBao seed + ESO → NATS → SeaweedFS → Kratos/Hydra/Keto → OCIR images (linux/arm64) + microservices. Same runbook for every new cluster; section 0 once per VM, 1–8 re-runnable with `helm upgrade --install`.
 
-App images: OCIR via laptop `docker login <region>.ocir.io` (username `<Object-Storage-namespace>/<oci-user>`, password Auth Token) → `pnpm images:push:ocir` (`tools/scripts/oci/push-images.sh`) → cluster Secret `ocir-pull` + overlay `microservice/ocir.values.yaml`. Home region Mumbai uses `bom` / `bom.ocir.io`. Chart supports `image.registry` + `imagePullSecrets`. Do not install Docker on the k3s VM for push.
+App images: OCIR via laptop `docker login <region>.ocir.io` (username `<Object-Storage-namespace>/<oci-user>`, password Auth Token) → `pnpm images:push:ocir` (`tools/scripts/oci/push-images.sh`) → cluster Secret `ocir-pull` + overlay `microservice/ocir.values.yaml` with `--set image.registry=bom.ocir.io/<namespace>` (lowercase; uppercase path → `InvalidImageName`). Home region Mumbai uses `bom` / `bom.ocir.io`. Chart supports `image.registry` + `imagePullSecrets`. Do not install Docker on the k3s VM for push.
 
 Stream names must match `@pine/events` `Streams`. Apps must not `ensureStream` on cluster. Durables stay in app code unless/until `nats-consumer` mirrors them.
 

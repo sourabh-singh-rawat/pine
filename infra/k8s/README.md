@@ -579,12 +579,7 @@ Script: `tools/scripts/oci/push-images.sh` (bash; Git Bash / WSL also fine with 
 
 ### 8.4 Pull secret + overlay (cluster)
 
-Edit `microservice/ocir.values.yaml`:
-
-```yaml
-image:
-  registry: bom.ocir.io/<Object-Storage-namespace>
-```
+Committed `microservice/ocir.values.yaml` keeps a **lowercase** placeholder registry (`bom.ocir.io/replace-ocir-namespace`). Do **not** commit your real Object Storage namespace. Prefer `--set image.registry=…` at install time (see §8.6). If you edit the file locally, use only lowercase path segments — uppercase in the image path yields `InvalidImageName`.
 
 Create the pull secret (same username + Auth Token as login):
 
@@ -606,23 +601,28 @@ That runs `pnpm tls:generate` (writes `.local/tls/`) then `pnpm tls:secrets` (ap
 
 Thin chart: `microservice/` + `*.values.yaml`. Do not fork the chart. Chart supports `image.registry` and `imagePullSecrets`.
 
-From `infra/` with `KUBECONFIG` set:
+From `infra/` with `KUBECONFIG` set. Export the real **lowercase** Object Storage namespace registry and the tag you pushed, then install each app with `--set` (do not leave the committed placeholder):
 
 ```bash
-OCIR_VALUES=./k8s/microservice/ocir.values.yaml
-helm upgrade --install identity ./k8s/microservice -n pine -f ./k8s/microservice/identity.values.yaml -f "$OCIR_VALUES"
-helm upgrade --install items ./k8s/microservice -n pine -f ./k8s/microservice/items.values.yaml -f "$OCIR_VALUES"
-helm upgrade --install attachment ./k8s/microservice -n pine -f ./k8s/microservice/attachment.values.yaml -f "$OCIR_VALUES"
-helm upgrade --install platform ./k8s/microservice -n pine -f ./k8s/microservice/platform.values.yaml -f "$OCIR_VALUES"
-helm upgrade --install authorization ./k8s/microservice -n pine -f ./k8s/microservice/authorization.values.yaml -f "$OCIR_VALUES"
-helm upgrade --install audit ./k8s/microservice -n pine -f ./k8s/microservice/audit.values.yaml -f "$OCIR_VALUES"
-helm upgrade --install notification ./k8s/microservice -n pine -f ./k8s/microservice/notification.values.yaml -f "$OCIR_VALUES"
-helm upgrade --install attachment-scanner ./k8s/microservice -n pine -f ./k8s/microservice/attachment-scanner.values.yaml -f "$OCIR_VALUES"
-helm upgrade --install attachment-image-processing ./k8s/microservice -n pine -f ./k8s/microservice/attachment-image-processing.values.yaml -f "$OCIR_VALUES"
-helm upgrade --install api-gateway ./k8s/microservice -n pine -f ./k8s/microservice/api-gateway.values.yaml -f "$OCIR_VALUES"
-helm upgrade --install data-gateway ./k8s/microservice -n pine -f ./k8s/microservice/data-gateway.values.yaml -f "$OCIR_VALUES"
+export OCIR_VALUES=./k8s/microservice/ocir.values.yaml
+export OCIR_REGISTRY=bom.ocir.io/<Object-Storage-namespace>
+export OCIR_TAG=0.1.0
+helm template identity ./k8s/microservice -n pine -f ./k8s/microservice/identity.values.yaml -f "$OCIR_VALUES" --set image.registry="$OCIR_REGISTRY" --set image.tag="$OCIR_TAG" | grep 'image:'
+helm upgrade --install identity ./k8s/microservice -n pine -f ./k8s/microservice/identity.values.yaml -f "$OCIR_VALUES" --set image.registry="$OCIR_REGISTRY" --set image.tag="$OCIR_TAG"
+helm upgrade --install items ./k8s/microservice -n pine -f ./k8s/microservice/items.values.yaml -f "$OCIR_VALUES" --set image.registry="$OCIR_REGISTRY" --set image.tag="$OCIR_TAG"
+helm upgrade --install attachment ./k8s/microservice -n pine -f ./k8s/microservice/attachment.values.yaml -f "$OCIR_VALUES" --set image.registry="$OCIR_REGISTRY" --set image.tag="$OCIR_TAG"
+helm upgrade --install platform ./k8s/microservice -n pine -f ./k8s/microservice/platform.values.yaml -f "$OCIR_VALUES" --set image.registry="$OCIR_REGISTRY" --set image.tag="$OCIR_TAG"
+helm upgrade --install authorization ./k8s/microservice -n pine -f ./k8s/microservice/authorization.values.yaml -f "$OCIR_VALUES" --set image.registry="$OCIR_REGISTRY" --set image.tag="$OCIR_TAG"
+helm upgrade --install audit ./k8s/microservice -n pine -f ./k8s/microservice/audit.values.yaml -f "$OCIR_VALUES" --set image.registry="$OCIR_REGISTRY" --set image.tag="$OCIR_TAG"
+helm upgrade --install notification ./k8s/microservice -n pine -f ./k8s/microservice/notification.values.yaml -f "$OCIR_VALUES" --set image.registry="$OCIR_REGISTRY" --set image.tag="$OCIR_TAG"
+helm upgrade --install attachment-scanner ./k8s/microservice -n pine -f ./k8s/microservice/attachment-scanner.values.yaml -f "$OCIR_VALUES" --set image.registry="$OCIR_REGISTRY" --set image.tag="$OCIR_TAG"
+helm upgrade --install attachment-image-processing ./k8s/microservice -n pine -f ./k8s/microservice/attachment-image-processing.values.yaml -f "$OCIR_VALUES" --set image.registry="$OCIR_REGISTRY" --set image.tag="$OCIR_TAG"
+helm upgrade --install api-gateway ./k8s/microservice -n pine -f ./k8s/microservice/api-gateway.values.yaml -f "$OCIR_VALUES" --set image.registry="$OCIR_REGISTRY" --set image.tag="$OCIR_TAG"
+helm upgrade --install data-gateway ./k8s/microservice -n pine -f ./k8s/microservice/data-gateway.values.yaml -f "$OCIR_VALUES" --set image.registry="$OCIR_REGISTRY" --set image.tag="$OCIR_TAG"
 kubectl get deploy,svc,pods -n pine
 ```
+
+Expect image like `bom.ocir.io/<namespace>/pine/identity-service:0.1.0` (all lowercase). `InvalidImageName` = malformed reference (often uppercase left in the path). `ErrImagePull` / `ImagePullBackOff` = name valid but pull failed (wrong registry/tag, missing `ocir-pull`, or Auth Token).
 
 Apps also need OpenBao unsealed, ESO secrets (full `*_DATABASE_URL` where required), and TLS secrets before pods stay healthy.
 ---
