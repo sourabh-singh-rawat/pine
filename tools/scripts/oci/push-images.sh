@@ -4,12 +4,13 @@ set -euo pipefail
 REGION_KEY="${OCIR_REGION_KEY:-}"
 NAMESPACE="${OCIR_NAMESPACE:-}"
 TAG="${OCIR_IMAGE_TAG:-0.1.0}"
+MAX_JOBS="${OCIR_BUILD_JOBS:-3}"
 SKIP_PUSH=0
 SKIP_LOGIN=0
 FILTERS=()
 
 usage() {
-  echo "Usage: OCIR_REGION_KEY=bom OCIR_NAMESPACE=<object-storage-ns> $0 [--service name]... [--skip-push] [--skip-login]" >&2
+  echo "Usage: OCIR_REGION_KEY=bom OCIR_NAMESPACE=<object-storage-ns> $0 [--service name]... [--jobs N] [--skip-push] [--skip-login]" >&2
   exit 1
 }
 
@@ -18,6 +19,11 @@ while [[ $# -gt 0 ]]; do
     --service|-s)
       [[ $# -ge 2 ]] || usage
       FILTERS+=("$2")
+      shift 2
+      ;;
+    --jobs|-j)
+      [[ $# -ge 2 ]] || usage
+      MAX_JOBS="$2"
       shift 2
       ;;
     --skip-push)
@@ -44,6 +50,10 @@ if [[ -z "$REGION_KEY" ]]; then
 fi
 if [[ -z "$NAMESPACE" ]]; then
   echo "Set OCIR_NAMESPACE to the tenancy Object Storage namespace (Tenancy details in OCI Console)." >&2
+  exit 1
+fi
+if ! [[ "$MAX_JOBS" =~ ^[1-9][0-9]*$ ]]; then
+  echo "OCIR_BUILD_JOBS / --jobs must be a positive integer (got: $MAX_JOBS)" >&2
   exit 1
 fi
 
@@ -94,6 +104,7 @@ fi
 
 echo "Registry: $REGISTRY_PREFIX"
 echo "Tag:      $TAG"
+echo "Jobs:     $MAX_JOBS"
 echo -n "Services:"
 for entry in "${selected[@]}"; do
   echo -n " ${entry%%|*}"
@@ -106,7 +117,10 @@ if [[ "$SKIP_LOGIN" -eq 0 ]]; then
 fi
 
 cd "$REPO_ROOT"
-for entry in "${selected[@]}"; do
+
+build_one() {
+  local entry="$1"
+  local image rest package dir full
   image="${entry%%|*}"
   rest="${entry#*|}"
   package="${rest%%|*}"
@@ -122,7 +136,37 @@ for entry in "${selected[@]}"; do
     echo "Pushing $full"
     docker push "$full"
   fi
+  echo "Done $full"
+}
+
+active=0
+failures=0
+for entry in "${selected[@]}"; do
+  while (( active >= MAX_JOBS )); do
+    if wait -n; then
+      :
+    else
+      failures=$((failures + 1))
+    fi
+    active=$((active - 1))
+  done
+  build_one "$entry" &
+  active=$((active + 1))
 done
+
+while (( active > 0 )); do
+  if wait -n; then
+    :
+  else
+    failures=$((failures + 1))
+  fi
+  active=$((active - 1))
+done
+
+if [[ "$failures" -ne 0 ]]; then
+  echo "Failed: $failures build(s)" >&2
+  exit 1
+fi
 
 echo "Done. Helm overlay image.registry should be: $REGISTRY_PREFIX"
 echo "Example: helm upgrade --install identity ./k8s/microservice -n pine -f ./k8s/microservice/identity.values.yaml -f ./k8s/microservice/ocir.values.yaml --set image.registry=$REGISTRY_PREFIX --set image.tag=$TAG"
