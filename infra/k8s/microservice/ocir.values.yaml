@@ -1,5 +1,5 @@
 image:
-  registry: bom.ocir.io/REPLACE_OCIR_NAMESPACE
+  registry: bom.ocir.io/replace-ocir-namespace
   tag: "0.1.0"
   pullPolicy: IfNotPresent
 
