@@ -3,6 +3,7 @@
 ARG NODE_VERSION=26.10.0
 ARG PNPM_VERSION=12.6.0
 ARG TURBO_VERSION=2.10.9
+ARG TSX_VERSION=4.23.1
 ARG SERVICE
 ARG SERVICE_DIR
 
@@ -31,13 +32,18 @@ RUN --mount=type=cache,id=pnpm-store,target=/pnpm/store \
 COPY --from=pruner /app/out/full/ .
 RUN mkdir -p tools/scripts/setup
 COPY --from=pruner /app/tools/scripts/setup/rm-rf.mjs tools/scripts/setup/rm-rf.mjs
-RUN pnpm exec turbo run build --filter="${SERVICE}..."
+RUN --mount=type=cache,id=turbo-cache,target=/app/.turbo \
+  pnpm exec turbo run build --filter="${SERVICE}..."
+RUN --mount=type=cache,id=pnpm-store,target=/pnpm/store \
+  pnpm --filter="${SERVICE}" deploy --prod --legacy /prod
 
-FROM pnpm AS runtime
+FROM node:${NODE_VERSION}-alpine AS runtime
+ARG TSX_VERSION
 ARG SERVICE_DIR
 RUN test -n "$SERVICE_DIR"
-COPY --from=builder --chown=node:node /app /app
+RUN npm install -g tsx@${TSX_VERSION} --allow-scripts=esbuild
+COPY --from=builder --chown=node:node /prod /app
 ENV NODE_ENV=production
 USER node
-WORKDIR /app/${SERVICE_DIR}
-CMD ["node", "--import", "tsx", "src/main.ts"]
+WORKDIR /app
+CMD ["node", "--import", "/usr/local/lib/node_modules/tsx/dist/loader.mjs", "src/main.ts"]

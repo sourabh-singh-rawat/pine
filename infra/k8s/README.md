@@ -557,7 +557,7 @@ Examples below use **Mumbai (`bom`)** — change the key if your home region dif
 PowerShell (Docker Desktop running):
 
 ```powershell
-cd C:\Users\Soura\dev\pine
+cd <pine-repo-root>
 docker login bom.ocir.io
 ```
 
@@ -574,6 +574,8 @@ pnpm images:push:ocir
 ```
 
 One service: `pnpm images:push:ocir -- --service identity`.
+
+Parallelism: default 3 concurrent builds (`OCIR_BUILD_JOBS` or `--jobs N`). Example: `pnpm images:push:ocir -- --jobs 4`.
 
 Script: `tools/scripts/oci/push-images.sh` (bash; Git Bash / WSL also fine with the same env vars). Ampere A1 nodes need **linux/arm64** images (build/push with `--platform linux/arm64` when the laptop is amd64).
 
@@ -597,11 +599,13 @@ pnpm tls:k8s
 
 That runs `pnpm tls:generate` (writes `.local/tls/`) then `pnpm tls:secrets` (applies Secrets `identity-tls`, `items-tls`, … in namespace `pine` with keys `tls.crt`, `tls.key`, `ca.crt`). Override namespace with `PINE_NAMESPACE` if needed. Re-run `pnpm tls:secrets` alone after generating certs if Secrets already need refreshing.
 
-### 8.6 Helm install apps
+### 8.6 Helm install apps (cluster — Linux bash)
 
 Thin chart: `microservice/` + `*.values.yaml`. Do not fork the chart. Chart supports `image.registry` and `imagePullSecrets`.
 
-From `infra/` with `KUBECONFIG` set. Export the real **lowercase** Object Storage namespace registry and the tag you pushed, then install each app with `--set` (do not leave the committed placeholder):
+**Linux bash only** (VM after `sudo -i`, or laptop with `KUBECONFIG` set). Do **not** paste PowerShell (`$f = @("-f", …)`, `@f`, `$env:…`) into this shell — Helm will fail with `=: command not found` / `requires 2 arguments`.
+
+From `infra/`. Export the real **lowercase** Object Storage namespace registry and the tag you pushed, then install each app with repeated `-f` flags and `--set` (do not leave the committed placeholder):
 
 ```bash
 export OCIR_VALUES=./k8s/microservice/ocir.values.yaml
@@ -622,9 +626,23 @@ helm upgrade --install data-gateway ./k8s/microservice -n pine -f ./k8s/microser
 kubectl get deploy,svc,pods -n pine
 ```
 
-Expect image like `bom.ocir.io/<namespace>/pine/identity-service:0.1.0` (all lowercase). `InvalidImageName` = malformed reference (often uppercase left in the path). `ErrImagePull` / `ImagePullBackOff` = name valid but pull failed (wrong registry/tag, missing `ocir-pull`, or Auth Token).
+Expect image like `bom.ocir.io/<namespace>/pine/identity-service:0.1.0` (all lowercase). `InvalidImageName` = malformed reference (often uppercase left in the path). `ErrImagePull` / `ImagePullBackOff` = name valid but pull failed (wrong registry/tag, missing `ocir-pull`, or Auth Token). `no space left on device` on the node → free images with `k3s crictl rmi --prune` (and/or grow the OCI boot volume) before reinstalling.
 
 Apps also need OpenBao unsealed, ESO secrets (full `*_DATABASE_URL` where required), and TLS secrets before pods stay healthy.
+
+### 8.7 Uninstall app releases only
+
+Removes the eleven `microservice` Helm releases. Leaves Ory (`kratos` / `hydra` / `keto`) and other infra in place:
+
+```bash
+helm -n pine uninstall identity items attachment platform authorization audit notification attachment-scanner attachment-image-processing api-gateway data-gateway
+helm -n pine list
+kubectl -n pine get deploy,pods
+k3s crictl rmi --prune
+df -h /
+```
+
+Then reinstall with §8.6.
 ---
 
 ## Namespaces
