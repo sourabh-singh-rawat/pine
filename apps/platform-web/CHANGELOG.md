@@ -1,5 +1,11 @@
 # @pine/platform-web
 
+## 0.5.6
+
+### Patch Changes
+
+- 50d3aa8: feat(gateway): add local dev reverse proxy and server attachment urls
+
 ## 0.5.5
 
 ### Patch Changes

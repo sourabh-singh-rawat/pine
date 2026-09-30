@@ -1,5 +1,20 @@
 # @pine/authorization-service
 
+## 0.7.1
+
+### Patch Changes
+
+- be61f50: feat(security): per-app OpenBao tokens and expanded secret paths
+- Updated dependencies [71ab521]
+- Updated dependencies [b095dfc]
+- Updated dependencies [66f9531]
+- Updated dependencies [98a6750]
+- Updated dependencies [faed029]
+- Updated dependencies [be61f50]
+  - @pine/events@1.4.0
+  - @pine/common@1.2.1
+  - @pine/server@1.1.6
+
 ## 0.7.0
 
 ### Minor Changes

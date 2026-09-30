@@ -1,5 +1,28 @@
 # @pine/attachment-service
 
+## 0.6.1
+
+### Patch Changes
+
+- 71ab521: feat(attachments): add image processing service and HTTP scan callback
+- c378794: feat(attachments): store image metadata in attachment service
+- 81f7d2e: feat(attachments): switch thumbnail derivatives to lossy webp
+- d2560ee: feat(attachments): switch thumbnail derivatives to avif
+- b095dfc: feat(attachments): serve thumbnail derivatives on attachment cards
+- 98a6750: feat(items): set attachment SCANNING/FAILED, sweep stuck, fail UX
+- cab6c45: chore(security): remove local OpenBao secret loading
+- be61f50: feat(security): per-app OpenBao tokens and expanded secret paths
+- Updated dependencies [71ab521]
+- Updated dependencies [b095dfc]
+- Updated dependencies [66f9531]
+- Updated dependencies [98a6750]
+- Updated dependencies [faed029]
+- Updated dependencies [be61f50]
+  - @pine/events@1.4.0
+  - @pine/common@1.2.1
+  - @pine/outbox@0.1.5
+  - @pine/server@1.1.6
+
 ## 0.6.0
 
 ### Minor Changes

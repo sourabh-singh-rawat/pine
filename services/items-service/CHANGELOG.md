@@ -1,5 +1,30 @@
 # @pine/items-service
 
+## 1.4.0
+
+### Minor Changes
+
+- 98a6750: feat(items): set attachment SCANNING/FAILED, sweep stuck, fail UX
+- faed029: feat(items): show processing skeleton while attachments scan
+
+### Patch Changes
+
+- 50d3aa8: feat(gateway): add local dev reverse proxy and server attachment urls
+- cab6c45: chore(security): remove local OpenBao secret loading
+- be61f50: feat(security): per-app OpenBao tokens and expanded secret paths
+- Updated dependencies [71ab521]
+- Updated dependencies [c378794]
+- Updated dependencies [b095dfc]
+- Updated dependencies [66f9531]
+- Updated dependencies [98a6750]
+- Updated dependencies [faed029]
+- Updated dependencies [be61f50]
+  - @pine/attachment@0.4.0
+  - @pine/events@1.4.0
+  - @pine/common@1.2.1
+  - @pine/outbox@0.1.5
+  - @pine/server@1.1.6
+
 ## 1.3.0
 
 ### Minor Changes

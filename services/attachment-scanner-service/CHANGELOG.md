@@ -1,5 +1,24 @@
 # @pine/attachment-scanner-service
 
+## 0.1.4
+
+### Patch Changes
+
+- 71ab521: feat(attachments): add image processing service and HTTP scan callback
+- 98a6750: feat(items): set attachment SCANNING/FAILED, sweep stuck, fail UX
+- faed029: feat(items): show processing skeleton while attachments scan
+- Updated dependencies [71ab521]
+- Updated dependencies [c378794]
+- Updated dependencies [b095dfc]
+- Updated dependencies [66f9531]
+- Updated dependencies [98a6750]
+- Updated dependencies [faed029]
+- Updated dependencies [be61f50]
+  - @pine/attachment@0.4.0
+  - @pine/events@1.4.0
+  - @pine/common@1.2.1
+  - @pine/server@1.1.6
+
 ## 0.1.3
 
 ### Patch Changes

@@ -1,5 +1,14 @@
 # @pine/outbox
 
+## 0.1.5
+
+### Patch Changes
+
+- 98a6750: feat(items): set attachment SCANNING/FAILED, sweep stuck, fail UX
+- Updated dependencies [71ab521]
+- Updated dependencies [98a6750]
+  - @pine/common@1.2.1
+
 ## 0.1.4
 
 ### Patch Changes
