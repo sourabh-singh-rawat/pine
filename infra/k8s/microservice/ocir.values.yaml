@@ -1,0 +1,7 @@
+image:
+  registry: bom.ocir.io/replace-ocir-namespace
+  tag: "0.1.0"
+  pullPolicy: IfNotPresent
+
+imagePullSecrets:
+  - name: ocir-pull

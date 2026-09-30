@@ -1,0 +1,249 @@
+fullnameOverride: kratos
+
+image:
+  tag: v26.2.0
+
+service:
+  public:
+    port: 4433
+  admin:
+    port: 4434
+
+kratos:
+  development: true
+  automigration:
+    enabled: true
+    type: job
+  identitySchemas:
+    "identity.user.schema.json": |
+      {
+        "$id": "https://schemas.pine.local/identity/user.schema.json",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "title": "User",
+        "type": "object",
+        "properties": {
+          "traits": {
+            "type": "object",
+            "properties": {
+              "username": {
+                "title": "Username",
+                "description": "3–30 lowercase letters, numbers, '.' or '_'. Must start with a letter.",
+                "type": "string",
+                "minLength": 3,
+                "maxLength": 30,
+                "pattern": "^[a-z][a-z0-9._]*[a-z0-9]$",
+                "ory.sh/kratos": {
+                  "credentials": {
+                    "password": {
+                      "identifier": true
+                    }
+                  }
+                }
+              },
+              "phone": {
+                "title": "Phone Number",
+                "description": "Phone number in E.164 format.",
+                "type": "string",
+                "pattern": "^\\+[1-9]\\d{1,14}$",
+                "ory.sh/kratos": {
+                  "credentials": {
+                    "password": {
+                      "identifier": true
+                    }
+                  }
+                }
+              },
+              "email": {
+                "title": "Email Address",
+                "type": "string",
+                "format": "email",
+                "minLength": 3,
+                "ory.sh/kratos": {
+                  "credentials": {
+                    "password": {
+                      "identifier": true
+                    }
+                  },
+                  "verification": {
+                    "via": "email"
+                  }
+                }
+              }
+            },
+            "required": ["username", "email"],
+            "additionalProperties": false
+          }
+        },
+        "required": ["traits"],
+        "additionalProperties": false
+      }
+  emailTemplates:
+    verification_code:
+      valid:
+        subject: "Use code {{ .VerificationCode }} to verify your account"
+        body: |-
+          {{- $query := index (splitList "?" .VerificationURL) 1 -}}
+          {{- $verifyURL := printf "https://localhost:3000/verification?%s" $query -}}
+          Verify your account with the following code:
+
+          {{ .VerificationCode }}
+
+          or click the following link:
+
+          <a href="{{ $verifyURL }}">{{ $verifyURL }}</a>
+
+          If this was not you, do nothing. This code / link expires in {{ .ExpiresInMinutes }} minutes.
+        plainBody: |-
+          {{- $query := index (splitList "?" .VerificationURL) 1 -}}
+          {{- $verifyURL := printf "https://localhost:3000/verification?%s" $query -}}
+          Verify your account with the following code:
+
+          {{ .VerificationCode }}
+
+          or open the following link:
+
+          {{ $verifyURL }}
+
+          If this was not you, do nothing. This code / link expires in {{ .ExpiresInMinutes }} minutes.
+  config:
+    dsn: ""
+    serve:
+      public:
+        base_url: http://kratos-public.pine.svc:4433/
+        port: 4433
+        cors:
+          enabled: true
+          allowed_origins:
+            - https://localhost:3000
+            - https://localhost:3001
+            - https://localhost:3002
+          allowed_methods:
+            - POST
+            - GET
+            - PUT
+            - PATCH
+            - DELETE
+          allowed_headers:
+            - Authorization
+            - Cookie
+            - Content-Type
+          exposed_headers:
+            - Content-Type
+            - Set-Cookie
+      admin:
+        base_url: http://kratos-admin.pine.svc:4434/
+        port: 4434
+    selfservice:
+      default_browser_return_url: https://localhost:3000/
+      allowed_return_urls:
+        - https://localhost:3000
+        - https://localhost:3001
+        - https://localhost:3002
+      methods:
+        password:
+          enabled: true
+        totp:
+          config:
+            issuer: Pine
+          enabled: true
+        lookup_secret:
+          enabled: true
+        link:
+          enabled: true
+        code:
+          enabled: true
+      flows:
+        error:
+          ui_url: https://localhost:3000/error
+        settings:
+          ui_url: https://localhost:3000/settings
+          privileged_session_max_age: 15m
+          required_aal: highest_available
+        recovery:
+          enabled: true
+          ui_url: https://localhost:3000/recovery
+          use: code
+        verification:
+          enabled: true
+          ui_url: https://localhost:3000/verification
+          use: code
+          after:
+            default_browser_return_url: https://localhost:3000/
+        logout:
+          after:
+            default_browser_return_url: https://localhost:3000/signin
+        login:
+          ui_url: https://localhost:3000/signin
+          lifespan: 10m
+        registration:
+          lifespan: 10m
+          ui_url: https://localhost:3000/registration
+          after:
+            password:
+              hooks:
+                - hook: session
+    log:
+      level: debug
+      format: text
+      leak_sensitive_values: true
+    secrets:
+      cookie:
+        - PLEASE-CHANGE-ME-I-AM-VERY-INSECURE
+      cipher:
+        - 32-LONG-SECRET-NOT-SECURE-AT-ALL
+    ciphers:
+      algorithm: xchacha20-poly1305
+    hashers:
+      algorithm: argon2
+      argon2:
+        parallelism: 4
+        memory: 128MB
+        iterations: 3
+        salt_length: 16
+        key_length: 32
+    identity:
+      default_schema_id: user
+      schemas:
+        - id: user
+          url: file:///etc/config/identity.user.schema.json
+    courier:
+      template_override_path: /conf/courier-templates
+      smtp:
+        connection_uri: smtp://unused:unused@127.0.0.1:1/?disable_starttls=true
+        from_address: unused@localhost
+        from_name: Pine
+    feature_flags:
+      use_continue_with_transitions: true
+
+deployment:
+  extraEnv:
+    - name: DSN
+      valueFrom:
+        secretKeyRef:
+          name: kratos-dsn
+          key: dsn
+  automigration:
+    extraEnv:
+      - name: DSN
+        valueFrom:
+          secretKeyRef:
+            name: kratos-dsn
+            key: dsn
+  resources:
+    requests:
+      cpu: 100m
+      memory: 64Mi
+    limits:
+      cpu: 500m
+      memory: 256Mi
+
+job:
+  extraEnv:
+    - name: DSN
+      valueFrom:
+        secretKeyRef:
+          name: kratos-dsn
+          key: dsn
+
+courier:
+  enabled: true

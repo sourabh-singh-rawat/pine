@@ -1,4 +1,4 @@
-import { configureTls } from "@pine/common";
+import { configureTls, type IWorker } from "@pine/common";
 import { env } from "@/bootstrap/env";
 import "reflect-metadata";
 
@@ -10,7 +10,6 @@ configureTls({
 
 import type { IHttpServer } from "@pine/server";
 import { initializeObservability } from "@pine/observability";
-import type { IOutboxCleanupWorker, IOutboxWorker } from "@pine/outbox";
 import { broker, container, initializeDb, TYPES } from "@/bootstrap";
 import { openApiOutputPath } from "@/bootstrap/container";
 import { writeSchemaToDist } from "@/bootstrap/graphql";
@@ -47,8 +46,8 @@ const main = async () => {
 
   await container.get<IClientSeederService>(TYPES.ClientSeederService).seed();
 
-  void container.get<IOutboxWorker>(TYPES.OutboxWorker).start();
-  void container.get<IOutboxCleanupWorker>(TYPES.OutboxCleanupWorker).start();
+  void container.get<IWorker>(TYPES.OutboxWorker).start();
+  void container.get<IWorker>(TYPES.OutboxCleanupWorker).start();
   void container.get<ProfilePhotoAttachmentConsumer>(TYPES.ProfilePhotoAttachmentConsumer).start();
 };
 

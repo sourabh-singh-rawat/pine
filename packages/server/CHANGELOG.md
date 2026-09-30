@@ -1,5 +1,15 @@
 # @pine/server
 
+## 1.1.6
+
+### Patch Changes
+
+- 98a6750: feat(items): set attachment SCANNING/FAILED, sweep stuck, fail UX
+- be61f50: feat(security): per-app OpenBao tokens and expanded secret paths
+- Updated dependencies [71ab521]
+- Updated dependencies [98a6750]
+  - @pine/common@1.2.1
+
 ## 1.1.5
 
 ### Patch Changes

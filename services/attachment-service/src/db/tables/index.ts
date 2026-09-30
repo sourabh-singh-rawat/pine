@@ -1,5 +1,15 @@
 export { type Attachment, type NewAttachment, Attachments } from "@/db/tables/Attachments";
 export {
+  type AttachmentDerivative,
+  type NewAttachmentDerivative,
+  AttachmentDerivatives,
+} from "@/db/tables/AttachmentDerivatives";
+export {
+  type AttachmentMetadata,
+  type NewAttachmentMetadata,
+  AttachmentMetadatas,
+} from "@/db/tables/AttachmentMetadatas";
+export {
   type AttachmentVersion,
   type NewAttachmentVersion,
   AttachmentVersions,

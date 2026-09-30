@@ -8,6 +8,7 @@ export const AttachmentCreatedDataSchema = Type.Object(
     tenantId: Type.Optional(Type.String()),
     currentVersionId: Type.Optional(Type.String()),
     operationId: Type.Optional(Type.String()),
+    contentType: Type.Optional(Type.String()),
     metadata: Type.Optional(Type.Record(Type.String(), Type.Unknown())),
     url: Type.Optional(Type.String()),
     status: Type.String(),

@@ -5,26 +5,11 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
+import { k8sTlsServices, localOnlyCertDirs } from "./k8s-tls-services.ts";
+
 const rootDir = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
 const tlsDir = path.join(rootDir, ".local", "tls");
 const caDir = path.join(tlsDir, "ca");
-
-const services = [
-  "api-gateway",
-  "data-gateway",
-  "identity-service",
-  "items-service",
-  "attachment-service",
-  "attachment-processing-service",
-  "attachment-scanner-service",
-  "audit-service",
-  "notification-service",
-  "platform-service",
-  "authorization-service",
-  "identity-web",
-  "pine-web",
-  "platform-web",
-];
 
 const runOpenSsl = (args: readonly string[]): void => {
   const isWindows = process.platform === "win32";
@@ -45,7 +30,18 @@ const runOpenSsl = (args: readonly string[]): void => {
   }
 };
 
-const createOpenSslConfig = (serviceName: string, configPath: string): void => {
+const createOpenSslConfig = (
+  serviceName: string,
+  dnsNames: readonly string[],
+  configPath: string,
+): void => {
+  const altNames = [
+    ...dnsNames.map((name, index) => `DNS.${index + 1} = ${name}`),
+    `DNS.${dnsNames.length + 1} = localhost`,
+    `DNS.${dnsNames.length + 2} = *.localhost`,
+    "IP.1 = 127.0.0.1",
+  ].join("\n");
+
   const content = `[req]
 default_bits = 2048
 prompt = no
@@ -60,12 +56,65 @@ CN = ${serviceName}
 subjectAltName = @alt_names
 
 [alt_names]
-DNS.1 = ${serviceName}
-DNS.2 = localhost
-DNS.3 = *.localhost
-IP.1 = 127.0.0.1
+${altNames}
 `;
   fs.writeFileSync(configPath, content, "utf8");
+};
+
+const issueServiceCert = (serviceName: string, dnsNames: readonly string[]): void => {
+  const serviceDir = path.join(tlsDir, serviceName);
+  fs.mkdirSync(serviceDir, { recursive: true });
+
+  const keyPath = path.join(serviceDir, `${serviceName}.key`);
+  const csrPath = path.join(serviceDir, `${serviceName}.csr`);
+  const crtPath = path.join(serviceDir, `${serviceName}.crt`);
+  const configPath = path.join(serviceDir, "openssl.cnf");
+  const caKeyPath = path.join(caDir, "ca.key");
+  const caCrtPath = path.join(caDir, "ca.crt");
+
+  createOpenSslConfig(serviceName, dnsNames, configPath);
+
+  runOpenSsl([
+    "req",
+    "-new",
+    "-newkey",
+    "rsa:2048",
+    "-nodes",
+    "-keyout",
+    keyPath,
+    "-out",
+    csrPath,
+    "-config",
+    configPath,
+  ]);
+
+  runOpenSsl([
+    "x509",
+    "-req",
+    "-in",
+    csrPath,
+    "-CA",
+    caCrtPath,
+    "-CAkey",
+    caKeyPath,
+    "-CAcreateserial",
+    "-out",
+    crtPath,
+    "-days",
+    "825",
+    "-sha256",
+    "-extfile",
+    configPath,
+    "-extensions",
+    "req_ext",
+  ]);
+
+  if (fs.existsSync(csrPath)) {
+    fs.unlinkSync(csrPath);
+  }
+  if (fs.existsSync(configPath)) {
+    fs.unlinkSync(configPath);
+  }
 };
 
 const main = (): void => {
@@ -93,58 +142,12 @@ const main = (): void => {
     ]);
   }
 
-  for (const service of services) {
-    const serviceDir = path.join(tlsDir, service);
-    fs.mkdirSync(serviceDir, { recursive: true });
+  for (const service of k8sTlsServices) {
+    issueServiceCert(service.certDir, service.dnsNames);
+  }
 
-    const keyPath = path.join(serviceDir, `${service}.key`);
-    const csrPath = path.join(serviceDir, `${service}.csr`);
-    const crtPath = path.join(serviceDir, `${service}.crt`);
-    const configPath = path.join(serviceDir, "openssl.cnf");
-
-    createOpenSslConfig(service, configPath);
-
-    runOpenSsl([
-      "req",
-      "-new",
-      "-newkey",
-      "rsa:2048",
-      "-nodes",
-      "-keyout",
-      keyPath,
-      "-out",
-      csrPath,
-      "-config",
-      configPath,
-    ]);
-
-    runOpenSsl([
-      "x509",
-      "-req",
-      "-in",
-      csrPath,
-      "-CA",
-      caCrtPath,
-      "-CAkey",
-      caKeyPath,
-      "-CAcreateserial",
-      "-out",
-      crtPath,
-      "-days",
-      "825",
-      "-sha256",
-      "-extfile",
-      configPath,
-      "-extensions",
-      "req_ext",
-    ]);
-
-    if (fs.existsSync(csrPath)) {
-      fs.unlinkSync(csrPath);
-    }
-    if (fs.existsSync(configPath)) {
-      fs.unlinkSync(configPath);
-    }
+  for (const serviceName of localOnlyCertDirs) {
+    issueServiceCert(serviceName, [serviceName]);
   }
 
   const srlPath = path.join(caDir, "ca.srl");

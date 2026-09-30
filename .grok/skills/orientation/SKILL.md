@@ -56,7 +56,6 @@ Extract to `packages/*` only when **two** services need the same logic. Feature 
 | `@pine/errors`        | `ApplicationError`                                           |
 | `@pine/events`        | NATS, CloudEvents, `publisher.send`, consumers               |
 | `@pine/server`        | `FastifyHttpServer`, `PinoLogger`, Pothos `builder`, scalars |
-| `@pine/security`      | JWT, hashing, auth helpers                                   |
 | `@pine/observability` | OTEL bootstrap                                               |
 | `@pine/authorization` | Keto client, relations, `requirePermission`                  |
 | `@pine/identity`      | `requireIdentityId`, identity HTTP client                    |

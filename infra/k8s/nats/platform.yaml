@@ -1,0 +1,11 @@
+apiVersion: jetstream.nats.io/v1beta2
+kind: Stream
+metadata:
+  name: platform
+  namespace: nats
+spec:
+  name: platform
+  subjects:
+    - platform.>
+  storage: file
+  replicas: 1

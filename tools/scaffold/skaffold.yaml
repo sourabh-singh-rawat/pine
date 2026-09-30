@@ -1,54 +1,175 @@
 apiVersion: skaffold/v4beta6
 kind: Config
 metadata:
-  name: issue-tracker-services
+  name: pine-services
 build:
   artifacts:
-    - image: sourabhrawatcc/attachment
+    - image: pine/attachment-service
       context: ../..
       docker:
         dockerfile: Dockerfile
-        target: attachment
+        target: runtime
+        buildArgs:
+          SERVICE: "@pine/attachment-service"
+          SERVICE_DIR: services/attachment-service
 
-    - image: sourabhrawatcc/notification-service
+    - image: pine/attachment-scanner-service
       context: ../..
       docker:
         dockerfile: Dockerfile
-        target: notification-service
+        target: runtime
+        buildArgs:
+          SERVICE: "@pine/attachment-scanner-service"
+          SERVICE_DIR: services/attachment-scanner-service
 
-    - image: sourabhrawatcc/identity-service
+    - image: pine/attachment-image-processing-service
       context: ../..
       docker:
         dockerfile: Dockerfile
-        target: identity-service
+        target: runtime
+        buildArgs:
+          SERVICE: "@pine/attachment-image-processing-service"
+          SERVICE_DIR: services/attachment-image-processing-service
 
-    - image: sourabhrawatcc/items-service
+    - image: pine/notification-service
       context: ../..
       docker:
         dockerfile: Dockerfile
-        target: items-service
+        target: runtime
+        buildArgs:
+          SERVICE: "@pine/notification-service"
+          SERVICE_DIR: services/notification-service
+
+    - image: pine/identity-service
+      context: ../..
+      docker:
+        dockerfile: Dockerfile
+        target: runtime
+        buildArgs:
+          SERVICE: "@pine/identity-service"
+          SERVICE_DIR: services/identity-service
+
+    - image: pine/items-service
+      context: ../..
+      docker:
+        dockerfile: Dockerfile
+        target: runtime
+        buildArgs:
+          SERVICE: "@pine/items-service"
+          SERVICE_DIR: services/items-service
+
+    - image: pine/platform-service
+      context: ../..
+      docker:
+        dockerfile: Dockerfile
+        target: runtime
+        buildArgs:
+          SERVICE: "@pine/platform-service"
+          SERVICE_DIR: services/platform-service
+
+    - image: pine/authorization-service
+      context: ../..
+      docker:
+        dockerfile: Dockerfile
+        target: runtime
+        buildArgs:
+          SERVICE: "@pine/authorization-service"
+          SERVICE_DIR: services/authorization-service
+
+    - image: pine/audit-service
+      context: ../..
+      docker:
+        dockerfile: Dockerfile
+        target: runtime
+        buildArgs:
+          SERVICE: "@pine/audit-service"
+          SERVICE_DIR: services/audit-service
+
+    - image: pine/api-gateway
+      context: ../..
+      docker:
+        dockerfile: Dockerfile
+        target: runtime
+        buildArgs:
+          SERVICE: "@pine/api-gateway"
+          SERVICE_DIR: services/api-gateway
+
+    - image: pine/data-gateway
+      context: ../..
+      docker:
+        dockerfile: Dockerfile
+        target: runtime
+        buildArgs:
+          SERVICE: "@pine/data-gateway"
+          SERVICE_DIR: services/data-gateway
 
   local:
     concurrency: 0
 deploy:
   helm:
     releases:
+      - name: identity
+        chartPath: ../../infra/k8s/microservice
+        namespace: pine
+        valuesFiles:
+          - ../../infra/k8s/microservice/identity.values.yaml
+
+      - name: items
+        chartPath: ../../infra/k8s/microservice
+        namespace: pine
+        valuesFiles:
+          - ../../infra/k8s/microservice/items.values.yaml
+
       - name: attachment
         chartPath: ../../infra/k8s/microservice
+        namespace: pine
         valuesFiles:
           - ../../infra/k8s/microservice/attachment.values.yaml
 
+      - name: platform
+        chartPath: ../../infra/k8s/microservice
+        namespace: pine
+        valuesFiles:
+          - ../../infra/k8s/microservice/platform.values.yaml
+
+      - name: authorization
+        chartPath: ../../infra/k8s/microservice
+        namespace: pine
+        valuesFiles:
+          - ../../infra/k8s/microservice/authorization.values.yaml
+
+      - name: audit
+        chartPath: ../../infra/k8s/microservice
+        namespace: pine
+        valuesFiles:
+          - ../../infra/k8s/microservice/audit.values.yaml
+
       - name: notification
         chartPath: ../../infra/k8s/microservice
+        namespace: pine
         valuesFiles:
           - ../../infra/k8s/microservice/notification.values.yaml
 
-      - name: identity
+      - name: attachment-scanner
         chartPath: ../../infra/k8s/microservice
+        namespace: pine
         valuesFiles:
-          - ../../infra/k8s/microservice/identity-service.values.yaml
+          - ../../infra/k8s/microservice/attachment-scanner.values.yaml
 
-      - name: items-service
+      - name: attachment-image-processing
         chartPath: ../../infra/k8s/microservice
+        namespace: pine
         valuesFiles:
-          - ../../infra/k8s/microservice/items-service.values.yaml
+          - ../../infra/k8s/microservice/attachment-image-processing.values.yaml
+
+      - name: api-gateway
+        chartPath: ../../infra/k8s/microservice
+        namespace: pine
+        valuesFiles:
+          - ../../infra/k8s/microservice/api-gateway.values.yaml
+
+      - name: data-gateway
+        chartPath: ../../infra/k8s/microservice
+        namespace: pine
+        valuesFiles:
+          - ../../infra/k8s/microservice/data-gateway.values.yaml

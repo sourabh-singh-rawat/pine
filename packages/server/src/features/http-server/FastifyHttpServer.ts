@@ -122,7 +122,7 @@ export class FastifyHttpServer<
     const { secret, httpOnly = false, sameSite = false, secure = false, path = "/" } = options;
 
     await this.server.register(cookie, {
-      secret,
+      ...(secret !== undefined && secret !== "" ? { secret } : {}),
       parseOptions: { httpOnly, sameSite, secure, path },
     });
   }

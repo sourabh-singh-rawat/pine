@@ -4,11 +4,14 @@ import { TYPES } from "@/bootstrap/container-types";
 import {
   type Attachment,
   Attachments,
+  type AttachmentDerivative,
+  AttachmentDerivatives,
   type AttachmentVersion,
   AttachmentVersions,
   type Database,
   type DbClient,
   type NewAttachment,
+  type NewAttachmentDerivative,
   type NewAttachmentVersion,
 } from "@/db";
 import type {
@@ -38,6 +41,16 @@ export class AttachmentRepository implements IAttachmentRepository {
     return created;
   }
 
+  async saveDerivative(
+    entity: NewAttachmentDerivative,
+    options?: AttachmentRepositoryOptions,
+  ): Promise<AttachmentDerivative> {
+    const client = this.client(options);
+    const [created] = await client.insert(AttachmentDerivatives).values(entity).returning();
+
+    return created;
+  }
+
   async findById(id: string, options?: AttachmentRepositoryOptions): Promise<Attachment | null> {
     const client = this.client(options);
     const [row] = await client.select().from(Attachments).where(eq(Attachments.id, id)).limit(1);
@@ -58,6 +71,28 @@ export class AttachmentRepository implements IAttachmentRepository {
         and(
           eq(AttachmentVersions.attachmentId, attachmentId),
           eq(AttachmentVersions.id, versionId),
+        ),
+      )
+      .limit(1);
+
+    return row ?? null;
+  }
+
+  async findDerivative(
+    attachmentId: string,
+    versionId: string,
+    derivativeType: string,
+    options?: AttachmentRepositoryOptions,
+  ): Promise<AttachmentDerivative | null> {
+    const client = this.client(options);
+    const [row] = await client
+      .select()
+      .from(AttachmentDerivatives)
+      .where(
+        and(
+          eq(AttachmentDerivatives.attachmentId, attachmentId),
+          eq(AttachmentDerivatives.versionId, versionId),
+          eq(AttachmentDerivatives.derivativeType, derivativeType),
         ),
       )
       .limit(1);

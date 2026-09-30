@@ -11,14 +11,6 @@ export const formatFileSize = (size: number | null | undefined): string => {
   return `${(size / (1024 * 1024)).toFixed(1)} MB`;
 };
 
-export const getAttachmentUrl = (attachmentId: string): string => {
-  const base =
-    import.meta.env.VITE_DATA_GATEWAY_URL ??
-    import.meta.env.VITE_API_BASE_URL ??
-    "https://localhost:4001";
-  return `${base.replace(/\/$/, "")}/attachments/${attachmentId}`;
-};
-
 export const isImageMimeType = (mimeType: string): boolean =>
   mimeType.toLowerCase().startsWith("image/");
 

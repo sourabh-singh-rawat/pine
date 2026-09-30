@@ -18,6 +18,7 @@ export const HttpServerOptionsSchema = Type.Object(
     cookie: Type.Optional(CookieOptionsSchema),
     openapi: Type.Optional(OpenApiOptionsSchema),
     multipart: Type.Optional(Type.Union([MultipartOptionsSchema, Type.Boolean()])),
+    bodyLimit: Type.Optional(Type.Integer({ minimum: 1 })),
     graphql: Type.Optional(Type.Unsafe<IGraphQLServer>(Type.Unknown())),
     routes: Type.Optional(Type.Unsafe<HttpRoute[]>(Type.Array(Type.Unknown()))),
     hooks: Type.Optional(Type.Unsafe<HttpHooks>(Type.Unknown())),

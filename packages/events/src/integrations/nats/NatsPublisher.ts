@@ -1,10 +1,10 @@
 import { JSONCodec } from "nats";
 import type { CloudEvent } from "../../cloud-events";
+import type { IBroker } from "./IBroker";
 import type { IPublisher } from "./IPublisher";
-import type { NatsBroker } from "./NatsBroker";
 
 export class NatsPublisher implements IPublisher {
-  constructor(private readonly broker: NatsBroker) {}
+  constructor(private readonly broker: IBroker) {}
 
   async send(event: CloudEvent): Promise<void> {
     if (!event.type) {

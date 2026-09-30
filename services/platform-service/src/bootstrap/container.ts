@@ -1,4 +1,5 @@
 import { HttpAuthorizationClient, type IAuthorizationClient } from "@pine/authorization";
+import type { IWorker } from "@pine/common";
 import { NatsPublisher, type IPublisher } from "@pine/events";
 import {
   ExponentialBackoffPolicy,
@@ -8,11 +9,9 @@ import {
   OutboxService,
   OutboxWorker,
   type IOutboxCleanupService,
-  type IOutboxCleanupWorker,
   type IOutboxPublisher,
   type IOutboxRepository,
   type IOutboxService,
-  type IOutboxWorker,
   type IRetryPolicy,
 } from "@pine/outbox";
 import { resolveIdentityFromHeaders, resolveTenantContextFromHeaders } from "@pine/identity";
@@ -59,14 +58,12 @@ container
   .bind<IOutboxService>(TYPES.OutboxService)
   .toConstantValue(new OutboxService(container.get<IOutboxRepository>(TYPES.OutboxRepository), container.get<IRetryPolicy>(TYPES.RetryPolicy)));
 container
-  .bind<IOutboxWorker>(TYPES.OutboxWorker)
+  .bind<IWorker>(TYPES.OutboxWorker)
   .toConstantValue(new OutboxWorker(container.get<IOutboxService>(TYPES.OutboxService), publisher satisfies IOutboxPublisher));
 container
   .bind<IOutboxCleanupService>(TYPES.OutboxCleanupService)
   .toConstantValue(new OutboxCleanupService(container.get<IOutboxRepository>(TYPES.OutboxRepository)));
-container
-  .bind<IOutboxCleanupWorker>(TYPES.OutboxCleanupWorker)
-  .toConstantValue(new OutboxCleanupWorker(container.get<IOutboxCleanupService>(TYPES.OutboxCleanupService)));
+container.bind<IWorker>(TYPES.OutboxCleanupWorker).toConstantValue(new OutboxCleanupWorker(container.get<IOutboxCleanupService>(TYPES.OutboxCleanupService)));
 container.bind<IAuthorizationClient>(TYPES.AuthorizationClient).toConstantValue(new HttpAuthorizationClient({ baseUrl: env.AUTHORIZATION_SERVICE_URL }));
 container.bind<ITenantRepository>(TYPES.TenantRepository).to(TenantRepository);
 container.bind<ITenantService>(TYPES.TenantService).to(TenantService);
@@ -102,7 +99,7 @@ export const bindHttpServer = async (): Promise<void> => {
         requestCert: true,
         rejectUnauthorized: true,
       },
-      cookie: { secret: env.JWT_SECRET },
+      cookie: {},
       openapi: {
         info: {
           title: "Platform Service",

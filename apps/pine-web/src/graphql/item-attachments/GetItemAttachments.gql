@@ -3,11 +3,17 @@ query GetItemAttachments($itemId: String!) {
     id
     itemId
     attachmentId
+    status
+    processing {
+      label
+    }
     name
     originalName
     mimeType
     size
     createdById
     createdAt
+    url
+    previewUrl
   }
 }

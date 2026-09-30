@@ -59,7 +59,7 @@ container.bind<IHttpServer>(TYPES.HttpServer).toConstantValue(
       requestCert: true,
       rejectUnauthorized: true,
     },
-    cookie: { secret: env.JWT_SECRET },
+    cookie: {},
     openapi: {
       info: {
         title: "Authorization Service",

@@ -128,6 +128,8 @@ export class AttachmentUploadService implements IAttachmentUploadService {
             scopeId: attachment.scopeId,
             tenantId: attachment.tenantId ?? undefined,
             currentVersionId: attachment.currentVersionId ?? undefined,
+            ...(attachment.operationId ? { operationId: attachment.operationId } : {}),
+            ...(attachment.metadata ? { metadata: attachment.metadata } : {}),
             status: attachment.status,
             securityStatus: attachment.securityStatus,
             createdBy: attachment.createdBy,

@@ -1,5 +1,46 @@
 # Changelog
 
+## v2026.09.30.1
+
+### Minor
+
+- 71ab521b: feat(attachments): add image processing service and HTTP scan callback — Sourabh Singh Rawat (`@pine/attachment`, `@pine/attachment-image-processing-service`, `@pine/attachment-scanner-service`, `@pine/attachment-service`, `@pine/common`, `@pine/events`)
+- 66f9531c: feat(events): stop creating JetStream streams in NatsBroker — Sourabh Singh Rawat (`@pine/events`)
+- 98a67509: feat(items): set attachment SCANNING/FAILED, sweep stuck, fail UX — Sourabh Singh Rawat (`@pine/attachment-scanner-service`, `@pine/attachment-service`, `@pine/common`, `@pine/data-gateway`, `@pine/events`, `@pine/identity-service`, `@pine/items-service`, `@pine/outbox`, `@pine/pine-web`, `@pine/platform-service`, `@pine/server`)
+- faed0294: feat(items): show processing skeleton while attachments scan — Sourabh Singh Rawat (`@pine/attachment-scanner-service`, `@pine/events`, `@pine/items-service`, `@pine/pine-web`)
+
+### Patch
+
+- 665cde7f: fix(attachments): lower AVIF encode effort to stabilize CI thumbnail tests — Sourabh Singh Rawat (`@pine/attachment-image-processing-service`)
+- c3787949: feat(attachments): store image metadata in attachment service — Sourabh Singh Rawat (`@pine/attachment`, `@pine/attachment-image-processing-service`, `@pine/attachment-service`)
+- 81f7d2e8: feat(attachments): switch thumbnail derivatives to lossy webp — Sourabh Singh Rawat (`@pine/attachment-image-processing-service`, `@pine/attachment-service`)
+- d2560eee: feat(attachments): switch thumbnail derivatives to avif — Sourabh Singh Rawat (`@pine/attachment-image-processing-service`, `@pine/attachment-service`)
+- b095dfc2: feat(attachments): serve thumbnail derivatives on attachment cards — Sourabh Singh Rawat (`@pine/attachment-image-processing-service`, `@pine/attachment-service`, `@pine/events`, `@pine/pine-web`)
+- 50d3aa8f: feat(gateway): add local dev reverse proxy and server attachment urls — Sourabh Singh Rawat (`@pine/items-service`, `@pine/pine-web`, `@pine/platform-web`)
+- cab6c45b: chore(security): remove local OpenBao secret loading — Sourabh Singh Rawat (`@pine/attachment-service`, `@pine/audit-service`, `@pine/identity-service`, `@pine/items-service`, `@pine/notification-service`, `@pine/platform-service`)
+- be61f50e: feat(security): per-app OpenBao tokens and expanded secret paths — Sourabh Singh Rawat, sourabh-singh-rawat (`@pine/attachment-service`, `@pine/audit-service`, `@pine/authorization-service`, `@pine/identity-service`, `@pine/items-service`, `@pine/notification-service`, `@pine/platform-service`, `@pine/server`)
+
+### Packages
+
+- `@pine/api-gateway@0.4.6`
+- `@pine/attachment@0.4.0`
+- `@pine/attachment-image-processing-service@0.1.0`
+- `@pine/attachment-scanner-service@0.1.4`
+- `@pine/attachment-service@0.6.1`
+- `@pine/audit-service@0.2.1`
+- `@pine/authorization-service@0.7.1`
+- `@pine/common@1.2.1`
+- `@pine/data-gateway@0.1.6`
+- `@pine/events@1.4.0`
+- `@pine/identity-service@0.7.1`
+- `@pine/items-service@1.4.0`
+- `@pine/notification-service@0.5.1`
+- `@pine/outbox@0.1.5`
+- `@pine/pine-web@0.10.2`
+- `@pine/platform-service@0.6.1`
+- `@pine/platform-web@0.5.6`
+- `@pine/server@1.1.6`
+
 ## v2026.09.27.2
 
 ### Minor

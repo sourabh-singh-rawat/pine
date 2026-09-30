@@ -1,3 +1,4 @@
+import type { IWorker } from "@pine/common";
 import { NatsPublisher, type IPublisher } from "@pine/events";
 import { resolveIdentityFromHeaders, resolveTenantContextFromHeaders } from "@pine/identity";
 import {
@@ -8,11 +9,9 @@ import {
   OutboxService,
   OutboxWorker,
   type IOutboxCleanupService,
-  type IOutboxCleanupWorker,
   type IOutboxPublisher,
   type IOutboxRepository,
   type IOutboxService,
-  type IOutboxWorker,
   type IRetryPolicy,
 } from "@pine/outbox";
 import { createGraphQLServer, createHttpServer, type IHttpServer } from "@pine/server";
@@ -24,9 +23,14 @@ import { TYPES } from "@/bootstrap/container-types";
 import { db } from "@/bootstrap/db";
 import { env } from "@/bootstrap/env";
 import { logger } from "@/bootstrap/logger";
-import { imageProcessingQueue } from "@/bootstrap/queue";
-import { redisClient } from "@/bootstrap/redis-client";
-import { AttachmentRepository, AttachmentScannedConsumer, AttachmentService, IAttachmentRepository, IAttachmentService } from "@/features/attachment";
+import { AttachmentRepository, AttachmentService, IAttachmentRepository, IAttachmentService } from "@/features/attachment";
+import { AttachmentDerivativeService, type IAttachmentDerivativeService } from "@/features/attachment-derivatives";
+import {
+  AttachmentMetadataRepository,
+  AttachmentMetadataService,
+  type IAttachmentMetadataRepository,
+  type IAttachmentMetadataService,
+} from "@/features/attachment-metadatas";
 import { AttachmentUploadRepository, AttachmentUploadService, IAttachmentUploadRepository, IAttachmentUploadService } from "@/features/attachment-upload";
 import { AttachmentIdentitySyncConsumer, IIdentityRepository, IdentityRepository } from "@/features/identities";
 import { AttachmentTenantSyncConsumer, ITenantRepository, TenantRepository } from "@/features/tenants";
@@ -41,8 +45,6 @@ const publisher = new NatsPublisher(broker);
 container.bind(TYPES.Database).toConstantValue(db);
 container.bind(TYPES.Logger).toConstantValue(logger);
 container.bind(TYPES.Broker).toConstantValue(broker);
-container.bind(TYPES.RedisClient).toConstantValue(redisClient);
-container.bind(TYPES.ImageProcessingQueue).toConstantValue(imageProcessingQueue);
 
 container.bind<IPublisher>(TYPES.Publisher).toConstantValue(publisher);
 container.bind<IOutboxRepository>(TYPES.OutboxRepository).toConstantValue(new OutboxRepository(db));
@@ -51,14 +53,12 @@ container
   .bind<IOutboxService>(TYPES.OutboxService)
   .toConstantValue(new OutboxService(container.get<IOutboxRepository>(TYPES.OutboxRepository), container.get<IRetryPolicy>(TYPES.RetryPolicy)));
 container
-  .bind<IOutboxWorker>(TYPES.OutboxWorker)
+  .bind<IWorker>(TYPES.OutboxWorker)
   .toConstantValue(new OutboxWorker(container.get<IOutboxService>(TYPES.OutboxService), publisher satisfies IOutboxPublisher));
 container
   .bind<IOutboxCleanupService>(TYPES.OutboxCleanupService)
   .toConstantValue(new OutboxCleanupService(container.get<IOutboxRepository>(TYPES.OutboxRepository)));
-container
-  .bind<IOutboxCleanupWorker>(TYPES.OutboxCleanupWorker)
-  .toConstantValue(new OutboxCleanupWorker(container.get<IOutboxCleanupService>(TYPES.OutboxCleanupService)));
+container.bind<IWorker>(TYPES.OutboxCleanupWorker).toConstantValue(new OutboxCleanupWorker(container.get<IOutboxCleanupService>(TYPES.OutboxCleanupService)));
 
 container.bind<IIdentityRepository>(TYPES.IdentityRepository).to(IdentityRepository);
 container.bind<ITenantRepository>(TYPES.TenantRepository).to(TenantRepository);
@@ -67,9 +67,11 @@ container.bind<IAttachmentUploadRepository>(TYPES.AttachmentUploadRepository).to
 container.bind<IObjectStorage>(TYPES.ObjectStorage).to(SeaweedObjectStorage);
 container.bind<IAttachmentUploadService>(TYPES.AttachmentUploadService).to(AttachmentUploadService);
 container.bind<IAttachmentService>(TYPES.AttachmentService).to(AttachmentService);
+container.bind<IAttachmentDerivativeService>(TYPES.AttachmentDerivativeService).to(AttachmentDerivativeService);
+container.bind<IAttachmentMetadataRepository>(TYPES.AttachmentMetadataRepository).to(AttachmentMetadataRepository);
+container.bind<IAttachmentMetadataService>(TYPES.AttachmentMetadataService).to(AttachmentMetadataService);
 container.bind<AttachmentIdentitySyncConsumer>(TYPES.AttachmentIdentitySyncConsumer).to(AttachmentIdentitySyncConsumer);
 container.bind<AttachmentTenantSyncConsumer>(TYPES.AttachmentTenantSyncConsumer).to(AttachmentTenantSyncConsumer);
-container.bind<AttachmentScannedConsumer>(TYPES.AttachmentScannedConsumer).to(AttachmentScannedConsumer);
 
 export const bindHttpServer = async (): Promise<void> => {
   const { schema } = await import("@/graphql/schema");
@@ -89,13 +91,14 @@ export const bindHttpServer = async (): Promise<void> => {
         requestCert: true,
         rejectUnauthorized: true,
       },
-      cookie: { secret: env.JWT_SECRET },
+      cookie: {},
       cors: {
         credentials: true,
         origin: [env.PINE_WEB_URL, env.IDENTITY_WEB_URL, env.VITE_PLATFORM_WEB_URL],
         methods: ["GET", "HEAD", "PUT", "POST", "DELETE", "PATCH", "OPTIONS"],
       },
-      multipart: { fileSize: 32000000 },
+      bodyLimit: env.ATTACHMENT_UPLOAD_MAX_BYTES,
+      multipart: { fileSize: env.ATTACHMENT_UPLOAD_MAX_BYTES },
       openapi: {
         info: {
           title: "Attachment Service",

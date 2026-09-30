@@ -31,6 +31,7 @@ container.bind<IHttpServer>(TYPES.HttpServer).toConstantValue(
       environment: resolveEnvironment(env.NODE_ENV),
       version: 1,
     },
+    bodyLimit: env.ATTACHMENT_UPLOAD_MAX_BYTES,
     proxy: {
       undici: {
         headersTimeout: 60_000,

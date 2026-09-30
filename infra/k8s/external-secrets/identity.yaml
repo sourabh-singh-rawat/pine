@@ -1,0 +1,17 @@
+apiVersion: external-secrets.io/v1
+kind: ExternalSecret
+metadata:
+  name: identity
+spec:
+  refreshInterval: 1m
+  secretStoreRef:
+    name: openbao
+    kind: SecretStore
+  target:
+    name: identity-secrets
+    creationPolicy: Owner
+  data:
+    - secretKey: POSTGRES_IDENTITY_PASSWORD
+      remoteRef:
+        key: pine/identity
+        property: postgres_identity_password

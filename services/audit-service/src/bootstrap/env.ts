@@ -18,7 +18,6 @@ export const EnvSchema = Type.Object({
   AUDIT_DATABASE_URL: Type.String({ minLength: 1 }),
   AUTHORIZATION_SERVICE_URL: Type.String({ default: "https://127.0.0.1:5006" }),
   NATS_URL: Type.String({ default: "nats://localhost:4222" }),
-  JWT_SECRET: Type.String({ minLength: 1 }),
 });
 
 export type Env = Type.Static<typeof EnvSchema>;

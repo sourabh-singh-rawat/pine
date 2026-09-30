@@ -1,19 +1,22 @@
 services:
-  redis:
-    image: redis:8.8.0
+  gateway:
+    image: nginx:alpine
     restart: unless-stopped
-    command: redis-server --appendonly yes --replica-read-only no --maxmemory 100mb --maxmemory-policy allkeys-lru
     ports:
-      - 6380:6379
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ../../.local/tls:/etc/nginx/tls:ro
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     deploy:
       resources:
         limits:
-          cpus: "0.50"
-          memory: 64M
+          cpus: "0.25"
+          memory: 128M
         reservations:
-          cpus: "0.10"
+          cpus: "0.05"
           memory: 32M
-
   nats:
     image: nats:2.14.3
     restart: unless-stopped
@@ -39,10 +42,12 @@ services:
   clamav:
     image: clamav/clamav:latest
     restart: unless-stopped
+    entrypoint: ["/bin/sh", "/clamav-entrypoint.sh"]
     ports:
       - "3310:3310"
     volumes:
       - ../data/docker/clamav-data:/var/lib/clamav
+      - ./clamav/entrypoint.sh:/clamav-entrypoint.sh:ro
     deploy:
       resources:
         limits:
@@ -105,7 +110,6 @@ services:
       - POSTGRES_ISSUES_PASSWORD=${POSTGRES_ISSUES_PASSWORD}
       - POSTGRES_NOTIFICATION_PASSWORD=${POSTGRES_NOTIFICATION_PASSWORD}
       - POSTGRES_ATTACHMENT_PASSWORD=${POSTGRES_ATTACHMENT_PASSWORD}
-      - POSTGRES_ATTACHMENT_SCANNER_PASSWORD=${POSTGRES_ATTACHMENT_SCANNER_PASSWORD}
       - POSTGRES_AUDIT_PASSWORD=${POSTGRES_AUDIT_PASSWORD}
     ports:
       - 5555:80

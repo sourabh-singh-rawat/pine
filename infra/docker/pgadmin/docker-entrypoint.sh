@@ -17,7 +17,6 @@ cat > "$PGPASS_FILE" <<EOF
 identity-postgres:5432:*:identity:${POSTGRES_IDENTITY_PASSWORD}
 issues-postgres:5432:*:issues:${POSTGRES_ISSUES_PASSWORD}
 attachment-postgres:5432:*:attachment:${POSTGRES_ATTACHMENT_PASSWORD}
-attachment-scanner-postgres:5432:*:attachment_scanner:${POSTGRES_ATTACHMENT_SCANNER_PASSWORD}
 notification-postgres:5432:*:notification:${POSTGRES_NOTIFICATION_PASSWORD}
 platform-postgres:5432:*:platform:${POSTGRES_PLATFORM_PASSWORD}
 audit-postgres:5432:*:audit:${POSTGRES_AUDIT_PASSWORD}

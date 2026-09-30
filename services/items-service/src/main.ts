@@ -1,4 +1,4 @@
-import { configureTls } from "@pine/common";
+import { configureTls, type IWorker } from "@pine/common";
 import { env } from "@/bootstrap/env";
 import "reflect-metadata";
 
@@ -9,12 +9,11 @@ configureTls({
 });
 
 import type { IHttpServer } from "@pine/server";
-import type { IOutboxCleanupWorker, IOutboxWorker } from "@pine/outbox";
 import { bindHttpServer, broker, container, initializeDb, TYPES } from "@/bootstrap";
 import { writeSchemaToDist } from "@/bootstrap/graphql";
 import { logger } from "@/bootstrap/logger";
 import { ItemsIdentitySyncConsumer } from "@/features/identities";
-import { ItemAttachmentCreatedConsumer } from "@/features/attachments";
+import { ItemAttachmentCreatedConsumer } from "@/features/item-attachments";
 
 export { container, db } from "@/bootstrap";
 export { builder, createContext } from "@/graphql";
@@ -33,8 +32,9 @@ const main = async () => {
 
   await broker.init();
 
-  void container.get<IOutboxWorker>(TYPES.OutboxWorker).start();
-  void container.get<IOutboxCleanupWorker>(TYPES.OutboxCleanupWorker).start();
+  void container.get<IWorker>(TYPES.OutboxWorker).start();
+  void container.get<IWorker>(TYPES.OutboxCleanupWorker).start();
+  void container.get<IWorker>(TYPES.ItemAttachmentSweepWorker).start();
   void container.get<ItemsIdentitySyncConsumer>(TYPES.ItemsIdentitySyncConsumer).start();
   void container.get<ItemAttachmentCreatedConsumer>(TYPES.ItemAttachmentCreatedConsumer).start();
 };

@@ -14,23 +14,20 @@ export const EnvSchema = Type.Object({
   ATTACHMENT_SCANNER_SERVICE_TLS_KEY_PATH: Type.String({ minLength: 1 }),
   ATTACHMENT_SCANNER_SERVICE_TLS_CERT_PATH: Type.String({ minLength: 1 }),
   CA_CERT_PATH: Type.String({ minLength: 1 }),
-  ATTACHMENT_SCANNER_DATABASE_URL: Type.String({ minLength: 1 }),
   ATTACHMENT_SERVICE_URL: Type.String({ default: "https://127.0.0.1:5003" }),
   NATS_URL: Type.String({ default: "nats://localhost:4222" }),
   CLAMAV_HOST: Type.String({ default: "localhost" }),
   CLAMAV_PORT: Type.Number({ default: 3310 }),
+  CLAMAV_TIMEOUT_MS: Type.Number({ default: 600_000 }),
 });
 
 export type Env = Type.Static<typeof EnvSchema>;
 
 const parseEnv = (): Env => {
-  const withDefaults = Value.Default(EnvSchema, {
-    ATTACHMENT_SCANNER_DATABASE_URL:
-      process.env.ATTACHMENT_SCANNER_DATABASE_URL ?? process.env.ATTACHMENT_DATABASE_URL,
-    ...process.env,
-  });
+  const withDefaults = Value.Default(EnvSchema, { ...process.env });
   const cleaned = Value.Clean(EnvSchema, withDefaults);
-  return Value.Parse(EnvSchema, cleaned);
+  const converted = Value.Convert(EnvSchema, cleaned);
+  return Value.Parse(EnvSchema, converted);
 };
 
 export const env = parseEnv();

@@ -16,7 +16,7 @@ Global guardrails (migrations, changesets, naming, no `as`/`any`, arrows vs clas
 | [http-route](./http-route/SKILL.md)           | `HttpRoute` / `operationId` / OpenAPI                      |
 | [events](./events/SKILL.md)                   | NATS publish / consumers                                   |
 | [outbox](./outbox/SKILL.md)                   | `schedule` + `OutboxWorker`                                |
-| [workers](./workers/SKILL.md)                 | Background process kind (outbox / NATS / scanner / BullMQ) |
+| [workers](./workers/SKILL.md)                 | Background process kind (outbox / NATS / dedicated worker) |
 | [authorization](./authorization/SKILL.md)     | `requirePermission`, Keto, relation events                 |
 | [identity-auth](./identity-auth/SKILL.md)     | Kratos/Hydra, session, OAuth                               |
 | [testing](./testing/SKILL.md)                 | Vitest, constructor doubles                                |

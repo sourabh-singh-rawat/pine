@@ -18,7 +18,6 @@ export const EnvSchema = Type.Object({
   AUTHORIZATION_SERVICE_URL: Type.String({ default: "https://127.0.0.1:5006" }),
   PLATFORM_DATABASE_URL: Type.String({ minLength: 1 }),
   NATS_URL: Type.String({ default: "nats://localhost:4222" }),
-  JWT_SECRET: Type.String({ minLength: 1 }),
   PINE_WEB_URL: Type.String({ default: "https://localhost:3001" }),
   IDENTITY_WEB_URL: Type.String({ default: "https://localhost:3000" }),
   VITE_PLATFORM_WEB_URL: Type.String({ default: "https://localhost:3002" }),

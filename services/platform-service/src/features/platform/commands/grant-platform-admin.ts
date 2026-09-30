@@ -1,8 +1,7 @@
 import "reflect-metadata";
 
 import { ADMIN } from "@pine/authorization";
-import { resolveIdentityId } from "@pine/common";
-import type { IOutboxWorker } from "@pine/outbox";
+import { resolveIdentityId, type IWorker } from "@pine/common";
 import { broker, closeDb, container, initializeDb, TYPES } from "@/bootstrap";
 import { GrantPlatformAdmin } from "@/features/platform/commands/GrantPlatformAdmin";
 import type { IPlatformRelationService } from "@/features/platform/services/IPlatformRelationService";
@@ -22,7 +21,7 @@ const main = async (): Promise<void> => {
   await command.execute(identityId);
 
   await broker.init();
-  await container.get<IOutboxWorker>(TYPES.OutboxWorker).tick();
+  await container.get<IWorker>(TYPES.OutboxWorker).tick();
 
   console.log(`grant-platform-admin: assigned relation=${ADMIN} identity=${identityId}`);
 };

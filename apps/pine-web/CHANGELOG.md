@@ -1,5 +1,17 @@
 # @pine/pine-web
 
+## 0.10.2
+
+### Patch Changes
+
+- b095dfc: feat(attachments): serve thumbnail derivatives on attachment cards
+- 50d3aa8: feat(gateway): add local dev reverse proxy and server attachment urls
+- 98a6750: feat(items): set attachment SCANNING/FAILED, sweep stuck, fail UX
+- faed029: feat(items): show processing skeleton while attachments scan
+- Updated dependencies [71ab521]
+- Updated dependencies [98a6750]
+  - @pine/common@1.2.1
+
 ## 0.10.1
 
 ### Patch Changes

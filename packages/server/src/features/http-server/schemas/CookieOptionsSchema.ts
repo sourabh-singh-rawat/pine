@@ -2,7 +2,7 @@ import Type from "typebox";
 
 export const CookieOptionsSchema = Type.Object(
   {
-    secret: Type.String(),
+    secret: Type.Optional(Type.String()),
     path: Type.Optional(Type.String()),
     httpOnly: Type.Optional(Type.Boolean()),
     sameSite: Type.Optional(Type.Boolean()),

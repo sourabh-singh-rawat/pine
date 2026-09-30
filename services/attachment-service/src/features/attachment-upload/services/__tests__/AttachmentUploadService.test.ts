@@ -146,7 +146,10 @@ describe("AttachmentUploadService", () => {
 
   describe("uploadToTarget", () => {
     it("puts object to storage, creates attachment, marks upload completed, and schedules outbox event in transaction", async () => {
-      const record = makeRecord();
+      const record = makeRecord({
+        operationId: "upload-req-1",
+        metadata: { itemId: "item-1", uploadRequestId: "upload-req-1" },
+      });
       vi.mocked(attachmentUploads.findById).mockResolvedValue(record);
 
       const createdAttachment: Attachment = {
@@ -155,8 +158,8 @@ describe("AttachmentUploadService", () => {
         scopeId: "org-1",
         tenantId: "tenant-1",
         currentVersionId: "ver-1",
-        operationId: null,
-        metadata: null,
+        operationId: "upload-req-1",
+        metadata: { itemId: "item-1", uploadRequestId: "upload-req-1" },
         status: ATTACHMENT_STATUS.QUARANTINED,
         securityStatus: ATTACHMENT_SECURITY_STATUS.PENDING,
         createdBy: "user-1",
@@ -185,6 +188,8 @@ describe("AttachmentUploadService", () => {
         data,
         storageProvider: "seaweed",
         storageObjectKey: "quarantine/workspace/org-1/upload-1",
+        operationId: "upload-req-1",
+        metadata: { itemId: "item-1", uploadRequestId: "upload-req-1" },
         createdBy: "user-1",
         tx: mockTx,
       });
@@ -206,6 +211,8 @@ describe("AttachmentUploadService", () => {
               scopeId: "org-1",
               tenantId: "tenant-1",
               currentVersionId: "ver-1",
+              operationId: "upload-req-1",
+              metadata: { itemId: "item-1", uploadRequestId: "upload-req-1" },
               status: ATTACHMENT_STATUS.QUARANTINED,
               securityStatus: ATTACHMENT_SECURITY_STATUS.PENDING,
               createdBy: "user-1",

@@ -20,7 +20,6 @@ export const EnvSchema = Type.Object({
   DATA_GATEWAY_URL: Type.String({ default: "https://localhost:4001" }),
   IDENTITY_DATABASE_URL: Type.String({ minLength: 1 }),
   NATS_URL: Type.String({ default: "nats://localhost:4222" }),
-  JWT_SECRET: Type.String({ minLength: 1 }),
   IDENTITY_WEB_URL: Type.String({ default: "https://localhost:3000" }),
   PINE_WEB_URL: Type.String({ default: "https://localhost:3001" }),
   VITE_PLATFORM_WEB_URL: Type.String({ default: "https://localhost:3002" }),

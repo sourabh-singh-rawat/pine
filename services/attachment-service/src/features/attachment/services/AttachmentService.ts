@@ -36,14 +36,11 @@ export type AttachmentDatabase = {
 @injectable()
 export class AttachmentService implements IAttachmentService {
   constructor(
-    @inject(TYPES.Database)
-    private readonly db: AttachmentDatabase,
+    @inject(TYPES.Database) private readonly db: AttachmentDatabase,
     @inject(TYPES.AttachmentRepository)
     private readonly attachmentRepository: IAttachmentRepository,
-    @inject(TYPES.ObjectStorage)
-    private readonly objectStorage: IObjectStorage,
-    @inject(TYPES.OutboxService)
-    private readonly outboxService: IOutboxService,
+    @inject(TYPES.ObjectStorage) private readonly objectStorage: IObjectStorage,
+    @inject(TYPES.OutboxService) private readonly outboxService: IOutboxService,
   ) {}
 
   async createFromUpload(input: CreateAttachmentFromUploadInput): Promise<Attachment> {
@@ -87,34 +84,23 @@ export class AttachmentService implements IAttachmentService {
       return attachment;
     };
 
-    if (input.tx) {
-      return execute(input.tx);
-    }
-
-    return this.db.transaction(execute);
+    return input.tx ? execute(input.tx) : this.db.transaction(execute);
   }
 
   async delete(options: DeleteAttachmentOptions): Promise<void> {
     const { id, tx } = options;
     const attachment = await this.attachmentRepository.findById(id, { tx });
-    if (!attachment) {
-      throw new NotFoundError("Attachment");
-    }
-
+    if (!attachment) throw new NotFoundError("Attachment");
     await this.attachmentRepository.deleteById(id, { tx });
   }
 
   async getContent(input: GetAttachmentVersionContentInput): Promise<AttachmentVersionContent> {
     const { attachmentId, versionId } = input;
     const attachment = await this.attachmentRepository.findById(attachmentId);
-    if (!attachment) {
-      throw new NotFoundError("Attachment");
-    }
+    if (!attachment) throw new NotFoundError("Attachment");
 
     const version = await this.attachmentRepository.findVersionById(attachmentId, versionId);
-    if (!version) {
-      throw new NotFoundError("AttachmentVersion");
-    }
+    if (!version) throw new NotFoundError("AttachmentVersion");
 
     const object = await this.objectStorage.getObject(version.storageObjectKey);
 
@@ -143,25 +129,25 @@ export class AttachmentService implements IAttachmentService {
 
     const execute = async (tx: DbClient): Promise<Attachment | null> => {
       const existing = await this.attachmentRepository.findById(input.id, { tx });
-      if (!existing) {
-        return null;
-      }
+      if (!existing) return null;
 
-      if (securityStatus === ATTACHMENT_SECURITY_STATUS.CLEAN && existing.currentVersionId) {
-        const version = await this.attachmentRepository.findVersionById(
-          existing.id,
-          existing.currentVersionId,
-          { tx },
+      const version = existing.currentVersionId
+        ? await this.attachmentRepository.findVersionById(existing.id, existing.currentVersionId, {
+            tx,
+          })
+        : null;
+
+      if (
+        securityStatus === ATTACHMENT_SECURITY_STATUS.CLEAN &&
+        version &&
+        version.storageObjectKey.startsWith(ATTACHMENT_STORAGE_ZONE.QUARANTINE)
+      ) {
+        const trustedKey = version.storageObjectKey.replace(
+          ATTACHMENT_STORAGE_ZONE.QUARANTINE,
+          ATTACHMENT_STORAGE_ZONE.TRUSTED,
         );
-
-        if (version && version.storageObjectKey.startsWith(ATTACHMENT_STORAGE_ZONE.QUARANTINE)) {
-          const trustedKey = version.storageObjectKey.replace(
-            ATTACHMENT_STORAGE_ZONE.QUARANTINE,
-            ATTACHMENT_STORAGE_ZONE.TRUSTED,
-          );
-          await this.objectStorage.moveObject(version.storageObjectKey, trustedKey);
-          await this.attachmentRepository.updateVersionStorageKey(version.id, trustedKey, { tx });
-        }
+        await this.objectStorage.moveObject(version.storageObjectKey, trustedKey);
+        await this.attachmentRepository.updateVersionStorageKey(version.id, trustedKey, { tx });
       }
 
       const updated = await this.attachmentRepository.updateStatus(
@@ -170,7 +156,11 @@ export class AttachmentService implements IAttachmentService {
         { tx },
       );
 
-      if (updated && updated.status === ATTACHMENT_STATUS.AVAILABLE) {
+      if (
+        updated &&
+        (updated.status === ATTACHMENT_STATUS.AVAILABLE ||
+          updated.status === ATTACHMENT_STATUS.REJECTED)
+      ) {
         const event: CloudEvent<AttachmentCreatedData> = createCloudEvent({
           type: AttachmentCreatedEvent.type,
           version: AttachmentCreatedEvent.version,
@@ -185,6 +175,7 @@ export class AttachmentService implements IAttachmentService {
             ...(updated.tenantId ? { tenantId: updated.tenantId } : {}),
             ...(updated.currentVersionId ? { currentVersionId: updated.currentVersionId } : {}),
             ...(updated.operationId ? { operationId: updated.operationId } : {}),
+            ...(version?.contentType ? { contentType: version.contentType } : {}),
             ...(updated.metadata ? { metadata: updated.metadata } : {}),
             status: updated.status,
             securityStatus: updated.securityStatus,
@@ -209,10 +200,6 @@ export class AttachmentService implements IAttachmentService {
       return updated;
     };
 
-    if (input.tx) {
-      return execute(input.tx);
-    }
-
-    return this.db.transaction(execute);
+    return input.tx ? execute(input.tx) : this.db.transaction(execute);
   }
 }

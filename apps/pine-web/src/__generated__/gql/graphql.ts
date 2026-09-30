@@ -249,7 +249,16 @@ export type ItemAttachmentObject = {
   mimeType?: Maybe<Scalars['String']['output']>;
   name?: Maybe<Scalars['String']['output']>;
   originalName?: Maybe<Scalars['String']['output']>;
+  previewUrl?: Maybe<Scalars['String']['output']>;
+  processing?: Maybe<ItemAttachmentProcessingObject>;
   size?: Maybe<Scalars['Int']['output']>;
+  status?: Maybe<Scalars['String']['output']>;
+  url?: Maybe<Scalars['String']['output']>;
+};
+
+export type ItemAttachmentProcessingObject = {
+  __typename?: 'ItemAttachmentProcessingObject';
+  label?: Maybe<Scalars['String']['output']>;
 };
 
 export type ItemAttachmentUploadHeaderObject = {
