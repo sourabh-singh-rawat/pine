@@ -1,5 +1,4 @@
 ---
-"@pine/security": minor
 "@pine/server": patch
 "@pine/attachment-service": patch
 "@pine/audit-service": patch
