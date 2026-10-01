@@ -13,6 +13,7 @@
         "attach: notification-service",
         "attach: platform-service",
         "attach: authorization-service",
+        "attach: oauth-service",
         "attach: audit-service",
         "attach: api-gateway",
         "attach: data-gateway"
@@ -120,6 +121,18 @@
       "request": "attach",
       "address": "127.0.0.1",
       "port": 9236,
+      "restart": true,
+      "enableContentValidation": false,
+      "sourceMaps": true,
+      "resolveSourceMapLocations": ["${workspaceFolder}/**", "!**/node_modules/**"],
+      "skipFiles": ["<node_internals>/**", "**/node_modules/**"]
+    },
+    {
+      "name": "attach: oauth-service",
+      "type": "node",
+      "request": "attach",
+      "address": "127.0.0.1",
+      "port": 9241,
       "restart": true,
       "enableContentValidation": false,
       "sourceMaps": true,

@@ -1,0 +1,14 @@
+export const TYPES = {
+  Logger: Symbol.for("Logger"),
+  HttpServer: Symbol.for("IHttpServer"),
+  HydraClient: Symbol.for("HydraClient"),
+  OAuthFlowProvider: Symbol.for("IOAuthFlowProvider"),
+  OAuthTokenProvider: Symbol.for("IOAuthTokenProvider"),
+  OAuthClientProvider: Symbol.for("IOAuthClientProvider"),
+  AuthorizeService: Symbol.for("IAuthorizeService"),
+  ConsentService: Symbol.for("IConsentService"),
+  LoginService: Symbol.for("ILoginService"),
+  TokenService: Symbol.for("ITokenService"),
+  ClientService: Symbol.for("IClientService"),
+  ClientSeederService: Symbol.for("IClientSeederService"),
+} as const;

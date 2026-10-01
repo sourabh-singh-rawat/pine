@@ -35,7 +35,7 @@ export const {
     };
 
     return client.buildUrl({
-      url: "/identity/oauth/authorize",
+      url: "/oauth/authorize",
       query,
     });
   },

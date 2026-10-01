@@ -23,6 +23,7 @@ env:
   NODE_ENV: production
   API_GATEWAY_URL: https://api-gateway.pine.svc:4000
   IDENTITY_SERVICE_URL: https://identity.pine.svc:5000
+  OAUTH_SERVICE_URL: https://oauth.pine.svc:5008
   ATTACHMENT_SERVICE_URL: https://attachment.pine.svc:5003
   AUTHORIZATION_SERVICE_URL: https://authorization.pine.svc:5006
   API_GATEWAY_TLS_KEY_PATH: /certs/tls.key

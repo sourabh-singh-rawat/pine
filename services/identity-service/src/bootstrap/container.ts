@@ -24,7 +24,6 @@ import { broker } from "@/bootstrap/broker";
 import { TYPES } from "@/bootstrap/container-types";
 import { db } from "@/bootstrap/db";
 import { env } from "@/bootstrap/env";
-import { hydraClient } from "@/bootstrap/hydra-client";
 import { kratosClient } from "@/bootstrap/kratos-client";
 import { logger } from "@/bootstrap/logger";
 import { createContext } from "@/graphql";
@@ -34,10 +33,8 @@ import { ISignInService, SignInService } from "@/features/signin";
 import { ILogoutService, LogoutService } from "@/features/logout";
 import { IMeService, MeService } from "@/features/me";
 import { ISessionService, SessionService } from "@/features/session";
-import { IOAuthService, OAuthService } from "@/features/oauth";
 import { IRegistrationService, RegistrationService } from "@/features/registration";
 import { IVerificationService, VerificationService } from "@/features/verification";
-import { ClientSeederService, ClientService, IClientSeederService, IClientService } from "@/features/clients";
 import { IIdentityRepository, IIdentityService, IdentityRepository, IdentityService } from "@/features/identities";
 import {
   IProfilePhotoUploadRequestRepository,
@@ -59,14 +56,7 @@ import {
   KratosSessionProvider,
   KratosVerificationProvider,
 } from "@/integrations/identity";
-import {
-  HydraOAuthClientProvider,
-  HydraOAuthFlowProvider,
-  HydraOAuthTokenProvider,
-  IOAuthClientProvider,
-  IOAuthFlowProvider,
-  IOAuthTokenProvider,
-} from "@/integrations/oauth";
+import { HttpOAuthFlowProvider, HttpOAuthTokenProvider, type IOAuthFlowProvider, type IOAuthTokenProvider } from "@/integrations/oauth";
 import { routes } from "@/routes";
 
 export const container = new Container({ defaultScope: "Singleton" });
@@ -88,7 +78,6 @@ container
   .toConstantValue(new OutboxCleanupService(container.get<IOutboxRepository>(TYPES.OutboxRepository)));
 container.bind<IWorker>(TYPES.OutboxCleanupWorker).toConstantValue(new OutboxCleanupWorker(container.get<IOutboxCleanupService>(TYPES.OutboxCleanupService)));
 container.bind(TYPES.KratosClient).toConstantValue(kratosClient);
-container.bind(TYPES.HydraClient).toConstantValue(hydraClient);
 container.bind(TYPES.KratosErrorMapper).to(KratosErrorMapper);
 
 container.bind<IIdentityRepository>(TYPES.IdentityRepository).to(IdentityRepository);
@@ -99,21 +88,17 @@ container.bind<IProfileService>(TYPES.ProfileService).to(ProfileService);
 container.bind<ProfilePhotoAttachmentConsumer>(TYPES.ProfilePhotoAttachmentConsumer).to(ProfilePhotoAttachmentConsumer);
 container.bind<IAuthorizationClient>(TYPES.AuthorizationClient).toConstantValue(new HttpAuthorizationClient({ baseUrl: env.AUTHORIZATION_SERVICE_URL }));
 container.bind<IAttachmentClient>(TYPES.AttachmentClient).toConstantValue(new HttpAttachmentClient({ baseUrl: env.ATTACHMENT_SERVICE_URL }));
-container.bind<IClientService>(TYPES.ClientService).to(ClientService);
-container.bind<IClientSeederService>(TYPES.ClientSeederService).to(ClientSeederService);
 container.bind<IRegistrationProvider>(TYPES.RegistrationProvider).to(KratosRegistrationProvider);
 container.bind<ISessionProvider>(TYPES.SessionProvider).to(KratosSessionProvider);
 container.bind<IIdentityAdminProvider>(TYPES.IdentityAdminProvider).to(KratosIdentityAdminProvider);
 container.bind<IVerificationProvider>(TYPES.VerificationProvider).to(KratosVerificationProvider);
-container.bind<IOAuthFlowProvider>(TYPES.OAuthFlowProvider).to(HydraOAuthFlowProvider);
-container.bind<IOAuthTokenProvider>(TYPES.OAuthTokenProvider).to(HydraOAuthTokenProvider);
-container.bind<IOAuthClientProvider>(TYPES.OAuthClientProvider).to(HydraOAuthClientProvider);
+container.bind<IOAuthTokenProvider>(TYPES.OAuthTokenProvider).toConstantValue(new HttpOAuthTokenProvider({ baseUrl: env.OAUTH_SERVICE_URL }));
+container.bind<IOAuthFlowProvider>(TYPES.OAuthFlowProvider).toConstantValue(new HttpOAuthFlowProvider({ baseUrl: env.OAUTH_SERVICE_URL }));
 container.bind<IRegistrationService>(TYPES.RegistrationService).to(RegistrationService);
 container.bind<ISignInService>(TYPES.SignInService).to(SignInService);
 container.bind<ILogoutService>(TYPES.LogoutService).to(LogoutService);
 container.bind<IMeService>(TYPES.MeService).to(MeService);
 container.bind<ISessionService>(TYPES.SessionService).to(SessionService);
-container.bind<IOAuthService>(TYPES.OAuthService).to(OAuthService);
 container.bind<IAdminService>(TYPES.AdminService).to(AdminService);
 container.bind<IVerificationService>(TYPES.VerificationService).to(VerificationService);
 

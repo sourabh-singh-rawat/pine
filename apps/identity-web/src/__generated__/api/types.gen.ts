@@ -142,7 +142,7 @@ export type AuthorizeData = {
         code_challenge_method?: 'S256' | 'plain';
         nonce?: string;
     };
-    url: '/identity/oauth/authorize';
+    url: '/oauth/authorize';
 };
 
 export type GetConsentChallengeData = {
@@ -151,7 +151,7 @@ export type GetConsentChallengeData = {
     query: {
         consent_challenge: string;
     };
-    url: '/identity/oauth/consent';
+    url: '/oauth/consent';
 };
 
 export type GetConsentChallengeResponses = {
@@ -186,7 +186,7 @@ export type AcceptConsentChallengeData = {
     query: {
         consent_challenge: string;
     };
-    url: '/identity/oauth/consent/accept';
+    url: '/oauth/consent/accept';
 };
 
 export type AcceptConsentChallengeResponses = {
@@ -209,7 +209,7 @@ export type RejectConsentChallengeData = {
     query: {
         consent_challenge: string;
     };
-    url: '/identity/oauth/consent/reject';
+    url: '/oauth/consent/reject';
 };
 
 export type RejectConsentChallengeResponses = {
@@ -233,7 +233,7 @@ export type ExchangeTokenData = {
     };
     path?: never;
     query?: never;
-    url: '/identity/oauth/token';
+    url: '/oauth/token';
 };
 
 export type ExchangeTokenResponses = {

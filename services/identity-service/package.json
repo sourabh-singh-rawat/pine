@@ -2,7 +2,7 @@
   "$schema": "https://json.schemastore.org/package.json",
   "name": "@pine/identity-service",
   "version": "0.7.1",
-  "description": "Identity service — authentication and authorization",
+  "description": "Identity service — authentication, sessions, and accounts",
   "keywords": [
     "authentication",
     "identity",
@@ -33,7 +33,6 @@
     "cli:bootstrap-admin": "tsx --env-file=../../.env src/cli/bootstrap-admin.ts"
   },
   "dependencies": {
-    "@ory/hydra-client": "26.2.0",
     "@ory/kratos-client": "26.2.0",
     "@pine/attachment": "workspace:^",
     "@pine/authorization": "workspace:^",
@@ -46,7 +45,6 @@
     "@pine/server": "workspace:^",
     "@pothos/core": "^4.13.1",
     "@pothos/plugin-scope-auth": "^4.1.7",
-    "axios": "^1.18.1",
     "drizzle-orm": "0.45.2",
     "graphql": "16.14.2",
     "graphql-scalars": "^1.25.0",
