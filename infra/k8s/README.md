@@ -11,7 +11,7 @@ Install/runbook for **one OCI Ampere A1 VM + single-node k3s**. Re-run the same 
 ```text
 infra/k8s/
   pine/              Namespace pine + ReferenceGrant
-  envoy/             Gateway + HTTPRoutes
+  envoy/             Gateway + HTTPRoutes + BackendTLSPolicy
   openbao/           (Helm only — no apply YAMLs)
   pgo/               Namespace pine-data + PostgresCluster YAMLs (incl. ory)
   external-secrets/  SecretStore + ExternalSecrets
@@ -204,6 +204,13 @@ kubectl apply -f ./k8s/envoy/httproutes.yaml
 - Gateway `pine` in `pine-gateway` (HTTP :80), class `eg`
 - `/api` → `api-gateway.pine:4000`, `/data` → `data-gateway.pine:4001` (prefix stripped)
 - ReferenceGrant lets routes target Services in `pine`
+- After `pnpm tls:k8s` (ConfigMap `pine-ca` in `pine`), apply backend TLS so Envoy speaks HTTPS to the gateways:
+
+```bash
+kubectl apply -f ./k8s/envoy/backend-tls.yaml
+```
+
+`BackendTLSPolicy` targets Services `api-gateway` / `data-gateway` (port name `https`) with SNI `*.pine.svc` and CA from ConfigMap `pine-ca`. Without this, curls to `/api` and `/data` return 503 while the pods are healthy.
 
 ---
 
@@ -325,11 +332,11 @@ done
 
 ### Copy PGO passwords + database URLs into OpenBao (host, once)
 
-Needs `jq` on the host. Builds each `*_DATABASE_URL` from the PGO `*-pguser-*` Secret `uri` field and appends `sslmode=require` (same pattern as Ory DSNs in §7.2). Set token once, then run:
+Needs `jq` on the host. Builds each `*_DATABASE_URL` from the PGO `*-pguser-*` Secret `uri` field and appends `sslmode=no-verify`. Node `pg` treats `sslmode=require` like `verify-full`, which fails against PGO’s self-signed cluster CA with `SELF_SIGNED_CERT_IN_CHAIN`. Ory DSNs in §7.2 still use `sslmode=require` (Go/libpq). Set token once, then run:
 
 ```bash
 export BAO_TOKEN='<ROOT_TOKEN>'
-pgo_db_url() { local uri dsn; uri="$(kubectl get secret "$1" -n pine-data -o jsonpath='{.data.uri}' | base64 -d)"; [ -n "$uri" ] || { echo "missing uri in $1" >&2; return 1; }; case "$uri" in *\?*) dsn="${uri}&sslmode=require" ;; *) dsn="${uri}?sslmode=require" ;; esac; printf '%s' "$dsn"; }
+pgo_db_url() { local uri dsn; uri="$(kubectl get secret "$1" -n pine-data -o jsonpath='{.data.uri}' | base64 -d)"; [ -n "$uri" ] || { echo "missing uri in $1" >&2; return 1; }; case "$uri" in *\?*) dsn="${uri}&sslmode=no-verify" ;; *) dsn="${uri}?sslmode=no-verify" ;; esac; printf '%s' "$dsn"; }
 pw=$(kubectl get secret identity-pguser-identity -n pine-data -o jsonpath='{.data.password}' | base64 -d); dburl=$(pgo_db_url identity-pguser-identity); jq -nc --arg pw "$pw" --arg dburl "$dburl" '{postgres_identity_password:$pw,identity_database_url:$dburl}' | kubectl exec -i -n openbao openbao-0 -- env BAO_ADDR=http://127.0.0.1:8200 BAO_TOKEN="$BAO_TOKEN" bao kv put secret/pine/identity -
 pw=$(kubectl get secret items-pguser-issues -n pine-data -o jsonpath='{.data.password}' | base64 -d); dburl=$(pgo_db_url items-pguser-issues); jq -nc --arg pw "$pw" --arg dburl "$dburl" '{postgres_issues_password:$pw,issues_database_url:$dburl}' | kubectl exec -i -n openbao openbao-0 -- env BAO_ADDR=http://127.0.0.1:8200 BAO_TOKEN="$BAO_TOKEN" bao kv put secret/pine/items -
 : "${S3_ACCESS_KEY:?set S3_ACCESS_KEY}"; : "${S3_SECRET_KEY:?set S3_SECRET_KEY}"
@@ -565,7 +572,7 @@ Examples below use **Mumbai (`bom`)** — change the key if your home region dif
 
 ### 8.3 Push images (VM, repo root)
 
-Requires Docker and the Pine repo on this VM (native **linux/arm64** builds):
+Requires Docker and the Pine repo on this VM. Match image platform to the node (`uname -m`: `x86_64` → `linux/amd64`, `aarch64` → `linux/arm64`).
 
 ```bash
 cd <pine-repo-root>
@@ -581,8 +588,11 @@ When prompted:
 export OCIR_REGION_KEY=bom
 export OCIR_NAMESPACE=<Object-Storage-namespace>
 export OCIR_IMAGE_TAG=0.1.0
+# optional: export OCIR_PLATFORM=linux/arm64   # Ampere A1; default is linux/amd64
 pnpm images:push:ocir
 ```
+
+Builds use `docker buildx build --platform <arch> --provenance=false --sbom=false`. Default platform is `linux/amd64` (e.g. `VM.Standard.E5.Flex`). Pass `--platform linux/arm64` or `OCIR_PLATFORM=linux/arm64` for Ampere A1. A platform mismatch CrashLoops with `Exec format error`.
 
 One service: `pnpm images:push:ocir -- --service identity`.
 
@@ -610,7 +620,7 @@ From the Pine repo root on this VM (`KUBECONFIG` set):
 pnpm tls:k8s
 ```
 
-That runs `pnpm tls:generate` (writes `.local/tls/`) then `pnpm tls:secrets` (applies Secrets `identity-tls`, `items-tls`, … in namespace `pine` with keys `tls.crt`, `tls.key`, `ca.crt`). Override namespace with `PINE_NAMESPACE` if needed. Re-run `pnpm tls:secrets` alone after generating certs if Secrets already need refreshing.
+That runs `pnpm tls:generate` (writes `.local/tls/`) then `pnpm tls:secrets` (applies Secrets `identity-tls`, `items-tls`, … in namespace `pine` with keys `tls.crt`, `tls.key`, `ca.crt`, plus ConfigMap `pine-ca` with `ca.crt` for Envoy `BackendTLSPolicy`). Override namespace with `PINE_NAMESPACE` if needed. Re-run `pnpm tls:secrets` alone after generating certs if Secrets already need refreshing. Then `kubectl apply -f ./k8s/envoy/backend-tls.yaml` if not already applied.
 
 ### 8.6 Helm install apps
 
