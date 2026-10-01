@@ -1,19 +1,25 @@
 import { inject, injectable } from "inversify";
 import type { OAuth2Client } from "@ory/hydra-client";
+import { env } from "@/bootstrap/env";
 import { TYPES } from "@/bootstrap/container-types";
 import type {
   AcceptConsentInput,
   AcceptLoginInput,
-  AuthorizeInput,
   ConsentChallenge,
+  ForwardAuthorizationInput,
+  ForwardAuthorizationResult,
   IOAuthFlowProvider,
   LoginChallenge,
   OAuthClientInfo,
   OAuthRedirectResult,
+  OAuthSetCookie,
   RejectRequestInput,
 } from "@/integrations/oauth/IOAuthFlowProvider";
 import type { HydraClient } from "@/integrations/oauth/ory-hydra/HydraClient";
+import { parseSetCookieHeader } from "@/integrations/oauth/ory-hydra/parseSetCookieHeader";
+import { rewriteHydraPublicUrl } from "@/integrations/oauth/ory-hydra/rewriteHydraPublicUrl";
 import { rethrowHydraError } from "@/integrations/oauth/ory-hydra/rethrowHydraError";
+import { OAuthProviderUnavailableError } from "@/integrations/oauth/errors";
 
 @injectable()
 export class HydraOAuthFlowProvider implements IOAuthFlowProvider {
@@ -22,23 +28,36 @@ export class HydraOAuthFlowProvider implements IOAuthFlowProvider {
     private readonly hydra: HydraClient,
   ) {}
 
-  getAuthorizationUrl(input: AuthorizeInput): string {
-    const url = new URL("/oauth2/auth", this.hydra.publicUrl);
-    url.searchParams.set("client_id", input.clientId);
-    url.searchParams.set("redirect_uri", input.redirectUri);
-    url.searchParams.set("response_type", input.responseType);
-    url.searchParams.set("scope", input.scope);
-    url.searchParams.set("state", input.state);
+  async forwardAuthorization(
+    input: ForwardAuthorizationInput,
+  ): Promise<ForwardAuthorizationResult> {
+    const search =
+      input.search.startsWith("?") || input.search.length === 0 ? input.search : `?${input.search}`;
+    const target = new URL(`/oauth2/auth${search}`, this.hydra.publicUrl);
 
-    if (input.codeChallenge) {
-      url.searchParams.set("code_challenge", input.codeChallenge);
-      url.searchParams.set("code_challenge_method", input.codeChallengeMethod ?? "S256");
-    }
-    if (input.nonce) {
-      url.searchParams.set("nonce", input.nonce);
+    let response: Response;
+    try {
+      response = await fetch(target, {
+        method: "GET",
+        redirect: "manual",
+        headers: input.cookieHeader ? { cookie: input.cookieHeader } : undefined,
+      });
+    } catch {
+      throw new OAuthProviderUnavailableError();
     }
 
-    return url.toString();
+    const locationHeader = response.headers.get("location") ?? undefined;
+    const location = locationHeader ? this.rewritePublicRedirect(locationHeader) : undefined;
+
+    const cookies = this.readSetCookies(response.headers);
+    const body = await response.text();
+
+    return {
+      status: response.status,
+      ...(location ? { location } : {}),
+      cookies,
+      ...(body.length > 0 ? { body } : {}),
+    };
   }
 
   async getLoginRequest(challenge: string): Promise<LoginChallenge> {
@@ -53,7 +72,6 @@ export class HydraOAuthFlowProvider implements IOAuthFlowProvider {
         subject: data.subject || undefined,
         client: this.mapClient(data.client),
         requestedScope: data.requested_scope ?? [],
-        requestUrl: data.request_url,
         sessionId: data.session_id,
       };
     } catch (error) {
@@ -74,7 +92,7 @@ export class HydraOAuthFlowProvider implements IOAuthFlowProvider {
         },
       });
 
-      return { redirectTo: data.redirect_to };
+      return { redirectTo: this.rewritePublicRedirect(data.redirect_to) };
     } catch (error) {
       rethrowHydraError(error);
     }
@@ -90,7 +108,7 @@ export class HydraOAuthFlowProvider implements IOAuthFlowProvider {
         },
       });
 
-      return { redirectTo: data.redirect_to };
+      return { redirectTo: this.rewritePublicRedirect(data.redirect_to) };
     } catch (error) {
       rethrowHydraError(error);
     }
@@ -108,7 +126,6 @@ export class HydraOAuthFlowProvider implements IOAuthFlowProvider {
         subject: data.subject,
         client: this.mapClient(data.client),
         requestedScope: data.requested_scope ?? [],
-        requestUrl: data.request_url,
         loginChallenge: data.login_challenge,
         loginSessionId: data.login_session_id,
       };
@@ -132,7 +149,7 @@ export class HydraOAuthFlowProvider implements IOAuthFlowProvider {
         },
       });
 
-      return { redirectTo: data.redirect_to };
+      return { redirectTo: this.rewritePublicRedirect(data.redirect_to) };
     } catch (error) {
       rethrowHydraError(error);
     }
@@ -148,10 +165,32 @@ export class HydraOAuthFlowProvider implements IOAuthFlowProvider {
         },
       });
 
-      return { redirectTo: data.redirect_to };
+      return { redirectTo: this.rewritePublicRedirect(data.redirect_to) };
     } catch (error) {
       rethrowHydraError(error);
     }
+  }
+
+  private rewritePublicRedirect(redirectTo: string): string {
+    return rewriteHydraPublicUrl(redirectTo, this.hydra.publicUrl, env.OAUTH_PUBLIC_URL);
+  }
+
+  private readSetCookies(headers: Headers): OAuthSetCookie[] {
+    const rawCookies = typeof headers.getSetCookie === "function" ? headers.getSetCookie() : [];
+    const publicIsHttps = env.OAUTH_PUBLIC_URL.startsWith("https:");
+
+    const cookies: OAuthSetCookie[] = [];
+    for (const header of rawCookies) {
+      const parsed = parseSetCookieHeader(header);
+      if (!parsed) {
+        continue;
+      }
+      if (publicIsHttps) {
+        parsed.secure = true;
+      }
+      cookies.push(parsed);
+    }
+    return cookies;
   }
 
   private mapClient(client?: OAuth2Client): OAuthClientInfo {

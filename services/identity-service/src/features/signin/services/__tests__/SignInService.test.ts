@@ -55,7 +55,7 @@ describe("SignInService", () => {
     };
     const oauthProvider = {
       acceptLoginRequest: vi.fn().mockResolvedValue({
-        redirectTo: "http://127.0.0.1:4444/oauth2/auth?login_verifier=abc",
+        redirectTo: "https://localhost/api/oauth/authorize?login_verifier=abc",
       }),
     };
     const identityService = {
@@ -76,7 +76,7 @@ describe("SignInService", () => {
       }),
     ).resolves.toEqual({
       ...resolvedSignInResult,
-      redirectTo: "http://127.0.0.1:4444/oauth2/auth?login_verifier=abc",
+      redirectTo: "https://localhost/api/oauth/authorize?login_verifier=abc",
     });
 
     expect(oauthProvider.acceptLoginRequest).toHaveBeenCalledWith({

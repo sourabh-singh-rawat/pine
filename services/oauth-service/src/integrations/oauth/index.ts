@@ -3,10 +3,13 @@ export type {
   AcceptLoginInput,
   AuthorizeInput,
   ConsentChallenge,
+  ForwardAuthorizationInput,
+  ForwardAuthorizationResult,
   IOAuthFlowProvider,
   LoginChallenge,
   OAuthClientInfo,
   OAuthRedirectResult,
+  OAuthSetCookie,
   RejectRequestInput,
 } from "@/integrations/oauth/IOAuthFlowProvider";
 export type {

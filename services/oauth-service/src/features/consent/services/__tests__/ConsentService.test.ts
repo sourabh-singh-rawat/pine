@@ -8,7 +8,7 @@ import {
 } from "@/integrations/oauth/errors";
 
 const createFlowProvider = (overrides: Partial<IOAuthFlowProvider> = {}): IOAuthFlowProvider => ({
-  getAuthorizationUrl: vi.fn(),
+  forwardAuthorization: vi.fn(),
   getLoginRequest: vi.fn(),
   acceptLoginRequest: vi.fn(),
   rejectLoginRequest: vi.fn(),
@@ -26,7 +26,6 @@ describe("ConsentService.getChallenge", () => {
       subject: "user-1",
       client: { id: "issues-web", name: "Issues Web" },
       requestedScope: ["openid"],
-      requestUrl: "http://127.0.0.1:4444/oauth2/auth?...",
       loginChallenge: "login-challenge-1",
       loginSessionId: "login-session-1",
     };
@@ -64,7 +63,7 @@ describe("ConsentService.getChallenge", () => {
 describe("ConsentService.accept", () => {
   it("accepts a consent challenge with granted scopes and returns redirectTo", async () => {
     const acceptConsentRequest = vi.fn().mockResolvedValue({
-      redirectTo: "http://127.0.0.1:4444/oauth2/auth?consent_verifier=abc",
+      redirectTo: "https://localhost/api/oauth/authorize?consent_verifier=abc",
     });
     const service = new ConsentService(createFlowProvider({ acceptConsentRequest }));
 
@@ -74,7 +73,7 @@ describe("ConsentService.accept", () => {
         grantScope: ["openid", "offline"],
       }),
     ).resolves.toEqual({
-      redirectTo: "http://127.0.0.1:4444/oauth2/auth?consent_verifier=abc",
+      redirectTo: "https://localhost/api/oauth/authorize?consent_verifier=abc",
     });
     expect(acceptConsentRequest).toHaveBeenCalledWith({
       challenge: "consent-challenge-1",
@@ -86,7 +85,7 @@ describe("ConsentService.accept", () => {
 
   it("accepts consent with remember options", async () => {
     const acceptConsentRequest = vi.fn().mockResolvedValue({
-      redirectTo: "http://127.0.0.1:4444/oauth2/auth?consent_verifier=abc",
+      redirectTo: "https://localhost/api/oauth/authorize?consent_verifier=abc",
     });
     const service = new ConsentService(createFlowProvider({ acceptConsentRequest }));
 
@@ -98,7 +97,7 @@ describe("ConsentService.accept", () => {
         rememberFor: 3600,
       }),
     ).resolves.toEqual({
-      redirectTo: "http://127.0.0.1:4444/oauth2/auth?consent_verifier=abc",
+      redirectTo: "https://localhost/api/oauth/authorize?consent_verifier=abc",
     });
     expect(acceptConsentRequest).toHaveBeenCalledWith({
       challenge: "consent-challenge-1",
@@ -112,7 +111,7 @@ describe("ConsentService.accept", () => {
 describe("ConsentService.reject", () => {
   it("rejects a consent challenge with an error code and description and returns redirectTo", async () => {
     const rejectConsentRequest = vi.fn().mockResolvedValue({
-      redirectTo: "http://127.0.0.1:4444/oauth2/auth?error=access_denied",
+      redirectTo: "https://localhost/api/oauth/authorize?error=access_denied",
     });
     const service = new ConsentService(createFlowProvider({ rejectConsentRequest }));
 
@@ -123,7 +122,7 @@ describe("ConsentService.reject", () => {
         errorDescription: "User denied consent",
       }),
     ).resolves.toEqual({
-      redirectTo: "http://127.0.0.1:4444/oauth2/auth?error=access_denied",
+      redirectTo: "https://localhost/api/oauth/authorize?error=access_denied",
     });
     expect(rejectConsentRequest).toHaveBeenCalledWith({
       challenge: "consent-challenge-1",

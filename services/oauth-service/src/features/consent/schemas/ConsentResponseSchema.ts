@@ -16,7 +16,6 @@ export const ConsentResponseSchema = Type.Object(
     subject: Type.Optional(Type.String()),
     client: ConsentClientSchema,
     requestedScope: Type.Array(Type.String()),
-    requestUrl: Type.Optional(Type.String()),
     loginChallenge: Type.Optional(Type.String()),
     loginSessionId: Type.Optional(Type.String()),
   },

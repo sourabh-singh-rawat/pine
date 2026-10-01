@@ -39,7 +39,7 @@ export class HttpOAuthFlowProvider implements IOAuthFlowProvider {
 
     let response: Response;
     try {
-      response = await fetch(`${this.baseUrl}/oauth/login/accept`, {
+      response = await fetch(`${this.baseUrl}/internal/oauth/login/accept`, {
         method: "POST",
         headers: {
           Accept: "application/json",

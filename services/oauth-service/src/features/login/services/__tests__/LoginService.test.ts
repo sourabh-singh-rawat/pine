@@ -4,7 +4,7 @@ import type { IOAuthFlowProvider } from "@/integrations/oauth";
 import { OAuthRequestNotFoundError } from "@/integrations/oauth/errors";
 
 const createFlowProvider = (overrides: Partial<IOAuthFlowProvider> = {}): IOAuthFlowProvider => ({
-  getAuthorizationUrl: vi.fn(),
+  forwardAuthorization: vi.fn(),
   getLoginRequest: vi.fn(),
   acceptLoginRequest: vi.fn(),
   rejectLoginRequest: vi.fn(),
@@ -17,7 +17,7 @@ const createFlowProvider = (overrides: Partial<IOAuthFlowProvider> = {}): IOAuth
 describe("LoginService.accept", () => {
   it("accepts a login challenge for an authenticated subject and returns redirectTo", async () => {
     const acceptLoginRequest = vi.fn().mockResolvedValue({
-      redirectTo: "http://127.0.0.1:4444/oauth2/auth?login_verifier=abc",
+      redirectTo: "https://localhost/api/oauth/authorize?login_verifier=abc",
     });
     const service = new LoginService(createFlowProvider({ acceptLoginRequest }));
 
@@ -27,7 +27,7 @@ describe("LoginService.accept", () => {
         subject: "user-1",
       }),
     ).resolves.toEqual({
-      redirectTo: "http://127.0.0.1:4444/oauth2/auth?login_verifier=abc",
+      redirectTo: "https://localhost/api/oauth/authorize?login_verifier=abc",
     });
     expect(acceptLoginRequest).toHaveBeenCalledWith({
       challenge: "login-challenge-1",
@@ -40,7 +40,7 @@ describe("LoginService.accept", () => {
 
   it("accepts a login challenge with remember options and identity provider session id", async () => {
     const acceptLoginRequest = vi.fn().mockResolvedValue({
-      redirectTo: "http://127.0.0.1:4444/oauth2/auth?login_verifier=abc",
+      redirectTo: "https://localhost/api/oauth/authorize?login_verifier=abc",
     });
     const service = new LoginService(createFlowProvider({ acceptLoginRequest }));
 
@@ -53,7 +53,7 @@ describe("LoginService.accept", () => {
         identityProviderSessionId: "kratos-session-1",
       }),
     ).resolves.toEqual({
-      redirectTo: "http://127.0.0.1:4444/oauth2/auth?login_verifier=abc",
+      redirectTo: "https://localhost/api/oauth/authorize?login_verifier=abc",
     });
     expect(acceptLoginRequest).toHaveBeenCalledWith({
       challenge: "login-challenge-1",

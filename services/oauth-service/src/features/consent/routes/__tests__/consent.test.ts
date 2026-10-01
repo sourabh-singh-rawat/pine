@@ -46,7 +46,6 @@ describe("consent routes", () => {
       subject: "user-1",
       client: { id: "issues-web", name: "Issues Web" },
       requestedScope: ["openid", "offline"],
-      requestUrl: "http://127.0.0.1:4444/oauth2/auth?...",
       loginChallenge: "login-challenge-1",
       loginSessionId: "login-session-1",
     };
@@ -69,7 +68,7 @@ describe("consent routes", () => {
 
   it("accepts a consent challenge with granted scopes and returns redirectTo", async () => {
     const accept = vi.fn().mockResolvedValue({
-      redirectTo: "http://127.0.0.1:4444/oauth2/auth?consent_verifier=abc",
+      redirectTo: "https://localhost/api/oauth/authorize?consent_verifier=abc",
     });
     get.mockReturnValue({ accept });
 
@@ -91,7 +90,7 @@ describe("consent routes", () => {
     expect(response).toEqual({
       status: 200,
       body: {
-        redirectTo: "http://127.0.0.1:4444/oauth2/auth?consent_verifier=abc",
+        redirectTo: "https://localhost/api/oauth/authorize?consent_verifier=abc",
       },
     });
     expect(acceptConsent.method).toBe("POST");
@@ -100,7 +99,7 @@ describe("consent routes", () => {
 
   it("rejects a consent challenge when the user denies consent and returns redirectTo", async () => {
     const reject = vi.fn().mockResolvedValue({
-      redirectTo: "http://127.0.0.1:4444/oauth2/auth?error=access_denied",
+      redirectTo: "https://localhost/api/oauth/authorize?error=access_denied",
     });
     get.mockReturnValue({ reject });
 
@@ -121,7 +120,7 @@ describe("consent routes", () => {
     expect(response).toEqual({
       status: 200,
       body: {
-        redirectTo: "http://127.0.0.1:4444/oauth2/auth?error=access_denied",
+        redirectTo: "https://localhost/api/oauth/authorize?error=access_denied",
       },
     });
     expect(rejectConsent.method).toBe("POST");
