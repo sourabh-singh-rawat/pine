@@ -12,6 +12,42 @@ const tlsDir = path.join(rootDir, ".local", "tls");
 const caCrtPath = path.join(tlsDir, "ca", "ca.crt");
 const namespace = process.env.PINE_NAMESPACE ?? "pine";
 
+const applyKubectlYaml = (createArgs: readonly string[]): void => {
+  const isWindows = process.platform === "win32";
+  const created = spawnSync("kubectl", [...createArgs], {
+    cwd: rootDir,
+    encoding: "utf8",
+    shell: isWindows,
+    windowsHide: true,
+  });
+
+  if (created.error) {
+    throw created.error;
+  }
+
+  if (created.status !== 0) {
+    console.error(created.stderr);
+    process.exit(created.status ?? 1);
+  }
+
+  const applied = spawnSync("kubectl", ["apply", "-f", "-"], {
+    cwd: rootDir,
+    encoding: "utf8",
+    shell: isWindows,
+    windowsHide: true,
+    input: created.stdout,
+    stdio: ["pipe", "inherit", "inherit"],
+  });
+
+  if (applied.error) {
+    throw applied.error;
+  }
+
+  if (applied.status !== 0) {
+    process.exit(applied.status ?? 1);
+  }
+};
+
 const main = (): void => {
   if (!fs.existsSync(caCrtPath)) {
     console.error(`Missing ${caCrtPath}. Run: pnpm tls:generate`);
@@ -28,7 +64,7 @@ const main = (): void => {
       process.exit(1);
     }
 
-    const createArgs = [
+    applyKubectlYaml([
       "create",
       "secret",
       "generic",
@@ -41,44 +77,24 @@ const main = (): void => {
       "--dry-run=client",
       "-o",
       "yaml",
-    ];
-
-    const isWindows = process.platform === "win32";
-    const created = spawnSync("kubectl", createArgs, {
-      cwd: rootDir,
-      encoding: "utf8",
-      shell: isWindows,
-      windowsHide: true,
-    });
-
-    if (created.error) {
-      throw created.error;
-    }
-
-    if (created.status !== 0) {
-      console.error(created.stderr);
-      process.exit(created.status ?? 1);
-    }
-
-    const applied = spawnSync("kubectl", ["apply", "-f", "-"], {
-      cwd: rootDir,
-      encoding: "utf8",
-      shell: isWindows,
-      windowsHide: true,
-      input: created.stdout,
-      stdio: ["pipe", "inherit", "inherit"],
-    });
-
-    if (applied.error) {
-      throw applied.error;
-    }
-
-    if (applied.status !== 0) {
-      process.exit(applied.status ?? 1);
-    }
+    ]);
   }
 
-  console.log(`Applied ${k8sTlsServices.length} TLS secrets in namespace ${namespace}.`);
+  applyKubectlYaml([
+    "create",
+    "configmap",
+    "pine-ca",
+    "--namespace",
+    namespace,
+    `--from-file=ca.crt=${caCrtPath}`,
+    "--dry-run=client",
+    "-o",
+    "yaml",
+  ]);
+
+  console.log(
+    `Applied ${k8sTlsServices.length} TLS secrets and ConfigMap pine-ca in namespace ${namespace}.`,
+  );
 };
 
 try {

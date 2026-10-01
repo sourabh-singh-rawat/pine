@@ -17,7 +17,7 @@ when-to-use: >
 infra/k8s/
   README.md            (single install/runbook)
   pine/                Namespace pine + ReferenceGrant
-  envoy/               Gateway + HTTPRoutes
+  envoy/               Gateway + HTTPRoutes + BackendTLSPolicy
   openbao/             Helm only (no apply YAMLs)
   pgo/                 Namespace pine-data + PostgresCluster YAMLs (incl. ory)
   external-secrets/    SecretStore + ExternalSecrets
@@ -33,7 +33,7 @@ infra/k8s/
 
 | Namespace              | Owns                                                                              |
 | ---------------------- | --------------------------------------------------------------------------------- |
-| `pine`                 | Microservices, ExternalSecrets, `*-secrets`, SeaweedFS, Kratos, Hydra, Keto       |
+| `pine`                 | Microservices, ExternalSecrets, `*-secrets`, `pine-ca`, BackendTLSPolicy, SeaweedFS, Kratos, Hydra, Keto |
 | `pine-data`            | PostgresClusters, PGO `*-pguser-*` Secrets, DB pods / PVCs                        |
 | `pine-gateway`         | Gateway `pine`, HTTPRoutes                                                        |
 | `envoy-gateway-system` | Envoy Gateway Helm (`eg`)                                                         |
@@ -44,7 +44,7 @@ infra/k8s/
 
 ## Recipe
 
-Install order (details and commands in the runbook): set `CLUSTER_NAME` / `PUBLIC_IP` / `PATH` / `KUBECONFIG` per VM → OCI Ampere + Oracle Linux 9 + k3s (disable Traefik, keep firewalld) → Envoy → pine → OpenBao → PGO (incl. `ory` + schema grants) → OpenBao seed + ESO → NATS → SeaweedFS → Kratos/Hydra/Keto → OCIR images (linux/arm64) + microservices. Same runbook for every new OCI lab VM; section 0 once per VM, 1–8 re-runnable with `helm upgrade --install`.
+Install order (details and commands in the runbook): set `CLUSTER_NAME` / `PUBLIC_IP` / `PATH` / `KUBECONFIG` per VM → OCI Ampere + Oracle Linux 9 + k3s (disable Traefik, keep firewalld) → Envoy → pine → OpenBao → PGO (incl. `ory` + schema grants) → OpenBao seed + ESO → NATS → SeaweedFS → Kratos/Hydra/Keto → OCIR images (match host arch: linux/amd64 for E5.Flex, linux/arm64 for Ampere A1) + microservices. Same runbook for every new OCI lab VM; section 0 once per VM, 1–8 re-runnable with `helm upgrade --install`.
 
 App images: on the VM, `docker login <region>.ocir.io` (username `<Object-Storage-namespace>/<oci-user>`, password Auth Token) → `pnpm images:push:ocir` (`tools/scripts/oci/push-images.sh`, linux/arm64 on Ampere) → Secret `ocir-pull` + overlay `microservice/ocir.values.yaml` with `--set image.registry=bom.ocir.io/<namespace>` (lowercase; uppercase path → `InvalidImageName`). Home region Mumbai uses `bom` / `bom.ocir.io`. Chart supports `image.registry` + `imagePullSecrets`.
 

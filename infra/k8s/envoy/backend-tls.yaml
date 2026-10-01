@@ -1,0 +1,35 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: BackendTLSPolicy
+metadata:
+  name: api-gateway
+  namespace: pine
+spec:
+  targetRefs:
+    - group: ""
+      kind: Service
+      name: api-gateway
+      sectionName: https
+  validation:
+    caCertificateRefs:
+      - group: ""
+        kind: ConfigMap
+        name: pine-ca
+    hostname: api-gateway.pine.svc
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: BackendTLSPolicy
+metadata:
+  name: data-gateway
+  namespace: pine
+spec:
+  targetRefs:
+    - group: ""
+      kind: Service
+      name: data-gateway
+      sectionName: https
+  validation:
+    caCertificateRefs:
+      - group: ""
+        kind: ConfigMap
+        name: pine-ca
+    hostname: data-gateway.pine.svc
