@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import {
   InvalidOAuthRequestError,
   OAuthProviderUnavailableError,
@@ -6,92 +6,112 @@ import {
 } from "@/integrations/oauth/errors";
 import { HydraOAuthFlowProvider } from "@/integrations/oauth/ory-hydra/HydraOAuthFlowProvider";
 
-function createHydraMock(overrides?: {
+const createHydraMock = (overrides?: {
   getOAuth2LoginRequest?: ReturnType<typeof vi.fn>;
   acceptOAuth2LoginRequest?: ReturnType<typeof vi.fn>;
   rejectOAuth2LoginRequest?: ReturnType<typeof vi.fn>;
   getOAuth2ConsentRequest?: ReturnType<typeof vi.fn>;
   acceptOAuth2ConsentRequest?: ReturnType<typeof vi.fn>;
   rejectOAuth2ConsentRequest?: ReturnType<typeof vi.fn>;
-}) {
-  return {
-    publicUrl: "http://127.0.0.1:4444",
-    adminApi: {
-      getOAuth2LoginRequest: overrides?.getOAuth2LoginRequest ?? vi.fn(),
-      acceptOAuth2LoginRequest: overrides?.acceptOAuth2LoginRequest ?? vi.fn(),
-      rejectOAuth2LoginRequest: overrides?.rejectOAuth2LoginRequest ?? vi.fn(),
-      getOAuth2ConsentRequest: overrides?.getOAuth2ConsentRequest ?? vi.fn(),
-      acceptOAuth2ConsentRequest: overrides?.acceptOAuth2ConsentRequest ?? vi.fn(),
-      rejectOAuth2ConsentRequest: overrides?.rejectOAuth2ConsentRequest ?? vi.fn(),
-    },
-    publicApi: {},
-  };
-}
+}) => ({
+  publicUrl: "http://127.0.0.1:4444",
+  adminApi: {
+    getOAuth2LoginRequest: overrides?.getOAuth2LoginRequest ?? vi.fn(),
+    acceptOAuth2LoginRequest: overrides?.acceptOAuth2LoginRequest ?? vi.fn(),
+    rejectOAuth2LoginRequest: overrides?.rejectOAuth2LoginRequest ?? vi.fn(),
+    getOAuth2ConsentRequest: overrides?.getOAuth2ConsentRequest ?? vi.fn(),
+    acceptOAuth2ConsentRequest: overrides?.acceptOAuth2ConsentRequest ?? vi.fn(),
+    rejectOAuth2ConsentRequest: overrides?.rejectOAuth2ConsentRequest ?? vi.fn(),
+  },
+  publicApi: {},
+});
 
-describe("HydraOAuthFlowProvider.getAuthorizationUrl", () => {
-  it("builds the Hydra public authorize URL with OAuth params", () => {
-    const provider = new HydraOAuthFlowProvider(createHydraMock() as never);
-
-    const url = provider.getAuthorizationUrl({
-      clientId: "issues-web",
-      redirectUri: "http://localhost:3000/callback",
-      responseType: "code",
-      scope: "openid offline",
-      state: "state-1",
-      codeChallenge: "challenge",
-      codeChallengeMethod: "S256",
-      nonce: "nonce-1",
-    });
-
-    const parsed = new URL(url);
-    expect(parsed.origin + parsed.pathname).toBe("http://127.0.0.1:4444/oauth2/auth");
-    expect(parsed.searchParams.get("client_id")).toBe("issues-web");
-    expect(parsed.searchParams.get("redirect_uri")).toBe("http://localhost:3000/callback");
-    expect(parsed.searchParams.get("response_type")).toBe("code");
-    expect(parsed.searchParams.get("scope")).toBe("openid offline");
-    expect(parsed.searchParams.get("state")).toBe("state-1");
-    expect(parsed.searchParams.get("code_challenge")).toBe("challenge");
-    expect(parsed.searchParams.get("code_challenge_method")).toBe("S256");
-    expect(parsed.searchParams.get("nonce")).toBe("nonce-1");
+describe("HydraOAuthFlowProvider.forwardAuthorization", () => {
+  afterEach(() => {
+    vi.unstubAllGlobals();
   });
 
-  it("omits PKCE and nonce params when they are not provided", () => {
-    const provider = new HydraOAuthFlowProvider(createHydraMock() as never);
+  it("proxies authorize to Hydra and rewrites Hydra Location headers", async () => {
+    const fetchMock = vi.fn().mockResolvedValue(
+      new Response(null, {
+        status: 302,
+        headers: {
+          Location: "http://127.0.0.1:4444/oauth2/auth?login_verifier=abc",
+          "Set-Cookie": "ory_hydra_session=s1; Path=/; HttpOnly; SameSite=Lax",
+        },
+      }),
+    );
+    vi.stubGlobal("fetch", fetchMock);
 
-    const url = provider.getAuthorizationUrl({
-      clientId: "issues-web",
-      redirectUri: "http://localhost:3000/callback",
-      responseType: "code",
-      scope: "openid",
-      state: "state-1",
+    const provider = new HydraOAuthFlowProvider(createHydraMock());
+
+    await expect(
+      provider.forwardAuthorization({
+        search: "?client_id=pine-web&response_type=code",
+        cookieHeader: "existing=1",
+      }),
+    ).resolves.toEqual({
+      status: 302,
+      location: "https://localhost/api/oauth/authorize?login_verifier=abc",
+      cookies: [
+        {
+          name: "ory_hydra_session",
+          value: "s1",
+          path: "/",
+          httpOnly: true,
+          sameSite: "lax",
+          secure: true,
+        },
+      ],
     });
 
-    const parsed = new URL(url);
-    expect(parsed.searchParams.has("code_challenge")).toBe(false);
-    expect(parsed.searchParams.has("code_challenge_method")).toBe(false);
-    expect(parsed.searchParams.has("nonce")).toBe(false);
+    expect(fetchMock).toHaveBeenCalledWith(
+      new URL("http://127.0.0.1:4444/oauth2/auth?client_id=pine-web&response_type=code"),
+      {
+        method: "GET",
+        redirect: "manual",
+        headers: { cookie: "existing=1" },
+      },
+    );
   });
 
-  it("defaults code_challenge_method to S256 when only codeChallenge is set", () => {
-    const provider = new HydraOAuthFlowProvider(createHydraMock() as never);
+  it("leaves login UI Location headers unchanged", async () => {
+    const fetchMock = vi.fn().mockResolvedValue(
+      new Response(null, {
+        status: 302,
+        headers: {
+          Location: "https://localhost:3000/signin?login_challenge=abc",
+        },
+      }),
+    );
+    vi.stubGlobal("fetch", fetchMock);
 
-    const url = provider.getAuthorizationUrl({
-      clientId: "issues-web",
-      redirectUri: "http://localhost:3000/callback",
-      responseType: "code",
-      scope: "openid",
-      state: "state-1",
-      codeChallenge: "challenge-only",
+    const provider = new HydraOAuthFlowProvider(createHydraMock());
+
+    await expect(
+      provider.forwardAuthorization({
+        search: "?client_id=pine-web&response_type=code",
+      }),
+    ).resolves.toMatchObject({
+      status: 302,
+      location: "https://localhost:3000/signin?login_challenge=abc",
+      cookies: [],
     });
+  });
 
-    const parsed = new URL(url);
-    expect(parsed.searchParams.get("code_challenge")).toBe("challenge-only");
-    expect(parsed.searchParams.get("code_challenge_method")).toBe("S256");
+  it("throws OAuthProviderUnavailableError when Hydra is unreachable", async () => {
+    vi.stubGlobal("fetch", vi.fn().mockRejectedValue(new TypeError("fetch failed")));
+
+    const provider = new HydraOAuthFlowProvider(createHydraMock());
+
+    await expect(
+      provider.forwardAuthorization({ search: "?client_id=pine-web" }),
+    ).rejects.toBeInstanceOf(OAuthProviderUnavailableError);
   });
 });
 
 describe("HydraOAuthFlowProvider.getLoginRequest", () => {
-  it("maps a Hydra login request to the domain shape", async () => {
+  it("maps a Hydra login request to the domain shape without Hydra request URLs", async () => {
     const getOAuth2LoginRequest = vi.fn().mockResolvedValue({
       data: {
         challenge: "login-challenge-1",
@@ -108,9 +128,7 @@ describe("HydraOAuthFlowProvider.getLoginRequest", () => {
       },
     });
 
-    const provider = new HydraOAuthFlowProvider(
-      createHydraMock({ getOAuth2LoginRequest }) as never,
-    );
+    const provider = new HydraOAuthFlowProvider(createHydraMock({ getOAuth2LoginRequest }));
 
     await expect(provider.getLoginRequest("login-challenge-1")).resolves.toEqual({
       challenge: "login-challenge-1",
@@ -122,7 +140,6 @@ describe("HydraOAuthFlowProvider.getLoginRequest", () => {
         redirectUris: ["http://localhost:3000/callback"],
       },
       requestedScope: ["openid", "offline"],
-      requestUrl: "http://127.0.0.1:4444/oauth2/auth?...",
       sessionId: "session-1",
     });
 
@@ -136,9 +153,7 @@ describe("HydraOAuthFlowProvider.getLoginRequest", () => {
       response: { status: 404 },
     });
 
-    const provider = new HydraOAuthFlowProvider(
-      createHydraMock({ getOAuth2LoginRequest }) as never,
-    );
+    const provider = new HydraOAuthFlowProvider(createHydraMock({ getOAuth2LoginRequest }));
 
     await expect(provider.getLoginRequest("missing")).rejects.toBeInstanceOf(
       OAuthRequestNotFoundError,
@@ -150,9 +165,7 @@ describe("HydraOAuthFlowProvider.getLoginRequest", () => {
       response: { status: 400 },
     });
 
-    const provider = new HydraOAuthFlowProvider(
-      createHydraMock({ getOAuth2LoginRequest }) as never,
-    );
+    const provider = new HydraOAuthFlowProvider(createHydraMock({ getOAuth2LoginRequest }));
 
     await expect(provider.getLoginRequest("bad")).rejects.toBeInstanceOf(InvalidOAuthRequestError);
   });
@@ -162,9 +175,7 @@ describe("HydraOAuthFlowProvider.getLoginRequest", () => {
       response: { status: 503 },
     });
 
-    const provider = new HydraOAuthFlowProvider(
-      createHydraMock({ getOAuth2LoginRequest }) as never,
-    );
+    const provider = new HydraOAuthFlowProvider(createHydraMock({ getOAuth2LoginRequest }));
 
     await expect(provider.getLoginRequest("challenge")).rejects.toBeInstanceOf(
       OAuthProviderUnavailableError,
@@ -173,14 +184,12 @@ describe("HydraOAuthFlowProvider.getLoginRequest", () => {
 });
 
 describe("HydraOAuthFlowProvider.acceptLoginRequest", () => {
-  it("accepts a login challenge and returns the redirect URL", async () => {
+  it("accepts a login challenge and rewrites Hydra redirect URLs", async () => {
     const acceptOAuth2LoginRequest = vi.fn().mockResolvedValue({
       data: { redirect_to: "http://127.0.0.1:4444/oauth2/auth?login_verifier=abc" },
     });
 
-    const provider = new HydraOAuthFlowProvider(
-      createHydraMock({ acceptOAuth2LoginRequest }) as never,
-    );
+    const provider = new HydraOAuthFlowProvider(createHydraMock({ acceptOAuth2LoginRequest }));
 
     await expect(
       provider.acceptLoginRequest({
@@ -191,7 +200,7 @@ describe("HydraOAuthFlowProvider.acceptLoginRequest", () => {
         identityProviderSessionId: "kratos-session-1",
       }),
     ).resolves.toEqual({
-      redirectTo: "http://127.0.0.1:4444/oauth2/auth?login_verifier=abc",
+      redirectTo: "https://localhost/api/oauth/authorize?login_verifier=abc",
     });
 
     expect(acceptOAuth2LoginRequest).toHaveBeenCalledWith({
@@ -213,9 +222,7 @@ describe("HydraOAuthFlowProvider.rejectLoginRequest", () => {
       data: { redirect_to: "http://localhost:3000/callback?error=access_denied" },
     });
 
-    const provider = new HydraOAuthFlowProvider(
-      createHydraMock({ rejectOAuth2LoginRequest }) as never,
-    );
+    const provider = new HydraOAuthFlowProvider(createHydraMock({ rejectOAuth2LoginRequest }));
 
     await expect(
       provider.rejectLoginRequest({
@@ -241,9 +248,7 @@ describe("HydraOAuthFlowProvider.rejectLoginRequest", () => {
       response: { status: 404 },
     });
 
-    const provider = new HydraOAuthFlowProvider(
-      createHydraMock({ rejectOAuth2LoginRequest }) as never,
-    );
+    const provider = new HydraOAuthFlowProvider(createHydraMock({ rejectOAuth2LoginRequest }));
 
     await expect(provider.rejectLoginRequest({ challenge: "missing" })).rejects.toBeInstanceOf(
       OAuthRequestNotFoundError,
@@ -252,7 +257,7 @@ describe("HydraOAuthFlowProvider.rejectLoginRequest", () => {
 });
 
 describe("HydraOAuthFlowProvider.getConsentRequest", () => {
-  it("maps a Hydra consent request to the domain shape", async () => {
+  it("maps a Hydra consent request without exposing Hydra request URLs", async () => {
     const getOAuth2ConsentRequest = vi.fn().mockResolvedValue({
       data: {
         challenge: "consent-challenge-1",
@@ -266,9 +271,7 @@ describe("HydraOAuthFlowProvider.getConsentRequest", () => {
       },
     });
 
-    const provider = new HydraOAuthFlowProvider(
-      createHydraMock({ getOAuth2ConsentRequest }) as never,
-    );
+    const provider = new HydraOAuthFlowProvider(createHydraMock({ getOAuth2ConsentRequest }));
 
     await expect(provider.getConsentRequest("consent-challenge-1")).resolves.toEqual({
       challenge: "consent-challenge-1",
@@ -280,7 +283,6 @@ describe("HydraOAuthFlowProvider.getConsentRequest", () => {
         redirectUris: undefined,
       },
       requestedScope: ["openid"],
-      requestUrl: "http://127.0.0.1:4444/oauth2/auth?...",
       loginChallenge: "login-challenge-1",
       loginSessionId: "login-session-1",
     });
@@ -293,9 +295,7 @@ describe("HydraOAuthFlowProvider.acceptConsentRequest", () => {
       data: { redirect_to: "http://localhost:3000/callback?code=xyz" },
     });
 
-    const provider = new HydraOAuthFlowProvider(
-      createHydraMock({ acceptOAuth2ConsentRequest }) as never,
-    );
+    const provider = new HydraOAuthFlowProvider(createHydraMock({ acceptOAuth2ConsentRequest }));
 
     await expect(
       provider.acceptConsentRequest({
@@ -323,6 +323,23 @@ describe("HydraOAuthFlowProvider.acceptConsentRequest", () => {
       },
     });
   });
+
+  it("rewrites Hydra consent verifier redirects to the public authorize URL", async () => {
+    const acceptOAuth2ConsentRequest = vi.fn().mockResolvedValue({
+      data: { redirect_to: "http://127.0.0.1:4444/oauth2/auth?consent_verifier=abc" },
+    });
+
+    const provider = new HydraOAuthFlowProvider(createHydraMock({ acceptOAuth2ConsentRequest }));
+
+    await expect(
+      provider.acceptConsentRequest({
+        challenge: "consent-challenge-1",
+        grantScope: ["openid"],
+      }),
+    ).resolves.toEqual({
+      redirectTo: "https://localhost/api/oauth/authorize?consent_verifier=abc",
+    });
+  });
 });
 
 describe("HydraOAuthFlowProvider.rejectConsentRequest", () => {
@@ -331,9 +348,7 @@ describe("HydraOAuthFlowProvider.rejectConsentRequest", () => {
       data: { redirect_to: "http://localhost:3000/callback?error=access_denied" },
     });
 
-    const provider = new HydraOAuthFlowProvider(
-      createHydraMock({ rejectOAuth2ConsentRequest }) as never,
-    );
+    const provider = new HydraOAuthFlowProvider(createHydraMock({ rejectOAuth2ConsentRequest }));
 
     await expect(
       provider.rejectConsentRequest({
@@ -352,19 +367,5 @@ describe("HydraOAuthFlowProvider.rejectConsentRequest", () => {
         error_description: "The resource owner denied the request",
       },
     });
-  });
-
-  it("throws OAuthProviderUnavailableError when Hydra is down", async () => {
-    const rejectOAuth2ConsentRequest = vi.fn().mockRejectedValue({
-      response: { status: 503 },
-    });
-
-    const provider = new HydraOAuthFlowProvider(
-      createHydraMock({ rejectOAuth2ConsentRequest }) as never,
-    );
-
-    await expect(
-      provider.rejectConsentRequest({ challenge: "consent-challenge-1" }),
-    ).rejects.toBeInstanceOf(OAuthProviderUnavailableError);
   });
 });

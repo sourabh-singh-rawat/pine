@@ -19,6 +19,7 @@ export const EnvSchema = Type.Object({
   VITE_PLATFORM_WEB_URL: Type.String({ default: "https://localhost:3002" }),
   HYDRA_PUBLIC_URL: Type.String({ default: "http://127.0.0.1:4444" }),
   HYDRA_ADMIN_URL: Type.String({ default: "http://127.0.0.1:4445" }),
+  OAUTH_PUBLIC_URL: Type.String({ default: "https://localhost/api/oauth" }),
   OTEL_EXPORTER_OTLP_ENDPOINT: Type.String({ default: "http://127.0.0.1:4317" }),
 });
 

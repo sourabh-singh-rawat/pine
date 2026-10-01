@@ -12,12 +12,12 @@ import type { ILoginService } from "@/features/login/services";
 import { InvalidOAuthRequestError } from "@/integrations/oauth/errors";
 
 export const acceptLogin: HttpRoute = {
-  url: "/oauth/login/accept",
+  url: "/internal/oauth/login/accept",
   method: "POST",
   schema: {
     tags: ["login"],
     summary: "Accept OAuth login challenge",
-    description: "Accept a Hydra login challenge after the user authenticates",
+    description: "Accept an OAuth login challenge after the user authenticates",
     operationId: "acceptLoginChallenge",
     body: AcceptLoginBodySchema,
     response: {

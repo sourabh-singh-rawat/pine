@@ -15,17 +15,9 @@ export class AuthorizeService implements IAuthorizeService {
   ) {}
 
   async authorize(params: AuthorizeOptions): Promise<AuthorizeResult> {
-    const redirectTo = this.oauthFlowProvider.getAuthorizationUrl({
-      clientId: params.clientId,
-      redirectUri: params.redirectUri,
-      responseType: params.responseType,
-      scope: params.scope,
-      state: params.state,
-      codeChallenge: params.codeChallenge,
-      codeChallengeMethod: params.codeChallengeMethod,
-      nonce: params.nonce,
+    return this.oauthFlowProvider.forwardAuthorization({
+      search: params.search,
+      cookieHeader: params.cookieHeader,
     });
-
-    return { redirectTo };
   }
 }

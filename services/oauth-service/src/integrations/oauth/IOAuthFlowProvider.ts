@@ -9,6 +9,29 @@ export interface AuthorizeInput {
   nonce?: string;
 }
 
+export interface ForwardAuthorizationInput {
+  search: string;
+  cookieHeader?: string;
+}
+
+export type OAuthSetCookie = {
+  name: string;
+  value: string;
+  path?: string;
+  httpOnly?: boolean;
+  sameSite?: "strict" | "lax" | "none";
+  secure?: boolean;
+  maxAge?: number;
+  expires?: Date;
+};
+
+export interface ForwardAuthorizationResult {
+  status: number;
+  location?: string;
+  cookies: OAuthSetCookie[];
+  body?: string;
+}
+
 export interface OAuthClientInfo {
   id: string;
   name?: string;
@@ -21,7 +44,6 @@ export interface LoginChallenge {
   subject?: string;
   client: OAuthClientInfo;
   requestedScope: string[];
-  requestUrl?: string;
   sessionId?: string;
 }
 
@@ -40,7 +62,6 @@ export interface ConsentChallenge {
   subject?: string;
   client: OAuthClientInfo;
   requestedScope: string[];
-  requestUrl?: string;
   loginChallenge?: string;
   loginSessionId?: string;
 }
@@ -65,7 +86,7 @@ export interface OAuthRedirectResult {
 }
 
 export interface IOAuthFlowProvider {
-  getAuthorizationUrl(input: AuthorizeInput): string;
+  forwardAuthorization(input: ForwardAuthorizationInput): Promise<ForwardAuthorizationResult>;
 
   getLoginRequest(challenge: string): Promise<LoginChallenge>;
   acceptLoginRequest(input: AcceptLoginInput): Promise<OAuthRedirectResult>;

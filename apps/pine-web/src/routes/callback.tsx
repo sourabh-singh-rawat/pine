@@ -1,13 +1,17 @@
+import Container from "@mui/material/Container";
+import Stack from "@mui/material/Stack";
+import Typography from "@mui/material/Typography";
 import { createFileRoute, useNavigate, useSearch } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { exchangeToken } from "@generated/api";
-import { useSnackbar } from "@shared";
+import { PrimaryButton, useSnackbar } from "@shared";
 import {
   clearOidcCodeVerifier,
   clearOidcState,
   getOidcCodeVerifier,
   getOidcState,
   markAuthenticated,
+  redirectToOidcSignIn,
 } from "../lib/auth";
 
 export const Route = createFileRoute("/callback")({
@@ -21,6 +25,25 @@ export const Route = createFileRoute("/callback")({
   component: CallbackPage,
 });
 
+const resolveCallbackErrorMessage = (error: string, errorDescription?: string): string => {
+  const description = errorDescription?.toLowerCase() ?? "";
+
+  if (error === "access_denied" && description.includes("consent verifier")) {
+    return "This sign-in link was already used. Start again to continue.";
+  }
+
+  if (error === "access_denied") {
+    return "Sign-in was cancelled or denied. You can try again.";
+  }
+
+  return errorDescription ?? error;
+};
+
+const clearOidcSession = (): void => {
+  clearOidcState();
+  clearOidcCodeVerifier();
+};
+
 function CallbackPage() {
   const navigate = useNavigate();
   const snackbar = useSnackbar();
@@ -33,6 +56,7 @@ function CallbackPage() {
     from: "/callback",
   });
   const [message, setMessage] = useState("Completing sign-in…");
+  const [canRetry, setCanRetry] = useState(false);
   const started = useRef(false);
 
   useEffect(() => {
@@ -41,29 +65,42 @@ function CallbackPage() {
     }
     started.current = true;
 
+    const fail = (nextMessage: string): void => {
+      clearOidcSession();
+      setMessage(nextMessage);
+      setCanRetry(true);
+      void navigate({
+        to: "/callback",
+        search: {
+          code: undefined,
+          state: undefined,
+          error: undefined,
+          error_description: undefined,
+        },
+        replace: true,
+      });
+    };
+
     const run = async () => {
       if (error) {
-        setMessage(errorDescription ?? error);
+        fail(resolveCallbackErrorMessage(error, errorDescription));
         return;
       }
 
       if (!code) {
-        setMessage("Missing authorization code.");
+        fail("Missing authorization code.");
         return;
       }
 
       const expectedState = getOidcState();
       if (expectedState && state !== expectedState) {
-        setMessage("Invalid OAuth state. Please try signing in again.");
-        clearOidcState();
-        clearOidcCodeVerifier();
+        fail("Invalid OAuth state. Please try signing in again.");
         return;
       }
 
       const codeVerifier = getOidcCodeVerifier();
       if (!codeVerifier) {
-        setMessage("Missing PKCE code verifier. Please try signing in again.");
-        clearOidcState();
+        fail("Missing PKCE code verifier. Please try signing in again.");
         return;
       }
 
@@ -79,17 +116,27 @@ function CallbackPage() {
         });
 
         markAuthenticated();
-        clearOidcState();
-        clearOidcCodeVerifier();
+        clearOidcSession();
         snackbar.success("Signed in successfully.");
         await navigate({ to: "/" });
       } catch (err) {
-        setMessage(err instanceof Error ? err.message : "Token exchange failed.");
+        fail(err instanceof Error ? err.message : "Token exchange failed.");
       }
     };
 
     void run();
   }, [code, state, error, errorDescription, navigate, snackbar]);
 
-  return <h1>{message}</h1>;
+  return (
+    <Container maxWidth="sm">
+      <Stack spacing={2} sx={{ alignItems: "center", py: 6 }}>
+        <Typography component="h1" variant="h6" textAlign="center">
+          {message}
+        </Typography>
+        {canRetry ? (
+          <PrimaryButton label="Try signing in again" onClick={redirectToOidcSignIn} />
+        ) : null}
+      </Stack>
+    </Container>
+  );
 }
