@@ -1,7 +1,6 @@
 import type { HttpRoute } from "@pine/server";
 import { logoutRoutes } from "@/features/logout";
 import { meRoutes } from "@/features/me";
-import { oauthRoutes } from "@/features/oauth";
 import { registrationRoutes } from "@/features/registration";
 import { sessionRoutes } from "@/features/session";
 import { signinRoutes } from "@/features/signin";
@@ -12,7 +11,6 @@ export const routes: HttpRoute[] = [
   ...logoutRoutes,
   ...meRoutes,
   ...sessionRoutes,
-  ...oauthRoutes,
   ...registrationRoutes,
   ...verificationRoutes,
 ];

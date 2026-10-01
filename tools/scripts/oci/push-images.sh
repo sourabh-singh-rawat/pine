@@ -86,6 +86,7 @@ SERVICES=(
   "pine/notification-service|@pine/notification-service|services/notification-service"
   "pine/platform-service|@pine/platform-service|services/platform-service"
   "pine/authorization-service|@pine/authorization-service|services/authorization-service"
+  "pine/oauth-service|@pine/oauth-service|services/oauth-service"
   "pine/audit-service|@pine/audit-service|services/audit-service"
   "pine/api-gateway|@pine/api-gateway|services/api-gateway"
   "pine/data-gateway|@pine/data-gateway|services/data-gateway"

@@ -92,12 +92,12 @@ Repeat this for each new lab VM (new instance → new `CLUSTER_NAME` / `PUBLIC_I
 
 Allow inbound to the instance (source = your IP for admin; `0.0.0.0/0` only if you accept the risk). Reuse the same VCN rules for every lab VM in that subnet, or attach the same NSG.
 
-| Port     | Why                          |
-| -------- | ---------------------------- |
-| TCP 22   | SSH                          |
-| TCP 6443 | Kubernetes API               |
-| TCP 80   | HTTP Gateway (Envoy)         |
-| TCP 443  | HTTPS later                  |
+| Port     | Why                  |
+| -------- | -------------------- |
+| TCP 22   | SSH                  |
+| TCP 6443 | Kubernetes API       |
+| TCP 80   | HTTP Gateway (Envoy) |
+| TCP 443  | HTTPS later          |
 
 Pod/service overlays (`10.42.0.0/16`, `10.43.0.0/16`) stay on-node; no need to open them on the VCN for a single node.
 
@@ -178,12 +178,12 @@ kubectl version --client
 
 ### New VM checklist
 
-| Step         | Action                                                          |
-| ------------ | --------------------------------------------------------------- |
-| New VM       | New OCI instance + `CLUSTER_NAME` / `PUBLIC_IP`                 |
-| Section 0    | Host prep → firewalld → k3s → kubeconfig → Helm                 |
-| Sections 1–8 | Same commands; `export KUBECONFIG=…` first                      |
-| Tear down    | Delete the OCI instance (or `k3s-uninstall.sh`)                 |
+| Step         | Action                                          |
+| ------------ | ----------------------------------------------- |
+| New VM       | New OCI instance + `CLUSTER_NAME` / `PUBLIC_IP` |
+| Section 0    | Host prep → firewalld → k3s → kubeconfig → Helm |
+| Sections 1–8 | Same commands; `export KUBECONFIG=…` first      |
+| Tear down    | Delete the OCI instance (or `k3s-uninstall.sh`) |
 
 ### Then
 
@@ -348,14 +348,14 @@ pw=$(kubectl get secret audit-pguser-audit -n pine-data -o jsonpath='{.data.pass
 
 Reuse `S3_ACCESS_KEY` / `S3_SECRET_KEY` from section 2 seed (or regenerate). `bao kv put` replaces the whole path — always include S3 keys when rewriting `secret/pine/attachment`.
 
-| OpenBao path               | K8s Secret (via ESO)   | Keys                                                                 |
-| -------------------------- | ---------------------- | -------------------------------------------------------------------- |
-| `secret/pine/identity`     | `identity-secrets`     | `POSTGRES_IDENTITY_PASSWORD`, `IDENTITY_DATABASE_URL`                |
-| `secret/pine/items`        | `items-secrets`        | `POSTGRES_ISSUES_PASSWORD`, `ISSUES_DATABASE_URL`                    |
-| `secret/pine/attachment`   | `attachment-secrets`   | `POSTGRES_ATTACHMENT_PASSWORD`, `ATTACHMENT_DATABASE_URL`, S3 keys   |
-| `secret/pine/platform`     | `platform-secrets`     | `POSTGRES_PLATFORM_PASSWORD`, `PLATFORM_DATABASE_URL`                |
-| `secret/pine/notification` | `notification-secrets` | `POSTGRES_NOTIFICATION_PASSWORD`, `NOTIFICATION_DATABASE_URL`        |
-| `secret/pine/audit`        | `audit-secrets`        | `POSTGRES_AUDIT_PASSWORD`, `AUDIT_DATABASE_URL`                      |
+| OpenBao path               | K8s Secret (via ESO)   | Keys                                                               |
+| -------------------------- | ---------------------- | ------------------------------------------------------------------ |
+| `secret/pine/identity`     | `identity-secrets`     | `POSTGRES_IDENTITY_PASSWORD`, `IDENTITY_DATABASE_URL`              |
+| `secret/pine/items`        | `items-secrets`        | `POSTGRES_ISSUES_PASSWORD`, `ISSUES_DATABASE_URL`                  |
+| `secret/pine/attachment`   | `attachment-secrets`   | `POSTGRES_ATTACHMENT_PASSWORD`, `ATTACHMENT_DATABASE_URL`, S3 keys |
+| `secret/pine/platform`     | `platform-secrets`     | `POSTGRES_PLATFORM_PASSWORD`, `PLATFORM_DATABASE_URL`              |
+| `secret/pine/notification` | `notification-secrets` | `POSTGRES_NOTIFICATION_PASSWORD`, `NOTIFICATION_DATABASE_URL`      |
+| `secret/pine/audit`        | `audit-secrets`        | `POSTGRES_AUDIT_PASSWORD`, `AUDIT_DATABASE_URL`                    |
 
 ### External Secrets Operator
 
@@ -521,11 +521,11 @@ Lab cookie/cipher/system secrets in values are placeholders. Courier SMTP is a s
 
 Private registry for this OCI VM. Reuse the **same OCI tenancy** as the VM — no separate OCIR account. Platform images (Postgres, NATS, Seaweed, Ory) stay on public registries; only custom `pine/*` apps need OCIR.
 
-| Step                                     | Where on this VM                                      |
-| ---------------------------------------- | ----------------------------------------------------- |
-| Auth Token + Object Storage namespace    | OCI Console (browser)                                 |
-| `docker login` + `pnpm images:push:ocir` | Pine repo + Docker on the VM                          |
-| Secret `ocir-pull` + Helm                | `kubectl` / `helm` on the VM                          |
+| Step                                     | Where on this VM             |
+| ---------------------------------------- | ---------------------------- |
+| Auth Token + Object Storage namespace    | OCI Console (browser)        |
+| `docker login` + `pnpm images:push:ocir` | Pine repo + Docker on the VM |
+| Secret `ocir-pull` + Helm                | `kubectl` / `helm` on the VM |
 
 Build and push **linux/arm64** images on this Ampere host, then pull via the `ocir-pull` secret.
 
@@ -638,6 +638,7 @@ helm upgrade --install items ./k8s/microservice -n pine -f ./k8s/microservice/it
 helm upgrade --install attachment ./k8s/microservice -n pine -f ./k8s/microservice/attachment.values.yaml -f "$OCIR_VALUES" --set image.registry="$OCIR_REGISTRY" --set image.tag="$OCIR_TAG"
 helm upgrade --install platform ./k8s/microservice -n pine -f ./k8s/microservice/platform.values.yaml -f "$OCIR_VALUES" --set image.registry="$OCIR_REGISTRY" --set image.tag="$OCIR_TAG"
 helm upgrade --install authorization ./k8s/microservice -n pine -f ./k8s/microservice/authorization.values.yaml -f "$OCIR_VALUES" --set image.registry="$OCIR_REGISTRY" --set image.tag="$OCIR_TAG"
+helm upgrade --install oauth ./k8s/microservice -n pine -f ./k8s/microservice/oauth.values.yaml -f "$OCIR_VALUES" --set image.registry="$OCIR_REGISTRY" --set image.tag="$OCIR_TAG"
 helm upgrade --install audit ./k8s/microservice -n pine -f ./k8s/microservice/audit.values.yaml -f "$OCIR_VALUES" --set image.registry="$OCIR_REGISTRY" --set image.tag="$OCIR_TAG"
 helm upgrade --install notification ./k8s/microservice -n pine -f ./k8s/microservice/notification.values.yaml -f "$OCIR_VALUES" --set image.registry="$OCIR_REGISTRY" --set image.tag="$OCIR_TAG"
 helm upgrade --install attachment-scanner ./k8s/microservice -n pine -f ./k8s/microservice/attachment-scanner.values.yaml -f "$OCIR_VALUES" --set image.registry="$OCIR_REGISTRY" --set image.tag="$OCIR_TAG"
@@ -653,10 +654,10 @@ Apps also need OpenBao unsealed, ESO secrets (full `*_DATABASE_URL` where requir
 
 ### 8.7 Uninstall app releases only
 
-Removes the eleven `microservice` Helm releases. Leaves Ory (`kratos` / `hydra` / `keto`) and other infra in place:
+Removes the twelve `microservice` Helm releases. Leaves Ory (`kratos` / `hydra` / `keto`) and other infra in place:
 
 ```bash
-helm -n pine uninstall identity items attachment platform authorization audit notification attachment-scanner attachment-image-processing api-gateway data-gateway
+helm -n pine uninstall identity items attachment platform authorization oauth audit notification attachment-scanner attachment-image-processing api-gateway data-gateway
 helm -n pine list
 kubectl -n pine get deploy,pods
 k3s crictl rmi --prune
@@ -668,16 +669,16 @@ Then reinstall with §8.6.
 
 ## Namespaces
 
-| Namespace              | Owns                                                         |
-| ---------------------- | ------------------------------------------------------------ |
-| `pine`                 | Apps, ESO objects / `*-secrets`, Seaweed, Ory                |
-| `pine-data`            | PostgresClusters, PGO `*-pguser-*` Secrets, DB pods / PVCs   |
-| `pine-gateway`         | Gateway + HTTPRoutes                                         |
-| `envoy-gateway-system` | Envoy Gateway                                                |
-| `openbao`              | OpenBao                                                      |
-| `postgres-operator`    | PGO operator (Helm)                                          |
-| `external-secrets`     | ESO                                                          |
-| `nats`                 | NATS + nack + streams                                        |
+| Namespace              | Owns                                                       |
+| ---------------------- | ---------------------------------------------------------- |
+| `pine`                 | Apps, ESO objects / `*-secrets`, Seaweed, Ory              |
+| `pine-data`            | PostgresClusters, PGO `*-pguser-*` Secrets, DB pods / PVCs |
+| `pine-gateway`         | Gateway + HTTPRoutes                                       |
+| `envoy-gateway-system` | Envoy Gateway                                              |
+| `openbao`              | OpenBao                                                    |
+| `postgres-operator`    | PGO operator (Helm)                                        |
+| `external-secrets`     | ESO                                                        |
+| `nats`                 | NATS + nack + streams                                      |
 
 ---
 

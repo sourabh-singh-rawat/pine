@@ -83,7 +83,7 @@ export const getIdentityFromAccessToken = <ThrowOnError extends boolean = false>
  *
  * Start the OAuth authorization code flow. Redirects (302) to the OAuth provider authorization endpoint.
  */
-export const authorize = <ThrowOnError extends boolean = false>(options: Options<AuthorizeData, ThrowOnError>): RequestResult<unknown, unknown, ThrowOnError> => (options.client ?? client).get<unknown, unknown, ThrowOnError>({ url: '/identity/oauth/authorize', ...options });
+export const authorize = <ThrowOnError extends boolean = false>(options: Options<AuthorizeData, ThrowOnError>): RequestResult<unknown, unknown, ThrowOnError> => (options.client ?? client).get<unknown, unknown, ThrowOnError>({ url: '/oauth/authorize', ...options });
 
 /**
  * OAuth consent challenge
@@ -92,7 +92,7 @@ export const authorize = <ThrowOnError extends boolean = false>(options: Options
  */
 export const getConsentChallenge = <ThrowOnError extends boolean = false>(options: Options<GetConsentChallengeData, ThrowOnError>): RequestResult<GetConsentChallengeResponses, unknown, ThrowOnError> => (options.client ?? client).get<GetConsentChallengeResponses, unknown, ThrowOnError>({
     responseType: 'json',
-    url: '/identity/oauth/consent',
+    url: '/oauth/consent',
     ...options
 });
 
@@ -103,7 +103,7 @@ export const getConsentChallenge = <ThrowOnError extends boolean = false>(option
  */
 export const acceptConsentChallenge = <ThrowOnError extends boolean = false>(options: Options<AcceptConsentChallengeData, ThrowOnError>): RequestResult<AcceptConsentChallengeResponses, unknown, ThrowOnError> => (options.client ?? client).post<AcceptConsentChallengeResponses, unknown, ThrowOnError>({
     responseType: 'json',
-    url: '/identity/oauth/consent/accept',
+    url: '/oauth/consent/accept',
     ...options,
     headers: {
         'Content-Type': 'application/json',
@@ -118,7 +118,7 @@ export const acceptConsentChallenge = <ThrowOnError extends boolean = false>(opt
  */
 export const rejectConsentChallenge = <ThrowOnError extends boolean = false>(options: Options<RejectConsentChallengeData, ThrowOnError>): RequestResult<RejectConsentChallengeResponses, unknown, ThrowOnError> => (options.client ?? client).post<RejectConsentChallengeResponses, unknown, ThrowOnError>({
     responseType: 'json',
-    url: '/identity/oauth/consent/reject',
+    url: '/oauth/consent/reject',
     ...options,
     headers: {
         'Content-Type': 'application/json',
@@ -133,7 +133,7 @@ export const rejectConsentChallenge = <ThrowOnError extends boolean = false>(opt
  */
 export const exchangeToken = <ThrowOnError extends boolean = false>(options: Options<ExchangeTokenData, ThrowOnError>): RequestResult<ExchangeTokenResponses, unknown, ThrowOnError> => (options.client ?? client).post<ExchangeTokenResponses, unknown, ThrowOnError>({
     responseType: 'json',
-    url: '/identity/oauth/token',
+    url: '/oauth/token',
     ...options,
     headers: {
         'Content-Type': 'application/json',
