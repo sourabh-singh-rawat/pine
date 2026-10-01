@@ -92,6 +92,8 @@ out
 .nuxt
 dist
 dist-ssr
+services/api-gateway/docker-assets/*
+!services/api-gateway/docker-assets/.gitkeep
 *.local
 bin/
 obj/
