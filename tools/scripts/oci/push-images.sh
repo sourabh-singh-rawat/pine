@@ -118,6 +118,40 @@ fi
 
 cd "$REPO_ROOT"
 
+prepare_api_gateway_docker_assets() {
+  local assets_dir="services/api-gateway/docker-assets"
+  local supergraph="services/api-gateway/dist/supergraph.graphql"
+  local openapi="services/api-gateway/dist/platform.openapi.json"
+
+  mkdir -p "$assets_dir"
+
+  if [[ ! -f "$supergraph" || ! -f "$openapi" ]]; then
+    echo "Composing api-gateway supergraph + OpenAPI (needs services/*/dist/schema.graphql and openapi inputs)"
+    pnpm schemas:compose
+  fi
+
+  if [[ ! -f "$supergraph" || ! -f "$openapi" ]]; then
+    echo "Missing $supergraph and/or $openapi after schemas:compose." >&2
+    echo "Boot GraphQL/OpenAPI subgraphs once (or emit dist schemas), then re-run." >&2
+    exit 1
+  fi
+
+  cp "$supergraph" "$assets_dir/supergraph.graphql"
+  cp "$openapi" "$assets_dir/platform.openapi.json"
+  echo "Prepared $assets_dir for api-gateway image bake"
+}
+
+needs_api_gateway_assets=0
+for entry in "${selected[@]}"; do
+  if [[ "${entry%%|*}" == "pine/api-gateway" ]]; then
+    needs_api_gateway_assets=1
+    break
+  fi
+done
+if [[ "$needs_api_gateway_assets" -eq 1 ]]; then
+  prepare_api_gateway_docker_assets
+fi
+
 build_one() {
   local entry="$1"
   local image rest package dir full

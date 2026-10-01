@@ -15,3 +15,7 @@ spec:
       remoteRef:
         key: pine/platform
         property: postgres_platform_password
+    - secretKey: PLATFORM_DATABASE_URL
+      remoteRef:
+        key: pine/platform
+        property: platform_database_url

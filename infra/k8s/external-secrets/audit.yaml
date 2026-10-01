@@ -15,3 +15,7 @@ spec:
       remoteRef:
         key: pine/audit
         property: postgres_audit_password
+    - secretKey: AUDIT_DATABASE_URL
+      remoteRef:
+        key: pine/audit
+        property: audit_database_url

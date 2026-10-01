@@ -2,6 +2,7 @@ apiVersion: postgres-operator.crunchydata.com/v1
 kind: PostgresCluster
 metadata:
   name: attachment
+  namespace: pine-data
 spec:
   postgresVersion: 18
   users:

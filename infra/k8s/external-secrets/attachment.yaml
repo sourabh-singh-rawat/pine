@@ -15,6 +15,10 @@ spec:
       remoteRef:
         key: pine/attachment
         property: postgres_attachment_password
+    - secretKey: ATTACHMENT_DATABASE_URL
+      remoteRef:
+        key: pine/attachment
+        property: attachment_database_url
     - secretKey: S3_ACCESS_KEY
       remoteRef:
         key: pine/attachment
