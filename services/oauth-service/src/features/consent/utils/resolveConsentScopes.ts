@@ -1,3 +1,5 @@
+import type { ConsentScopeDetail } from "@/features/consent/schemas";
+
 type ConsentScopeCopy = {
   title: string;
   description: string;
@@ -26,31 +28,21 @@ const SCOPE_COPY: Record<string, ConsentScopeCopy> = {
   },
 };
 
-export const formatConsentScope = (scope: string): ConsentScopeCopy => {
-  const known = SCOPE_COPY[scope];
-  if (known) {
-    return known;
-  }
+export const resolveConsentScopes = (requestedScopes: string[]): ConsentScopeDetail[] => {
+  return requestedScopes.map((scope) => {
+    const known = SCOPE_COPY[scope];
+    if (known) {
+      return {
+        scope,
+        title: known.title,
+        description: known.description,
+      };
+    }
 
-  return {
-    title: scope,
-    description: "Additional access requested by this application.",
-  };
-};
-
-export const getClientInitials = (name: string): string => {
-  const parts = name
-    .trim()
-    .split(/[\s-_]+/)
-    .filter((part) => part.length > 0);
-
-  if (parts.length === 0) {
-    return "?";
-  }
-
-  if (parts.length === 1) {
-    return parts[0].slice(0, 2).toUpperCase();
-  }
-
-  return `${parts[0][0] ?? ""}${parts[1][0] ?? ""}`.toUpperCase();
+    return {
+      scope,
+      title: scope,
+      description: "Additional access requested by this application.",
+    };
+  });
 };

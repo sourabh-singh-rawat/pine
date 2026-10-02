@@ -3,10 +3,15 @@ import Divider from "@mui/material/Divider";
 import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
 import { Fragment } from "react";
-import { formatConsentScope } from "@features/consent/utils";
+
+type ConsentScopeItem = {
+  scope: string;
+  title: string;
+  description: string;
+};
 
 type ConsentScopeListProps = {
-  scopes: string[];
+  scopes: ConsentScopeItem[];
 };
 
 export const ConsentScopeList = ({ scopes }: ConsentScopeListProps) => (
@@ -25,32 +30,29 @@ export const ConsentScopeList = ({ scopes }: ConsentScopeListProps) => (
         This app will be able to
       </Typography>
     </Box>
-    {scopes.map((scope, index) => {
-      const copy = formatConsentScope(scope);
-      return (
-        <Fragment key={scope}>
-          {index > 0 ? <Divider /> : null}
-          <Box
-            sx={{
-              display: "flex",
-              alignItems: "flex-start",
-              justifyContent: "space-between",
-              gap: 3,
-              px: 3,
-              py: 2.5,
-            }}
-          >
-            <Box sx={{ minWidth: 0 }}>
-              <Typography variant="body1" sx={{ fontWeight: 500 }}>
-                {copy.title}
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
-                {copy.description}
-              </Typography>
-            </Box>
+    {scopes.map((scopeItem, index) => (
+      <Fragment key={scopeItem.scope}>
+        {index > 0 ? <Divider /> : null}
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "flex-start",
+            justifyContent: "space-between",
+            gap: 3,
+            px: 3,
+            py: 2.5,
+          }}
+        >
+          <Box sx={{ minWidth: 0 }}>
+            <Typography variant="body1" sx={{ fontWeight: 500 }}>
+              {scopeItem.title}
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              {scopeItem.description}
+            </Typography>
           </Box>
-        </Fragment>
-      );
-    })}
+        </Box>
+      </Fragment>
+    ))}
   </Paper>
 );

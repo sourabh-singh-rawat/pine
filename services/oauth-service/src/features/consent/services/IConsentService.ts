@@ -1,6 +1,9 @@
+import type { ConsentScopeDetail } from "@/features/consent/schemas";
 import type { ConsentChallenge } from "@/integrations/oauth";
 
-export type ConsentChallengeResult = ConsentChallenge;
+export type ConsentChallengeResult = ConsentChallenge & {
+  scopes: ConsentScopeDetail[];
+};
 
 export interface AcceptOptions {
   challenge: string;
@@ -20,7 +23,7 @@ export interface ConsentActionResult {
 }
 
 export interface IConsentService {
-  getChallenge(challenge: string): Promise<ConsentChallengeResult>;
-  accept(params: AcceptOptions): Promise<ConsentActionResult>;
-  reject(params: RejectOptions): Promise<ConsentActionResult>;
+  getChallenge: (challenge: string) => Promise<ConsentChallengeResult>;
+  accept: (params: AcceptOptions) => Promise<ConsentActionResult>;
+  reject: (params: RejectOptions) => Promise<ConsentActionResult>;
 }

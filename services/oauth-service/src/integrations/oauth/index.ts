@@ -27,6 +27,7 @@ export {
   InvalidOAuthRequestError,
   OAuthErrorCodes,
   OAuthProviderUnavailableError,
+  OAuthRequestExpiredError,
   OAuthRequestNotFoundError,
   type OAuthErrorCode,
 } from "@/integrations/oauth/errors";

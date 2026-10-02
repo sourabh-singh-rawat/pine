@@ -5,6 +5,7 @@ import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import { PrimaryButton, ProgressCircularIndicator, SecondaryButton } from "@pine/ui";
 import { useSearch } from "@tanstack/react-router";
+import { isAxiosError } from "axios";
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
   useAcceptConsentChallengeMutation,
@@ -97,11 +98,19 @@ export const ConsentForm = () => {
   }
 
   if (consentChallengeQuery.isError) {
+    const error = consentChallengeQuery.error;
+    const isGone = isAxiosError(error) && error.response?.status === 410;
+    const message = getErrorMessage(error, "Unable to load consent request.");
+    const isExpired = isGone || message.toLowerCase().includes("expired");
+
     return (
       <ConsentCardShell>
-        <Typography color="error">
-          {getErrorMessage(consentChallengeQuery.error, "Unable to load consent request.")}
-        </Typography>
+        <Stack spacing={2} sx={{ py: 4 }}>
+          <Typography variant="h5" component="h1" sx={{ fontWeight: 500 }}>
+            {isExpired ? "Consent request expired" : "Unable to load consent request"}
+          </Typography>
+          <Typography color="text.secondary">{message}</Typography>
+        </Stack>
       </ConsentCardShell>
     );
   }
@@ -109,7 +118,15 @@ export const ConsentForm = () => {
   if (consentChallengeQuery.isLoading || !challenge || shouldAutoAcceptSkip) {
     return (
       <ConsentCardShell>
-        <Stack spacing={2} sx={{ alignItems: "flex-start", py: 2 }}>
+        <Stack
+          spacing={2}
+          sx={{
+            alignItems: "center",
+            justifyContent: "center",
+            textAlign: "center",
+            py: 8,
+          }}
+        >
           <ProgressCircularIndicator
             size={40}
             aria-label={
@@ -145,7 +162,7 @@ export const ConsentForm = () => {
             clientId={challenge.client.id}
             subject={challenge.subject}
           />
-          <ConsentScopeList scopes={challenge.requestedScope} />
+          <ConsentScopeList scopes={challenge.scopes} />
         </Stack>
 
         <FormControlLabel
