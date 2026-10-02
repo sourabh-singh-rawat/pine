@@ -45,7 +45,7 @@ Confirm in active compose + `.env.example`.
 | 4222 / 8222 | NATS client / monitor            |
 | 9200 / 9600 | OpenSearch REST / Performance Analyzer |
 
-NATS JetStream is enabled (`-js`). Streams are **not** created by apps — after infra is up run `pnpm nats:streams` (same five names as `infra/k8s/nats/` Stream CRs). Compose JetStream under `/tmp` is wiped on container recreate; re-run the script.
+NATS JetStream is enabled (`-js`, store dir `/data` → `infra/data/docker/nats-jetstream`). Streams are **not** created by apps. `nats-streams-init` (nats-box one-shot, same pattern as `seaweedfs-init`) creates `attachment`, `authorization`, `identity`, `items`, and `platform` after NATS is healthy — same five names as `infra/k8s/nats/` Stream CRs. Host fallback: `pnpm nats:streams`. Durable consumers stay app-owned via `Consumer.start()`.
 | 4433 / 4434 | Kratos public / admin            |
 | 4444 / 4445 | Hydra public / admin             |
 | 4466 / 4467 | Keto read / write                |
