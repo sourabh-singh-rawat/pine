@@ -15,3 +15,7 @@ spec:
       remoteRef:
         key: pine/notification
         property: postgres_notification_password
+    - secretKey: NOTIFICATION_DATABASE_URL
+      remoteRef:
+        key: pine/notification
+        property: notification_database_url

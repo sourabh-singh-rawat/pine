@@ -16,6 +16,7 @@ export const EnvSchema = Type.Object({
   IDENTITY_SERVICE_TLS_CERT_PATH: Type.String({ minLength: 1 }),
   CA_CERT_PATH: Type.String({ minLength: 1 }),
   AUTHORIZATION_SERVICE_URL: Type.String({ default: "https://127.0.0.1:5006" }),
+  OAUTH_SERVICE_URL: Type.String({ default: "https://127.0.0.1:5008" }),
   ATTACHMENT_SERVICE_URL: Type.String({ default: "https://127.0.0.1:5003" }),
   DATA_GATEWAY_URL: Type.String({ default: "https://localhost:4001" }),
   IDENTITY_DATABASE_URL: Type.String({ minLength: 1 }),
@@ -25,8 +26,6 @@ export const EnvSchema = Type.Object({
   VITE_PLATFORM_WEB_URL: Type.String({ default: "https://localhost:3002" }),
   KRATOS_PUBLIC_URL: Type.String({ default: "http://127.0.0.1:4433" }),
   KRATOS_ADMIN_URL: Type.String({ default: "http://127.0.0.1:4434" }),
-  HYDRA_PUBLIC_URL: Type.String({ default: "http://127.0.0.1:4444" }),
-  HYDRA_ADMIN_URL: Type.String({ default: "http://127.0.0.1:4445" }),
   OTEL_EXPORTER_OTLP_ENDPOINT: Type.String({ default: "http://127.0.0.1:4317" }),
 });
 

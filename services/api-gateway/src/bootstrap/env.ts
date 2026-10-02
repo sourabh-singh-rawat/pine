@@ -13,6 +13,7 @@ export const EnvSchema = Type.Object({
   IDENTITY_SERVICE_URL: Type.String({ default: "https://127.0.0.1:5000" }),
   ATTACHMENT_SERVICE_URL: Type.String({ default: "https://127.0.0.1:5003" }),
   AUTHORIZATION_SERVICE_URL: Type.String({ default: "https://127.0.0.1:5006" }),
+  OAUTH_SERVICE_URL: Type.String({ default: "https://127.0.0.1:5008" }),
   OTEL_EXPORTER_OTLP_ENDPOINT: Type.String({ default: "http://127.0.0.1:4317" }),
 });
 

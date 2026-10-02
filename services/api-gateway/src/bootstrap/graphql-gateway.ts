@@ -62,6 +62,7 @@ const subgraphFetcher = makeFetchHappen.defaults({
 
 export const graphqlGateway = new ApolloGateway({
   async supergraphSdl({ update }) {
+    const initialSdl = readSupergraphSdl();
     let debounce: ReturnType<typeof setTimeout> | null = null;
     const watcher = watch(supergraphPath, () => {
       if (debounce) clearTimeout(debounce);
@@ -78,7 +79,7 @@ export const graphqlGateway = new ApolloGateway({
     });
 
     return {
-      supergraphSdl: readSupergraphSdl(),
+      supergraphSdl: initialSdl,
       cleanup: async () => {
         if (debounce) clearTimeout(debounce);
         watcher.close();

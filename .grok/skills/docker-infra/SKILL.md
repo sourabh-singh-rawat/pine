@@ -43,6 +43,7 @@ Confirm in active compose + `.env.example`.
 | 5433–5439   | Per-service Postgres (multi-db)  |
 | 5440        | Ory Postgres (kratos/hydra/keto) |
 | 4222 / 8222 | NATS client / monitor            |
+| 9200 / 9600 | OpenSearch REST / Performance Analyzer |
 
 NATS JetStream is enabled (`-js`). Streams are **not** created by apps — after infra is up run `pnpm nats:streams` (same five names as `infra/k8s/nats/` Stream CRs). Compose JetStream under `/tmp` is wiped on container recreate; re-run the script.
 | 4433 / 4434 | Kratos public / admin            |

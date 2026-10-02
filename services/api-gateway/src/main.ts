@@ -21,6 +21,7 @@ const main = async () => {
   console.log(`   GraphQL:  ${env.API_GATEWAY_URL}/graphql`);
   console.log(`   Swagger:  ${env.API_GATEWAY_URL}/docs`);
   console.log(`   Proxy → identity:   ${env.IDENTITY_SERVICE_URL}  (/identity)`);
+  console.log(`   Proxy → oauth:      ${env.OAUTH_SERVICE_URL}  (/oauth)`);
   console.log(`   Proxy → attachment: ${env.ATTACHMENT_SERVICE_URL}  (/attachments)`);
 };
 

@@ -1,5 +1,15 @@
 # @pine/identity-service
 
+## 0.8.0
+
+### Minor Changes
+
+- b376e83: feat(oauth-service): extract OAuth/OIDC Hydra APIs from identity-service
+
+### Patch Changes
+
+- be64deb: feat(oauth): facade Hydra authorize and interactive consent
+
 ## 0.7.1
 
 ### Patch Changes

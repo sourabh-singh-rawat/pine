@@ -14,7 +14,6 @@ import { broker, container, initializeDb, TYPES } from "@/bootstrap";
 import { openApiOutputPath } from "@/bootstrap/container";
 import { writeSchemaToDist } from "@/bootstrap/graphql";
 import { logger } from "@/bootstrap/logger";
-import type { IClientSeederService } from "@/features/clients";
 import { ProfilePhotoAttachmentConsumer } from "@/features/profiles";
 
 export { container, db } from "@/bootstrap";
@@ -43,8 +42,6 @@ const main = async () => {
   httpServer.writeOpenApi(openApiOutputPath);
 
   await broker.init();
-
-  await container.get<IClientSeederService>(TYPES.ClientSeederService).seed();
 
   void container.get<IWorker>(TYPES.OutboxWorker).start();
   void container.get<IWorker>(TYPES.OutboxCleanupWorker).start();

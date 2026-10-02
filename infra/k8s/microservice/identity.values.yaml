@@ -25,12 +25,11 @@ env:
   NATS_URL: nats://nats.nats.svc:4222
   IDENTITY_SERVICE_URL: https://identity.pine.svc:5000
   AUTHORIZATION_SERVICE_URL: https://authorization.pine.svc:5006
+  OAUTH_SERVICE_URL: https://oauth.pine.svc:5008
   ATTACHMENT_SERVICE_URL: https://attachment.pine.svc:5003
   DATA_GATEWAY_URL: https://data-gateway.pine.svc:4001
   KRATOS_PUBLIC_URL: http://kratos-public.pine.svc:4433
   KRATOS_ADMIN_URL: http://kratos-admin.pine.svc:4434
-  HYDRA_PUBLIC_URL: http://hydra-public.pine.svc:4444
-  HYDRA_ADMIN_URL: http://hydra-admin.pine.svc:4445
   IDENTITY_SERVICE_TLS_KEY_PATH: /certs/tls.key
   IDENTITY_SERVICE_TLS_CERT_PATH: /certs/tls.crt
   CA_CERT_PATH: /certs/ca.crt

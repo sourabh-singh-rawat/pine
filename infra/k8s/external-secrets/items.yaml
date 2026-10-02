@@ -15,3 +15,7 @@ spec:
       remoteRef:
         key: pine/items
         property: postgres_issues_password
+    - secretKey: ISSUES_DATABASE_URL
+      remoteRef:
+        key: pine/items
+        property: issues_database_url

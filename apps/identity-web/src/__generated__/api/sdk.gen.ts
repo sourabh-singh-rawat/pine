@@ -2,7 +2,7 @@
 
 import type { Client, ClientMeta, Options as Options2, RequestResult, TDataShape } from './client';
 import { client } from './client.gen';
-import type { AcceptConsentChallengeData, AcceptConsentChallengeResponses, AuthorizeData, CheckRelationshipData, CheckRelationshipResponses, CreateUploadTargetData, CreateUploadTargetResponses, DeleteRelationshipData, DeleteRelationshipResponses, EnsureRelationshipData, EnsureRelationshipResponses, ExchangeTokenData, ExchangeTokenResponses, GetAttachmentContentData, GetAttachmentContentResponses, GetAttachmentVersionContentData, GetAttachmentVersionContentResponses, GetConsentChallengeData, GetConsentChallengeResponses, GetCurrentUserData, GetCurrentUserResponses, GetIdentityFromAccessTokenData, GetIdentityFromAccessTokenResponses, GetIdentityFromSessionData, GetIdentityFromSessionResponses, ListRelationshipsData, ListRelationshipsResponses, LogoutData, LogoutResponses, RegisterData, RegisterResponses, RejectConsentChallengeData, RejectConsentChallengeResponses, ResendVerificationEmailData, ResendVerificationEmailResponses, SignInWithEmailAndPasswordData, SignInWithEmailAndPasswordResponses, UploadToTargetData, UploadToTargetResponses, VerifyEmailData, VerifyEmailResponses } from './types.gen';
+import type { AcceptConsentChallengeData, AcceptConsentChallengeResponses, AcceptLoginChallengeData, AcceptLoginChallengeResponses, AuthorizeData, CheckRelationshipData, CheckRelationshipResponses, CreateOAuthClientData, CreateOAuthClientResponses, CreateUploadTargetData, CreateUploadTargetResponses, DeleteOAuthClientData, DeleteOAuthClientResponses, DeleteRelationshipData, DeleteRelationshipResponses, EnsureRelationshipData, EnsureRelationshipResponses, ExchangeTokenData, ExchangeTokenResponses, GetAttachmentContentData, GetAttachmentContentResponses, GetAttachmentDerivativeData, GetAttachmentDerivativeResponses, GetAttachmentVersionContentData, GetAttachmentVersionContentResponses, GetConsentChallengeData, GetConsentChallengeResponses, GetCurrentUserData, GetCurrentUserResponses, GetIdentityFromAccessTokenData, GetIdentityFromAccessTokenResponses, GetIdentityFromSessionData, GetIdentityFromSessionResponses, GetOAuthClientData, GetOAuthClientResponses, IntrospectTokenData, IntrospectTokenResponses, ListRelationshipsData, ListRelationshipsResponses, LogoutData, LogoutResponses, RegisterData, RegisterResponses, RejectConsentChallengeData, RejectConsentChallengeResponses, ResendVerificationEmailData, ResendVerificationEmailResponses, SignInWithEmailAndPasswordData, SignInWithEmailAndPasswordResponses, StoreAttachmentDerivativeData, StoreAttachmentDerivativeResponses, StoreAttachmentMetadataData, StoreAttachmentMetadataResponses, UpdateSecurityStatusData, UpdateSecurityStatusResponses, UploadToTargetData, UploadToTargetResponses, VerifyEmailData, VerifyEmailResponses } from './types.gen';
 
 export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends boolean = boolean, TResponse = unknown> = Options2<TData, ThrowOnError, TResponse> & {
     /**
@@ -79,69 +79,6 @@ export const getIdentityFromAccessToken = <ThrowOnError extends boolean = false>
 });
 
 /**
- * OAuth authorize
- *
- * Start the OAuth authorization code flow. Redirects (302) to the OAuth provider authorization endpoint.
- */
-export const authorize = <ThrowOnError extends boolean = false>(options: Options<AuthorizeData, ThrowOnError>): RequestResult<unknown, unknown, ThrowOnError> => (options.client ?? client).get<unknown, unknown, ThrowOnError>({ url: '/identity/oauth/authorize', ...options });
-
-/**
- * OAuth consent challenge
- *
- * Load OAuth consent challenge details by consent_challenge
- */
-export const getConsentChallenge = <ThrowOnError extends boolean = false>(options: Options<GetConsentChallengeData, ThrowOnError>): RequestResult<GetConsentChallengeResponses, unknown, ThrowOnError> => (options.client ?? client).get<GetConsentChallengeResponses, unknown, ThrowOnError>({
-    responseType: 'json',
-    url: '/identity/oauth/consent',
-    ...options
-});
-
-/**
- * Accept OAuth consent
- *
- * Accept an OAuth consent challenge with granted scopes
- */
-export const acceptConsentChallenge = <ThrowOnError extends boolean = false>(options: Options<AcceptConsentChallengeData, ThrowOnError>): RequestResult<AcceptConsentChallengeResponses, unknown, ThrowOnError> => (options.client ?? client).post<AcceptConsentChallengeResponses, unknown, ThrowOnError>({
-    responseType: 'json',
-    url: '/identity/oauth/consent/accept',
-    ...options,
-    headers: {
-        'Content-Type': 'application/json',
-        ...options.headers
-    }
-});
-
-/**
- * Reject OAuth consent
- *
- * Reject an OAuth consent challenge when the user denies access
- */
-export const rejectConsentChallenge = <ThrowOnError extends boolean = false>(options: Options<RejectConsentChallengeData, ThrowOnError>): RequestResult<RejectConsentChallengeResponses, unknown, ThrowOnError> => (options.client ?? client).post<RejectConsentChallengeResponses, unknown, ThrowOnError>({
-    responseType: 'json',
-    url: '/identity/oauth/consent/reject',
-    ...options,
-    headers: {
-        'Content-Type': 'application/json',
-        ...options.headers
-    }
-});
-
-/**
- * OAuth token
- *
- * Exchange an authorization code for access (and optional refresh/id) tokens and set them as HTTP-only cookies
- */
-export const exchangeToken = <ThrowOnError extends boolean = false>(options: Options<ExchangeTokenData, ThrowOnError>): RequestResult<ExchangeTokenResponses, unknown, ThrowOnError> => (options.client ?? client).post<ExchangeTokenResponses, unknown, ThrowOnError>({
-    responseType: 'json',
-    url: '/identity/oauth/token',
-    ...options,
-    headers: {
-        'Content-Type': 'application/json',
-        ...options.headers
-    }
-});
-
-/**
  * Register
  *
  * Register a new user with email and password via the identity provider
@@ -183,6 +120,169 @@ export const resendVerificationEmail = <ThrowOnError extends boolean = false>(op
 });
 
 /**
+ * OAuth authorize
+ *
+ * Start or continue the OAuth authorization code flow. Proxies the authorization server public authorize endpoint and returns its redirect.
+ */
+export const authorize = <ThrowOnError extends boolean = false>(options?: Options<AuthorizeData, ThrowOnError>): RequestResult<unknown, unknown, ThrowOnError> => (options?.client ?? client).get<unknown, unknown, ThrowOnError>({ url: '/oauth/authorize', ...options });
+
+/**
+ * Accept OAuth login challenge
+ *
+ * Accept an OAuth login challenge after the user authenticates
+ */
+export const acceptLoginChallenge = <ThrowOnError extends boolean = false>(options: Options<AcceptLoginChallengeData, ThrowOnError>): RequestResult<AcceptLoginChallengeResponses, unknown, ThrowOnError> => (options.client ?? client).post<AcceptLoginChallengeResponses, unknown, ThrowOnError>({
+    responseType: 'json',
+    url: '/internal/oauth/login/accept',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * OAuth consent challenge
+ *
+ * Load OAuth consent challenge details by consent_challenge
+ */
+export const getConsentChallenge = <ThrowOnError extends boolean = false>(options: Options<GetConsentChallengeData, ThrowOnError>): RequestResult<GetConsentChallengeResponses, unknown, ThrowOnError> => (options.client ?? client).get<GetConsentChallengeResponses, unknown, ThrowOnError>({
+    responseType: 'json',
+    url: '/oauth/consent',
+    ...options
+});
+
+/**
+ * Accept OAuth consent
+ *
+ * Accept an OAuth consent challenge with granted scopes
+ */
+export const acceptConsentChallenge = <ThrowOnError extends boolean = false>(options: Options<AcceptConsentChallengeData, ThrowOnError>): RequestResult<AcceptConsentChallengeResponses, unknown, ThrowOnError> => (options.client ?? client).post<AcceptConsentChallengeResponses, unknown, ThrowOnError>({
+    responseType: 'json',
+    url: '/oauth/consent/accept',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Reject OAuth consent
+ *
+ * Reject an OAuth consent challenge when the user denies access
+ */
+export const rejectConsentChallenge = <ThrowOnError extends boolean = false>(options: Options<RejectConsentChallengeData, ThrowOnError>): RequestResult<RejectConsentChallengeResponses, unknown, ThrowOnError> => (options.client ?? client).post<RejectConsentChallengeResponses, unknown, ThrowOnError>({
+    responseType: 'json',
+    url: '/oauth/consent/reject',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * OAuth token
+ *
+ * Exchange an authorization code for access (and optional refresh/id) tokens and set them as HTTP-only cookies
+ */
+export const exchangeToken = <ThrowOnError extends boolean = false>(options: Options<ExchangeTokenData, ThrowOnError>): RequestResult<ExchangeTokenResponses, unknown, ThrowOnError> => (options.client ?? client).post<ExchangeTokenResponses, unknown, ThrowOnError>({
+    responseType: 'json',
+    url: '/oauth/token',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Introspect OAuth token
+ *
+ * Introspect an access or refresh token via the OAuth provider
+ */
+export const introspectToken = <ThrowOnError extends boolean = false>(options: Options<IntrospectTokenData, ThrowOnError>): RequestResult<IntrospectTokenResponses, unknown, ThrowOnError> => (options.client ?? client).post<IntrospectTokenResponses, unknown, ThrowOnError>({
+    responseType: 'json',
+    url: '/oauth/introspect',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Create OAuth client
+ *
+ * Register a new OAuth 2.0 client with the authorization server
+ */
+export const createOAuthClient = <ThrowOnError extends boolean = false>(options: Options<CreateOAuthClientData, ThrowOnError>): RequestResult<CreateOAuthClientResponses, unknown, ThrowOnError> => (options.client ?? client).post<CreateOAuthClientResponses, unknown, ThrowOnError>({
+    responseType: 'json',
+    url: '/oauth/clients',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Delete OAuth client
+ *
+ * Delete an OAuth 2.0 client by client id
+ */
+export const deleteOAuthClient = <ThrowOnError extends boolean = false>(options: Options<DeleteOAuthClientData, ThrowOnError>): RequestResult<DeleteOAuthClientResponses, unknown, ThrowOnError> => (options.client ?? client).delete<DeleteOAuthClientResponses, unknown, ThrowOnError>({
+    responseType: 'json',
+    url: '/oauth/clients/{clientId}',
+    ...options
+});
+
+/**
+ * Get OAuth client
+ *
+ * Fetch an OAuth 2.0 client by client id
+ */
+export const getOAuthClient = <ThrowOnError extends boolean = false>(options: Options<GetOAuthClientData, ThrowOnError>): RequestResult<GetOAuthClientResponses, unknown, ThrowOnError> => (options.client ?? client).get<GetOAuthClientResponses, unknown, ThrowOnError>({
+    responseType: 'json',
+    url: '/oauth/clients/{clientId}',
+    ...options
+});
+
+/**
+ * Get attachment derivative content stream
+ *
+ * Download thumbnail or preview derivative for an attachment current version
+ */
+export const getAttachmentDerivative = <ThrowOnError extends boolean = false>(options: Options<GetAttachmentDerivativeData, ThrowOnError>): RequestResult<GetAttachmentDerivativeResponses, unknown, ThrowOnError> => (options.client ?? client).get<GetAttachmentDerivativeResponses, unknown, ThrowOnError>({ url: '/attachments/{attachmentId}/derivatives/{derivativeType}', ...options });
+
+/**
+ * Store attachment derivative
+ *
+ * Store processed attachment derivative bytes (thumbnail or preview)
+ */
+export const storeAttachmentDerivative = <ThrowOnError extends boolean = false>(options: Options<StoreAttachmentDerivativeData, ThrowOnError>): RequestResult<StoreAttachmentDerivativeResponses, unknown, ThrowOnError> => (options.client ?? client).put<StoreAttachmentDerivativeResponses, unknown, ThrowOnError>({
+    responseType: 'json',
+    url: '/internal/attachments/{attachmentId}/versions/{versionId}/derivatives/{derivativeType}',
+    ...options
+});
+
+/**
+ * Store attachment metadata
+ *
+ * Store processed attachment image metadata and schedule event via outbox
+ */
+export const storeAttachmentMetadata = <ThrowOnError extends boolean = false>(options: Options<StoreAttachmentMetadataData, ThrowOnError>): RequestResult<StoreAttachmentMetadataResponses, unknown, ThrowOnError> => (options.client ?? client).post<StoreAttachmentMetadataResponses, unknown, ThrowOnError>({
+    responseType: 'json',
+    url: '/internal/attachments/{attachmentId}/versions/{versionId}/metadata',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
  * Get attachment content stream
  *
  * Download raw current version content for an attachment
@@ -195,6 +295,21 @@ export const getAttachmentContent = <ThrowOnError extends boolean = false>(optio
  * Download raw attachment version content
  */
 export const getAttachmentVersionContent = <ThrowOnError extends boolean = false>(options: Options<GetAttachmentVersionContentData, ThrowOnError>): RequestResult<GetAttachmentVersionContentResponses, unknown, ThrowOnError> => (options.client ?? client).get<GetAttachmentVersionContentResponses, unknown, ThrowOnError>({ url: '/internal/attachments/{attachmentId}/versions/{versionId}/content', ...options });
+
+/**
+ * Update attachment security status
+ *
+ * Record malware scan result and promote or reject the attachment
+ */
+export const updateSecurityStatus = <ThrowOnError extends boolean = false>(options: Options<UpdateSecurityStatusData, ThrowOnError>): RequestResult<UpdateSecurityStatusResponses, unknown, ThrowOnError> => (options.client ?? client).post<UpdateSecurityStatusResponses, unknown, ThrowOnError>({
+    responseType: 'json',
+    url: '/internal/attachments/{attachmentId}/security-status',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
 
 /**
  * Create upload target

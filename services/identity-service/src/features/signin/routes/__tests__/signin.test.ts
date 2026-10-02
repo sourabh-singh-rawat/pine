@@ -83,7 +83,7 @@ describe("signin route", () => {
 
   it("passes login_challenge and returns redirectTo in JSON (no HTTP 302)", async () => {
     const expiresAt = new Date("2030-01-01T00:00:00.000Z");
-    const redirectTo = "http://127.0.0.1:4444/oauth2/auth?login_verifier=abc";
+    const redirectTo = "https://localhost/api/oauth/authorize?login_verifier=abc";
     const signInWithEmailAndPassword = vi.fn().mockResolvedValue({
       identity: {
         id: "identity-1",

@@ -26,6 +26,7 @@ RUN turbo prune "$SERVICE" --docker
 
 FROM base AS builder
 ARG SERVICE
+ARG SERVICE_DIR
 COPY --from=pruner /app/out/json/ .
 RUN --mount=type=cache,id=pnpm-store,target=/pnpm/store \
   pnpm install --frozen-lockfile
@@ -36,6 +37,13 @@ RUN --mount=type=cache,id=turbo-cache,target=/app/.turbo \
   pnpm exec turbo run build --filter="${SERVICE}..."
 RUN --mount=type=cache,id=pnpm-store,target=/pnpm/store \
   pnpm --filter="${SERVICE}" deploy --prod --legacy /prod
+COPY services/api-gateway/docker-assets /tmp/api-gateway-docker-assets
+RUN mkdir -p /prod/dist \
+  && if [ "$SERVICE" = "@pine/api-gateway" ]; then \
+    cp -a /tmp/api-gateway-docker-assets/. /prod/dist/; \
+    test -s /prod/dist/supergraph.graphql; \
+    test -s /prod/dist/platform.openapi.json; \
+  fi
 
 FROM node:${NODE_VERSION}-alpine AS runtime
 ARG TSX_VERSION

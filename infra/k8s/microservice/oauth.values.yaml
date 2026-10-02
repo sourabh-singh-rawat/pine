@@ -1,0 +1,32 @@
+name: oauth
+
+replicaCount: 1
+
+image:
+  repository: pine/oauth-service
+  tag: "0.1.0"
+  pullPolicy: IfNotPresent
+
+service:
+  enabled: true
+  port: 5008
+  targetPort: 5008
+
+secretRefs: []
+
+tls:
+  enabled: true
+  secretName: oauth-tls
+  mountPath: /certs
+
+env:
+  NODE_ENV: production
+  OAUTH_SERVICE_URL: https://oauth.pine.svc:5008
+  HYDRA_PUBLIC_URL: http://hydra-public.pine.svc:4444
+  HYDRA_ADMIN_URL: http://hydra-admin.pine.svc:4445
+  OAUTH_PUBLIC_URL: https://localhost/api/oauth
+  PINE_WEB_URL: https://localhost:3001
+  VITE_PLATFORM_WEB_URL: https://localhost:3002
+  OAUTH_SERVICE_TLS_KEY_PATH: /certs/tls.key
+  OAUTH_SERVICE_TLS_CERT_PATH: /certs/tls.crt
+  CA_CERT_PATH: /certs/ca.crt

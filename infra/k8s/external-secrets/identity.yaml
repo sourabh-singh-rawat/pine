@@ -15,3 +15,7 @@ spec:
       remoteRef:
         key: pine/identity
         property: postgres_identity_password
+    - secretKey: IDENTITY_DATABASE_URL
+      remoteRef:
+        key: pine/identity
+        property: identity_database_url

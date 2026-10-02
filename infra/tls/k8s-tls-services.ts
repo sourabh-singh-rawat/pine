@@ -66,6 +66,16 @@ export const k8sTlsServices: readonly K8sTlsService[] = [
     secretName: "authorization-tls",
     dnsNames: [...pineDns("authorization"), "authorization-service"],
   },
+  {
+    certDir: "oauth-service",
+    secretName: "oauth-tls",
+    dnsNames: [...pineDns("oauth"), "oauth-service"],
+  },
+  {
+    certDir: "search-service",
+    secretName: "search-tls",
+    dnsNames: [...pineDns("search"), "search-service"],
+  },
 ];
 
 export const localOnlyCertDirs: readonly string[] = ["identity-web", "pine-web", "platform-web"];
