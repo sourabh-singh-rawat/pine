@@ -75,7 +75,7 @@ export class HydraOAuthFlowProvider implements IOAuthFlowProvider {
         sessionId: data.session_id,
       };
     } catch (error) {
-      rethrowHydraError(error);
+      throw rethrowHydraError(error);
     }
   }
 
@@ -94,7 +94,7 @@ export class HydraOAuthFlowProvider implements IOAuthFlowProvider {
 
       return { redirectTo: this.rewritePublicRedirect(data.redirect_to) };
     } catch (error) {
-      rethrowHydraError(error);
+      throw rethrowHydraError(error);
     }
   }
 
@@ -110,7 +110,7 @@ export class HydraOAuthFlowProvider implements IOAuthFlowProvider {
 
       return { redirectTo: this.rewritePublicRedirect(data.redirect_to) };
     } catch (error) {
-      rethrowHydraError(error);
+      throw rethrowHydraError(error);
     }
   }
 
@@ -130,7 +130,7 @@ export class HydraOAuthFlowProvider implements IOAuthFlowProvider {
         loginSessionId: data.login_session_id,
       };
     } catch (error) {
-      rethrowHydraError(error);
+      throw rethrowHydraError(error);
     }
   }
 
@@ -151,7 +151,7 @@ export class HydraOAuthFlowProvider implements IOAuthFlowProvider {
 
       return { redirectTo: this.rewritePublicRedirect(data.redirect_to) };
     } catch (error) {
-      rethrowHydraError(error);
+      throw rethrowHydraError(error);
     }
   }
 
@@ -167,7 +167,7 @@ export class HydraOAuthFlowProvider implements IOAuthFlowProvider {
 
       return { redirectTo: this.rewritePublicRedirect(data.redirect_to) };
     } catch (error) {
-      rethrowHydraError(error);
+      throw rethrowHydraError(error);
     }
   }
 
