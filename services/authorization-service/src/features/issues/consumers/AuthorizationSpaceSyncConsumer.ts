@@ -30,7 +30,7 @@ export class AuthorizationSpaceSyncConsumer extends Consumer<CloudEvent<SpaceDat
     @inject(TYPES.AuthorizationGraphProvider)
     private readonly authorizationGraphProvider: IAuthorizationGraphProvider,
   ) {
-    super(broker.client);
+    super(broker);
   }
 
   async onMessage(message: JsMsg, payload: CloudEvent<SpaceData>): Promise<void> {

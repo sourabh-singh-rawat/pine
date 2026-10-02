@@ -40,5 +40,7 @@ const main = async () => {
 };
 
 main().catch((error) => {
-  console.log(error);
+  const message = error instanceof Error ? error.message : String(error);
+  logger.error(`Items service failed to start: ${message}`);
+  process.exitCode = 1;
 });

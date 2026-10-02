@@ -31,7 +31,7 @@ export class AttachmentTenantSyncConsumer extends Consumer<
     @inject(TYPES.TenantRepository)
     private readonly tenantRepository: ITenantRepository,
   ) {
-    super(broker.client);
+    super(broker);
   }
 
   async onMessage(

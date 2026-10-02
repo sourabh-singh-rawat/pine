@@ -39,7 +39,7 @@ export class AuditItemsSyncConsumer extends Consumer<
     @inject(TYPES.AuditLogRepository)
     private readonly auditLogRepository: IAuditLogRepository,
   ) {
-    super(broker.client);
+    super(broker);
   }
 
   onMessage = async (

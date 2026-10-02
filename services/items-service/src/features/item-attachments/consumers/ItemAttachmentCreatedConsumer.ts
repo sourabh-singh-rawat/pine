@@ -41,7 +41,7 @@ export class ItemAttachmentCreatedConsumer extends Consumer<
     @inject(TYPES.ItemAttachmentService)
     private readonly itemAttachmentService: IItemAttachmentService,
   ) {
-    super(broker.client);
+    super(broker);
   }
 
   async onMessage(

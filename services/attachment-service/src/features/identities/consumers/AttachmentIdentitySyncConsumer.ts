@@ -29,7 +29,7 @@ export class AttachmentIdentitySyncConsumer extends Consumer<
     @inject(TYPES.IdentityRepository)
     private readonly identityRepository: IIdentityRepository,
   ) {
-    super(broker.client);
+    super(broker);
   }
 
   onMessage = async (

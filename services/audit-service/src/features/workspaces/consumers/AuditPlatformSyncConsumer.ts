@@ -30,7 +30,7 @@ export class AuditPlatformSyncConsumer extends Consumer<CloudEvent<WorkspaceCrea
     @inject(TYPES.AuditLogRepository)
     private readonly auditLogRepository: IAuditLogRepository,
   ) {
-    super(broker.client);
+    super(broker);
   }
 
   onMessage = async (message: JsMsg, payload: CloudEvent<WorkspaceCreatedData>): Promise<void> => {

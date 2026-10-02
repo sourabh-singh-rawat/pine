@@ -26,7 +26,7 @@ export class AuthorizationWorkspaceSyncConsumer extends Consumer<CloudEvent<Work
     @inject(TYPES.AuthorizationGraphProvider)
     private readonly authorizationGraphProvider: IAuthorizationGraphProvider,
   ) {
-    super(broker.client);
+    super(broker);
   }
 
   async onMessage(message: JsMsg, payload: CloudEvent<WorkspaceCreatedData>): Promise<void> {

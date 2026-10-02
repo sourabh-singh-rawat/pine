@@ -27,7 +27,7 @@ export class ItemsIdentitySyncConsumer extends Consumer<CloudEvent<IdentityEmail
     @inject(TYPES.IdentityRepository)
     private readonly identityRepository: IIdentityRepository,
   ) {
-    super(broker.client);
+    super(broker);
   }
 
   onMessage = async (
