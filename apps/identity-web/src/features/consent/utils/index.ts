@@ -1,1 +1,1 @@
-export * from "./formatConsentScope";
+export * from "./getClientInitials";

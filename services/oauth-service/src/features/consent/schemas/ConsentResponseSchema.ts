@@ -9,6 +9,15 @@ const ConsentClientSchema = Type.Object(
   { additionalProperties: false },
 );
 
+export const ConsentScopeDetailSchema = Type.Object(
+  {
+    scope: Type.String({ minLength: 1 }),
+    title: Type.String(),
+    description: Type.String(),
+  },
+  { additionalProperties: false },
+);
+
 export const ConsentResponseSchema = Type.Object(
   {
     challenge: Type.String({ minLength: 1 }),
@@ -16,10 +25,12 @@ export const ConsentResponseSchema = Type.Object(
     subject: Type.Optional(Type.String()),
     client: ConsentClientSchema,
     requestedScope: Type.Array(Type.String()),
+    scopes: Type.Array(ConsentScopeDetailSchema),
     loginChallenge: Type.Optional(Type.String()),
     loginSessionId: Type.Optional(Type.String()),
   },
   { additionalProperties: false },
 );
 
+export type ConsentScopeDetail = Type.Static<typeof ConsentScopeDetailSchema>;
 export type ConsentResponse = Type.Static<typeof ConsentResponseSchema>;

@@ -46,6 +46,18 @@ describe("consent routes", () => {
       subject: "user-1",
       client: { id: "issues-web", name: "Issues Web" },
       requestedScope: ["openid", "offline"],
+      scopes: [
+        {
+          scope: "openid",
+          title: "Verify your identity",
+          description: "Confirm who you are when you sign in.",
+        },
+        {
+          scope: "offline",
+          title: "Stay signed in",
+          description: "Refresh your session without signing in again.",
+        },
+      ],
       loginChallenge: "login-challenge-1",
       loginSessionId: "login-session-1",
     };

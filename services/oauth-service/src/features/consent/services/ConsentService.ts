@@ -7,6 +7,7 @@ import type {
   IConsentService,
   RejectOptions,
 } from "@/features/consent/services/IConsentService";
+import { resolveConsentScopes } from "@/features/consent/utils";
 import type { IOAuthFlowProvider } from "@/integrations/oauth";
 
 @injectable()
@@ -17,7 +18,11 @@ export class ConsentService implements IConsentService {
   ) {}
 
   async getChallenge(challenge: string): Promise<ConsentChallengeResult> {
-    return this.oauthFlowProvider.getConsentRequest(challenge);
+    const consentRequest = await this.oauthFlowProvider.getConsentRequest(challenge);
+    return {
+      ...consentRequest,
+      scopes: resolveConsentScopes(consentRequest.requestedScope),
+    };
   }
 
   async accept(params: AcceptOptions): Promise<ConsentActionResult> {

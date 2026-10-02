@@ -19,20 +19,34 @@ const createFlowProvider = (overrides: Partial<IOAuthFlowProvider> = {}): IOAuth
 });
 
 describe("ConsentService.getChallenge", () => {
-  it("loads a consent challenge from the OAuth flow provider by challenge id", async () => {
+  it("loads a consent challenge from the OAuth flow provider by challenge id and enriches scopes", async () => {
     const consentChallenge = {
       challenge: "consent-challenge-1",
       skip: false,
       subject: "user-1",
       client: { id: "issues-web", name: "Issues Web" },
-      requestedScope: ["openid"],
+      requestedScope: ["openid", "offline"],
       loginChallenge: "login-challenge-1",
       loginSessionId: "login-session-1",
     };
     const getConsentRequest = vi.fn().mockResolvedValue(consentChallenge);
     const service = new ConsentService(createFlowProvider({ getConsentRequest }));
 
-    await expect(service.getChallenge("consent-challenge-1")).resolves.toEqual(consentChallenge);
+    await expect(service.getChallenge("consent-challenge-1")).resolves.toEqual({
+      ...consentChallenge,
+      scopes: [
+        {
+          scope: "openid",
+          title: "Verify your identity",
+          description: "Confirm who you are when you sign in.",
+        },
+        {
+          scope: "offline",
+          title: "Stay signed in",
+          description: "Refresh your session without signing in again.",
+        },
+      ],
+    });
     expect(getConsentRequest).toHaveBeenCalledWith("consent-challenge-1");
   });
 
