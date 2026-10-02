@@ -1,5 +1,11 @@
 # @pine/platform-web
 
+## 0.5.7
+
+### Patch Changes
+
+- b376e83: feat(oauth-service): extract OAuth/OIDC Hydra APIs from identity-service
+
 ## 0.5.6
 
 ### Patch Changes

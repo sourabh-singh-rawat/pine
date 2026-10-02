@@ -1,5 +1,12 @@
 # @pine/api-gateway
 
+## 0.4.7
+
+### Patch Changes
+
+- 0cbe43b: chore(k8s): pine-data PGO ns + bake api-gateway supergraph
+- b376e83: feat(oauth-service): extract OAuth/OIDC Hydra APIs from identity-service
+
 ## 0.4.6
 
 ### Patch Changes

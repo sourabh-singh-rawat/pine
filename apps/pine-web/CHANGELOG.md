@@ -1,5 +1,12 @@
 # @pine/pine-web
 
+## 0.10.3
+
+### Patch Changes
+
+- be64deb: feat(oauth): facade Hydra authorize and interactive consent
+- b376e83: feat(oauth-service): extract OAuth/OIDC Hydra APIs from identity-service
+
 ## 0.10.2
 
 ### Patch Changes

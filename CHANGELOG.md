@@ -1,5 +1,30 @@
 # Changelog
 
+## v2026.10.02.1
+
+### Minor
+
+- be64deba: feat(oauth): facade Hydra authorize and interactive consent — Sourabh Singh Rawat (`@pine/identity-service`, `@pine/identity-web`, `@pine/oauth-service`, `@pine/pine-web`)
+- b376e838: feat(oauth-service): extract OAuth/OIDC Hydra APIs from identity-service — Sourabh Singh Rawat (`@pine/api-gateway`, `@pine/identity-service`, `@pine/identity-web`, `@pine/oauth-service`, `@pine/pine-web`, `@pine/platform-web`)
+- 1d79be3f: feat(search-service): scaffold service with OpenSearch client — Sourabh Singh Rawat (`@pine/search-service`)
+
+### Patch
+
+- 9ece8808: fix(oauth): rethrow hydra error explicitly to satisfy return checks — Sourabh Singh Rawat (`@pine/oauth-service`)
+- 0cbe43b1: chore(k8s): pine-data PGO ns + bake api-gateway supergraph — Sourabh Singh Rawat (`@pine/api-gateway`)
+- 3a5881ea: chore(oauth): move consent scope copy into constants — Sourabh Singh Rawat (`@pine/oauth-service`)
+- 003a5e1b: feat(oauth): provide consent scope details from server — Sourabh Singh Rawat (`@pine/identity-web`, `@pine/oauth-service`)
+
+### Packages
+
+- `@pine/api-gateway@0.4.7`
+- `@pine/identity-service@0.8.0`
+- `@pine/identity-web@0.6.6`
+- `@pine/oauth-service@0.8.0`
+- `@pine/pine-web@0.10.3`
+- `@pine/platform-web@0.5.7`
+- `@pine/search-service@0.2.0`
+
 ## v2026.09.30.1
 
 ### Minor
