@@ -1,0 +1,10 @@
+query GetTags($input: GetTagsInput!) {
+  getTags(input: $input) {
+    id
+    workspaceId
+    spaceId
+    name
+    color
+    description
+  }
+}

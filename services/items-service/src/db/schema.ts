@@ -44,4 +44,12 @@ export {
   type Identity,
   type NewIdentity,
   Identities,
+  type Tag,
+  type NewTag,
+  Tags,
+  TagsRelations,
+  type ItemTag,
+  type NewItemTag,
+  ItemTags,
+  ItemTagsRelations,
 } from "@/db/tables";

@@ -1,0 +1,10 @@
+mutation SetItemTags($input: SetItemTagsInput!) {
+  setItemTags(input: $input) {
+    id
+    workspaceId
+    spaceId
+    name
+    color
+    description
+  }
+}

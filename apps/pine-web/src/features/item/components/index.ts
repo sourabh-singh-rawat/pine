@@ -8,3 +8,4 @@ export * from "./ItemList";
 export * from "./ItemName";
 export * from "./ItemPrioritySelector";
 export * from "./ItemStatusSelector";
+export * from "./ItemTagSelector";
