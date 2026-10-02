@@ -1,3 +1,4 @@
+import { readApiData } from "@pine/common";
 import { isGraphNamespace, type GraphRelationship } from "../types";
 import type { IAuthorizationClient } from "./IAuthorizationClient";
 import type {
@@ -18,34 +19,38 @@ export class HttpAuthorizationClient implements IAuthorizationClient {
 
   async checkRelationship(input: CheckRelationshipInput): Promise<boolean> {
     const body = await this.postJson("/authorization/checkRelationship", input);
-    if (!isCheckRelationshipResponse(body)) {
+    const data = readApiData(body);
+    if (!isCheckRelationshipResponse(data)) {
       throw new Error("checkRelationship returned an invalid response body");
     }
-    return body.allowed;
+    return data.allowed;
   }
 
   async ensureRelationship(relationship: GraphRelationship): Promise<{ created: boolean }> {
     const body = await this.postJson("/authorization/ensureRelationship", relationship);
-    if (!isEnsureRelationshipResponse(body)) {
+    const data = readApiData(body);
+    if (!isEnsureRelationshipResponse(data)) {
       throw new Error("ensureRelationship returned an invalid response body");
     }
-    return { created: body.created };
+    return { created: data.created };
   }
 
   async listRelationships(input: ListRelationshipsInput): Promise<GraphRelationship[]> {
     const body = await this.postJson("/authorization/listRelationships", input);
-    if (!isListRelationshipsResponse(body)) {
+    const data = readApiData(body);
+    if (!isListRelationshipsResponse(data)) {
       throw new Error("listRelationships returned an invalid response body");
     }
-    return body.relationships;
+    return data.relationships;
   }
 
   async deleteRelationship(relationship: GraphRelationship): Promise<{ deleted: boolean }> {
     const body = await this.postJson("/authorization/deleteRelationship", relationship);
-    if (!isDeleteRelationshipResponse(body)) {
+    const data = readApiData(body);
+    if (!isDeleteRelationshipResponse(data)) {
       throw new Error("deleteRelationship returned an invalid response body");
     }
-    return { deleted: body.deleted };
+    return { deleted: data.deleted };
   }
 
   private async postJson(path: string, payload: unknown): Promise<unknown> {

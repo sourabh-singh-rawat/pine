@@ -6,12 +6,12 @@ import type { IRegistrationService } from "@/features/registration/services";
 import {
   RegisterBodySchema,
   RegisterResponseSchema,
-  type RegisterResponse,
+  type RegisterData,
 } from "@/features/registration/schemas";
 
-function isRegisterBody(
+const isRegisterBody = (
   body: unknown,
-): body is { email: string; username: string; password: string } {
+): body is { email: string; username: string; password: string } => {
   return (
     body !== null &&
     typeof body === "object" &&
@@ -22,7 +22,7 @@ function isRegisterBody(
     "password" in body &&
     typeof body.password === "string"
   );
-}
+};
 
 export const register: HttpRoute = {
   url: "/identity/register",
@@ -46,7 +46,7 @@ export const register: HttpRoute = {
 
     await service.register(request.body.email, request.body.username, request.body.password);
 
-    const response: RegisterResponse = {
+    const response: RegisterData = {
       message: "Your request has been received.",
     };
 

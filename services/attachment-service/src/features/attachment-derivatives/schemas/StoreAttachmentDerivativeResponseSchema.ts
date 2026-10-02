@@ -10,7 +10,7 @@ export type StoreAttachmentDerivativeHeaders = Type.Static<
   typeof StoreAttachmentDerivativeHeadersSchema
 >;
 
-export const StoreAttachmentDerivativeResponseSchema = Type.Object(
+const StoreAttachmentDerivativeDataSchema = Type.Object(
   {
     derivativeId: Type.String(),
     attachmentId: Type.String(),
@@ -24,6 +24,13 @@ export const StoreAttachmentDerivativeResponseSchema = Type.Object(
   { additionalProperties: false },
 );
 
+export const StoreAttachmentDerivativeResponseSchema = Type.Object(
+  {
+    data: StoreAttachmentDerivativeDataSchema,
+  },
+  { additionalProperties: false },
+);
+
 export type StoreAttachmentDerivativeResponse = Type.Static<
-  typeof StoreAttachmentDerivativeResponseSchema
+  typeof StoreAttachmentDerivativeDataSchema
 >;

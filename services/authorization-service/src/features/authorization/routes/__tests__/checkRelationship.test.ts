@@ -54,7 +54,7 @@ describe("checkRelationship route", () => {
     });
     expect(response).toEqual({
       status: 200,
-      body: { allowed: true },
+      body: { data: { allowed: true } },
     });
   });
 
@@ -75,7 +75,7 @@ describe("checkRelationship route", () => {
 
     expect(response).toEqual({
       status: 200,
-      body: { allowed: false },
+      body: { data: { allowed: false } },
     });
   });
 

@@ -1,4 +1,5 @@
 import { Readable } from "node:stream";
+import { readApiData } from "@pine/common";
 import Value from "typebox/value";
 import type {
   CreateUploadTargetOptions,
@@ -53,11 +54,12 @@ export class HttpAttachmentClient implements IAttachmentClient {
     }
 
     const body: unknown = await response.json();
-    if (!Value.Check(CreateUploadTargetResponseSchema, body)) {
+    const data = readApiData(body);
+    if (!Value.Check(CreateUploadTargetResponseSchema, data)) {
       throw new Error("createUploadTarget returned an invalid response body");
     }
 
-    return body;
+    return data;
   }
 
   async downloadStream(options: DownloadAttachmentOptions): Promise<Readable> {
@@ -93,11 +95,12 @@ export class HttpAttachmentClient implements IAttachmentClient {
     }
 
     const body: unknown = await response.json();
-    if (!Value.Check(StoreDerivativeResultSchema, body)) {
+    const data = readApiData(body);
+    if (!Value.Check(StoreDerivativeResultSchema, data)) {
       throw new Error("storeDerivative returned an invalid response body");
     }
 
-    return body;
+    return data;
   }
 
   async storeMetadata(options: StoreMetadataOptions): Promise<StoreAttachmentMetadataResult> {
@@ -119,11 +122,12 @@ export class HttpAttachmentClient implements IAttachmentClient {
     }
 
     const body: unknown = await response.json();
-    if (!Value.Check(StoreAttachmentMetadataResultSchema, body)) {
+    const data = readApiData(body);
+    if (!Value.Check(StoreAttachmentMetadataResultSchema, data)) {
       throw new Error("storeMetadata returned an invalid response body");
     }
 
-    return body;
+    return data;
   }
 
   async updateSecurityStatus(
@@ -147,10 +151,11 @@ export class HttpAttachmentClient implements IAttachmentClient {
     }
 
     const body: unknown = await response.json();
-    if (!Value.Check(UpdateSecurityStatusResultSchema, body)) {
+    const data = readApiData(body);
+    if (!Value.Check(UpdateSecurityStatusResultSchema, data)) {
       throw new Error("updateSecurityStatus returned an invalid response body");
     }
 
-    return body;
+    return data;
   }
 }

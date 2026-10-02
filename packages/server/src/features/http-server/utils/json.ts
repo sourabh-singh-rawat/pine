@@ -1,6 +1,6 @@
 import type { HttpResponse } from "../types";
 
-export const json = (body: unknown, status = 200): HttpResponse => ({
+export const json = <TData>(data: TData, status = 200): HttpResponse => ({
   status,
-  body,
+  body: { data },
 });

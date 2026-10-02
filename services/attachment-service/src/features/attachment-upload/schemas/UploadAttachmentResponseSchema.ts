@@ -1,7 +1,17 @@
 import Type from "typebox";
 
-export const UploadAttachmentResponseSchema = Type.Object({
-  status: Type.String(),
-});
+const UploadAttachmentDataSchema = Type.Object(
+  {
+    status: Type.String(),
+  },
+  { additionalProperties: false },
+);
 
-export type UploadAttachmentResponse = Type.Static<typeof UploadAttachmentResponseSchema>;
+export const UploadAttachmentResponseSchema = Type.Object(
+  {
+    data: UploadAttachmentDataSchema,
+  },
+  { additionalProperties: false },
+);
+
+export type UploadAttachmentResponse = Type.Static<typeof UploadAttachmentDataSchema>;

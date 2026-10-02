@@ -6,14 +6,14 @@ import type { IVerificationService } from "@/features/verification/services";
 import {
   ResendVerificationEmailBodySchema,
   ResendVerificationEmailResponseSchema,
-  type ResendVerificationEmailResponse,
+  type ResendVerificationEmailData,
 } from "@/features/verification/schemas";
 
-function isResendBody(body: unknown): body is { email: string } {
+const isResendBody = (body: unknown): body is { email: string } => {
   return (
     body !== null && typeof body === "object" && "email" in body && typeof body.email === "string"
   );
-}
+};
 
 export const resendVerificationEmail: HttpRoute = {
   url: "/identity/resendVerificationEmail",
@@ -40,7 +40,7 @@ export const resendVerificationEmail: HttpRoute = {
       email: request.body.email,
     });
 
-    const response: ResendVerificationEmailResponse = {
+    const response: ResendVerificationEmailData = {
       message: "If an account exists for that email, a verification email has been sent.",
     };
 

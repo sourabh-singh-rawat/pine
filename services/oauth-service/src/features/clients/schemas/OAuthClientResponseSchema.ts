@@ -1,6 +1,6 @@
 import Type from "typebox";
 
-export const OAuthClientResponseSchema = Type.Object({
+const OAuthClientDataSchema = Type.Object({
   id: Type.String(),
   name: Type.String(),
   redirectUris: Type.Array(Type.String()),
@@ -8,4 +8,11 @@ export const OAuthClientResponseSchema = Type.Object({
   grantTypes: Type.Array(Type.String()),
 });
 
-export type OAuthClientResponse = Type.Static<typeof OAuthClientResponseSchema>;
+export const OAuthClientResponseSchema = Type.Object(
+  {
+    data: OAuthClientDataSchema,
+  },
+  { additionalProperties: false },
+);
+
+export type OAuthClientResponse = Type.Static<typeof OAuthClientDataSchema>;

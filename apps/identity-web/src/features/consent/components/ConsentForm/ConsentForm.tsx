@@ -36,7 +36,7 @@ export const ConsentForm = () => {
   const acceptConsentMutation = useAcceptConsentChallengeMutation();
   const rejectConsentMutation = useRejectConsentChallengeMutation();
 
-  const challenge = consentChallengeQuery.data;
+  const challenge = consentChallengeQuery.data?.data;
   const isBusy = acceptConsentMutation.isPending || rejectConsentMutation.isPending;
   const shouldAutoAcceptSkip = Boolean(challenge?.skip) && !skipFailed;
 
@@ -54,7 +54,7 @@ export const ConsentForm = () => {
           ...(remember ? { rememberFor: REMEMBER_FOR_SECONDS } : {}),
         },
       });
-      window.location.assign(result.redirectTo);
+      window.location.assign(result.data.redirectTo);
     } catch (error) {
       setSkipFailed(true);
       snackbar.error(getErrorMessage(error, "Unable to approve access. Please try again."));
@@ -74,7 +74,7 @@ export const ConsentForm = () => {
           errorDescription: "User denied consent",
         },
       });
-      window.location.assign(result.redirectTo);
+      window.location.assign(result.data.redirectTo);
     } catch (error) {
       snackbar.error(getErrorMessage(error, "Unable to deny access. Please try again."));
     }

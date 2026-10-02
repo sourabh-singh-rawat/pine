@@ -1,10 +1,17 @@
 import Type from "typebox";
 
-export const TokenResponseSchema = Type.Object(
+const TokenDataSchema = Type.Object(
   {
     message: Type.String(),
   },
   { additionalProperties: false },
 );
 
-export type TokenResponse = Type.Static<typeof TokenResponseSchema>;
+export const TokenResponseSchema = Type.Object(
+  {
+    data: TokenDataSchema,
+  },
+  { additionalProperties: false },
+);
+
+export type TokenResponse = Type.Static<typeof TokenDataSchema>;

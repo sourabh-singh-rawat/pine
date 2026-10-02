@@ -1,3 +1,4 @@
+import { readApiData } from "@pine/common";
 import { InvalidCredentialError } from "@/integrations/identity";
 import type {
   AcceptLoginInput,
@@ -57,11 +58,17 @@ export class HttpOAuthFlowProvider implements IOAuthFlowProvider {
     }
 
     const payload: unknown = await response.json();
-    if (!isRedirectResponse(payload)) {
+    let data: unknown;
+    try {
+      data = readApiData(payload);
+    } catch {
+      throw new InvalidCredentialError("OAuth accept login returned an invalid response body");
+    }
+    if (!isRedirectResponse(data)) {
       throw new InvalidCredentialError("OAuth accept login returned an invalid response body");
     }
 
-    return { redirectTo: payload.redirectTo };
+    return { redirectTo: data.redirectTo };
   }
 }
 

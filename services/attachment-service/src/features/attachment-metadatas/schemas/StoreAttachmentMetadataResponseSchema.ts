@@ -1,6 +1,6 @@
 import Type from "typebox";
 
-export const StoreAttachmentMetadataResponseSchema = Type.Object(
+const StoreAttachmentMetadataDataSchema = Type.Object(
   {
     metadataId: Type.String(),
     attachmentId: Type.String(),
@@ -18,6 +18,11 @@ export const StoreAttachmentMetadataResponseSchema = Type.Object(
   { additionalProperties: false },
 );
 
-export type StoreAttachmentMetadataResponse = Type.Static<
-  typeof StoreAttachmentMetadataResponseSchema
->;
+export const StoreAttachmentMetadataResponseSchema = Type.Object(
+  {
+    data: StoreAttachmentMetadataDataSchema,
+  },
+  { additionalProperties: false },
+);
+
+export type StoreAttachmentMetadataResponse = Type.Static<typeof StoreAttachmentMetadataDataSchema>;

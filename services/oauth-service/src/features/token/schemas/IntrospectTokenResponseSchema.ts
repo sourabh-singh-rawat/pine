@@ -1,6 +1,6 @@
 import Type from "typebox";
 
-export const IntrospectTokenResponseSchema = Type.Object({
+const IntrospectTokenDataSchema = Type.Object({
   active: Type.Boolean(),
   subject: Type.Optional(Type.String()),
   clientId: Type.Optional(Type.String()),
@@ -11,4 +11,11 @@ export const IntrospectTokenResponseSchema = Type.Object({
   extra: Type.Optional(Type.Record(Type.String(), Type.Unknown())),
 });
 
-export type IntrospectTokenResponse = Type.Static<typeof IntrospectTokenResponseSchema>;
+export const IntrospectTokenResponseSchema = Type.Object(
+  {
+    data: IntrospectTokenDataSchema,
+  },
+  { additionalProperties: false },
+);
+
+export type IntrospectTokenResponse = Type.Static<typeof IntrospectTokenDataSchema>;

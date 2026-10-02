@@ -1,3 +1,4 @@
+import { readApiData } from "@pine/common";
 import { InvalidCredentialError } from "@/integrations/identity";
 import type {
   IntrospectTokenResult,
@@ -41,21 +42,27 @@ export class HttpOAuthTokenProvider implements IOAuthTokenProvider {
     }
 
     const payload: unknown = await response.json();
-    if (!isIntrospectResponse(payload)) {
+    let data: unknown;
+    try {
+      data = readApiData(payload);
+    } catch {
+      throw new InvalidCredentialError("OAuth introspect returned an invalid response body");
+    }
+    if (!isIntrospectResponse(data)) {
       throw new InvalidCredentialError("OAuth introspect returned an invalid response body");
     }
 
     return {
-      active: payload.active,
-      ...(typeof payload.subject === "string" ? { subject: payload.subject } : {}),
-      ...(typeof payload.clientId === "string" ? { clientId: payload.clientId } : {}),
-      ...(typeof payload.scope === "string" ? { scope: payload.scope } : {}),
-      ...(typeof payload.expiresAt === "string" ? { expiresAt: new Date(payload.expiresAt) } : {}),
-      ...(typeof payload.issuedAt === "string" ? { issuedAt: new Date(payload.issuedAt) } : {}),
-      ...(Array.isArray(payload.audience) && payload.audience.every((v) => typeof v === "string")
-        ? { audience: payload.audience }
+      active: data.active,
+      ...(typeof data.subject === "string" ? { subject: data.subject } : {}),
+      ...(typeof data.clientId === "string" ? { clientId: data.clientId } : {}),
+      ...(typeof data.scope === "string" ? { scope: data.scope } : {}),
+      ...(typeof data.expiresAt === "string" ? { expiresAt: new Date(data.expiresAt) } : {}),
+      ...(typeof data.issuedAt === "string" ? { issuedAt: new Date(data.issuedAt) } : {}),
+      ...(Array.isArray(data.audience) && data.audience.every((v) => typeof v === "string")
+        ? { audience: data.audience }
         : {}),
-      ...(isRecord(payload.extra) ? { extra: payload.extra } : {}),
+      ...(isRecord(data.extra) ? { extra: data.extra } : {}),
     };
   }
 }

@@ -74,7 +74,7 @@ describe("consent routes", () => {
     expect(getChallenge).toHaveBeenCalledWith("consent-challenge-1");
     expect(response).toEqual({
       status: 200,
-      body: challenge,
+      body: { data: challenge },
     });
   });
 
@@ -102,7 +102,9 @@ describe("consent routes", () => {
     expect(response).toEqual({
       status: 200,
       body: {
-        redirectTo: "https://localhost/api/oauth/authorize?consent_verifier=abc",
+        data: {
+          redirectTo: "https://localhost/api/oauth/authorize?consent_verifier=abc",
+        },
       },
     });
     expect(acceptConsent.method).toBe("POST");
@@ -132,7 +134,9 @@ describe("consent routes", () => {
     expect(response).toEqual({
       status: 200,
       body: {
-        redirectTo: "https://localhost/api/oauth/authorize?error=access_denied",
+        data: {
+          redirectTo: "https://localhost/api/oauth/authorize?error=access_denied",
+        },
       },
     });
     expect(rejectConsent.method).toBe("POST");

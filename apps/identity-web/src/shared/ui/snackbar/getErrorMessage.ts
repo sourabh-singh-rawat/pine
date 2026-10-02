@@ -1,6 +1,7 @@
 import { isAxiosError } from "axios";
 
 type ErrorResponsePayload = {
+  data?: unknown;
   message?: string;
   errors?: Array<{ message?: string }>;
 };
@@ -13,13 +14,13 @@ const extractPayloadMessage = (data: unknown): string | undefined => {
     return undefined;
   }
 
-  if (typeof data.message === "string" && data.message.length > 0) {
-    return data.message;
-  }
-
   const firstError = data.errors?.[0];
   if (typeof firstError?.message === "string" && firstError.message.length > 0) {
     return firstError.message;
+  }
+
+  if (typeof data.message === "string" && data.message.length > 0) {
+    return data.message;
   }
 
   return undefined;

@@ -22,7 +22,7 @@ export const ResendEmailVerification = () => {
           body: { email: value.email },
         });
         snackbar.success(
-          result.message ??
+          result.data.message ??
             "If an account exists for that email, a verification email has been sent.",
         );
       } catch {

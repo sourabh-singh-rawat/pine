@@ -1,11 +1,12 @@
 import type { HttpRoute } from "@pine/server";
-import { StatusCodes } from "http-status-codes";
+import { json } from "@pine/server";
 import Value from "typebox/value";
 import { TYPES } from "@/bootstrap/container-types";
 import {
   StoreAttachmentMetadataBodySchema,
   StoreAttachmentMetadataParamsSchema,
   StoreAttachmentMetadataResponseSchema,
+  type StoreAttachmentMetadataResponse,
 } from "@/features/attachment-metadatas/schemas";
 import type { IAttachmentMetadataService } from "@/features/attachment-metadatas/services";
 
@@ -44,22 +45,21 @@ export const storeAttachmentMetadata: HttpRoute = {
       ...body,
     });
 
-    return {
-      status: StatusCodes.OK,
-      body: {
-        metadataId: saved.id,
-        attachmentId: saved.attachmentId,
-        versionId: saved.versionId,
-        width: saved.width ?? undefined,
-        height: saved.height ?? undefined,
-        format: saved.format ?? undefined,
-        space: saved.space ?? undefined,
-        channels: saved.channels ?? undefined,
-        density: saved.density ?? undefined,
-        hasAlpha: saved.hasAlpha ?? undefined,
-        orientation: saved.orientation ?? undefined,
-        extractedAt: saved.extractedAt.toISOString(),
-      },
+    const response: StoreAttachmentMetadataResponse = {
+      metadataId: saved.id,
+      attachmentId: saved.attachmentId,
+      versionId: saved.versionId,
+      width: saved.width ?? undefined,
+      height: saved.height ?? undefined,
+      format: saved.format ?? undefined,
+      space: saved.space ?? undefined,
+      channels: saved.channels ?? undefined,
+      density: saved.density ?? undefined,
+      hasAlpha: saved.hasAlpha ?? undefined,
+      orientation: saved.orientation ?? undefined,
+      extractedAt: saved.extractedAt.toISOString(),
     };
+
+    return json(response);
   },
 };

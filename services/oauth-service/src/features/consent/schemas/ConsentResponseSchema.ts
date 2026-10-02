@@ -18,7 +18,7 @@ export const ConsentScopeDetailSchema = Type.Object(
   { additionalProperties: false },
 );
 
-export const ConsentResponseSchema = Type.Object(
+const ConsentDataSchema = Type.Object(
   {
     challenge: Type.String({ minLength: 1 }),
     skip: Type.Boolean(),
@@ -32,5 +32,12 @@ export const ConsentResponseSchema = Type.Object(
   { additionalProperties: false },
 );
 
+export const ConsentResponseSchema = Type.Object(
+  {
+    data: ConsentDataSchema,
+  },
+  { additionalProperties: false },
+);
+
 export type ConsentScopeDetail = Type.Static<typeof ConsentScopeDetailSchema>;
-export type ConsentResponse = Type.Static<typeof ConsentResponseSchema>;
+export type ConsentResponse = Type.Static<typeof ConsentDataSchema>;
