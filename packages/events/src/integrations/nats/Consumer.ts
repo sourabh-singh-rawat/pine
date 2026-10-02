@@ -43,7 +43,7 @@ export abstract class Consumer<T> {
 
   constructor(broker: IBroker) {
     this.jetstream = broker.client.jetstream({ timeout: JSM_TIMEOUT_MS });
-    this.logger = broker.getConfig().logger;
+    this.logger = broker.getConfig()?.logger;
   }
 
   async start(): Promise<void> {
