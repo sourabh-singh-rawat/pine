@@ -18,6 +18,16 @@ minimumReleaseAge: 1440
 
 overrides:
   typescript: "7.0.2"
-  graphql: "16.14.2"
+  graphql: "17.0.2"
   uuid: "14.0.1"
   vitest: "5.0.0"
+
+peerDependencyRules:
+  allowedVersions:
+    "@apollo/server>graphql": "17"
+    "@apollo/gateway>graphql": "17"
+    "@apollo/subgraph>graphql": "17"
+    "@apollo/composition>graphql": "17"
+    "@apollo/federation-internals>graphql": "17"
+    "@apollo/query-planner>graphql": "17"
+    "@apollo/server-gateway-interface>graphql": "17"

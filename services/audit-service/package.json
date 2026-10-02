@@ -40,7 +40,7 @@
     "@pine/server": "workspace:^",
     "@pothos/core": "^4.13.1",
     "drizzle-orm": "0.45.2",
-    "graphql": "16.14.2",
+    "graphql": "17.0.2",
     "graphql-scalars": "^1.25.0",
     "inversify": "8.2.2",
     "nats": "^2.29.3",
