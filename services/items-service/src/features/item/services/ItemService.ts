@@ -1,14 +1,22 @@
 import { requirePermission, type IAuthorizationClient } from "@pine/authorization";
-import { ItemStatus, ITEM_PRIORITY, ServiceResponse } from "@pine/common";
+import { ITEM_PRIORITY } from "@pine/common";
 import { createCloudEvent, ItemCreatedEvent, ItemUpdatedEvent } from "@pine/events";
 import type { IOutboxService } from "@pine/outbox";
 import { inject, injectable } from "inversify";
 import { TYPES } from "@/bootstrap/container-types";
-import type { DbClient, Item } from "@/db";
+import type { DbClient } from "@/db";
 import type { ChecklistCounts, IChecklistRepository } from "@/features/checklists/repositories";
-import { ItemNotFoundError, ListItemsValidationError } from "@/features/item/errors";
-import type { IItemAssigneeRepository, IItemRepository } from "@/features/item/repositories";
-import { clampListItemsFirst } from "@/features/item/utils";
+import {
+  ItemNotFoundError,
+  ItemReorderError,
+  ListItemsValidationError,
+} from "@/features/item/errors";
+import type { IItemRepository } from "@/features/item/repositories";
+import {
+  clampListItemsFirst,
+  decodeItemListCursor,
+  encodeItemListCursor,
+} from "@/features/item/utils";
 import { StatusNotFoundError } from "@/features/item-statuses/errors";
 import type { IStatusRepository } from "@/features/item-statuses/repositories";
 import type {
@@ -20,9 +28,9 @@ import type {
   ItemListItem,
   ItemStatusGroup,
   ListItemsOptions,
+  ReorderListItemsOptions,
   UpdateItemOptions,
 } from "./IItemService";
-import { decodeItemListCursor, encodeItemListCursor } from "./itemListCursor";
 
 export type ItemDatabase = {
   transaction: <T>(callback: (tx: DbClient) => Promise<T>) => Promise<T>;
@@ -35,8 +43,6 @@ export class ItemService implements IItemService {
     private readonly db: ItemDatabase,
     @inject(TYPES.ItemRepository)
     private readonly itemRepository: IItemRepository,
-    @inject(TYPES.ItemAssigneeRepository)
-    private readonly itemAssigneeRepository: IItemAssigneeRepository,
     @inject(TYPES.StatusRepository)
     private readonly statusRepository: IStatusRepository,
     @inject(TYPES.ChecklistRepository)
@@ -48,46 +54,50 @@ export class ItemService implements IItemService {
   ) {}
 
   async create(options: CreateItemOptions) {
-    const { userId, assigneeIds, parentItemId, estimate, component, statusId, priority, ...input } =
-      options;
+    const { identityId, parentItemId, estimate, component, statusId, priority, ...input } = options;
 
     await requirePermission(
       this.authorizationClient,
-      userId,
+      identityId,
       "create_item",
       `list:${input.listId}`,
     );
 
     return this.db.transaction(async (tx) => {
+      let resolvedStatusId = statusId ?? "";
       if (parentItemId) {
         const parentItem = await this.itemRepository.findById(parentItemId, { tx });
         if (!parentItem) {
-          throw new Error("Parent not found");
+          throw new ItemNotFoundError("Parent not found");
+        }
+        if (!resolvedStatusId) {
+          resolvedStatusId = parentItem.statusId;
         }
       }
 
-      const item = await this.itemRepository.save(
+      const maxOrderIndex = await this.itemRepository.findMaxOrderIndex(
         {
-          ...input,
-          statusId: statusId ?? "",
-          priority: priority ?? ITEM_PRIORITY.NORMAL,
-          estimate,
-          component,
-          createdById: userId,
+          listId: input.listId,
+          statusId: resolvedStatusId,
           parentItemId: parentItemId ?? null,
         },
         { tx },
       );
+      const orderIndex = maxOrderIndex === null ? 0 : maxOrderIndex + 1;
 
-      if (assigneeIds.length > 0) {
-        await this.itemAssigneeRepository.saveMany(
-          assigneeIds.map((assigneeId) => ({
-            itemId: item.id,
-            userId: assigneeId,
-          })),
-          { tx },
-        );
-      }
+      const item = await this.itemRepository.save(
+        {
+          ...input,
+          statusId: resolvedStatusId,
+          priority: priority ?? ITEM_PRIORITY.NORMAL,
+          estimate,
+          component,
+          createdById: identityId,
+          parentItemId: parentItemId ?? null,
+          orderIndex,
+        },
+        { tx },
+      );
 
       const event = createCloudEvent({
         type: ItemCreatedEvent.type,
@@ -95,7 +105,15 @@ export class ItemService implements IItemService {
         schema: ItemCreatedEvent.schema,
         source: "pine/items-service",
         subject: item.id,
-        data: this.toItemCreatedEventData(item),
+        data: {
+          id: item.id,
+          name: item.name,
+          ownerId: item.createdById,
+          reporterId: item.createdById,
+          listId: item.listId,
+          createdAt: item.createdAt.toISOString(),
+          ...(item.description != null ? { description: item.description } : {}),
+        },
       });
 
       await this.outboxService.schedule(
@@ -115,14 +133,14 @@ export class ItemService implements IItemService {
   }
 
   async list(options: ListItemsOptions): Promise<ItemStatusGroup[]> {
-    const { listId, userId, statusId, after } = options;
+    const { listId, identityId, statusId, after } = options;
     const first = clampListItemsFirst(options.first);
 
     if (after && !statusId) {
       throw new ListItemsValidationError("statusId is required when after is provided");
     }
 
-    await requirePermission(this.authorizationClient, userId, "read", `list:${listId}`);
+    await requirePermission(this.authorizationClient, identityId, "read", `list:${listId}`);
 
     const statuses = await this.statusRepository.findByListId(listId);
 
@@ -140,7 +158,21 @@ export class ItemService implements IItemService {
       });
       const counts = await this.itemRepository.countRootsByListGrouped(listId);
       const totalCount = counts.find((row) => row.statusId === statusId)?.totalCount ?? 0;
-      const { items, pageInfo } = await this.toPageItems(page, first);
+      const hasNextPage = page.length > first;
+      const roots = hasNextPage ? page.slice(0, first) : page;
+      const checklistCounts = await this.checklistRepository.findCountsByItemIds(
+        roots.map((root) => root.id),
+      );
+      const countsByItemId = this.groupCountsByItemId(checklistCounts);
+      const items: ItemListItem[] = roots.map((root) => ({
+        ...root,
+        checklistCounts: countsByItemId.get(root.id) ?? { completedCount: 0, totalCount: 0 },
+      }));
+      const last = items[items.length - 1];
+      const pageInfo: ItemGroupPageInfo = {
+        hasNextPage,
+        endCursor: last ? encodeItemListCursor(last) : null,
+      };
 
       return [{ status, items, pageInfo, totalCount }];
     }
@@ -191,24 +223,14 @@ export class ItemService implements IItemService {
   }
 
   async getById(options: GetItemOptions) {
-    const { userId, itemId } = options;
+    const { identityId, itemId } = options;
     const item = await this.itemRepository.findByIdWithList(itemId);
     if (!item) {
       return null;
     }
 
-    await requirePermission(this.authorizationClient, userId, "read", `list:${item.listId}`);
+    await requirePermission(this.authorizationClient, identityId, "read", `list:${item.listId}`);
     return item;
-  }
-
-  async getStatusList() {
-    const statuses = this.getStatuses();
-    return new ServiceResponse({ rows: statuses, rowCount: statuses.length });
-  }
-
-  async getPriorityList() {
-    const priorities = this.getPriorities();
-    return new ServiceResponse({ rows: priorities, rowCount: priorities.length });
   }
 
   async update(options: UpdateItemOptions) {
@@ -217,7 +239,7 @@ export class ItemService implements IItemService {
       name,
       description,
       dueDate,
-      userId,
+      identityId,
       priority,
       statusId,
       estimate,
@@ -230,9 +252,27 @@ export class ItemService implements IItemService {
       throw new ItemNotFoundError(`Item not found: ${itemId}`);
     }
 
-    await requirePermission(this.authorizationClient, userId, "update", `list:${existing.listId}`);
+    await requirePermission(
+      this.authorizationClient,
+      identityId,
+      "update",
+      `list:${existing.listId}`,
+    );
 
     await this.db.transaction(async (tx) => {
+      let nextOrderIndex: number | undefined;
+      if (statusId !== undefined && statusId !== existing.statusId && !existing.parentItemId) {
+        const maxOrderIndex = await this.itemRepository.findMaxOrderIndex(
+          {
+            listId: existing.listId,
+            statusId,
+            parentItemId: null,
+          },
+          { tx },
+        );
+        nextOrderIndex = maxOrderIndex === null ? 0 : maxOrderIndex + 1;
+      }
+
       const updatedItem = await this.itemRepository.update(
         itemId,
         {
@@ -244,7 +284,8 @@ export class ItemService implements IItemService {
           estimate,
           component,
           type,
-          updatedById: userId,
+          updatedById: identityId,
+          ...(nextOrderIndex !== undefined ? { orderIndex: nextOrderIndex } : {}),
         },
         { tx },
       );
@@ -255,7 +296,23 @@ export class ItemService implements IItemService {
         schema: ItemUpdatedEvent.schema,
         source: "pine/items-service",
         subject: updatedItem.id,
-        data: this.toItemUpdatedEventData(updatedItem),
+        data: {
+          id: updatedItem.id,
+          name: updatedItem.name,
+          ownerId: updatedItem.createdById,
+          reporterId: updatedItem.createdById,
+          listId: updatedItem.listId,
+          createdAt: updatedItem.createdAt.toISOString(),
+          updatedAt: (updatedItem.updatedAt ?? updatedItem.createdAt).toISOString(),
+          updatedById: updatedItem.updatedById ?? updatedItem.createdById,
+          ...(updatedItem.description != null ? { description: updatedItem.description } : {}),
+          ...(updatedItem.statusId ? { statusId: updatedItem.statusId } : {}),
+          ...(updatedItem.priority ? { priority: updatedItem.priority } : {}),
+          ...(updatedItem.type ? { type: updatedItem.type } : {}),
+          ...(updatedItem.dueDate != null ? { dueDate: updatedItem.dueDate.toISOString() } : {}),
+          ...(updatedItem.estimate != null ? { estimate: updatedItem.estimate } : {}),
+          ...(updatedItem.component != null ? { component: updatedItem.component } : {}),
+        },
       });
 
       await this.outboxService.schedule(
@@ -273,14 +330,14 @@ export class ItemService implements IItemService {
   }
 
   async delete(options: DeleteItemOptions) {
-    const { id, userId } = options;
+    const { id, identityId } = options;
 
     const item = await this.itemRepository.findById(id);
     if (!item) {
       throw new ItemNotFoundError(`Item not found: ${id}`);
     }
 
-    await requirePermission(this.authorizationClient, userId, "delete", `list:${item.listId}`);
+    await requirePermission(this.authorizationClient, identityId, "delete", `list:${item.listId}`);
 
     const deleted = await this.itemRepository.softDelete(id);
     if (!deleted) {
@@ -288,24 +345,70 @@ export class ItemService implements IItemService {
     }
   }
 
-  private async toPageItems(
-    page: Awaited<ReturnType<IItemRepository["findRootPageByStatus"]>>,
-    first: number,
-  ): Promise<{ items: ItemListItem[]; pageInfo: ItemGroupPageInfo }> {
-    const hasNextPage = page.length > first;
-    const roots = hasNextPage ? page.slice(0, first) : page;
-    const counts = await this.checklistRepository.findCountsByItemIds(roots.map((root) => root.id));
-    const countsByItemId = this.groupCountsByItemId(counts);
-    const items: ItemListItem[] = roots.map((root) => ({
-      ...root,
-      checklistCounts: countsByItemId.get(root.id) ?? { completedCount: 0, totalCount: 0 },
-    }));
-    const last = items[items.length - 1];
-    const pageInfo: ItemGroupPageInfo = {
-      hasNextPage,
-      endCursor: last ? encodeItemListCursor(last) : null,
-    };
-    return { items, pageInfo };
+  async reorder(options: ReorderListItemsOptions) {
+    const { listId, statusId, itemIds, identityId } = options;
+
+    await requirePermission(this.authorizationClient, identityId, "update", `list:${listId}`);
+
+    const status = await this.statusRepository.findById(statusId);
+    if (!status || status.listId !== listId) {
+      throw new StatusNotFoundError(`Status not found: ${statusId}`);
+    }
+
+    if (itemIds.length === 0) {
+      throw new ItemReorderError("itemIds must not be empty");
+    }
+
+    const uniqueIds = new Set(itemIds);
+    if (uniqueIds.size !== itemIds.length) {
+      throw new ItemReorderError("itemIds must be unique");
+    }
+
+    const allRoots = await this.itemRepository.findRootsByStatus(listId, statusId);
+    const indexById = new Map(allRoots.map((root, index) => [root.id, index]));
+
+    const positions = itemIds.map((id) => indexById.get(id));
+    if (positions.some((position) => position === undefined)) {
+      throw new ItemReorderError("itemIds must be root items in the given list status");
+    }
+
+    const sortedPositions = positions
+      .filter((position): position is number => position !== undefined)
+      .slice()
+      .sort((left, right) => left - right);
+
+    for (let index = 1; index < sortedPositions.length; index += 1) {
+      const previous = sortedPositions[index - 1];
+      const current = sortedPositions[index];
+      if (previous === undefined || current === undefined || current !== previous + 1) {
+        throw new ItemReorderError("itemIds must form a contiguous segment of the status group");
+      }
+    }
+
+    const start = sortedPositions[0];
+    const end = sortedPositions[sortedPositions.length - 1];
+    if (start === undefined || end === undefined) {
+      throw new ItemReorderError("itemIds must form a contiguous segment of the status group");
+    }
+
+    const segmentIds = allRoots.slice(start, end + 1).map((root) => root.id);
+    const segmentIdSet = new Set(segmentIds);
+    if (
+      segmentIds.length !== itemIds.length ||
+      segmentIdSet.size !== segmentIds.length ||
+      !itemIds.every((id) => segmentIdSet.has(id))
+    ) {
+      throw new ItemReorderError("itemIds must be a permutation of the contiguous segment");
+    }
+
+    const nextOrder = [
+      ...allRoots.slice(0, start).map((root) => root.id),
+      ...itemIds,
+      ...allRoots.slice(end + 1).map((root) => root.id),
+    ];
+
+    await this.itemRepository.replaceOrderIndexes(nextOrder);
+    return this.itemRepository.findRootsByStatus(listId, statusId);
   }
 
   private groupCountsByItemId(
@@ -322,45 +425,5 @@ export class ItemService implements IItemService {
       });
     }
     return countsByItemId;
-  }
-
-  private getStatuses() {
-    return Object.values(ItemStatus);
-  }
-
-  private getPriorities() {
-    return Object.values(ITEM_PRIORITY);
-  }
-
-  private toItemCreatedEventData(item: Item) {
-    return {
-      id: item.id,
-      name: item.name,
-      ownerId: item.createdById,
-      reporterId: item.createdById,
-      listId: item.listId,
-      createdAt: item.createdAt.toISOString(),
-      ...(item.description != null ? { description: item.description } : {}),
-    };
-  }
-
-  private toItemUpdatedEventData(item: Item) {
-    return {
-      id: item.id,
-      name: item.name,
-      ownerId: item.createdById,
-      reporterId: item.createdById,
-      listId: item.listId,
-      createdAt: item.createdAt.toISOString(),
-      updatedAt: (item.updatedAt ?? item.createdAt).toISOString(),
-      updatedById: item.updatedById ?? item.createdById,
-      ...(item.description != null ? { description: item.description } : {}),
-      ...(item.statusId ? { statusId: item.statusId } : {}),
-      ...(item.priority ? { priority: item.priority } : {}),
-      ...(item.type ? { type: item.type } : {}),
-      ...(item.dueDate != null ? { dueDate: item.dueDate.toISOString() } : {}),
-      ...(item.estimate != null ? { estimate: item.estimate } : {}),
-      ...(item.component != null ? { component: item.component } : {}),
-    };
   }
 }

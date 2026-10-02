@@ -13,9 +13,9 @@ builder.queryFields((t) => ({
     },
     resolve: async (_root, { input }, ctx) => {
       const { parentItemId } = input;
-      const userId = requireIdentityId(ctx);
+      const identityId = requireIdentityId(ctx);
       const service = container.get<ISubItemService>(TYPES.SubItemService);
-      return service.list({ userId, parentItemId });
+      return service.list({ identityId, parentItemId });
     },
   }),
 }));

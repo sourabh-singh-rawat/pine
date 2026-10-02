@@ -1,18 +1,18 @@
 import { ListItemsValidationError } from "@/features/item/errors";
 
-type ItemListCursorV1 = {
-  v: 1;
-  n: string;
+type ItemListCursorV2 = {
+  v: 2;
+  o: number;
   i: string;
 };
 
 export type DecodedItemListCursor = {
-  name: string;
+  orderIndex: number;
   id: string;
 };
 
-export const encodeItemListCursor = (item: { name: string; id: string }): string => {
-  const payload: ItemListCursorV1 = { v: 1, n: item.name, i: item.id };
+export const encodeItemListCursor = (item: { orderIndex: number; id: string }): string => {
+  const payload: ItemListCursorV2 = { v: 2, o: item.orderIndex, i: item.id };
   return Buffer.from(JSON.stringify(payload), "utf8").toString("base64url");
 };
 
@@ -24,19 +24,24 @@ export const decodeItemListCursor = (cursor: string): DecodedItemListCursor => {
     throw new ListItemsValidationError("Invalid list items cursor");
   }
 
-  if (!isItemListCursorV1(parsed)) {
+  if (!isItemListCursorV2(parsed)) {
     throw new ListItemsValidationError("Invalid list items cursor");
   }
 
-  return { name: parsed.n, id: parsed.i };
+  return { orderIndex: parsed.o, id: parsed.i };
 };
 
-const isItemListCursorV1 = (value: unknown): value is ItemListCursorV1 => {
+const isItemListCursorV2 = (value: unknown): value is ItemListCursorV2 => {
   if (typeof value !== "object" || value === null) {
     return false;
   }
-  if (!("v" in value) || !("n" in value) || !("i" in value)) {
+  if (!("v" in value) || !("o" in value) || !("i" in value)) {
     return false;
   }
-  return value.v === 1 && typeof value.n === "string" && typeof value.i === "string";
+  return (
+    value.v === 2 &&
+    typeof value.o === "number" &&
+    Number.isFinite(value.o) &&
+    typeof value.i === "string"
+  );
 };

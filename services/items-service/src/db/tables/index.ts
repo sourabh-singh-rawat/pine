@@ -1,9 +1,4 @@
 export {
-  type CheckListItem,
-  type NewCheckListItem,
-  CheckListItems,
-} from "@/db/tables/CheckListItems";
-export {
   type ChecklistEntry,
   type NewChecklistEntry,
   ChecklistEntries,

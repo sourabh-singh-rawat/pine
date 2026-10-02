@@ -108,7 +108,6 @@ export type CreateItemAttachmentUploadRequestInput = {
 };
 
 export type CreateItemInput = {
-  assigneeIds: Array<Scalars['String']['input']>;
   component?: InputMaybe<Scalars['String']['input']>;
   description?: InputMaybe<Scalars['String']['input']>;
   dueDate?: InputMaybe<Scalars['DateTimeISO']['input']>;
@@ -290,6 +289,7 @@ export type ItemObject = {
   id?: Maybe<Scalars['String']['output']>;
   list?: Maybe<ListObject>;
   name?: Maybe<Scalars['String']['output']>;
+  orderIndex?: Maybe<Scalars['Int']['output']>;
   parentItem?: Maybe<ItemObject>;
   priority?: Maybe<Scalars['String']['output']>;
   statusId?: Maybe<Scalars['String']['output']>;
@@ -346,6 +346,7 @@ export type Mutation = {
   deleteWorkspaceRelation?: Maybe<Scalars['Boolean']['output']>;
   hello?: Maybe<Scalars['String']['output']>;
   reorderChecklistEntries?: Maybe<Array<ChecklistEntryObject>>;
+  reorderListItems?: Maybe<Array<ItemObject>>;
   reorderStatuses?: Maybe<Array<StatusObject>>;
   setItemTags?: Maybe<Array<TagObject>>;
   setMyWorkspacePreference?: Maybe<WorkspacePreferenceObject>;
@@ -515,6 +516,11 @@ export type MutationDeleteWorkspaceRelationArgs = {
 
 export type MutationReorderChecklistEntriesArgs = {
   input: ReorderChecklistEntriesInput;
+};
+
+
+export type MutationReorderListItemsArgs = {
+  input: ReorderListItemsInput;
 };
 
 
@@ -825,6 +831,12 @@ export type QueryGetWorkspacesArgs = {
 export type ReorderChecklistEntriesInput = {
   checklistId: Scalars['String']['input'];
   ids: Array<Scalars['String']['input']>;
+};
+
+export type ReorderListItemsInput = {
+  itemIds: Array<Scalars['String']['input']>;
+  listId: Scalars['ID']['input'];
+  statusId: Scalars['ID']['input'];
 };
 
 export type ReorderStatusesInput = {

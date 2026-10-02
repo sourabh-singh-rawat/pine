@@ -72,6 +72,7 @@ ItemObject.implement({
     }),
     estimate: t.exposeInt("estimate", { nullable: true }),
     component: t.exposeString("component", { nullable: true }),
+    orderIndex: t.exposeInt("orderIndex"),
     dueDate: t.expose("dueDate", { type: "DateTimeISO", nullable: true }),
     tags: t.field({
       type: [TagObject],

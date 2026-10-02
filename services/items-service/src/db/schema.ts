@@ -1,9 +1,6 @@
 export { OutboxMessages } from "@pine/outbox";
 export { auditColumns, idColumn } from "@/db/columns";
 export {
-  type CheckListItem,
-  type NewCheckListItem,
-  CheckListItems,
   type ChecklistEntry,
   type NewChecklistEntry,
   ChecklistEntries,

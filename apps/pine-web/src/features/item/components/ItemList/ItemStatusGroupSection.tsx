@@ -1,12 +1,18 @@
 import { Box } from "@mui/material";
+import { DragDropProvider } from "@dnd-kit/react";
 import { Button, DataTable } from "@pine/ui";
-import { memo, useState } from "react";
-import { FLAT_COLUMNS, getItemRowId } from "./ItemListColumns";
+import { memo, useMemo, useState } from "react";
+import { getItemRowId, SORTABLE_COLUMNS } from "./ItemListColumns";
+import { ItemListDragContext } from "./ItemListDragContext";
+import { SortableItemDataTableRow } from "./SortableItemDataTableRow";
 import { type ItemRow } from "./types";
+import { useItemListReorder } from "./useItemListReorder";
 
 const EMPTY_ROWS: ItemRow[] = [];
 
 type ItemStatusGroupSectionProps = {
+  listId: string;
+  statusId: string;
   statusName: string;
   rows: ItemRow[];
   totalCount: number;
@@ -22,6 +28,8 @@ const getItemSubRows = (row: ItemRow) => row.children;
 
 export const ItemStatusGroupSection = memo(
   ({
+    listId,
+    statusId,
     statusName,
     rows,
     totalCount,
@@ -33,6 +41,24 @@ export const ItemStatusGroupSection = memo(
     onLoadMore,
   }: ItemStatusGroupSectionProps) => {
     const [expanded, setExpanded] = useState(defaultExpanded);
+    const reorder = useItemListReorder({ listId, statusId, rows });
+    const displayRows = reorder.displayRows;
+
+    const rootIndexById = useMemo(() => {
+      const map = new Map<string, number>();
+      displayRows.forEach((row, index) => {
+        map.set(row.id, index);
+      });
+      return map;
+    }, [displayRows]);
+
+    const dragContext = useMemo(
+      () => ({
+        disabled: reorder.isReordering || isLoadingMore,
+        rootIndexById,
+      }),
+      [isLoadingMore, reorder.isReordering, rootIndexById],
+    );
 
     return (
       <Box sx={{ mb: 1.5 }}>
@@ -58,14 +84,19 @@ export const ItemStatusGroupSection = memo(
         </Box>
         {expanded ? (
           <>
-            <DataTable
-              data={rows.length > 0 ? rows : EMPTY_ROWS}
-              columns={FLAT_COLUMNS}
-              getRowId={getItemRowId}
-              getSubRows={enableNestedRows ? getItemSubRows : undefined}
-              ariaLabel={`${statusName} items`}
-              showBorder={showBorder}
-            />
+            <ItemListDragContext.Provider value={dragContext}>
+              <DragDropProvider onDragStart={reorder.onDragStart} onDragEnd={reorder.onDragEnd}>
+                <DataTable
+                  data={displayRows.length > 0 ? displayRows : EMPTY_ROWS}
+                  columns={SORTABLE_COLUMNS}
+                  getRowId={getItemRowId}
+                  getSubRows={enableNestedRows ? getItemSubRows : undefined}
+                  ariaLabel={`${statusName} items`}
+                  showBorder={showBorder}
+                  RowComponent={SortableItemDataTableRow}
+                />
+              </DragDropProvider>
+            </ItemListDragContext.Provider>
             {hasNextPage && onLoadMore ? (
               <Box sx={{ display: "flex", justifyContent: "center", mt: 1 }}>
                 <Button

@@ -98,8 +98,5 @@ export const buildItemListGroups = (options: {
     }
   }
 
-  return [...buckets.values()].map((group) => ({
-    ...group,
-    rows: sortItemRows(group.rows),
-  }));
+  return [...buckets.values()];
 };

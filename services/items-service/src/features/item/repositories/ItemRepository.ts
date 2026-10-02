@@ -3,6 +3,7 @@ import {
   and,
   asc,
   count,
+  desc,
   eq,
   getTableColumns,
   gt,
@@ -17,6 +18,7 @@ import { TYPES } from "@/bootstrap/container-types";
 import { type Database, type Item, Items, Lists } from "@/db";
 import type {
   CreateItemEntity,
+  FindMaxOrderIndexOptions,
   FindRootPageByStatusOptions,
   IItemRepository,
   ItemRepositoryOptions,
@@ -49,6 +51,7 @@ export class ItemRepository implements IItemRepository {
         dueDate: entity.dueDate ?? null,
         estimate: entity.estimate ?? null,
         component: entity.component ?? null,
+        orderIndex: entity.orderIndex,
         createdAt: now,
         version: 1,
       })
@@ -77,6 +80,7 @@ export class ItemRepository implements IItemRepository {
         ...(entity.estimate !== undefined ? { estimate: entity.estimate } : {}),
         ...(entity.component !== undefined ? { component: entity.component } : {}),
         ...(entity.updatedById !== undefined ? { updatedById: entity.updatedById } : {}),
+        ...(entity.orderIndex !== undefined ? { orderIndex: entity.orderIndex } : {}),
         updatedAt: now,
         version: sql`${Items.version} + 1`,
       })
@@ -146,9 +150,30 @@ export class ItemRepository implements IItemRepository {
     const roots = await client
       .select()
       .from(Items)
-      .where(and(eq(Items.listId, listId), isNull(Items.parentItemId), isNull(Items.deletedAt)));
+      .where(and(eq(Items.listId, listId), isNull(Items.parentItemId), isNull(Items.deletedAt)))
+      .orderBy(asc(Items.orderIndex), asc(Items.id));
 
     return this.withHasChildren(roots, options);
+  }
+
+  async findRootsByStatus(
+    listId: string,
+    statusId: string,
+    options?: ItemRepositoryOptions,
+  ): Promise<Item[]> {
+    const client = this.client(options);
+    return client
+      .select()
+      .from(Items)
+      .where(
+        and(
+          eq(Items.listId, listId),
+          eq(Items.statusId, statusId),
+          isNull(Items.parentItemId),
+          isNull(Items.deletedAt),
+        ),
+      )
+      .orderBy(asc(Items.orderIndex), asc(Items.id));
   }
 
   async findRootPageByStatus(
@@ -159,8 +184,8 @@ export class ItemRepository implements IItemRepository {
     const client = this.client(options);
     const seek = page.after
       ? or(
-          gt(Items.name, page.after.name),
-          and(eq(Items.name, page.after.name), gt(Items.id, page.after.id)),
+          gt(Items.orderIndex, page.after.orderIndex),
+          and(eq(Items.orderIndex, page.after.orderIndex), gt(Items.id, page.after.id)),
         )
       : undefined;
 
@@ -176,7 +201,7 @@ export class ItemRepository implements IItemRepository {
           seek,
         ),
       )
-      .orderBy(asc(Items.name), asc(Items.id))
+      .orderBy(asc(Items.orderIndex), asc(Items.id))
       .limit(page.limit);
 
     return this.withHasChildren(roots, options);
@@ -193,7 +218,7 @@ export class ItemRepository implements IItemRepository {
         ...getTableColumns(Items),
         rowNum: sql<number>`row_number() over (
           partition by ${Items.statusId}
-          order by ${Items.name} asc, ${Items.id} asc
+          order by ${Items.orderIndex} asc, ${Items.id} asc
         )`.as("row_num"),
       })
       .from(Items)
@@ -204,7 +229,7 @@ export class ItemRepository implements IItemRepository {
       .select()
       .from(ranked)
       .where(lte(ranked.rowNum, limit))
-      .orderBy(asc(ranked.statusId), asc(ranked.name), asc(ranked.id));
+      .orderBy(asc(ranked.statusId), asc(ranked.orderIndex), asc(ranked.id));
 
     const items = rows.map((row) => {
       const { rowNum, ...item } = row;
@@ -240,7 +265,53 @@ export class ItemRepository implements IItemRepository {
     return client
       .select()
       .from(Items)
-      .where(and(eq(Items.parentItemId, parentItemId), isNull(Items.deletedAt)));
+      .where(and(eq(Items.parentItemId, parentItemId), isNull(Items.deletedAt)))
+      .orderBy(asc(Items.orderIndex), asc(Items.id));
+  }
+
+  async findMaxOrderIndex(
+    query: FindMaxOrderIndexOptions,
+    options?: ItemRepositoryOptions,
+  ): Promise<number | null> {
+    const client = this.client(options);
+    const parentFilter =
+      query.parentItemId === undefined || query.parentItemId === null
+        ? isNull(Items.parentItemId)
+        : eq(Items.parentItemId, query.parentItemId);
+
+    const [row] = await client
+      .select({ orderIndex: Items.orderIndex })
+      .from(Items)
+      .where(
+        and(
+          eq(Items.listId, query.listId),
+          eq(Items.statusId, query.statusId),
+          parentFilter,
+          isNull(Items.deletedAt),
+        ),
+      )
+      .orderBy(desc(Items.orderIndex))
+      .limit(1);
+
+    return row?.orderIndex ?? null;
+  }
+
+  async replaceOrderIndexes(orderedIds: string[], options?: ItemRepositoryOptions): Promise<void> {
+    const client = this.client(options);
+    const now = new Date();
+
+    await Promise.all(
+      orderedIds.map((id, index) =>
+        client
+          .update(Items)
+          .set({
+            orderIndex: index,
+            updatedAt: now,
+            version: sql`${Items.version} + 1`,
+          })
+          .where(and(eq(Items.id, id), isNull(Items.deletedAt))),
+      ),
+    );
   }
 
   async countByStatusId(statusId: string, options?: ItemRepositoryOptions): Promise<number> {

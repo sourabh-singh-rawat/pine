@@ -21,6 +21,7 @@ const parentItem: Item = {
   parentItemId: null,
   estimate: null,
   component: null,
+  orderIndex: 0,
   version: 1,
   createdAt: new Date("2026-01-01T00:00:00.000Z"),
   updatedAt: null,
@@ -41,10 +42,13 @@ const createItemRepository = (overrides: Partial<IItemRepository> = {}): IItemRe
   findById: vi.fn().mockResolvedValue(parentItem),
   findByIdWithList: vi.fn(),
   findRootsByList: vi.fn(),
+  findRootsByStatus: vi.fn(),
   findRootPageByStatus: vi.fn(),
   findRootFirstPagesByList: vi.fn(),
   countRootsByListGrouped: vi.fn(),
   findChildren: vi.fn().mockResolvedValue([childItem]),
+  findMaxOrderIndex: vi.fn(),
+  replaceOrderIndexes: vi.fn(),
   countByStatusId: vi.fn().mockResolvedValue(0),
   reassignStatus: vi.fn().mockResolvedValue(0),
   ...overrides,
@@ -78,7 +82,7 @@ describe("SubItemService.list", () => {
     const service = createService({ itemRepository, authorizationClient });
 
     const result = await service.list({
-      userId: "user-2",
+      identityId: "user-2",
       parentItemId: "parent-1",
     });
 
@@ -103,7 +107,7 @@ describe("SubItemService.list", () => {
     });
 
     await expect(
-      service.list({ userId: "user-1", parentItemId: "missing" }),
+      service.list({ identityId: "user-1", parentItemId: "missing" }),
     ).rejects.toBeInstanceOf(ItemNotFoundError);
     expect(authorizationClient.checkRelationship).not.toHaveBeenCalled();
   });
@@ -116,7 +120,7 @@ describe("SubItemService.list", () => {
     const service = createService({ itemRepository, authorizationClient });
 
     await expect(
-      service.list({ userId: "user-1", parentItemId: "parent-1" }),
+      service.list({ identityId: "user-1", parentItemId: "parent-1" }),
     ).rejects.toBeInstanceOf(InsufficientPermissionError);
     expect(itemRepository.findChildren).not.toHaveBeenCalled();
   });
