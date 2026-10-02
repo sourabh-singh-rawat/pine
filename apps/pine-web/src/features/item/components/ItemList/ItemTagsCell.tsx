@@ -123,9 +123,15 @@ export const ItemTagsCell = ({ itemId, tags = [] }: ItemTagsCellProps) => {
       sx={{
         display: "flex",
         alignItems: "center",
+        width: "100%",
+        minWidth: 0,
       }}
     >
-      <Stack direction="row" spacing={0.5} sx={{ alignItems: "center", py: 0.5 }}>
+      <Stack
+        direction="row"
+        spacing={0.5}
+        sx={{ alignItems: "center", py: 0.5, minWidth: 0, overflow: "hidden" }}
+      >
         {visibleTags.map((tag) => (
           <Chip
             key={tag.id}

@@ -32,6 +32,7 @@ export const DataTableRoot = <TData extends RowData = RowData>({
           sx={[
             {
               width: "100%",
+              tableLayout: "fixed",
               borderCollapse: "collapse",
               border: showBorder ? `1px solid ${theme.palette.divider}` : "none",
               "& th, & td": {
@@ -42,6 +43,7 @@ export const DataTableRoot = <TData extends RowData = RowData>({
                 verticalAlign: "middle",
                 fontSize: theme.typography.body2.fontSize,
                 color: theme.palette.text.primary,
+                overflow: "hidden",
               },
               "& th": {
                 fontWeight: theme.typography.fontWeightMedium,

@@ -75,6 +75,7 @@ export const DataTable = <TData extends RowData>({
     (state) => ({
       grouping: state.grouping,
       expanded: state.expanded,
+      columnSizing: state.columnSizing,
     }),
   );
 
