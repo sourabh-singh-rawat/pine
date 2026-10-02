@@ -9,9 +9,9 @@ builder.mutationFields((t) => ({
       id: t.arg.string({ required: true }),
     },
     resolve: async (_root, { id }, ctx) => {
-      const userId = requireIdentityId(ctx);
+      const identityId = requireIdentityId(ctx);
       const service = container.get<IItemService>(TYPES.ItemService);
-      await service.delete({ id, userId });
+      await service.delete({ id, identityId });
       return "Deleted successfully";
     },
   }),

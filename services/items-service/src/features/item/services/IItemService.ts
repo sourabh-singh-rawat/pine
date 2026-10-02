@@ -1,14 +1,14 @@
-import { ItemStatus, ItemPriority, ServiceResponse } from "@pine/common";
+import type { ItemPriority } from "@pine/common";
 import type { StatusOption } from "@/db";
 import type { ChecklistCounts } from "@/features/checklists/repositories";
+import type { Item } from "@/db";
 import type { ItemWithHasChildren, ItemWithList } from "@/features/item/repositories";
 
 export interface CreateItemOptions {
-  userId: string;
+  identityId: string;
   listId: string;
   type: string;
   name: string;
-  assigneeIds: string[];
   description?: string;
   dueDate?: Date;
   statusId?: string;
@@ -19,18 +19,17 @@ export interface CreateItemOptions {
 }
 
 export interface GetItemOptions {
-  userId: string;
+  identityId: string;
   itemId: string;
 }
 
 export interface UpdateItemOptions {
-  userId: string;
+  identityId: string;
   itemId: string;
   type?: string;
   name?: string;
   statusId?: string;
   priority?: ItemPriority;
-  assigneeIds?: string[];
   description?: string;
   dueDate?: Date | null;
   estimate?: number;
@@ -39,7 +38,7 @@ export interface UpdateItemOptions {
 
 export interface ListItemsOptions {
   listId: string;
-  userId: string;
+  identityId: string;
   first?: number | null;
   statusId?: string | null;
   after?: string | null;
@@ -47,7 +46,14 @@ export interface ListItemsOptions {
 
 export interface DeleteItemOptions {
   id: string;
-  userId: string;
+  identityId: string;
+}
+
+export interface ReorderListItemsOptions {
+  listId: string;
+  statusId: string;
+  itemIds: string[];
+  identityId: string;
 }
 
 export type ItemListItem = ItemWithHasChildren & {
@@ -72,6 +78,5 @@ export interface IItemService {
   list(options: ListItemsOptions): Promise<ItemStatusGroup[]>;
   update(options: UpdateItemOptions): Promise<void>;
   delete(options: DeleteItemOptions): Promise<void>;
-  getStatusList(): Promise<ServiceResponse<ItemStatus[]>>;
-  getPriorityList(): Promise<ServiceResponse<ItemPriority[]>>;
+  reorder(options: ReorderListItemsOptions): Promise<Item[]>;
 }

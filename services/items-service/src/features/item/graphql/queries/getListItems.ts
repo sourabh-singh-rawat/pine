@@ -15,8 +15,8 @@ builder.queryFields((t) => ({
     },
     resolve: async (_root, { listId, first, statusId, after }, ctx) => {
       const service = container.get<IItemService>(TYPES.ItemService);
-      const userId = requireIdentityId(ctx);
-      return await service.list({ userId, listId, first, statusId, after });
+      const identityId = requireIdentityId(ctx);
+      return await service.list({ identityId, listId, first, statusId, after });
     },
   }),
 }));

@@ -15,14 +15,19 @@ export class SubItemService implements ISubItemService {
   ) {}
 
   async list(options: ListOptions) {
-    const { userId, parentItemId } = options;
+    const { identityId, parentItemId } = options;
 
     const parentItem = await this.itemRepository.findById(parentItemId);
     if (!parentItem) {
       throw new ItemNotFoundError("Parent not found");
     }
 
-    await requirePermission(this.authorizationClient, userId, "read", `list:${parentItem.listId}`);
+    await requirePermission(
+      this.authorizationClient,
+      identityId,
+      "read",
+      `list:${parentItem.listId}`,
+    );
 
     return this.itemRepository.findChildren(parentItemId);
   }

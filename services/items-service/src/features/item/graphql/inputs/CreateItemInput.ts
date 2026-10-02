@@ -10,7 +10,6 @@ export const CreateItemInput = builder.inputType("CreateItemInput", {
     priority: t.string({ required: true }),
     dueDate: t.field({ type: "DateTimeISO", required: false }),
     description: t.string({ required: false }),
-    assigneeIds: t.stringList({ required: true }),
     estimate: t.int({ required: false }),
     component: t.string({ required: false }),
   }),

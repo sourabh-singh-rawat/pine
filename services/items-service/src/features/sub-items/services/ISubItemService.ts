@@ -1,7 +1,7 @@
 import type { Item } from "@/db";
 
 export type ListOptions = {
-  userId: string;
+  identityId: string;
   parentItemId: string;
 };
 

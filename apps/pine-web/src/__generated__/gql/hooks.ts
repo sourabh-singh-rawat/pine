@@ -178,7 +178,7 @@ export type GetListItemsQueryVariables = Exact<{
 }>;
 
 
-export type GetListItemsQuery = { getListItems: Array<{ totalCount: number | null, status: { id: string | null, name: string | null, orderIndex: number | null, color: string | null, type: string | null } | null, items: Array<{ description: string | null, id: string | null, name: string | null, statusId: string | null, priority: string | null, dueDate: unknown, hasChildren: boolean | null, checklistCounts: { completedCount: number | null, totalCount: number | null } | null, tags: Array<{ id: string, name: string, color: string }> | null }> | null, pageInfo: { hasNextPage: boolean | null, endCursor: string | null } | null }> | null };
+export type GetListItemsQuery = { getListItems: Array<{ totalCount: number | null, status: { id: string | null, name: string | null, orderIndex: number | null, color: string | null, type: string | null } | null, items: Array<{ description: string | null, id: string | null, name: string | null, statusId: string | null, priority: string | null, dueDate: unknown, hasChildren: boolean | null, orderIndex: number | null, checklistCounts: { completedCount: number | null, totalCount: number | null } | null, tags: Array<{ id: string, name: string, color: string }> | null }> | null, pageInfo: { hasNextPage: boolean | null, endCursor: string | null } | null }> | null };
 
 export type GetSubItemsQueryVariables = Exact<{
   input: Types.GetSubItemsInput;
@@ -186,6 +186,13 @@ export type GetSubItemsQueryVariables = Exact<{
 
 
 export type GetSubItemsQuery = { getSubItems: Array<{ description: string | null, id: string | null, name: string | null, dueDate: unknown, statusId: string | null, priority: string | null, tags: Array<{ id: string, name: string, color: string }> | null }> | null };
+
+export type ReorderListItemsMutationVariables = Exact<{
+  input: Types.ReorderListItemsInput;
+}>;
+
+
+export type ReorderListItemsMutation = { reorderListItems: Array<{ id: string | null, name: string | null, statusId: string | null, priority: string | null, dueDate: unknown, hasChildren: boolean | null, orderIndex: number | null, checklistCounts: { completedCount: number | null, totalCount: number | null } | null, tags: Array<{ id: string, name: string, color: string }> | null }> | null };
 
 export type UpdateItemMutationVariables = Exact<{
   input: Types.UpdateItemInput;
@@ -995,6 +1002,7 @@ export const GetListItemsDocument = new TypedDocumentString(`
       priority
       dueDate
       hasChildren
+      orderIndex
       checklistCounts {
         completedCount
         totalCount
@@ -1071,6 +1079,44 @@ export const useGetSubItemsQuery = <
 useGetSubItemsQuery.document = GetSubItemsDocument;
 
 useGetSubItemsQuery.getKey = (variables: GetSubItemsQueryVariables) => ['GetSubItems', variables];
+
+export const ReorderListItemsDocument = new TypedDocumentString(`
+    mutation ReorderListItems($input: ReorderListItemsInput!) {
+  reorderListItems(input: $input) {
+    id
+    name
+    statusId
+    priority
+    dueDate
+    hasChildren
+    orderIndex
+    checklistCounts {
+      completedCount
+      totalCount
+    }
+    tags {
+      id
+      name
+      color
+    }
+  }
+}
+    `);
+
+export const useReorderListItemsMutation = <
+      TError = unknown,
+      TContext = unknown
+    >(options?: UseMutationOptions<ReorderListItemsMutation, TError, ReorderListItemsMutationVariables, TContext>) => {
+    
+    return useMutation<ReorderListItemsMutation, TError, ReorderListItemsMutationVariables, TContext>(
+      {
+    mutationKey: ['ReorderListItems'],
+    mutationFn: (variables?: ReorderListItemsMutationVariables) => graphQLFetcher<ReorderListItemsMutation, ReorderListItemsMutationVariables>(ReorderListItemsDocument, variables)(),
+    ...options
+  }
+    )};
+
+useReorderListItemsMutation.getKey = () => ['ReorderListItems'];
 
 export const UpdateItemDocument = new TypedDocumentString(`
     mutation UpdateItem($input: UpdateItemInput!) {

@@ -11,12 +11,12 @@ builder.mutationFields((t) => ({
       input: t.arg({ type: UpdateItemInput, required: true }),
     },
     resolve: async (_root, { input }, ctx) => {
-      const userId = requireIdentityId(ctx);
+      const identityId = requireIdentityId(ctx);
       const service = container.get<IItemService>(TYPES.ItemService);
       const { itemId } = input;
 
       await service.update({
-        userId,
+        identityId,
         itemId,
         name: input.name ?? undefined,
         type: input.type ?? undefined,

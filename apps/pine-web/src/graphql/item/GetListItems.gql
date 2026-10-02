@@ -15,6 +15,7 @@ query GetListItems($listId: String!, $first: Int, $statusId: String, $after: Str
       priority
       dueDate
       hasChildren
+      orderIndex
       checklistCounts {
         completedCount
         totalCount

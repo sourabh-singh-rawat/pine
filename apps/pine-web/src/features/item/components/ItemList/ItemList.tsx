@@ -222,10 +222,12 @@ export const ItemList = ({ itemId, listId, style }: ItemListProps) => {
   return (
     <ItemListUiContext.Provider value={uiValue}>
       <Box sx={{ scrollbarGutter: "stable" }}>
-        {groups ? (
+        {groups && listId ? (
           groups.map((group) => (
             <ItemStatusGroupSection
               key={group.statusId}
+              listId={listId}
+              statusId={group.statusId}
               statusName={group.statusName}
               rows={group.rows}
               totalCount={group.totalCount}
