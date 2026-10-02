@@ -24,6 +24,7 @@
     "build": "pnpm clean && tsc"
   },
   "dependencies": {
+    "@pine/common": "workspace:^",
     "@pine/errors": "workspace:^"
   },
   "devDependencies": {

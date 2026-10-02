@@ -6,27 +6,56 @@ import type {
   RouteGenericInterface,
 } from "fastify";
 import { StatusCodes } from "http-status-codes";
+import type { ApiError } from "../api/ApiError";
+import { Errors } from "../constants/errors/errors";
 import { ResponseError, StandardError } from "../constants/errors";
+
+type ErrorResponseBody = {
+  data: null;
+  errors: ApiError[];
+};
+
+const toApiErrors = (
+  code: string,
+  serialized: { errors: Array<{ message: string; field?: string }> },
+): ApiError[] =>
+  serialized.errors.map((error) => ({
+    code,
+    message: error.message,
+    ...(error.field !== undefined ? { field: error.field } : {}),
+  }));
 
 export class ErrorHandlerUtil {
   static serialize(error: unknown): {
     statusCode: number;
-    body: { errors: [{ message: string; field?: string }] };
+    body: ErrorResponseBody;
   } {
     if (error instanceof ResponseError) {
-      return { statusCode: error.statusCode, body: error.serializeError() };
+      return {
+        statusCode: error.statusCode,
+        body: {
+          data: null,
+          errors: toApiErrors(error.errorCode, error.serializeError()),
+        },
+      };
     }
 
     if (error instanceof StandardError) {
       return {
         statusCode: error.statusCode ?? StatusCodes.INTERNAL_SERVER_ERROR,
-        body: error.serializeError(),
+        body: {
+          data: null,
+          errors: toApiErrors(error.errorCode, error.serializeError()),
+        },
       };
     }
 
     return {
       statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
-      body: { errors: [{ message: "something went wrong" }] },
+      body: {
+        data: null,
+        errors: [{ code: Errors.ERR_INTERNAL_SERVER, message: "something went wrong" }],
+      },
     };
   }
 

@@ -48,7 +48,9 @@ describe("verifyEmail route", () => {
     expect(response).toEqual({
       status: 200,
       body: {
-        message: "Email verified successfully.",
+        data: {
+          message: "Email verified successfully.",
+        },
       },
     });
   });

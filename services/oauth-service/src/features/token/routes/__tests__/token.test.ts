@@ -90,7 +90,9 @@ describe("token route", () => {
 
     expect(response.status).toBe(200);
     expect(response.body).toEqual({
-      message: "Tokens issued successfully.",
+      data: {
+        message: "Tokens issued successfully.",
+      },
     });
     expect(response.cookies).toEqual(
       expect.arrayContaining([

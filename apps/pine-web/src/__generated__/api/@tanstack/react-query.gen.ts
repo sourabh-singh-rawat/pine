@@ -4,8 +4,8 @@ import { type DefaultError, queryOptions, useMutation, type UseMutationOptions, 
 import type { AxiosError } from 'axios';
 
 import { client } from '../client.gen';
-import { acceptConsentChallenge, authorize, checkRelationship, createUploadTarget, deleteRelationship, ensureRelationship, exchangeToken, getAttachmentContent, getAttachmentVersionContent, getConsentChallenge, getCurrentUser, getIdentityFromAccessToken, getIdentityFromSession, listRelationships, logout, type Options, register, rejectConsentChallenge, resendVerificationEmail, signInWithEmailAndPassword, uploadToTarget, verifyEmail } from '../sdk.gen';
-import type { AcceptConsentChallengeData, AcceptConsentChallengeResponse, AuthorizeData, CheckRelationshipData, CheckRelationshipResponse, CreateUploadTargetData, CreateUploadTargetResponse, DeleteRelationshipData, DeleteRelationshipResponse, EnsureRelationshipData, EnsureRelationshipResponse, ExchangeTokenData, ExchangeTokenResponse, GetAttachmentContentData, GetAttachmentVersionContentData, GetConsentChallengeData, GetConsentChallengeResponse, GetCurrentUserData, GetCurrentUserResponse, GetIdentityFromAccessTokenData, GetIdentityFromAccessTokenResponse, GetIdentityFromSessionData, GetIdentityFromSessionResponse, ListRelationshipsData, ListRelationshipsResponse, LogoutData, LogoutResponse, RegisterData, RegisterResponse, RejectConsentChallengeData, RejectConsentChallengeResponse, ResendVerificationEmailData, ResendVerificationEmailResponse, SignInWithEmailAndPasswordData, SignInWithEmailAndPasswordResponse, UploadToTargetData, UploadToTargetResponse, VerifyEmailData, VerifyEmailResponse } from '../types.gen';
+import { acceptConsentChallenge, acceptLoginChallenge, authorize, checkRelationship, createOAuthClient, createUploadTarget, deleteOAuthClient, deleteRelationship, ensureRelationship, exchangeToken, getAttachmentContent, getAttachmentDerivative, getAttachmentVersionContent, getConsentChallenge, getCurrentUser, getIdentityFromAccessToken, getIdentityFromSession, getOAuthClient, introspectToken, listRelationships, logout, type Options, register, rejectConsentChallenge, resendVerificationEmail, signInWithEmailAndPassword, storeAttachmentDerivative, storeAttachmentMetadata, updateSecurityStatus, uploadToTarget, verifyEmail } from '../sdk.gen';
+import type { AcceptConsentChallengeData, AcceptConsentChallengeResponse, AcceptLoginChallengeData, AcceptLoginChallengeResponse, AuthorizeData, CheckRelationshipData, CheckRelationshipResponse, CreateOAuthClientData, CreateOAuthClientResponse, CreateUploadTargetData, CreateUploadTargetResponse, DeleteOAuthClientData, DeleteOAuthClientResponse, DeleteRelationshipData, DeleteRelationshipResponse, EnsureRelationshipData, EnsureRelationshipResponse, ExchangeTokenData, ExchangeTokenResponse, GetAttachmentContentData, GetAttachmentDerivativeData, GetAttachmentVersionContentData, GetConsentChallengeData, GetConsentChallengeResponse, GetCurrentUserData, GetCurrentUserResponse, GetIdentityFromAccessTokenData, GetIdentityFromAccessTokenResponse, GetIdentityFromSessionData, GetIdentityFromSessionResponse, GetOAuthClientData, GetOAuthClientResponse, IntrospectTokenData, IntrospectTokenResponse, ListRelationshipsData, ListRelationshipsResponse, LogoutData, LogoutResponse, RegisterData, RegisterResponse, RejectConsentChallengeData, RejectConsentChallengeResponse, ResendVerificationEmailData, ResendVerificationEmailResponse, SignInWithEmailAndPasswordData, SignInWithEmailAndPasswordResponse, StoreAttachmentDerivativeData, StoreAttachmentDerivativeResponse, StoreAttachmentMetadataData, StoreAttachmentMetadataResponse, UpdateSecurityStatusData, UpdateSecurityStatusResponse, UploadToTargetData, UploadToTargetResponse, VerifyEmailData, VerifyEmailResponse } from '../types.gen';
 
 /**
  * Sign in with email and password
@@ -173,14 +173,93 @@ export const getIdentityFromAccessTokenOptions = (options?: Options<GetIdentityF
  */
 export const useGetIdentityFromAccessTokenQuery = (options?: Options<GetIdentityFromAccessTokenData>) => useQuery(getIdentityFromAccessTokenOptions(options));
 
-export const authorizeQueryKey = (options: Options<AuthorizeData>) => createQueryKey('authorize', options);
+/**
+ * Register
+ *
+ * Register a new user with email and password via the identity provider
+ */
+export const registerMutation = (options?: Partial<Options<RegisterData>>): UseMutationOptions<RegisterResponse, AxiosError<DefaultError>, Options<RegisterData>> => {
+    const mutationOptions: UseMutationOptions<RegisterResponse, AxiosError<DefaultError>, Options<RegisterData>> = {
+        mutationFn: async (fnOptions) => {
+            const { data } = await register({
+                ...options,
+                ...fnOptions,
+                throwOnError: true
+            });
+            return data;
+        }
+    };
+    return mutationOptions;
+};
+
+/**
+ * Register
+ *
+ * Register a new user with email and password via the identity provider
+ */
+export const useRegisterMutation = (mutationOptions?: Partial<Omit<UseMutationOptions<RegisterResponse, AxiosError<DefaultError>, Options<RegisterData>>, 'mutationFn'>>) => useMutation({ ...registerMutation(), ...mutationOptions });
+
+export const verifyEmailQueryKey = (options: Options<VerifyEmailData>) => createQueryKey('verifyEmail', options);
+
+/**
+ * Verify email with Kratos code
+ *
+ * Complete email verification using the one-time code from the Kratos verification email
+ */
+export const verifyEmailOptions = (options: Options<VerifyEmailData>) => queryOptions<VerifyEmailResponse, AxiosError<DefaultError>, VerifyEmailResponse, ReturnType<typeof verifyEmailQueryKey>>({
+    queryFn: async ({ queryKey, signal }) => {
+        const { data } = await verifyEmail({
+            ...options,
+            ...queryKey[0],
+            signal,
+            throwOnError: true
+        });
+        return data;
+    },
+    queryKey: verifyEmailQueryKey(options)
+});
+
+/**
+ * Verify email with Kratos code
+ *
+ * Complete email verification using the one-time code from the Kratos verification email
+ */
+export const useVerifyEmailQuery = (options: Options<VerifyEmailData>) => useQuery(verifyEmailOptions(options));
+
+/**
+ * Resend verification email
+ *
+ * Request a new email verification code. Always returns success to avoid revealing whether the email is registered.
+ */
+export const resendVerificationEmailMutation = (options?: Partial<Options<ResendVerificationEmailData>>): UseMutationOptions<ResendVerificationEmailResponse, AxiosError<DefaultError>, Options<ResendVerificationEmailData>> => {
+    const mutationOptions: UseMutationOptions<ResendVerificationEmailResponse, AxiosError<DefaultError>, Options<ResendVerificationEmailData>> = {
+        mutationFn: async (fnOptions) => {
+            const { data } = await resendVerificationEmail({
+                ...options,
+                ...fnOptions,
+                throwOnError: true
+            });
+            return data;
+        }
+    };
+    return mutationOptions;
+};
+
+/**
+ * Resend verification email
+ *
+ * Request a new email verification code. Always returns success to avoid revealing whether the email is registered.
+ */
+export const useResendVerificationEmailMutation = (mutationOptions?: Partial<Omit<UseMutationOptions<ResendVerificationEmailResponse, AxiosError<DefaultError>, Options<ResendVerificationEmailData>>, 'mutationFn'>>) => useMutation({ ...resendVerificationEmailMutation(), ...mutationOptions });
+
+export const authorizeQueryKey = (options?: Options<AuthorizeData>) => createQueryKey('authorize', options);
 
 /**
  * OAuth authorize
  *
- * Start the OAuth authorization code flow. Redirects (302) to the OAuth provider authorization endpoint.
+ * Start or continue the OAuth authorization code flow. Proxies the authorization server public authorize endpoint and returns its redirect.
  */
-export const authorizeOptions = (options: Options<AuthorizeData>) => queryOptions<unknown, AxiosError<DefaultError>, unknown, ReturnType<typeof authorizeQueryKey>>({
+export const authorizeOptions = (options?: Options<AuthorizeData>) => queryOptions<unknown, AxiosError<DefaultError>, unknown, ReturnType<typeof authorizeQueryKey>>({
     queryFn: async ({ queryKey, signal }) => {
         const { data } = await authorize({
             ...options,
@@ -196,9 +275,35 @@ export const authorizeOptions = (options: Options<AuthorizeData>) => queryOption
 /**
  * OAuth authorize
  *
- * Start the OAuth authorization code flow. Redirects (302) to the OAuth provider authorization endpoint.
+ * Start or continue the OAuth authorization code flow. Proxies the authorization server public authorize endpoint and returns its redirect.
  */
-export const useAuthorizeQuery = (options: Options<AuthorizeData>) => useQuery(authorizeOptions(options));
+export const useAuthorizeQuery = (options?: Options<AuthorizeData>) => useQuery(authorizeOptions(options));
+
+/**
+ * Accept OAuth login challenge
+ *
+ * Accept an OAuth login challenge after the user authenticates
+ */
+export const acceptLoginChallengeMutation = (options?: Partial<Options<AcceptLoginChallengeData>>): UseMutationOptions<AcceptLoginChallengeResponse, AxiosError<DefaultError>, Options<AcceptLoginChallengeData>> => {
+    const mutationOptions: UseMutationOptions<AcceptLoginChallengeResponse, AxiosError<DefaultError>, Options<AcceptLoginChallengeData>> = {
+        mutationFn: async (fnOptions) => {
+            const { data } = await acceptLoginChallenge({
+                ...options,
+                ...fnOptions,
+                throwOnError: true
+            });
+            return data;
+        }
+    };
+    return mutationOptions;
+};
+
+/**
+ * Accept OAuth login challenge
+ *
+ * Accept an OAuth login challenge after the user authenticates
+ */
+export const useAcceptLoginChallengeMutation = (mutationOptions?: Partial<Omit<UseMutationOptions<AcceptLoginChallengeResponse, AxiosError<DefaultError>, Options<AcceptLoginChallengeData>>, 'mutationFn'>>) => useMutation({ ...acceptLoginChallengeMutation(), ...mutationOptions });
 
 export const getConsentChallengeQueryKey = (options: Options<GetConsentChallengeData>) => createQueryKey('getConsentChallenge', options);
 
@@ -306,14 +411,14 @@ export const exchangeTokenMutation = (options?: Partial<Options<ExchangeTokenDat
 export const useExchangeTokenMutation = (mutationOptions?: Partial<Omit<UseMutationOptions<ExchangeTokenResponse, AxiosError<DefaultError>, Options<ExchangeTokenData>>, 'mutationFn'>>) => useMutation({ ...exchangeTokenMutation(), ...mutationOptions });
 
 /**
- * Register
+ * Introspect OAuth token
  *
- * Register a new user with email and password via the identity provider
+ * Introspect an access or refresh token via the OAuth provider
  */
-export const registerMutation = (options?: Partial<Options<RegisterData>>): UseMutationOptions<RegisterResponse, AxiosError<DefaultError>, Options<RegisterData>> => {
-    const mutationOptions: UseMutationOptions<RegisterResponse, AxiosError<DefaultError>, Options<RegisterData>> = {
+export const introspectTokenMutation = (options?: Partial<Options<IntrospectTokenData>>): UseMutationOptions<IntrospectTokenResponse, AxiosError<DefaultError>, Options<IntrospectTokenData>> => {
+    const mutationOptions: UseMutationOptions<IntrospectTokenResponse, AxiosError<DefaultError>, Options<IntrospectTokenData>> = {
         mutationFn: async (fnOptions) => {
-            const { data } = await register({
+            const { data } = await introspectToken({
                 ...options,
                 ...fnOptions,
                 throwOnError: true
@@ -325,22 +430,74 @@ export const registerMutation = (options?: Partial<Options<RegisterData>>): UseM
 };
 
 /**
- * Register
+ * Introspect OAuth token
  *
- * Register a new user with email and password via the identity provider
+ * Introspect an access or refresh token via the OAuth provider
  */
-export const useRegisterMutation = (mutationOptions?: Partial<Omit<UseMutationOptions<RegisterResponse, AxiosError<DefaultError>, Options<RegisterData>>, 'mutationFn'>>) => useMutation({ ...registerMutation(), ...mutationOptions });
-
-export const verifyEmailQueryKey = (options: Options<VerifyEmailData>) => createQueryKey('verifyEmail', options);
+export const useIntrospectTokenMutation = (mutationOptions?: Partial<Omit<UseMutationOptions<IntrospectTokenResponse, AxiosError<DefaultError>, Options<IntrospectTokenData>>, 'mutationFn'>>) => useMutation({ ...introspectTokenMutation(), ...mutationOptions });
 
 /**
- * Verify email with Kratos code
+ * Create OAuth client
  *
- * Complete email verification using the one-time code from the Kratos verification email
+ * Register a new OAuth 2.0 client with the authorization server
  */
-export const verifyEmailOptions = (options: Options<VerifyEmailData>) => queryOptions<VerifyEmailResponse, AxiosError<DefaultError>, VerifyEmailResponse, ReturnType<typeof verifyEmailQueryKey>>({
+export const createOAuthClientMutation = (options?: Partial<Options<CreateOAuthClientData>>): UseMutationOptions<CreateOAuthClientResponse, AxiosError<DefaultError>, Options<CreateOAuthClientData>> => {
+    const mutationOptions: UseMutationOptions<CreateOAuthClientResponse, AxiosError<DefaultError>, Options<CreateOAuthClientData>> = {
+        mutationFn: async (fnOptions) => {
+            const { data } = await createOAuthClient({
+                ...options,
+                ...fnOptions,
+                throwOnError: true
+            });
+            return data;
+        }
+    };
+    return mutationOptions;
+};
+
+/**
+ * Create OAuth client
+ *
+ * Register a new OAuth 2.0 client with the authorization server
+ */
+export const useCreateOAuthClientMutation = (mutationOptions?: Partial<Omit<UseMutationOptions<CreateOAuthClientResponse, AxiosError<DefaultError>, Options<CreateOAuthClientData>>, 'mutationFn'>>) => useMutation({ ...createOAuthClientMutation(), ...mutationOptions });
+
+/**
+ * Delete OAuth client
+ *
+ * Delete an OAuth 2.0 client by client id
+ */
+export const deleteOAuthClientMutation = (options?: Partial<Options<DeleteOAuthClientData>>): UseMutationOptions<DeleteOAuthClientResponse, AxiosError<DefaultError>, Options<DeleteOAuthClientData>> => {
+    const mutationOptions: UseMutationOptions<DeleteOAuthClientResponse, AxiosError<DefaultError>, Options<DeleteOAuthClientData>> = {
+        mutationFn: async (fnOptions) => {
+            const { data } = await deleteOAuthClient({
+                ...options,
+                ...fnOptions,
+                throwOnError: true
+            });
+            return data;
+        }
+    };
+    return mutationOptions;
+};
+
+/**
+ * Delete OAuth client
+ *
+ * Delete an OAuth 2.0 client by client id
+ */
+export const useDeleteOAuthClientMutation = (mutationOptions?: Partial<Omit<UseMutationOptions<DeleteOAuthClientResponse, AxiosError<DefaultError>, Options<DeleteOAuthClientData>>, 'mutationFn'>>) => useMutation({ ...deleteOAuthClientMutation(), ...mutationOptions });
+
+export const getOAuthClientQueryKey = (options: Options<GetOAuthClientData>) => createQueryKey('getOAuthClient', options);
+
+/**
+ * Get OAuth client
+ *
+ * Fetch an OAuth 2.0 client by client id
+ */
+export const getOAuthClientOptions = (options: Options<GetOAuthClientData>) => queryOptions<GetOAuthClientResponse, AxiosError<DefaultError>, GetOAuthClientResponse, ReturnType<typeof getOAuthClientQueryKey>>({
     queryFn: async ({ queryKey, signal }) => {
-        const { data } = await verifyEmail({
+        const { data } = await getOAuthClient({
             ...options,
             ...queryKey[0],
             signal,
@@ -348,25 +505,52 @@ export const verifyEmailOptions = (options: Options<VerifyEmailData>) => queryOp
         });
         return data;
     },
-    queryKey: verifyEmailQueryKey(options)
+    queryKey: getOAuthClientQueryKey(options)
 });
 
 /**
- * Verify email with Kratos code
+ * Get OAuth client
  *
- * Complete email verification using the one-time code from the Kratos verification email
+ * Fetch an OAuth 2.0 client by client id
  */
-export const useVerifyEmailQuery = (options: Options<VerifyEmailData>) => useQuery(verifyEmailOptions(options));
+export const useGetOAuthClientQuery = (options: Options<GetOAuthClientData>) => useQuery(getOAuthClientOptions(options));
+
+export const getAttachmentDerivativeQueryKey = (options: Options<GetAttachmentDerivativeData>) => createQueryKey('getAttachmentDerivative', options);
 
 /**
- * Resend verification email
+ * Get attachment derivative content stream
  *
- * Request a new email verification code. Always returns success to avoid revealing whether the email is registered.
+ * Download thumbnail or preview derivative for an attachment current version
  */
-export const resendVerificationEmailMutation = (options?: Partial<Options<ResendVerificationEmailData>>): UseMutationOptions<ResendVerificationEmailResponse, AxiosError<DefaultError>, Options<ResendVerificationEmailData>> => {
-    const mutationOptions: UseMutationOptions<ResendVerificationEmailResponse, AxiosError<DefaultError>, Options<ResendVerificationEmailData>> = {
+export const getAttachmentDerivativeOptions = (options: Options<GetAttachmentDerivativeData>) => queryOptions<unknown, AxiosError<DefaultError>, unknown, ReturnType<typeof getAttachmentDerivativeQueryKey>>({
+    queryFn: async ({ queryKey, signal }) => {
+        const { data } = await getAttachmentDerivative({
+            ...options,
+            ...queryKey[0],
+            signal,
+            throwOnError: true
+        });
+        return data;
+    },
+    queryKey: getAttachmentDerivativeQueryKey(options)
+});
+
+/**
+ * Get attachment derivative content stream
+ *
+ * Download thumbnail or preview derivative for an attachment current version
+ */
+export const useGetAttachmentDerivativeQuery = (options: Options<GetAttachmentDerivativeData>) => useQuery(getAttachmentDerivativeOptions(options));
+
+/**
+ * Store attachment derivative
+ *
+ * Store processed attachment derivative bytes (thumbnail or preview)
+ */
+export const storeAttachmentDerivativeMutation = (options?: Partial<Options<StoreAttachmentDerivativeData>>): UseMutationOptions<StoreAttachmentDerivativeResponse, AxiosError<DefaultError>, Options<StoreAttachmentDerivativeData>> => {
+    const mutationOptions: UseMutationOptions<StoreAttachmentDerivativeResponse, AxiosError<DefaultError>, Options<StoreAttachmentDerivativeData>> = {
         mutationFn: async (fnOptions) => {
-            const { data } = await resendVerificationEmail({
+            const { data } = await storeAttachmentDerivative({
                 ...options,
                 ...fnOptions,
                 throwOnError: true
@@ -378,11 +562,37 @@ export const resendVerificationEmailMutation = (options?: Partial<Options<Resend
 };
 
 /**
- * Resend verification email
+ * Store attachment derivative
  *
- * Request a new email verification code. Always returns success to avoid revealing whether the email is registered.
+ * Store processed attachment derivative bytes (thumbnail or preview)
  */
-export const useResendVerificationEmailMutation = (mutationOptions?: Partial<Omit<UseMutationOptions<ResendVerificationEmailResponse, AxiosError<DefaultError>, Options<ResendVerificationEmailData>>, 'mutationFn'>>) => useMutation({ ...resendVerificationEmailMutation(), ...mutationOptions });
+export const useStoreAttachmentDerivativeMutation = (mutationOptions?: Partial<Omit<UseMutationOptions<StoreAttachmentDerivativeResponse, AxiosError<DefaultError>, Options<StoreAttachmentDerivativeData>>, 'mutationFn'>>) => useMutation({ ...storeAttachmentDerivativeMutation(), ...mutationOptions });
+
+/**
+ * Store attachment metadata
+ *
+ * Store processed attachment image metadata and schedule event via outbox
+ */
+export const storeAttachmentMetadataMutation = (options?: Partial<Options<StoreAttachmentMetadataData>>): UseMutationOptions<StoreAttachmentMetadataResponse, AxiosError<DefaultError>, Options<StoreAttachmentMetadataData>> => {
+    const mutationOptions: UseMutationOptions<StoreAttachmentMetadataResponse, AxiosError<DefaultError>, Options<StoreAttachmentMetadataData>> = {
+        mutationFn: async (fnOptions) => {
+            const { data } = await storeAttachmentMetadata({
+                ...options,
+                ...fnOptions,
+                throwOnError: true
+            });
+            return data;
+        }
+    };
+    return mutationOptions;
+};
+
+/**
+ * Store attachment metadata
+ *
+ * Store processed attachment image metadata and schedule event via outbox
+ */
+export const useStoreAttachmentMetadataMutation = (mutationOptions?: Partial<Omit<UseMutationOptions<StoreAttachmentMetadataResponse, AxiosError<DefaultError>, Options<StoreAttachmentMetadataData>>, 'mutationFn'>>) => useMutation({ ...storeAttachmentMetadataMutation(), ...mutationOptions });
 
 export const getAttachmentContentQueryKey = (options: Options<GetAttachmentContentData>) => createQueryKey('getAttachmentContent', options);
 
@@ -437,6 +647,32 @@ export const getAttachmentVersionContentOptions = (options: Options<GetAttachmen
  * Download raw attachment version content
  */
 export const useGetAttachmentVersionContentQuery = (options: Options<GetAttachmentVersionContentData>) => useQuery(getAttachmentVersionContentOptions(options));
+
+/**
+ * Update attachment security status
+ *
+ * Record malware scan result and promote or reject the attachment
+ */
+export const updateSecurityStatusMutation = (options?: Partial<Options<UpdateSecurityStatusData>>): UseMutationOptions<UpdateSecurityStatusResponse, AxiosError<DefaultError>, Options<UpdateSecurityStatusData>> => {
+    const mutationOptions: UseMutationOptions<UpdateSecurityStatusResponse, AxiosError<DefaultError>, Options<UpdateSecurityStatusData>> = {
+        mutationFn: async (fnOptions) => {
+            const { data } = await updateSecurityStatus({
+                ...options,
+                ...fnOptions,
+                throwOnError: true
+            });
+            return data;
+        }
+    };
+    return mutationOptions;
+};
+
+/**
+ * Update attachment security status
+ *
+ * Record malware scan result and promote or reject the attachment
+ */
+export const useUpdateSecurityStatusMutation = (mutationOptions?: Partial<Omit<UseMutationOptions<UpdateSecurityStatusResponse, AxiosError<DefaultError>, Options<UpdateSecurityStatusData>>, 'mutationFn'>>) => useMutation({ ...updateSecurityStatusMutation(), ...mutationOptions });
 
 /**
  * Create upload target

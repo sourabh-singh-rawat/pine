@@ -1,10 +1,11 @@
 import type { HttpRoute } from "@pine/server";
-import { StatusCodes } from "http-status-codes";
+import { json } from "@pine/server";
 import Value from "typebox/value";
 import { TYPES } from "@/bootstrap/container-types";
 import {
   StoreAttachmentDerivativeParamsSchema,
   StoreAttachmentDerivativeResponseSchema,
+  type StoreAttachmentDerivativeResponse,
 } from "@/features/attachment-derivatives/schemas";
 import type { IAttachmentDerivativeService } from "@/features/attachment-derivatives/services";
 
@@ -65,18 +66,17 @@ export const storeAttachmentDerivative: HttpRoute = {
       height: Number.isNaN(height) ? undefined : height,
     });
 
-    return {
-      status: StatusCodes.OK,
-      body: {
-        derivativeId: derivative.id,
-        attachmentId: derivative.attachmentId,
-        versionId: derivative.versionId,
-        derivativeType: derivative.derivativeType,
-        mimeType: derivative.mimeType,
-        fileSize: derivative.fileSize,
-        width: derivative.width,
-        height: derivative.height,
-      },
+    const response: StoreAttachmentDerivativeResponse = {
+      derivativeId: derivative.id,
+      attachmentId: derivative.attachmentId,
+      versionId: derivative.versionId,
+      derivativeType: derivative.derivativeType,
+      mimeType: derivative.mimeType,
+      fileSize: derivative.fileSize,
+      width: derivative.width,
+      height: derivative.height,
     };
+
+    return json(response);
   },
 };

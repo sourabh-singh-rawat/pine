@@ -10,8 +10,8 @@ import { Link } from "@tanstack/react-router";
 
 export const UpdateName = () => {
   const currentUserQuery = useGetCurrentUserQuery();
-  const identity = currentUserQuery.data?.identity;
-  const rawProfile = currentUserQuery.data?.profile;
+  const identity = currentUserQuery.data?.data?.identity;
+  const rawProfile = currentUserQuery.data?.data?.profile;
   const profile = isMeProfile(rawProfile) ? rawProfile : null;
 
   if (currentUserQuery.isPending) {

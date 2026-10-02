@@ -44,7 +44,9 @@ describe("logout route", () => {
     expect(response).toEqual({
       status: 200,
       body: {
-        message: "Logged out successfully.",
+        data: {
+          message: "Logged out successfully.",
+        },
       },
       clearCookies: [
         {

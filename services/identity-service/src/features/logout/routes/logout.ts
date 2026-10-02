@@ -3,7 +3,7 @@ import { json } from "@pine/server";
 import { container } from "@/bootstrap";
 import { TYPES } from "@/bootstrap/container-types";
 import type { ILogoutService } from "@/features/logout/services";
-import { LogoutResponseSchema, type LogoutResponse } from "@/features/logout/schemas";
+import { LogoutResponseSchema, type LogoutData } from "@/features/logout/schemas";
 import { InvalidCredentialError } from "@/integrations/identity";
 
 export const logout: HttpRoute = {
@@ -28,7 +28,7 @@ export const logout: HttpRoute = {
     const service = container.get<ILogoutService>(TYPES.LogoutService);
     await service.logout(sessionToken);
 
-    const response: LogoutResponse = {
+    const response: LogoutData = {
       message: "Logged out successfully.",
     };
 

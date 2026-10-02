@@ -50,10 +50,12 @@ describe("getIdentityFromAccessToken route", () => {
     expect(response).toEqual({
       status: 200,
       body: {
-        identity: {
-          id: "identity-1",
-          email: "a@b.com",
-          emailVerified: true,
+        data: {
+          identity: {
+            id: "identity-1",
+            email: "a@b.com",
+            emailVerified: true,
+          },
         },
       },
     });

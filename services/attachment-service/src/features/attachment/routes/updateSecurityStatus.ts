@@ -1,12 +1,13 @@
 import { NotFoundError } from "@pine/common";
 import type { HttpRoute } from "@pine/server";
-import { StatusCodes } from "http-status-codes";
+import { json } from "@pine/server";
 import Value from "typebox/value";
 import { TYPES } from "@/bootstrap/container-types";
 import {
   UpdateSecurityStatusBodySchema,
   UpdateSecurityStatusParamsSchema,
   UpdateSecurityStatusResponseSchema,
+  type UpdateSecurityStatusResponse,
 } from "@/features/attachment/schemas";
 import type { IAttachmentService } from "@/features/attachment/services";
 
@@ -48,13 +49,12 @@ export const updateSecurityStatus: HttpRoute = {
       throw new NotFoundError("Attachment");
     }
 
-    return {
-      status: StatusCodes.OK,
-      body: {
-        attachmentId: updated.id,
-        status: updated.status,
-        securityStatus: updated.securityStatus,
-      },
+    const response: UpdateSecurityStatusResponse = {
+      attachmentId: updated.id,
+      status: updated.status,
+      securityStatus: updated.securityStatus,
     };
+
+    return json(response);
   },
 };

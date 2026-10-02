@@ -42,7 +42,23 @@ Do not invent a second name (`consent.ts` + `operationId: "getConsentChallenge"`
 
 ## Recipe
 
-TypeBox schemas under `features/<feature>/schemas/`; `{ additionalProperties: false }` on bodies. Validate body/query; throw feature errors on bad input. Handler: map args → **one** service method → `json(response)` / cookies. Authenticated routes read `request.identity` or throw `UnauthorizedError`. Public routes need OpenAPI tags/summary/description.
+TypeBox schemas under `features/<feature>/schemas/`; `{ additionalProperties: false }` on bodies. Validate body/query; throw feature errors on bad input. Handler: map args → **one** service method → `json(payload)` / cookies. `json(payload)` sends `{ data: payload }` (GraphQL-like envelope). Failures use the shared error handler `{ data: null, errors: [{ code, message, field? }] }` with real HTTP status codes. Authenticated routes read `request.identity` or throw `UnauthorizedError`. Public routes need OpenAPI tags/summary/description.
+
+Response TypeBox schemas wrap the payload in `{ data }` inline:
+
+```ts
+export const CheckRelationshipDataSchema = Type.Object(
+  { allowed: Type.Boolean() },
+  { additionalProperties: false },
+);
+
+export const CheckRelationshipResponseSchema = Type.Object(
+  {
+    data: CheckRelationshipDataSchema,
+  },
+  { additionalProperties: false },
+);
+```
 
 ```ts
 export const checkRelationship: HttpRoute = {

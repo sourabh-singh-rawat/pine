@@ -6,13 +6,13 @@ import type { IVerificationService } from "@/features/verification/services";
 import {
   VerifyEmailQuerySchema,
   VerifyEmailResponseSchema,
-  type VerifyEmailResponse,
+  type VerifyEmailData,
 } from "@/features/verification/schemas";
 
-function readQueryString(
+const readQueryString = (
   query: Record<string, string | string[] | undefined>,
   key: string,
-): string | undefined {
+): string | undefined => {
   const value = query[key];
   if (typeof value === "string") {
     return value;
@@ -21,7 +21,7 @@ function readQueryString(
     return value[0];
   }
   return undefined;
-}
+};
 
 export const verifyEmail: HttpRoute = {
   url: "/identity/verifyEmail",
@@ -48,7 +48,7 @@ export const verifyEmail: HttpRoute = {
 
     await service.verifyEmail({ flowId, code });
 
-    const response: VerifyEmailResponse = {
+    const response: VerifyEmailData = {
       message: "Email verified successfully.",
     };
 

@@ -1,11 +1,12 @@
 import type { HttpRoute } from "@pine/server";
-import { StatusCodes } from "http-status-codes";
+import { json } from "@pine/server";
 import { container } from "@/bootstrap/container";
 import { TYPES } from "@/bootstrap/container-types";
 import { ATTACHMENT_UPLOAD_STATUS } from "@/features/attachment-upload/constants";
 import {
   UploadAttachmentParamsSchema,
   UploadAttachmentResponseSchema,
+  type UploadAttachmentResponse,
 } from "@/features/attachment-upload/schemas";
 import type { IAttachmentUploadService } from "@/features/attachment-upload/services";
 
@@ -50,9 +51,10 @@ export const uploadToTarget: HttpRoute = {
     const service = container.get<IAttachmentUploadService>(TYPES.AttachmentUploadService);
     await service.uploadToTarget({ uploadId: id, data: buffer, contentType });
 
-    return {
-      status: StatusCodes.OK,
-      body: { status: ATTACHMENT_UPLOAD_STATUS.COMPLETED },
+    const response: UploadAttachmentResponse = {
+      status: ATTACHMENT_UPLOAD_STATUS.COMPLETED,
     };
+
+    return json(response);
   },
 };

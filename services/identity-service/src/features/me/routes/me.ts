@@ -3,7 +3,7 @@ import { json } from "@pine/server";
 import { container } from "@/bootstrap";
 import { TYPES } from "@/bootstrap/container-types";
 import type { IMeService } from "@/features/me/services";
-import { MeResponseSchema, type MeResponse } from "@/features/me/schemas";
+import { MeResponseSchema, type MeData } from "@/features/me/schemas";
 import { toMeProfileFullName, toMeProfilePhotoUrl } from "@/features/me/utils";
 import { InvalidCredentialError } from "@/integrations/identity";
 
@@ -32,7 +32,7 @@ export const me: HttpRoute = {
       profile,
     } = await service.getCurrentUser(sessionToken);
 
-    const response: MeResponse = {
+    const response: MeData = {
       identity: { id, email, emailVerified },
       profile: profile
         ? {

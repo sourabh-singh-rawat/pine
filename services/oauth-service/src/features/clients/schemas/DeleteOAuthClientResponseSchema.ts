@@ -1,7 +1,14 @@
 import Type from "typebox";
 
-export const DeleteOAuthClientResponseSchema = Type.Object({
+const DeleteOAuthClientDataSchema = Type.Object({
   deleted: Type.Boolean(),
 });
 
-export type DeleteOAuthClientResponse = Type.Static<typeof DeleteOAuthClientResponseSchema>;
+export const DeleteOAuthClientResponseSchema = Type.Object(
+  {
+    data: DeleteOAuthClientDataSchema,
+  },
+  { additionalProperties: false },
+);
+
+export type DeleteOAuthClientResponse = Type.Static<typeof DeleteOAuthClientDataSchema>;

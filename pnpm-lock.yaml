@@ -541,6 +541,9 @@ importers:
 
   packages/attachment:
     dependencies:
+      '@pine/common':
+        specifier: workspace:^
+        version: link:../common
       typebox:
         specifier: 1.3.6
         version: 1.3.6
@@ -560,6 +563,9 @@ importers:
 
   packages/authorization:
     dependencies:
+      '@pine/common':
+        specifier: workspace:^
+        version: link:../common
       '@pine/errors':
         specifier: workspace:^
         version: link:../errors

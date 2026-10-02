@@ -1,10 +1,17 @@
 import Type from "typebox";
 
-export const ConsentActionResponseSchema = Type.Object(
+const ConsentActionDataSchema = Type.Object(
   {
     redirectTo: Type.String({ minLength: 1 }),
   },
   { additionalProperties: false },
 );
 
-export type ConsentActionResponse = Type.Static<typeof ConsentActionResponseSchema>;
+export const ConsentActionResponseSchema = Type.Object(
+  {
+    data: ConsentActionDataSchema,
+  },
+  { additionalProperties: false },
+);
+
+export type ConsentActionResponse = Type.Static<typeof ConsentActionDataSchema>;
