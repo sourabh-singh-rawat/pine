@@ -65,13 +65,26 @@ const getProfile = (data: unknown): MeProfile | null => {
   };
 };
 
+const unwrapMePayload = (data: unknown): unknown => {
+  if (typeof data !== "object" || data === null || !("data" in data)) {
+    return data;
+  }
+
+  if ("identity" in data) {
+    return data;
+  }
+
+  return data.data;
+};
+
 export const toAuthUserFromMeResponse = (data: unknown): AuthUser | null => {
-  const identity = getIdentity(data);
+  const payload = unwrapMePayload(data);
+  const identity = getIdentity(payload);
   if (!identity) {
     return null;
   }
 
-  const profile = getProfile(data);
+  const profile = getProfile(payload);
 
   return {
     userId: identity.id,
