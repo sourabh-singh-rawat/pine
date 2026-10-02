@@ -58,7 +58,7 @@ export class HydraOAuthTokenProvider implements IOAuthTokenProvider {
       if (error instanceof InvalidOAuthRequestError) {
         throw error;
       }
-      rethrowHydraError(error);
+      throw rethrowHydraError(error);
     }
   }
 
@@ -77,10 +77,10 @@ export class HydraOAuthTokenProvider implements IOAuthTokenProvider {
         expiresAt: data.exp != null ? new Date(data.exp * 1000) : undefined,
         issuedAt: data.iat != null ? new Date(data.iat * 1000) : undefined,
         audience: data.aud,
-        extra: data.ext as Record<string, unknown> | undefined,
+        extra: isRecord(data.ext) ? data.ext : undefined,
       };
     } catch (error) {
-      rethrowHydraError(error);
+      throw rethrowHydraError(error);
     }
   }
 
@@ -88,7 +88,10 @@ export class HydraOAuthTokenProvider implements IOAuthTokenProvider {
     try {
       await this.hydra.publicApi.revokeOAuth2Token({ token });
     } catch (error) {
-      rethrowHydraError(error);
+      throw rethrowHydraError(error);
     }
   }
 }
+
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  typeof value === "object" && value !== null && !Array.isArray(value);

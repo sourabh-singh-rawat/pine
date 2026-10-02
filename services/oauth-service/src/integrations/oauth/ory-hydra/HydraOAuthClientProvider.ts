@@ -27,7 +27,7 @@ export class HydraOAuthClientProvider implements IOAuthClientProvider {
 
       return this.mapRegisteredClient(data, input.clientId);
     } catch (error) {
-      rethrowHydraError(error);
+      throw rethrowHydraError(error);
     }
   }
 
@@ -40,7 +40,7 @@ export class HydraOAuthClientProvider implements IOAuthClientProvider {
 
       return this.mapRegisteredClient(data, input.clientId);
     } catch (error) {
-      rethrowHydraError(error);
+      throw rethrowHydraError(error);
     }
   }
 
@@ -52,7 +52,7 @@ export class HydraOAuthClientProvider implements IOAuthClientProvider {
       if (getHydraHttpStatus(error) === 404) {
         return null;
       }
-      rethrowHydraError(error);
+      throw rethrowHydraError(error);
     }
   }
 
@@ -63,7 +63,7 @@ export class HydraOAuthClientProvider implements IOAuthClientProvider {
       if (getHydraHttpStatus(error) === 404) {
         return;
       }
-      rethrowHydraError(error);
+      throw rethrowHydraError(error);
     }
   }
 
