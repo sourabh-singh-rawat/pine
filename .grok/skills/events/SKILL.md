@@ -67,7 +67,7 @@ export class PlatformIdentitySyncConsumer extends Consumer<
     @inject(TYPES.Broker) private readonly broker: IBroker,
     @inject(TYPES.IdentityRepository) private readonly identityRepository: IIdentityRepository,
   ) {
-    super(broker.client);
+    super(broker);
   }
 
   async onMessage(
@@ -91,6 +91,8 @@ export class PlatformIdentitySyncConsumer extends Consumer<
 ```
 
 `start()` from `main.ts` after `broker.init()`. Always `validateEvent` + `message.ack()`. Group related types on one durable when they sync the same entity.
+
+`Consumer` takes `IBroker` (not bare `client`) so it can use `getConfig().logger`. `ensureConsumer` retries NATS `TIMEOUT` with backoff, uses a 10s JetStream timeout, logs failures through the broker logger, and does not rethrow from `start()` so `void consumer.start()` will not crash the process on a failed ensure.
 
 ## Durable consumers
 

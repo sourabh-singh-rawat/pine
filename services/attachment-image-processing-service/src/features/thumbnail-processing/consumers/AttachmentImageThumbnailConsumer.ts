@@ -56,7 +56,7 @@ export class AttachmentImageThumbnailConsumer extends Consumer<CloudEvent<Attach
     @inject(TYPES.ThumbnailProcessingService)
     private readonly thumbnailProcessingService: IThumbnailProcessingService,
   ) {
-    super(broker.client);
+    super(broker);
   }
 
   async onMessage(message: JsMsg, payload: CloudEvent<AttachmentCreatedData>): Promise<void> {

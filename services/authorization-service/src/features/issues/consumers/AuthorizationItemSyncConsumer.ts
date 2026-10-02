@@ -30,7 +30,7 @@ export class AuthorizationItemSyncConsumer extends Consumer<CloudEvent<ItemCreat
     @inject(TYPES.AuthorizationGraphProvider)
     private readonly authorizationGraphProvider: IAuthorizationGraphProvider,
   ) {
-    super(broker.client);
+    super(broker);
   }
 
   async onMessage(message: JsMsg, payload: CloudEvent<ItemCreatedData>): Promise<void> {

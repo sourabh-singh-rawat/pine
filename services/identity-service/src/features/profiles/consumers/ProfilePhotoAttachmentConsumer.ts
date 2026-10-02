@@ -25,7 +25,7 @@ export class ProfilePhotoAttachmentConsumer extends Consumer<CloudEvent<Attachme
     @inject(TYPES.ProfileService)
     private readonly profileService: IProfileService,
   ) {
-    super(broker.client);
+    super(broker);
   }
 
   async onMessage(message: JsMsg, payload: CloudEvent<AttachmentCreatedData>): Promise<void> {

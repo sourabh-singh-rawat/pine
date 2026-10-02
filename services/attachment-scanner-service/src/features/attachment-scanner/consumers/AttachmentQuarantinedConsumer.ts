@@ -24,7 +24,7 @@ export class AttachmentQuarantinedConsumer extends Consumer<CloudEvent<Attachmen
     @inject(TYPES.AttachmentScannerService)
     private readonly scannerService: IAttachmentScannerService,
   ) {
-    super(broker.client);
+    super(broker);
   }
 
   async onMessage(message: JsMsg, payload: CloudEvent<AttachmentQuarantinedData>): Promise<void> {

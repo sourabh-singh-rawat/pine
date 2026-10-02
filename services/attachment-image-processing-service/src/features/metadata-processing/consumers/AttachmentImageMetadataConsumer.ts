@@ -56,7 +56,7 @@ export class AttachmentImageMetadataConsumer extends Consumer<CloudEvent<Attachm
     @inject(TYPES.MetadataProcessingService)
     private readonly metadataProcessingService: IMetadataProcessingService,
   ) {
-    super(broker.client);
+    super(broker);
   }
 
   async onMessage(message: JsMsg, payload: CloudEvent<AttachmentCreatedData>): Promise<void> {

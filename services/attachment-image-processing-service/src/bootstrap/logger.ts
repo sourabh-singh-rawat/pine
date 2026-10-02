@@ -1,4 +1,5 @@
-import { PinoLogger } from "@pine/server";
-import pino from "pino";
+import { createLogger } from "@pine/server";
 
-export const logger = new PinoLogger(pino({ transport: { target: "pino-pretty" } }));
+export const logger = createLogger({
+  serviceName: "attachment-image-processing-service",
+});
