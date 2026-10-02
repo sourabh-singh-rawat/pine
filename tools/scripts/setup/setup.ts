@@ -175,6 +175,9 @@ const main = (): void => {
 
   waitForPostgres();
 
+  console.log("setup: ensuring NATS JetStream streams");
+  runPnpm(["nats:streams"]);
+
   console.log("setup: running database migrations");
   runPnpm(["db:migrate"]);
 
