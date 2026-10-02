@@ -1,5 +1,6 @@
 import {
   columnGroupingFeature,
+  columnSizingFeature,
   createExpandedRowModel,
   createGroupedRowModel,
   createTableHook,
@@ -10,6 +11,7 @@ import {
 
 export const pineTableFeatures = tableFeatures({
   columnGroupingFeature,
+  columnSizingFeature,
   rowExpandingFeature,
   groupedRowModel: createGroupedRowModel(),
   expandedRowModel: createExpandedRowModel(),

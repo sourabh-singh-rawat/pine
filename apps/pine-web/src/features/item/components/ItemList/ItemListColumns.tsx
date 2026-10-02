@@ -15,6 +15,9 @@ export const FLAT_COLUMNS = columnHelper.columns([
   columnHelper.display({
     id: "status",
     header: "",
+    size: 48,
+    minSize: 48,
+    maxSize: 48,
     enableGrouping: false,
     cell: ({ row }) => (
       <ItemStatusTableCell
@@ -26,6 +29,8 @@ export const FLAT_COLUMNS = columnHelper.columns([
   }),
   columnHelper.accessor("name", {
     header: "Name",
+    size: 480,
+    minSize: 200,
     enableGrouping: false,
     cell: ({ row, getValue }) => {
       const parentRow = row.getParentRow();
@@ -45,6 +50,9 @@ export const FLAT_COLUMNS = columnHelper.columns([
   }),
   columnHelper.accessor("dueDate", {
     header: "Due Date",
+    size: 140,
+    minSize: 120,
+    maxSize: 160,
     enableGrouping: false,
     cell: ({ row, getValue }) => (
       <ItemDueDateTableCell itemId={row.original.id} value={getValue()} />
@@ -52,6 +60,9 @@ export const FLAT_COLUMNS = columnHelper.columns([
   }),
   columnHelper.accessor("priority", {
     header: "Priority",
+    size: 120,
+    minSize: 100,
+    maxSize: 140,
     enableGrouping: false,
     cell: ({ row, getValue }) => (
       <ItemPriorityTableCell itemId={row.original.id} value={getValue()} />
@@ -59,12 +70,18 @@ export const FLAT_COLUMNS = columnHelper.columns([
   }),
   columnHelper.accessor("tags", {
     header: "Tags",
+    size: 180,
+    minSize: 160,
+    maxSize: 220,
     enableGrouping: false,
     cell: ({ row }) => <ItemTagsTableCell itemId={row.original.id} tags={row.original.tags} />,
   }),
   columnHelper.display({
     id: "actions",
     header: "",
+    size: 48,
+    minSize: 48,
+    maxSize: 48,
     cell: ({ row }) => <ItemActionsTableCell itemId={row.original.id} />,
   }),
 ]);

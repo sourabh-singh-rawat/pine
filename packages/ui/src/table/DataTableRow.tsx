@@ -45,16 +45,25 @@ export const DataTableRow = <TData extends RowData = RowData>({
     );
   }
 
+  const totalSize = table.getTotalSize();
+
   return (
     <tr
       data-clickable={onRowClick ? "true" : undefined}
       onClick={onRowClick ? () => onRowClick(row.original) : undefined}
     >
-      {row.getAllCells().map((cell) => (
-        <td key={cell.id}>
-          <table.FlexRender cell={cell} />
-        </td>
-      ))}
+      {row.getAllCells().map((cell) => {
+        const size = cell.column.getSize();
+        const widthPercent = totalSize > 0 ? (size / totalSize) * 100 : undefined;
+        return (
+          <td
+            key={cell.id}
+            style={widthPercent == null ? undefined : { width: `${widthPercent}%` }}
+          >
+            <table.FlexRender cell={cell} />
+          </td>
+        );
+      })}
     </tr>
   );
 };
