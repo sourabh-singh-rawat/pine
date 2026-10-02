@@ -113,6 +113,34 @@ export type UpdateStatusMutationVariables = Exact<{
 
 export type UpdateStatusMutation = { updateStatus: { id: string | null, name: string | null, type: string | null, color: string | null, orderIndex: number | null, listId: string | null } | null };
 
+export type CreateTagMutationVariables = Exact<{
+  input: Types.CreateTagInput;
+}>;
+
+
+export type CreateTagMutation = { createTag: { id: string, workspaceId: string, spaceId: string | null, name: string, color: string, description: string | null } | null };
+
+export type GetItemTagsQueryVariables = Exact<{
+  itemId: string;
+}>;
+
+
+export type GetItemTagsQuery = { getItemTags: Array<{ id: string, workspaceId: string, spaceId: string | null, name: string, color: string, description: string | null }> | null };
+
+export type GetTagsQueryVariables = Exact<{
+  input: Types.GetTagsInput;
+}>;
+
+
+export type GetTagsQuery = { getTags: Array<{ id: string, workspaceId: string, spaceId: string | null, name: string, color: string, description: string | null }> | null };
+
+export type SetItemTagsMutationVariables = Exact<{
+  input: Types.SetItemTagsInput;
+}>;
+
+
+export type SetItemTagsMutation = { setItemTags: Array<{ id: string, workspaceId: string, spaceId: string | null, name: string, color: string, description: string | null }> | null };
+
 export type CreateItemMutationVariables = Exact<{
   input: Types.CreateItemInput;
 }>;
@@ -132,7 +160,7 @@ export type GetItemQueryVariables = Exact<{
 }>;
 
 
-export type GetItemQuery = { getItem: { id: string | null, description: string | null, name: string | null, statusId: string | null, priority: string | null, dueDate: unknown, list: { id: string | null, name: string | null } | null, parentItem: { id: string | null, name: string | null } | null } | null };
+export type GetItemQuery = { getItem: { id: string | null, description: string | null, name: string | null, statusId: string | null, priority: string | null, dueDate: unknown, list: { id: string | null, name: string | null } | null, parentItem: { id: string | null, name: string | null } | null, tags: Array<{ id: string, name: string, color: string }> | null } | null };
 
 export type GetItemAuditLogsQueryVariables = Exact<{
   itemId: string;
@@ -150,14 +178,14 @@ export type GetListItemsQueryVariables = Exact<{
 }>;
 
 
-export type GetListItemsQuery = { getListItems: Array<{ totalCount: number | null, status: { id: string | null, name: string | null, orderIndex: number | null, color: string | null, type: string | null } | null, items: Array<{ description: string | null, id: string | null, name: string | null, statusId: string | null, priority: string | null, dueDate: unknown, hasChildren: boolean | null, checklistCounts: { completedCount: number | null, totalCount: number | null } | null }> | null, pageInfo: { hasNextPage: boolean | null, endCursor: string | null } | null }> | null };
+export type GetListItemsQuery = { getListItems: Array<{ totalCount: number | null, status: { id: string | null, name: string | null, orderIndex: number | null, color: string | null, type: string | null } | null, items: Array<{ description: string | null, id: string | null, name: string | null, statusId: string | null, priority: string | null, dueDate: unknown, hasChildren: boolean | null, checklistCounts: { completedCount: number | null, totalCount: number | null } | null, tags: Array<{ id: string, name: string, color: string }> | null }> | null, pageInfo: { hasNextPage: boolean | null, endCursor: string | null } | null }> | null };
 
 export type GetSubItemsQueryVariables = Exact<{
   input: Types.GetSubItemsInput;
 }>;
 
 
-export type GetSubItemsQuery = { getSubItems: Array<{ description: string | null, id: string | null, name: string | null, dueDate: unknown, statusId: string | null, priority: string | null }> | null };
+export type GetSubItemsQuery = { getSubItems: Array<{ description: string | null, id: string | null, name: string | null, dueDate: unknown, statusId: string | null, priority: string | null, tags: Array<{ id: string, name: string, color: string }> | null }> | null };
 
 export type UpdateItemMutationVariables = Exact<{
   input: Types.UpdateItemInput;
@@ -696,6 +724,128 @@ export const useUpdateStatusMutation = <
 
 useUpdateStatusMutation.getKey = () => ['UpdateStatus'];
 
+export const CreateTagDocument = new TypedDocumentString(`
+    mutation CreateTag($input: CreateTagInput!) {
+  createTag(input: $input) {
+    id
+    workspaceId
+    spaceId
+    name
+    color
+    description
+  }
+}
+    `);
+
+export const useCreateTagMutation = <
+      TError = unknown,
+      TContext = unknown
+    >(options?: UseMutationOptions<CreateTagMutation, TError, CreateTagMutationVariables, TContext>) => {
+    
+    return useMutation<CreateTagMutation, TError, CreateTagMutationVariables, TContext>(
+      {
+    mutationKey: ['CreateTag'],
+    mutationFn: (variables?: CreateTagMutationVariables) => graphQLFetcher<CreateTagMutation, CreateTagMutationVariables>(CreateTagDocument, variables)(),
+    ...options
+  }
+    )};
+
+useCreateTagMutation.getKey = () => ['CreateTag'];
+
+export const GetItemTagsDocument = new TypedDocumentString(`
+    query GetItemTags($itemId: String!) {
+  getItemTags(itemId: $itemId) {
+    id
+    workspaceId
+    spaceId
+    name
+    color
+    description
+  }
+}
+    `);
+
+export const useGetItemTagsQuery = <
+      TData = GetItemTagsQuery,
+      TError = unknown
+    >(
+      variables: GetItemTagsQueryVariables,
+      options?: Omit<UseQueryOptions<GetItemTagsQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<GetItemTagsQuery, TError, TData>['queryKey'] }
+    ) => {
+    
+    return useQuery<GetItemTagsQuery, TError, TData>(
+      {
+    queryKey: ['GetItemTags', variables],
+    queryFn: graphQLFetcher<GetItemTagsQuery, GetItemTagsQueryVariables>(GetItemTagsDocument, variables),
+    ...options
+  }
+    )};
+
+useGetItemTagsQuery.document = GetItemTagsDocument;
+
+useGetItemTagsQuery.getKey = (variables: GetItemTagsQueryVariables) => ['GetItemTags', variables];
+
+export const GetTagsDocument = new TypedDocumentString(`
+    query GetTags($input: GetTagsInput!) {
+  getTags(input: $input) {
+    id
+    workspaceId
+    spaceId
+    name
+    color
+    description
+  }
+}
+    `);
+
+export const useGetTagsQuery = <
+      TData = GetTagsQuery,
+      TError = unknown
+    >(
+      variables: GetTagsQueryVariables,
+      options?: Omit<UseQueryOptions<GetTagsQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<GetTagsQuery, TError, TData>['queryKey'] }
+    ) => {
+    
+    return useQuery<GetTagsQuery, TError, TData>(
+      {
+    queryKey: ['GetTags', variables],
+    queryFn: graphQLFetcher<GetTagsQuery, GetTagsQueryVariables>(GetTagsDocument, variables),
+    ...options
+  }
+    )};
+
+useGetTagsQuery.document = GetTagsDocument;
+
+useGetTagsQuery.getKey = (variables: GetTagsQueryVariables) => ['GetTags', variables];
+
+export const SetItemTagsDocument = new TypedDocumentString(`
+    mutation SetItemTags($input: SetItemTagsInput!) {
+  setItemTags(input: $input) {
+    id
+    workspaceId
+    spaceId
+    name
+    color
+    description
+  }
+}
+    `);
+
+export const useSetItemTagsMutation = <
+      TError = unknown,
+      TContext = unknown
+    >(options?: UseMutationOptions<SetItemTagsMutation, TError, SetItemTagsMutationVariables, TContext>) => {
+    
+    return useMutation<SetItemTagsMutation, TError, SetItemTagsMutationVariables, TContext>(
+      {
+    mutationKey: ['SetItemTags'],
+    mutationFn: (variables?: SetItemTagsMutationVariables) => graphQLFetcher<SetItemTagsMutation, SetItemTagsMutationVariables>(SetItemTagsDocument, variables)(),
+    ...options
+  }
+    )};
+
+useSetItemTagsMutation.getKey = () => ['SetItemTags'];
+
 export const CreateItemDocument = new TypedDocumentString(`
     mutation CreateItem($input: CreateItemInput!) {
   createItem(input: $input)
@@ -755,6 +905,11 @@ export const GetItemDocument = new TypedDocumentString(`
     statusId
     priority
     dueDate
+    tags {
+      id
+      name
+      color
+    }
   }
 }
     `);
@@ -844,6 +999,11 @@ export const GetListItemsDocument = new TypedDocumentString(`
         completedCount
         totalCount
       }
+      tags {
+        id
+        name
+        color
+      }
     }
     pageInfo {
       hasNextPage
@@ -883,6 +1043,11 @@ export const GetSubItemsDocument = new TypedDocumentString(`
     dueDate
     statusId
     priority
+    tags {
+      id
+      name
+      color
+    }
   }
 }
     `);
