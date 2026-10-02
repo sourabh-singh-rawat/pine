@@ -6,5 +6,10 @@ query GetSubItems($input: GetSubItemsInput!) {
     dueDate
     statusId
     priority
+    tags {
+      id
+      name
+      color
+    }
   }
 }

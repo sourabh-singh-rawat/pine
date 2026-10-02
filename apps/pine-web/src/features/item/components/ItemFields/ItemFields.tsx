@@ -1,11 +1,13 @@
 import CalendarMonthOutlined from "@mui/icons-material/CalendarMonthOutlined";
 import CircleOutlined from "@mui/icons-material/CircleOutlined";
 import FlagOutlined from "@mui/icons-material/FlagOutlined";
+import LocalOfferOutlined from "@mui/icons-material/LocalOfferOutlined";
 import { Grid2, Stack, Typography, useTheme } from "@mui/material";
 import { useForm } from "react-hook-form";
 import type { UpdateItemInput } from "@generated/gql/graphql";
 import { ItemPrioritySelector } from "../ItemPrioritySelector";
 import { ItemStatusSelector } from "../ItemStatusSelector";
+import { ItemTagSelector } from "../ItemTagSelector";
 
 interface ItemFieldsProps {
   itemId: string;
@@ -53,6 +55,11 @@ export const ItemFields = ({ itemId, listId, statusId, priority, updateItem }: I
       icon: <CalendarMonthOutlined fontSize="small" />,
       name: "Dates",
       component: <Typography>Empty</Typography>,
+    },
+    {
+      icon: <LocalOfferOutlined fontSize="small" />,
+      name: "Tags",
+      component: <ItemTagSelector itemId={itemId} />,
     },
   ];
 

@@ -19,6 +19,11 @@ query GetListItems($listId: String!, $first: Int, $statusId: String, $after: Str
         completedCount
         totalCount
       }
+      tags {
+        id
+        name
+        color
+      }
     }
     pageInfo {
       hasNextPage

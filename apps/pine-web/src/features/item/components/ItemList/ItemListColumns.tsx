@@ -5,6 +5,7 @@ import {
   ItemNameTableCell,
   ItemPriorityTableCell,
   ItemStatusTableCell,
+  ItemTagsTableCell,
 } from "./ItemListTableCells";
 import { type ItemRow } from "./types";
 
@@ -55,6 +56,11 @@ export const FLAT_COLUMNS = columnHelper.columns([
     cell: ({ row, getValue }) => (
       <ItemPriorityTableCell itemId={row.original.id} value={getValue()} />
     ),
+  }),
+  columnHelper.accessor("tags", {
+    header: "Tags",
+    enableGrouping: false,
+    cell: ({ row }) => <ItemTagsTableCell itemId={row.original.id} tags={row.original.tags} />,
   }),
   columnHelper.display({
     id: "actions",

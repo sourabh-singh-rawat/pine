@@ -1,0 +1,10 @@
+mutation CreateTag($input: CreateTagInput!) {
+  createTag(input: $input) {
+    id
+    workspaceId
+    spaceId
+    name
+    color
+    description
+  }
+}

@@ -11,6 +11,11 @@ export type ItemSource = {
     completedCount?: number | null;
     totalCount?: number | null;
   } | null;
+  tags?: Array<{
+    id?: string | null;
+    name?: string | null;
+    color?: string | null;
+  } | null> | null;
 };
 
 export const toItemRow = (
@@ -38,6 +43,9 @@ export const toItemRow = (
       : 0;
   const checklistTotalCount =
     typeof item.checklistCounts?.totalCount === "number" ? item.checklistCounts.totalCount : 0;
+  const tags = (item.tags ?? []).flatMap((t) =>
+    t && t.id && t.name && t.color ? [{ id: t.id, name: t.name, color: t.color }] : [],
+  );
 
   return {
     id: item.id,
@@ -51,6 +59,7 @@ export const toItemRow = (
     isNestedExpanded: options.isNestedExpanded ?? false,
     checklistCompletedCount,
     checklistTotalCount,
+    tags,
     children: options.children,
   };
 };

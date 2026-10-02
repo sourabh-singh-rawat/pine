@@ -1,0 +1,2 @@
+import "./getTags";
+import "./getItemTags";
