@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { Box, Container, Grid2, Toolbar, useTheme } from "@mui/material";
+import { Box, Container, Grid2, useTheme } from "@mui/material";
 import { useRouterState } from "@tanstack/react-router";
 import { useAuthStore } from "@features/auth";
 import { appShowsSidebar, getActiveApp } from "../../apps";
@@ -29,25 +29,27 @@ export const PrivateRoutes = ({ children }: PrivateRoutesProps) => {
   if (isLoading || !current) return <AppLoader />;
 
   return (
-    <Box display="flex" height="100vh">
+    <Box display="flex" flexDirection="column" height="100vh">
       <Navbar />
-      {showSidebar ? <Sidebar /> : null}
-      <Container
-        sx={{
-          flex: 1,
-          minWidth: 0,
-          overflowX: "auto",
-          backgroundColor: theme.palette.background.default,
-        }}
-        disableGutters
-      >
-        <Toolbar variant="dense" disableGutters />
-        <Grid2 container>
-          <Grid2 size={12} sx={{ px: 2, py: 1.5 }}>
-            {children}
+      <Box display="flex" flex={1} minHeight={0}>
+        {showSidebar ? <Sidebar /> : null}
+        <Container
+          maxWidth={false}
+          sx={{
+            flex: 1,
+            minWidth: 0,
+            overflowX: "auto",
+            backgroundColor: theme.palette.background.default,
+          }}
+          disableGutters
+        >
+          <Grid2 container>
+            <Grid2 size={12} sx={{ px: 2, py: 1.5 }}>
+              {children}
+            </Grid2>
           </Grid2>
-        </Grid2>
-      </Container>
+        </Container>
+      </Box>
     </Box>
   );
 };
