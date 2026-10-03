@@ -1,5 +1,31 @@
 # @pine/items-service
 
+## 1.5.0
+
+### Minor Changes
+
+- 15fb6d3: feat(items): add workspace and space tags support to items and list
+
+### Patch Changes
+
+- 942d839: chore(deps): bump graphql to 17 and refresh related pins
+- ad7c767: feat(items): within-status list reorder and item cleanup
+- Updated dependencies [2f61d7c]
+- Updated dependencies [942d839]
+- Updated dependencies [0b4966a]
+- Updated dependencies [87d3856]
+- Updated dependencies [a406229]
+- Updated dependencies [47d8722]
+- Updated dependencies [ad7c767]
+- Updated dependencies [b5760be]
+  - @pine/common@1.3.0
+  - @pine/events@1.5.0
+  - @pine/server@1.2.0
+  - @pine/errors@0.1.1
+  - @pine/authorization@0.8.0
+  - @pine/identity@0.4.0
+  - @pine/attachment@0.5.0
+
 ## 1.4.0
 
 ### Minor Changes

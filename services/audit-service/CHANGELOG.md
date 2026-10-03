@@ -1,5 +1,25 @@
 # @pine/audit-service
 
+## 0.2.2
+
+### Patch Changes
+
+- 942d839: chore(deps): bump graphql to 17 and refresh related pins
+- Updated dependencies [2f61d7c]
+- Updated dependencies [942d839]
+- Updated dependencies [0b4966a]
+- Updated dependencies [87d3856]
+- Updated dependencies [a406229]
+- Updated dependencies [47d8722]
+- Updated dependencies [ad7c767]
+- Updated dependencies [b5760be]
+  - @pine/common@1.3.0
+  - @pine/events@1.5.0
+  - @pine/server@1.2.0
+  - @pine/errors@0.1.1
+  - @pine/authorization@0.8.0
+  - @pine/identity@0.4.0
+
 ## 0.2.1
 
 ### Patch Changes

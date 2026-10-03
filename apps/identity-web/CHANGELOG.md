@@ -1,5 +1,18 @@
 # @pine/identity-web
 
+## 0.7.0
+
+### Minor Changes
+
+- 47d8722: feat(http): return ApiResponse data and errors envelope on JSON APIs
+
+### Patch Changes
+
+- 942d839: chore(deps): bump graphql to 17 and refresh related pins
+- Updated dependencies [b8b9f2b]
+- Updated dependencies [ad7c767]
+  - @pine/ui@0.3.2
+
 ## 0.6.6
 
 ### Patch Changes

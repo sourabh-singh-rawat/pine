@@ -1,5 +1,22 @@
 # @pine/identity
 
+## 0.4.0
+
+### Minor Changes
+
+- 47d8722: feat(http): return ApiResponse data and errors envelope on JSON APIs
+
+### Patch Changes
+
+- Updated dependencies [2f61d7c]
+- Updated dependencies [942d839]
+- Updated dependencies [87d3856]
+- Updated dependencies [47d8722]
+- Updated dependencies [ad7c767]
+- Updated dependencies [b5760be]
+  - @pine/common@1.3.0
+  - @pine/server@1.2.0
+
 ## 0.3.2
 
 ### Patch Changes
