@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { parseSetCookieHeader } from "@/integrations/oauth/ory-hydra/parseSetCookieHeader";
+import { parseSetCookieHeader } from "@/integrations/oauth/ory-hydra/utils/parseSetCookieHeader";
 
 describe("parseSetCookieHeader", () => {
   it("parses name, value, and cookie attributes", () => {

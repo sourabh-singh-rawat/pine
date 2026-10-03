@@ -7,10 +7,7 @@ import type {
   RegisterOAuthClientInput,
 } from "@/integrations/oauth/IOAuthClientProvider";
 import type { HydraClient } from "@/integrations/oauth/ory-hydra/HydraClient";
-import {
-  getHydraHttpStatus,
-  rethrowHydraError,
-} from "@/integrations/oauth/ory-hydra/rethrowHydraError";
+import { getHydraHttpStatus, rethrowHydraError } from "@/integrations/oauth/ory-hydra/utils";
 
 @injectable()
 export class HydraOAuthClientProvider implements IOAuthClientProvider {

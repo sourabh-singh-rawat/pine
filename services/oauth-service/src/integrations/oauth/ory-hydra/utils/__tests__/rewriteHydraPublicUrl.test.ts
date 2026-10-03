@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { rewriteHydraPublicUrl } from "@/integrations/oauth/ory-hydra/rewriteHydraPublicUrl";
+import { rewriteHydraPublicUrl } from "@/integrations/oauth/ory-hydra/utils/rewriteHydraPublicUrl";
 
 describe("rewriteHydraPublicUrl", () => {
   const hydraPublicUrl = "http://127.0.0.1:4444";

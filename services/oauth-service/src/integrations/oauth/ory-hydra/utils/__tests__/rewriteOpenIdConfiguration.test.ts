@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { rewriteOpenIdConfiguration } from "@/integrations/oauth/ory-hydra/rewriteOpenIdConfiguration";
+import { rewriteOpenIdConfiguration } from "@/integrations/oauth/ory-hydra/utils/rewriteOpenIdConfiguration";
 
 describe("rewriteOpenIdConfiguration", () => {
   const oauthPublicUrl = "https://localhost/api/oauth";

@@ -9,7 +9,7 @@ import type {
 } from "@/integrations/oauth/IOAuthTokenProvider";
 import type { HydraClient } from "@/integrations/oauth/ory-hydra/HydraClient";
 import { InvalidOAuthRequestError } from "@/integrations/oauth/errors";
-import { rethrowHydraError } from "@/integrations/oauth/ory-hydra/rethrowHydraError";
+import { rethrowHydraError } from "@/integrations/oauth/ory-hydra/utils";
 
 @injectable()
 export class HydraOAuthTokenProvider implements IOAuthTokenProvider {
