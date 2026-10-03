@@ -5,10 +5,12 @@ export const TYPES = {
   OAuthFlowProvider: Symbol.for("IOAuthFlowProvider"),
   OAuthTokenProvider: Symbol.for("IOAuthTokenProvider"),
   OAuthClientProvider: Symbol.for("IOAuthClientProvider"),
+  OAuthDiscoveryProvider: Symbol.for("IOAuthDiscoveryProvider"),
   AuthorizeService: Symbol.for("IAuthorizeService"),
   ConsentService: Symbol.for("IConsentService"),
   LoginService: Symbol.for("ILoginService"),
   TokenService: Symbol.for("ITokenService"),
   ClientService: Symbol.for("IClientService"),
   ClientSeederService: Symbol.for("IClientSeederService"),
+  DiscoveryService: Symbol.for("IDiscoveryService"),
 } as const;
