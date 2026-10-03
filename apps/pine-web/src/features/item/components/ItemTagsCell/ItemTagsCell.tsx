@@ -5,7 +5,7 @@ import { useState, type MouseEvent } from "react";
 import { useCreateTagMutation, useGetTagsQuery, useSetItemTagsMutation } from "@generated/gql";
 import { useWorkspaceStore } from "@features/workspace/store";
 import { TagPickerPopover, type TagItem } from "../ItemTagSelector";
-import type { ItemRowTag } from "./types";
+import type { ItemRowTag } from "../../types";
 
 export interface ItemTagsCellProps {
   itemId: string;

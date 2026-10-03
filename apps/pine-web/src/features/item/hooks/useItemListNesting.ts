@@ -7,7 +7,7 @@ import {
   type GetSubItemsQuery,
   type GetSubItemsQueryVariables,
 } from "@generated/gql";
-import { type ItemSource } from "./mapItemRow";
+import { type ItemSource } from "../utils";
 
 const EMPTY_IDS: ReadonlySet<string> = new Set();
 

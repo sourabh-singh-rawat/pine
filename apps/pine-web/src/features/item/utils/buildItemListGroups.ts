@@ -1,5 +1,5 @@
 import { sortItemRows, toItemRow, type ItemSource } from "./mapItemRow";
-import { type ItemRow } from "./types";
+import { type ItemRow } from "../types";
 
 export type ItemListGroup = {
   statusId: string;

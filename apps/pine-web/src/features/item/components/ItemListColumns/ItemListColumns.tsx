@@ -1,5 +1,5 @@
 import { createPineColumnHelper } from "@pine/ui";
-import { ItemDragHandleCell } from "./ItemDragHandleCell";
+import { ItemDragHandleCell } from "../ItemDragHandleCell";
 import {
   ItemActionsTableCell,
   ItemDueDateTableCell,
@@ -7,8 +7,8 @@ import {
   ItemPriorityTableCell,
   ItemStatusTableCell,
   ItemTagsTableCell,
-} from "./ItemListTableCells";
-import { type ItemRow } from "./types";
+} from "../ItemListTableCells";
+import { type ItemRow } from "../../types";
 
 const columnHelper = createPineColumnHelper<ItemRow>();
 

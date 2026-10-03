@@ -8,7 +8,7 @@ import {
   useUpdateItemMutation,
 } from "@generated/gql";
 import { useSnackbar } from "@shared";
-import type { ItemStatusOverride } from "./ItemListUiContext";
+import type { ItemStatusOverride } from "../components/ItemListUiContext";
 
 type UseItemListActionsArgs = {
   itemId?: string;
