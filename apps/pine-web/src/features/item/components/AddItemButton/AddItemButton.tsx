@@ -5,5 +5,5 @@ interface AddItemButtonProps {
 }
 
 export const AddItemButton = ({ listId }: AddItemButtonProps) => {
-  return <AddItemModal listId={listId} />;
+  return <AddItemModal listId={listId} type="issue" />;
 };

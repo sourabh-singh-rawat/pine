@@ -6,9 +6,9 @@ import {
   useDataTableContext,
   usePineTableContext,
 } from "@pine/ui";
-import { useItemListDragContext } from "./ItemListDragContext";
-import { ItemSortableRowContext } from "./ItemSortableRowContext";
-import { type ItemRow } from "./types";
+import { useItemListDragContext } from "../ItemListDragContext";
+import { ItemSortableRowContext } from "../ItemSortableRowContext";
+import { type ItemRow } from "../../types";
 
 export const SortableItemDataTableRow = ({ row, onRowClick }: DataTableRowProps<ItemRow>) => {
   const parentRow = row.getParentRow();

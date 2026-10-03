@@ -1,13 +1,13 @@
 import MoreVert from "@mui/icons-material/MoreVert";
 import { IconButton } from "@mui/material";
 import { useContext } from "react";
-import { ItemDueDateCell } from "./ItemDueDateCell";
-import { ItemNameCell } from "./ItemNameCell";
-import { ItemPriorityCell } from "./ItemPriorityCell";
-import { ItemStatusCell } from "./ItemStatusCell";
-import { ItemTagsCell } from "./ItemTagsCell";
-import { ItemListUiContext } from "./ItemListUiContext";
-import type { ItemRowTag } from "./types";
+import { ItemDueDateCell } from "../ItemDueDateCell";
+import { ItemNameCell } from "../ItemNameCell";
+import { ItemPriorityCell } from "../ItemPriorityCell";
+import { ItemStatusCell } from "../ItemStatusCell";
+import { ItemTagsCell } from "../ItemTagsCell";
+import { ItemListUiContext } from "../ItemListUiContext";
+import type { ItemRowTag } from "../../types";
 
 export const ItemStatusTableCell = ({
   itemId,

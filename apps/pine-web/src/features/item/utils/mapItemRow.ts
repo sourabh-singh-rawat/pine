@@ -1,4 +1,4 @@
-import { type ItemRow, statusOrderIndex } from "./types";
+import { type ItemRow, statusOrderIndex } from "../types";
 
 export type ItemSource = {
   id?: string | null;

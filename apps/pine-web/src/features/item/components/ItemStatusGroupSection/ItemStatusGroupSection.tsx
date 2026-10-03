@@ -2,11 +2,12 @@ import { Box } from "@mui/material";
 import { DragDropProvider } from "@dnd-kit/react";
 import { Button, DataTable } from "@pine/ui";
 import { memo, useMemo, useState } from "react";
-import { getItemRowId, SORTABLE_COLUMNS } from "./ItemListColumns";
-import { ItemListDragContext } from "./ItemListDragContext";
-import { SortableItemDataTableRow } from "./SortableItemDataTableRow";
-import { type ItemRow } from "./types";
-import { useItemListReorder } from "./useItemListReorder";
+import { getItemRowId, SORTABLE_COLUMNS } from "../ItemListColumns";
+import { GroupAddItemRow } from "../GroupAddItemRow";
+import { ItemListDragContext } from "../ItemListDragContext";
+import { SortableItemDataTableRow } from "../SortableItemDataTableRow";
+import { type ItemRow } from "../../types";
+import { useItemListReorder } from "../../hooks";
 
 const EMPTY_ROWS: ItemRow[] = [];
 
@@ -108,6 +109,7 @@ export const ItemStatusGroupSection = memo(
                 />
               </Box>
             ) : null}
+            <GroupAddItemRow listId={listId} statusId={statusId} />
           </>
         ) : null}
       </Box>

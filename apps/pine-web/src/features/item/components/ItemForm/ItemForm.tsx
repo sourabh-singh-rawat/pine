@@ -1,31 +1,47 @@
 import { Grid2 } from "@mui/material";
 import MuiContainer from "@mui/material/Container";
+import { useQueryClient } from "@tanstack/react-query";
 import dayjs from "dayjs";
 import { SubmitHandler, useForm } from "react-hook-form";
 import type { CreateItemInput } from "@generated/gql/graphql";
-import { useCreateItemMutation } from "@generated/gql";
+import { useCreateItemMutation, useGetListItemsQuery, useGetSubItemsQuery } from "@generated/gql";
 import { DatePicker, TextField, useSnackbar } from "@shared";
 import { ItemPrioritySelector } from "../ItemPrioritySelector";
 import { ItemStatusSelector } from "../ItemStatusSelector";
+
+const DEFAULT_ITEM_PRIORITY = "Normal";
 
 interface ItemFormProps {
   listId: string;
   parentItemId?: string;
   formId: string;
+  defaultStatusId?: string;
+  type?: string;
+  defaultName?: string;
   onSuccess?: () => void;
 }
 
-export const ItemForm = ({ listId, parentItemId, formId, onSuccess }: ItemFormProps) => {
+export const ItemForm = ({
+  listId,
+  parentItemId,
+  formId,
+  defaultStatusId,
+  type = "issue",
+  defaultName = "",
+  onSuccess,
+}: ItemFormProps) => {
+  const queryClient = useQueryClient();
   const messageBar = useSnackbar();
   const createItemMutation = useCreateItemMutation();
 
   const form = useForm<CreateItemInput>({
     defaultValues: {
+      name: defaultName,
       listId,
       parentItemId,
       description: "",
-      statusId: "",
-      priority: "",
+      statusId: defaultStatusId ?? "",
+      priority: DEFAULT_ITEM_PRIORITY,
       dueDate: null,
       estimate: undefined,
       component: "",
@@ -50,7 +66,7 @@ export const ItemForm = ({ listId, parentItemId, formId, onSuccess }: ItemFormPr
           listId: formListId,
           name,
           description,
-          type: "item",
+          type,
           statusId,
           priority,
           dueDate: dueDate ? dayjs(dueDate).format() : null,
@@ -58,6 +74,14 @@ export const ItemForm = ({ listId, parentItemId, formId, onSuccess }: ItemFormPr
           component: component || null,
         },
       });
+      await queryClient.invalidateQueries({
+        queryKey: useGetListItemsQuery.getKey({ listId: formListId }),
+      });
+      if (formParentItemId) {
+        await queryClient.invalidateQueries({
+          queryKey: useGetSubItemsQuery.getKey({ input: { parentItemId: formParentItemId } }),
+        });
+      }
       messageBar.success("Item created successfully");
       onSuccess?.();
     } catch (error) {
@@ -96,7 +120,7 @@ export const ItemForm = ({ listId, parentItemId, formId, onSuccess }: ItemFormPr
             form={form}
             name="priority"
             title="Priority"
-            options={["Urgent", "High", "Medium", "Low"]}
+            options={["Urgent", "High", "Normal", "Low"]}
           />
         </Grid2>
         <Grid2 size={6}>

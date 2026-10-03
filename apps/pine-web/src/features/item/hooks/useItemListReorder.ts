@@ -8,7 +8,7 @@ import {
   type GetListItemsQuery,
 } from "@generated/gql";
 import { useSnackbar } from "@shared";
-import { type ItemRow } from "./types";
+import { type ItemRow } from "../types";
 
 export const useItemListReorder = (options: {
   listId: string;

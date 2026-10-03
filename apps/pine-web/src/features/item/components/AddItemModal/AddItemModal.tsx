@@ -11,30 +11,62 @@ import { ItemForm } from "../ItemForm";
 
 const ADD_ITEM_FORM_ID = "add-item-form";
 
-interface AddItemModalProps {
+export interface AddItemModalProps {
   listId: string;
+  defaultStatusId?: string;
+  type?: string;
+  defaultName?: string;
+  open?: boolean;
+  onClose?: () => void;
+  hideTrigger?: boolean;
 }
 
-export const AddItemModal = ({ listId }: AddItemModalProps) => {
-  const [open, setOpen] = useState(false);
-  const onClose = () => {
-    setOpen(false);
+export const AddItemModal = ({
+  listId,
+  defaultStatusId,
+  type = "issue",
+  defaultName,
+  open: controlledOpen,
+  onClose: controlledOnClose,
+  hideTrigger = false,
+}: AddItemModalProps) => {
+  const [internalOpen, setInternalOpen] = useState(false);
+  const isControlled = controlledOpen !== undefined;
+  const isOpen = isControlled ? controlledOpen : internalOpen;
+
+  const handleClose = () => {
+    if (isControlled) {
+      controlledOnClose?.();
+    } else {
+      setInternalOpen(false);
+    }
   };
-  const onOpen = () => {
-    setOpen(true);
+
+  const handleOpen = () => {
+    setInternalOpen(true);
   };
+
+  const title = type === "issue" ? "New Issue" : "New Item";
+  const submitLabel = type === "issue" ? "Create Issue" : "Create Item";
 
   return (
     <>
-      <PrimaryButton label="Add Item" onClick={onOpen} size="small" />
-      <Modal open={open} onClose={onClose}>
-        <ModalHeader title="New Item" onClose={onClose} />
+      {!hideTrigger ? <PrimaryButton label="Add Item" onClick={handleOpen} size="small" /> : null}
+      <Modal open={isOpen} onClose={handleClose}>
+        <ModalHeader title={title} onClose={handleClose} />
         <ModalBody>
-          <ItemForm listId={listId} formId={ADD_ITEM_FORM_ID} onSuccess={onClose} />
+          <ItemForm
+            listId={listId}
+            defaultStatusId={defaultStatusId}
+            type={type}
+            defaultName={defaultName}
+            formId={ADD_ITEM_FORM_ID}
+            onSuccess={handleClose}
+          />
         </ModalBody>
         <ModalFooter>
-          <SecondaryButton label="Cancel" onClick={onClose} />
-          <PrimaryButton type="submit" form={ADD_ITEM_FORM_ID} label="Create Item" />
+          <SecondaryButton label="Cancel" onClick={handleClose} />
+          <PrimaryButton type="submit" form={ADD_ITEM_FORM_ID} label={submitLabel} />
         </ModalFooter>
       </Modal>
     </>
