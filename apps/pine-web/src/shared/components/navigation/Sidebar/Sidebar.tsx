@@ -5,7 +5,6 @@ import { useLargeScreen } from "../../../hooks/useLargeScreen";
 import MuiDivider from "@mui/material/Divider";
 import MuiDrawer from "@mui/material/Drawer";
 import List from "@mui/material/List";
-import MuiToolbar from "@mui/material/Toolbar";
 
 import { SpaceList } from "@features/space";
 
@@ -55,7 +54,6 @@ export const Sidebar = () => {
 
   return (
     <Drawer open={open} variant="permanent">
-      <MuiToolbar variant="dense" disableGutters />
       <List disablePadding />
       <MuiDivider />
       <SpaceList />

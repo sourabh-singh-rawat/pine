@@ -16,7 +16,7 @@ export const Navbar = () => {
   const activeApp = getActiveApp(pathname);
 
   return (
-    <AppBar position="fixed" sx={{ boxShadow: theme.shadows[0] }}>
+    <AppBar position="static" sx={{ boxShadow: theme.shadows[0] }}>
       <Toolbar
         sx={{
           px: theme.spacing(2.5),
