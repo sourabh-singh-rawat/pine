@@ -16,9 +16,11 @@ import type {
   RejectRequestInput,
 } from "@/integrations/oauth/IOAuthFlowProvider";
 import type { HydraClient } from "@/integrations/oauth/ory-hydra/HydraClient";
-import { parseSetCookieHeader } from "@/integrations/oauth/ory-hydra/parseSetCookieHeader";
-import { rewriteHydraPublicUrl } from "@/integrations/oauth/ory-hydra/rewriteHydraPublicUrl";
-import { rethrowHydraError } from "@/integrations/oauth/ory-hydra/rethrowHydraError";
+import {
+  parseSetCookieHeader,
+  rethrowHydraError,
+  rewriteHydraPublicUrl,
+} from "@/integrations/oauth/ory-hydra/utils";
 import { OAuthProviderUnavailableError } from "@/integrations/oauth/errors";
 
 @injectable()

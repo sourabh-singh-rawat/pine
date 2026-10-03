@@ -8,8 +8,10 @@ import type {
   JsonWebKeySet,
   OpenIdConfiguration,
 } from "@/integrations/oauth/IOAuthDiscoveryProvider";
-import { rethrowHydraError } from "@/integrations/oauth/ory-hydra/rethrowHydraError";
-import { rewriteOpenIdConfiguration } from "@/integrations/oauth/ory-hydra/rewriteOpenIdConfiguration";
+import {
+  rethrowHydraError,
+  rewriteOpenIdConfiguration,
+} from "@/integrations/oauth/ory-hydra/utils";
 
 @injectable()
 export class HydraOAuthDiscoveryProvider implements IOAuthDiscoveryProvider {

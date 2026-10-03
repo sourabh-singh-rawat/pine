@@ -9,7 +9,7 @@ import {
   getHydraErrorDetails,
   getHydraHttpStatus,
   rethrowHydraError,
-} from "@/integrations/oauth/ory-hydra/rethrowHydraError";
+} from "@/integrations/oauth/ory-hydra/utils/rethrowHydraError";
 
 describe("rethrowHydraError", () => {
   it("extracts status code and error details from an Axios-like error", () => {
