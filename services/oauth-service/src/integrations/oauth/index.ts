@@ -23,6 +23,11 @@ export type {
   RegisteredOAuthClient,
   RegisterOAuthClientInput,
 } from "@/integrations/oauth/IOAuthClientProvider";
+export type {
+  IOAuthDiscoveryProvider,
+  JsonWebKeySet,
+  OpenIdConfiguration,
+} from "@/integrations/oauth/IOAuthDiscoveryProvider";
 export {
   InvalidOAuthRequestError,
   OAuthErrorCodes,
@@ -34,6 +39,7 @@ export {
 export {
   HydraClient,
   HydraOAuthClientProvider,
+  HydraOAuthDiscoveryProvider,
   HydraOAuthFlowProvider,
   HydraOAuthTokenProvider,
 } from "@/integrations/oauth/ory-hydra";
