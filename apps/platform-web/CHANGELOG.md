@@ -1,5 +1,22 @@
 # @pine/platform-web
 
+## 0.6.0
+
+### Minor Changes
+
+- 47d8722: feat(http): return ApiResponse data and errors envelope on JSON APIs
+
+### Patch Changes
+
+- 942d839: chore(deps): bump graphql to 17 and refresh related pins
+- a406229: fix(platform-web): unwrap ApiResponse envelope in Root and point authorization to built types
+- Updated dependencies [a406229]
+- Updated dependencies [47d8722]
+- Updated dependencies [b8b9f2b]
+- Updated dependencies [ad7c767]
+  - @pine/authorization@0.8.0
+  - @pine/ui@0.3.2
+
 ## 0.5.7
 
 ### Patch Changes

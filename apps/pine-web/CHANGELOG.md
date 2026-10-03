@@ -1,5 +1,29 @@
 # @pine/pine-web
 
+## 0.11.0
+
+### Minor Changes
+
+- 15fb6d3: feat(items): add workspace and space tags support to items and list
+- 47d8722: feat(http): return ApiResponse data and errors envelope on JSON APIs
+
+### Patch Changes
+
+- 942d839: chore(deps): bump graphql to 17 and refresh related pins
+- b8b9f2b: fix(pine-web): align item list column widths across groups
+- ad7c767: feat(items): within-status list reorder and item cleanup
+- aac9e18: fix(pine-web): unwrap ApiResponse envelope when bootstrapping auth from /me
+- 77d717f: fix(pine-web): even priority select width in item list
+- 82dc4ca: fix(pine-web): keep list content below static navbar
+- Updated dependencies [2f61d7c]
+- Updated dependencies [942d839]
+- Updated dependencies [87d3856]
+- Updated dependencies [47d8722]
+- Updated dependencies [b8b9f2b]
+- Updated dependencies [ad7c767]
+  - @pine/common@1.3.0
+  - @pine/ui@0.3.2
+
 ## 0.10.3
 
 ### Patch Changes

@@ -1,5 +1,18 @@
 # @pine/common
 
+## 1.3.0
+
+### Minor Changes
+
+- 2f61d7c: feat(common): retry NATS and Postgres connect at boot
+- 47d8722: feat(http): return ApiResponse data and errors envelope on JSON APIs
+
+### Patch Changes
+
+- 942d839: chore(deps): bump graphql to 17 and refresh related pins
+- 87d3856: fix(packages): point @pine/errors and @pine/common exports at dist
+- ad7c767: feat(items): within-status list reorder and item cleanup
+
 ## 1.2.1
 
 ### Patch Changes

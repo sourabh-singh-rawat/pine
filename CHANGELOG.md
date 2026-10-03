@@ -1,5 +1,54 @@
 # Changelog
 
+## v2026.10.03.1
+
+### Minor
+
+- 2f61d7c0: feat(common): retry NATS and Postgres connect at boot — Sourabh Singh Rawat (`@pine/common`, `@pine/events`)
+- 15fb6d37: feat(items): add workspace and space tags support to items and list — Sourabh Singh Rawat (`@pine/items-service`, `@pine/pine-web`)
+- 47d87228: feat(http): return ApiResponse data and errors envelope on JSON APIs — Sourabh Singh Rawat (`@pine/attachment`, `@pine/attachment-service`, `@pine/authorization`, `@pine/authorization-service`, `@pine/common`, `@pine/identity`, `@pine/identity-service`, `@pine/identity-web`, `@pine/oauth-service`, `@pine/pine-web`, `@pine/platform-web`, `@pine/server`)
+- c9a93c8b: feat(oauth-service): add OIDC discovery and JWKS public endpoints — Sourabh Singh Rawat (`@pine/oauth-service`)
+- b5760bef: feat(server): file+OTLP logger; harden NATS consumer start — Sourabh Singh Rawat (`@pine/events`, `@pine/server`)
+
+### Patch
+
+- 942d839c: chore(deps): bump graphql to 17 and refresh related pins — Sourabh Singh Rawat (`@pine/api-gateway`, `@pine/attachment-service`, `@pine/audit-service`, `@pine/common`, `@pine/data-gateway`, `@pine/identity-service`, `@pine/identity-web`, `@pine/items-service`, `@pine/observability`, `@pine/pine-web`, `@pine/platform-service`, `@pine/platform-web`, `@pine/server`)
+- 0b4966ab: fix(events): tolerate missing broker logger in Consumer — Sourabh Singh Rawat (`@pine/events`)
+- 87d38562: fix(packages): point @pine/errors and @pine/common exports at dist — Sourabh Singh Rawat (`@pine/common`, `@pine/errors`)
+- a406229a: fix(platform-web): unwrap ApiResponse envelope in Root and point authorization to built types — Sourabh Singh Rawat (`@pine/authorization`, `@pine/platform-web`)
+- b8b9f2bc: fix(pine-web): align item list column widths across groups — Sourabh Singh Rawat (`@pine/pine-web`, `@pine/ui`)
+- ad7c7678: feat(items): within-status list reorder and item cleanup — Sourabh Singh Rawat (`@pine/common`, `@pine/items-service`, `@pine/pine-web`, `@pine/ui`)
+- 6c30d895: refactor(oauth-service): move Hydra helpers into ory-hydra/utils — Sourabh Singh Rawat (`@pine/oauth-service`)
+- aac9e188: fix(pine-web): unwrap ApiResponse envelope when bootstrapping auth from /me — Sourabh Singh Rawat (`@pine/pine-web`)
+- 77d717f1: fix(pine-web): even priority select width in item list — Sourabh Singh Rawat (`@pine/pine-web`)
+- 82dc4ca3: fix(pine-web): keep list content below static navbar — Sourabh Singh Rawat (`@pine/pine-web`)
+
+### Packages
+
+- `@pine/api-gateway@0.4.8`
+- `@pine/attachment@0.5.0`
+- `@pine/attachment-image-processing-service@0.1.1`
+- `@pine/attachment-scanner-service@0.1.5`
+- `@pine/attachment-service@0.7.0`
+- `@pine/audit-service@0.2.2`
+- `@pine/authorization@0.8.0`
+- `@pine/authorization-service@0.8.0`
+- `@pine/common@1.3.0`
+- `@pine/data-gateway@0.1.7`
+- `@pine/errors@0.1.1`
+- `@pine/events@1.5.0`
+- `@pine/identity@0.4.0`
+- `@pine/identity-service@0.9.0`
+- `@pine/identity-web@0.7.0`
+- `@pine/items-service@1.5.0`
+- `@pine/oauth-service@0.9.0`
+- `@pine/observability@0.1.1`
+- `@pine/pine-web@0.11.0`
+- `@pine/platform-service@0.6.2`
+- `@pine/platform-web@0.6.0`
+- `@pine/server@1.2.0`
+- `@pine/ui@0.3.2`
+
 ## v2026.10.02.1
 
 ### Minor

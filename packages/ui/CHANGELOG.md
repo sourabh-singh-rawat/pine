@@ -1,5 +1,12 @@
 # @pine/ui
 
+## 0.3.2
+
+### Patch Changes
+
+- b8b9f2b: fix(pine-web): align item list column widths across groups
+- ad7c767: feat(items): within-status list reorder and item cleanup
+
 ## 0.3.1
 
 ### Patch Changes
