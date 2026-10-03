@@ -26,7 +26,7 @@ export class PlatformUserOnboardingConsumer extends Consumer<
     @inject(TYPES.OnboardingService)
     private readonly onboardingService: IOnboardingService,
   ) {
-    super(broker.client);
+    super(broker);
   }
 
   onMessage = async (

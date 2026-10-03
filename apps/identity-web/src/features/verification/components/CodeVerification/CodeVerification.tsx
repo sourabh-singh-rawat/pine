@@ -72,7 +72,7 @@ export const CodeVerification = () => {
 
   const message =
     status === "success"
-      ? (verifyEmailQuery.data?.message ?? statusMessage.success)
+      ? (verifyEmailQuery.data?.data?.message ?? statusMessage.success)
       : statusMessage[status];
   const showSignIn = status === "success";
   const showResend = status === "error" || status === "missing";

@@ -5,7 +5,9 @@ import { ItemDueDateCell } from "./ItemDueDateCell";
 import { ItemNameCell } from "./ItemNameCell";
 import { ItemPriorityCell } from "./ItemPriorityCell";
 import { ItemStatusCell } from "./ItemStatusCell";
+import { ItemTagsCell } from "./ItemTagsCell";
 import { ItemListUiContext } from "./ItemListUiContext";
+import type { ItemRowTag } from "./types";
 
 export const ItemStatusTableCell = ({
   itemId,
@@ -132,4 +134,14 @@ export const ItemActionsTableCell = ({ itemId }: { itemId: string }) => {
       <MoreVert fontSize="small" />
     </IconButton>
   );
+};
+
+export const ItemTagsTableCell = ({
+  itemId,
+  tags = [],
+}: {
+  itemId: string;
+  tags?: ItemRowTag[];
+}) => {
+  return <ItemTagsCell itemId={itemId} tags={tags} />;
 };

@@ -30,9 +30,10 @@ export const ItemPriorityCell = ({ itemId, value, disabled, onChange }: ItemPrio
       }}
       sx={{
         width: "100%",
-        display: "flex",
-        alignItems: "center",
-        minWidth: 120,
+        minWidth: 0,
+        "& > *": {
+          width: "100%",
+        },
       }}
     >
       <Select

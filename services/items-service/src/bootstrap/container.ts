@@ -49,6 +49,7 @@ import { IListRepository, IListService, ListRepository, ListService } from "@/fe
 import { ISpaceRepository, ISpaceService, SpaceRepository, SpaceService } from "@/features/spaces";
 import { IStatusRepository, IStatusService, StatusRepository, StatusService } from "@/features/item-statuses";
 import { ISubItemService, SubItemService } from "@/features/sub-items";
+import { IItemTagRepository, ITagRepository, ITagService, ItemTagRepository, TagRepository, TagService } from "@/features/tags";
 
 export const container = new Container({ defaultScope: "Singleton" });
 
@@ -86,6 +87,9 @@ container.bind<IListRepository>(TYPES.ListRepository).to(ListRepository);
 container.bind<IListService>(TYPES.ListService).to(ListService);
 container.bind<ISpaceRepository>(TYPES.SpaceRepository).to(SpaceRepository);
 container.bind<ISpaceService>(TYPES.SpaceService).to(SpaceService);
+container.bind<ITagRepository>(TYPES.TagRepository).to(TagRepository);
+container.bind<IItemTagRepository>(TYPES.ItemTagRepository).to(ItemTagRepository);
+container.bind<ITagService>(TYPES.TagService).to(TagService);
 container.bind<IAuthorizationClient>(TYPES.AuthorizationClient).toConstantValue(new HttpAuthorizationClient({ baseUrl: env.AUTHORIZATION_SERVICE_URL }));
 container.bind<IAttachmentClient>(TYPES.AttachmentClient).toConstantValue(new HttpAttachmentClient({ baseUrl: env.ATTACHMENT_SERVICE_URL }));
 container

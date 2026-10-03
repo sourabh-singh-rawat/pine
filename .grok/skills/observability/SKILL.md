@@ -30,6 +30,23 @@ observability?.start();
 
 Env: `OTEL_EXPORTER_OTLP_ENDPOINT` in root `.env.example`. Instrumentations: HTTP, Fastify (`@fastify/otel`), GraphQL, pg. Extend `packages/observability/src/bootstrap/node-sdk.ts` only.
 
+## App logs (pino)
+
+Use `createLogger` from `@pine/server` in each service’s `bootstrap/logger.ts`. It fans out to:
+
+- stdout (JSON when `NODE_ENV=production`, else `pino-pretty`)
+- `<cwd>/logs/app.yyyy-MM-dd.log` (daily rotate, default 7-day retention)
+- `<cwd>/logs/combined.log` (append; reset on startup if older than retention)
+- OTLP → Alloy when `OTEL_EXPORTER_OTLP_ENDPOINT` is set (`pino-opentelemetry-transport`)
+
+```ts
+import { createLogger } from "@pine/server";
+
+export const logger = createLogger({ serviceName: "identity-service" });
+```
+
+`logDir` defaults to `join(process.cwd(), "logs")` (per-service when started from the package root). Override with `{ logDir, retentionDays }`.
+
 ```bash
 pnpm dev:infra:observability
 ```

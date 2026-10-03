@@ -1,10 +1,17 @@
 import Type from "typebox";
 
-export const CheckRelationshipResponseSchema = Type.Object(
+const CheckRelationshipDataSchema = Type.Object(
   {
     allowed: Type.Boolean(),
   },
   { additionalProperties: false },
 );
 
-export type CheckRelationshipResponse = Type.Static<typeof CheckRelationshipResponseSchema>;
+export const CheckRelationshipResponseSchema = Type.Object(
+  {
+    data: CheckRelationshipDataSchema,
+  },
+  { additionalProperties: false },
+);
+
+export type CheckRelationshipResponse = Type.Static<typeof CheckRelationshipDataSchema>;

@@ -1,6 +1,6 @@
 import Type from "typebox";
 
-export const CreateUploadTargetResponseSchema = Type.Object(
+const CreateUploadTargetDataSchema = Type.Object(
   {
     objectId: Type.String(),
     url: Type.String(),
@@ -10,4 +10,11 @@ export const CreateUploadTargetResponseSchema = Type.Object(
   { additionalProperties: false },
 );
 
-export type CreateUploadTargetResponse = Type.Static<typeof CreateUploadTargetResponseSchema>;
+export const CreateUploadTargetResponseSchema = Type.Object(
+  {
+    data: CreateUploadTargetDataSchema,
+  },
+  { additionalProperties: false },
+);
+
+export type CreateUploadTargetResponse = Type.Static<typeof CreateUploadTargetDataSchema>;

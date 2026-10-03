@@ -1,9 +1,6 @@
 export { OutboxMessages } from "@pine/outbox";
 export { auditColumns, idColumn } from "@/db/columns";
 export {
-  type CheckListItem,
-  type NewCheckListItem,
-  CheckListItems,
   type ChecklistEntry,
   type NewChecklistEntry,
   ChecklistEntries,
@@ -44,4 +41,12 @@ export {
   type Identity,
   type NewIdentity,
   Identities,
+  type Tag,
+  type NewTag,
+  Tags,
+  TagsRelations,
+  type ItemTag,
+  type NewItemTag,
+  ItemTags,
+  ItemTagsRelations,
 } from "@/db/tables";

@@ -1,6 +1,6 @@
 import Type from "typebox";
 
-export const UpdateSecurityStatusResponseSchema = Type.Object(
+const UpdateSecurityStatusDataSchema = Type.Object(
   {
     attachmentId: Type.String(),
     status: Type.String(),
@@ -9,4 +9,11 @@ export const UpdateSecurityStatusResponseSchema = Type.Object(
   { additionalProperties: false },
 );
 
-export type UpdateSecurityStatusResponse = Type.Static<typeof UpdateSecurityStatusResponseSchema>;
+export const UpdateSecurityStatusResponseSchema = Type.Object(
+  {
+    data: UpdateSecurityStatusDataSchema,
+  },
+  { additionalProperties: false },
+);
+
+export type UpdateSecurityStatusResponse = Type.Static<typeof UpdateSecurityStatusDataSchema>;

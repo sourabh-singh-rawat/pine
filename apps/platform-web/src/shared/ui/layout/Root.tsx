@@ -14,13 +14,14 @@ export const Root = () => {
   const userQuery = useGetCurrentUserQuery();
 
   useEffect(() => {
-    if (userQuery.data?.identity) {
+    const identity = userQuery.data?.data?.identity;
+    if (identity) {
       setCurrentUser({
         current: {
-          userId: userQuery.data.identity.id,
-          email: userQuery.data.identity.email,
-          emailVerified: userQuery.data.identity.emailVerified,
-          displayName: userQuery.data.identity.email,
+          userId: identity.id,
+          email: identity.email,
+          emailVerified: identity.emailVerified,
+          displayName: identity.email,
         },
         isLoading: false,
       });

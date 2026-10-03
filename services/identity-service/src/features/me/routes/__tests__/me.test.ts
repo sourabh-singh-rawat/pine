@@ -62,21 +62,23 @@ describe("me route", () => {
     expect(response).toEqual({
       status: 200,
       body: {
-        identity: {
-          id: "identity-1",
-          email: "a@b.com",
-          emailVerified: true,
-        },
-        profile: {
-          id: "profile-1",
-          identityId: "identity-1",
-          firstName: "Ada",
-          middleName: null,
-          lastName: "Lovelace",
-          fullName: "Ada Lovelace",
-          gender: "FEMALE",
-          description: "Mathematician",
-          photoUrl: "https://example.com/ada.jpg",
+        data: {
+          identity: {
+            id: "identity-1",
+            email: "a@b.com",
+            emailVerified: true,
+          },
+          profile: {
+            id: "profile-1",
+            identityId: "identity-1",
+            firstName: "Ada",
+            middleName: null,
+            lastName: "Lovelace",
+            fullName: "Ada Lovelace",
+            gender: "FEMALE",
+            description: "Mathematician",
+            photoUrl: "https://example.com/ada.jpg",
+          },
         },
       },
     });
@@ -102,12 +104,14 @@ describe("me route", () => {
     expect(response).toEqual({
       status: 200,
       body: {
-        identity: {
-          id: "identity-1",
-          email: "a@b.com",
-          emailVerified: true,
+        data: {
+          identity: {
+            id: "identity-1",
+            email: "a@b.com",
+            emailVerified: true,
+          },
+          profile: null,
         },
-        profile: null,
       },
     });
   });

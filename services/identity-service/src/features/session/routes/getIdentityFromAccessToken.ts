@@ -5,7 +5,7 @@ import { TYPES } from "@/bootstrap/container-types";
 import type { ISessionService } from "@/features/session/services";
 import {
   GetIdentityFromAccessTokenResponseSchema,
-  type GetIdentityFromAccessTokenResponse,
+  type GetIdentityFromAccessTokenData,
 } from "@/features/session/schemas";
 import { InvalidCredentialError } from "@/integrations/identity";
 
@@ -43,7 +43,7 @@ export const getIdentityFromAccessToken: HttpRoute = {
     const service = container.get<ISessionService>(TYPES.SessionService);
     const identity = await service.getIdentityFromAccessToken(accessToken);
 
-    const response: GetIdentityFromAccessTokenResponse = {
+    const response: GetIdentityFromAccessTokenData = {
       identity: {
         id: identity.id,
         email: identity.email,

@@ -29,6 +29,12 @@ export type SignInWithEmailAndPasswordResponses = {
             };
             redirectTo?: string;
         };
+        errors?: Array<{
+            code: string;
+            message: string;
+            field?: string;
+            details?: unknown;
+        }>;
     };
 };
 
@@ -46,7 +52,15 @@ export type LogoutResponses = {
      * Default Response
      */
     200: {
-        message: string;
+        data: {
+            message: string;
+        };
+        errors?: Array<{
+            code: string;
+            message: string;
+            field?: string;
+            details?: unknown;
+        }>;
     };
 };
 
@@ -64,22 +78,30 @@ export type GetCurrentUserResponses = {
      * Default Response
      */
     200: {
-        identity: {
-            id: string;
-            email: string;
-            emailVerified?: boolean;
+        data: {
+            identity: {
+                id: string;
+                email: string;
+                emailVerified?: boolean;
+            };
+            profile: {
+                id: string;
+                identityId: string;
+                firstName: string;
+                middleName?: string | unknown;
+                lastName?: string | unknown;
+                gender?: string | unknown;
+                description?: string | unknown;
+                photoUrl?: string | unknown;
+                fullName: string;
+            } | unknown;
         };
-        profile: {
-            id: string;
-            identityId: string;
-            firstName: string;
-            middleName?: string | unknown;
-            lastName?: string | unknown;
-            gender?: string | unknown;
-            description?: string | unknown;
-            photoUrl?: string | unknown;
-            fullName: string;
-        } | unknown;
+        errors?: Array<{
+            code: string;
+            message: string;
+            field?: string;
+            details?: unknown;
+        }>;
     };
 };
 
@@ -97,11 +119,19 @@ export type GetIdentityFromSessionResponses = {
      * Default Response
      */
     200: {
-        identity: {
-            id: string;
-            email: string;
-            emailVerified: boolean;
+        data: {
+            identity: {
+                id: string;
+                email: string;
+                emailVerified: boolean;
+            };
         };
+        errors?: Array<{
+            code: string;
+            message: string;
+            field?: string;
+            details?: unknown;
+        }>;
     };
 };
 
@@ -119,11 +149,19 @@ export type GetIdentityFromAccessTokenResponses = {
      * Default Response
      */
     200: {
-        identity: {
-            id: string;
-            email: string;
-            emailVerified: boolean;
+        data: {
+            identity: {
+                id: string;
+                email: string;
+                emailVerified: boolean;
+            };
         };
+        errors?: Array<{
+            code: string;
+            message: string;
+            field?: string;
+            details?: unknown;
+        }>;
     };
 };
 
@@ -145,7 +183,15 @@ export type RegisterResponses = {
      * Default Response
      */
     200: {
-        message: string;
+        data: {
+            message: string;
+        };
+        errors?: Array<{
+            code: string;
+            message: string;
+            field?: string;
+            details?: unknown;
+        }>;
     };
 };
 
@@ -166,7 +212,15 @@ export type VerifyEmailResponses = {
      * Default Response
      */
     200: {
-        message: string;
+        data: {
+            message: string;
+        };
+        errors?: Array<{
+            code: string;
+            message: string;
+            field?: string;
+            details?: unknown;
+        }>;
     };
 };
 
@@ -186,7 +240,15 @@ export type ResendVerificationEmailResponses = {
      * Default Response
      */
     200: {
-        message: string;
+        data: {
+            message: string;
+        };
+        errors?: Array<{
+            code: string;
+            message: string;
+            field?: string;
+            details?: unknown;
+        }>;
     };
 };
 
@@ -228,7 +290,15 @@ export type AcceptLoginChallengeResponses = {
      * Default Response
      */
     200: {
-        redirectTo: string;
+        data: {
+            redirectTo: string;
+        };
+        errors?: Array<{
+            code: string;
+            message: string;
+            field?: string;
+            details?: unknown;
+        }>;
     };
 };
 
@@ -248,22 +318,30 @@ export type GetConsentChallengeResponses = {
      * Default Response
      */
     200: {
-        challenge: string;
-        skip: boolean;
-        subject?: string;
-        client: {
-            id: string;
-            name?: string;
-            redirectUris?: Array<string>;
+        data: {
+            challenge: string;
+            skip: boolean;
+            subject?: string;
+            client: {
+                id: string;
+                name?: string;
+                redirectUris?: Array<string>;
+            };
+            requestedScope: Array<string>;
+            scopes: Array<{
+                scope: string;
+                title: string;
+                description: string;
+            }>;
+            loginChallenge?: string;
+            loginSessionId?: string;
         };
-        requestedScope: Array<string>;
-        scopes: Array<{
-            scope: string;
-            title: string;
-            description: string;
+        errors?: Array<{
+            code: string;
+            message: string;
+            field?: string;
+            details?: unknown;
         }>;
-        loginChallenge?: string;
-        loginSessionId?: string;
     };
 };
 
@@ -287,7 +365,15 @@ export type AcceptConsentChallengeResponses = {
      * Default Response
      */
     200: {
-        redirectTo: string;
+        data: {
+            redirectTo: string;
+        };
+        errors?: Array<{
+            code: string;
+            message: string;
+            field?: string;
+            details?: unknown;
+        }>;
     };
 };
 
@@ -310,7 +396,15 @@ export type RejectConsentChallengeResponses = {
      * Default Response
      */
     200: {
-        redirectTo: string;
+        data: {
+            redirectTo: string;
+        };
+        errors?: Array<{
+            code: string;
+            message: string;
+            field?: string;
+            details?: unknown;
+        }>;
     };
 };
 
@@ -334,7 +428,15 @@ export type ExchangeTokenResponses = {
      * Default Response
      */
     200: {
-        message: string;
+        data: {
+            message: string;
+        };
+        errors?: Array<{
+            code: string;
+            message: string;
+            field?: string;
+            details?: unknown;
+        }>;
     };
 };
 
@@ -355,16 +457,24 @@ export type IntrospectTokenResponses = {
      * Default Response
      */
     200: {
-        active: boolean;
-        subject?: string;
-        clientId?: string;
-        scope?: string;
-        expiresAt?: string;
-        issuedAt?: string;
-        audience?: Array<string>;
-        extra?: {
-            [key: string]: unknown;
+        data: {
+            active: boolean;
+            subject?: string;
+            clientId?: string;
+            scope?: string;
+            expiresAt?: string;
+            issuedAt?: string;
+            audience?: Array<string>;
+            extra?: {
+                [key: string]: unknown;
+            };
         };
+        errors?: Array<{
+            code: string;
+            message: string;
+            field?: string;
+            details?: unknown;
+        }>;
     };
 };
 
@@ -387,11 +497,19 @@ export type CreateOAuthClientResponses = {
      * Default Response
      */
     200: {
-        id: string;
-        name: string;
-        redirectUris: Array<string>;
-        scopes: Array<string>;
-        grantTypes: Array<string>;
+        data: {
+            id: string;
+            name: string;
+            redirectUris: Array<string>;
+            scopes: Array<string>;
+            grantTypes: Array<string>;
+        };
+        errors?: Array<{
+            code: string;
+            message: string;
+            field?: string;
+            details?: unknown;
+        }>;
     };
 };
 
@@ -411,7 +529,15 @@ export type DeleteOAuthClientResponses = {
      * Default Response
      */
     200: {
-        deleted: boolean;
+        data: {
+            deleted: boolean;
+        };
+        errors?: Array<{
+            code: string;
+            message: string;
+            field?: string;
+            details?: unknown;
+        }>;
     };
 };
 
@@ -431,11 +557,19 @@ export type GetOAuthClientResponses = {
      * Default Response
      */
     200: {
-        id: string;
-        name: string;
-        redirectUris: Array<string>;
-        scopes: Array<string>;
-        grantTypes: Array<string>;
+        data: {
+            id: string;
+            name: string;
+            redirectUris: Array<string>;
+            scopes: Array<string>;
+            grantTypes: Array<string>;
+        };
+        errors?: Array<{
+            code: string;
+            message: string;
+            field?: string;
+            details?: unknown;
+        }>;
     };
 };
 
@@ -474,14 +608,22 @@ export type StoreAttachmentDerivativeResponses = {
      * Default Response
      */
     200: {
-        derivativeId: string;
-        attachmentId: string;
-        versionId: string;
-        derivativeType: string;
-        mimeType: string;
-        fileSize: number;
-        width: number;
-        height: number;
+        data: {
+            derivativeId: string;
+            attachmentId: string;
+            versionId: string;
+            derivativeType: string;
+            mimeType: string;
+            fileSize: number;
+            width: number;
+            height: number;
+        };
+        errors?: Array<{
+            code: string;
+            message: string;
+            field?: string;
+            details?: unknown;
+        }>;
     };
 };
 
@@ -512,18 +654,26 @@ export type StoreAttachmentMetadataResponses = {
      * Default Response
      */
     200: {
-        metadataId: string;
-        attachmentId: string;
-        versionId: string;
-        width?: number;
-        height?: number;
-        format?: string;
-        space?: string;
-        channels?: number;
-        density?: number;
-        hasAlpha?: boolean;
-        orientation?: number;
-        extractedAt: string;
+        data: {
+            metadataId: string;
+            attachmentId: string;
+            versionId: string;
+            width?: number;
+            height?: number;
+            format?: string;
+            space?: string;
+            channels?: number;
+            density?: number;
+            hasAlpha?: boolean;
+            orientation?: number;
+            extractedAt: string;
+        };
+        errors?: Array<{
+            code: string;
+            message: string;
+            field?: string;
+            details?: unknown;
+        }>;
     };
 };
 
@@ -578,9 +728,17 @@ export type UpdateSecurityStatusResponses = {
      * Default Response
      */
     200: {
-        attachmentId: string;
-        status: string;
-        securityStatus: string;
+        data: {
+            attachmentId: string;
+            status: string;
+            securityStatus: string;
+        };
+        errors?: Array<{
+            code: string;
+            message: string;
+            field?: string;
+            details?: unknown;
+        }>;
     };
 };
 
@@ -609,12 +767,20 @@ export type CreateUploadTargetResponses = {
      * Default Response
      */
     200: {
-        objectId: string;
-        url: string;
-        headers: {
-            [key: string]: string;
+        data: {
+            objectId: string;
+            url: string;
+            headers: {
+                [key: string]: string;
+            };
+            expiresAt: string;
         };
-        expiresAt: string;
+        errors?: Array<{
+            code: string;
+            message: string;
+            field?: string;
+            details?: unknown;
+        }>;
     };
 };
 
@@ -634,7 +800,15 @@ export type UploadToTargetResponses = {
      * Default Response
      */
     200: {
-        status: string;
+        data: {
+            status: string;
+        };
+        errors?: Array<{
+            code: string;
+            message: string;
+            field?: string;
+            details?: unknown;
+        }>;
     };
 };
 
@@ -657,7 +831,15 @@ export type CheckRelationshipResponses = {
      * Default Response
      */
     200: {
-        allowed: boolean;
+        data: {
+            allowed: boolean;
+        };
+        errors?: Array<{
+            code: string;
+            message: string;
+            field?: string;
+            details?: unknown;
+        }>;
     };
 };
 
@@ -690,7 +872,15 @@ export type EnsureRelationshipResponses = {
      * Default Response
      */
     200: {
-        created: boolean;
+        data: {
+            created: boolean;
+        };
+        errors?: Array<{
+            code: string;
+            message: string;
+            field?: string;
+            details?: unknown;
+        }>;
     };
 };
 
@@ -723,7 +913,15 @@ export type DeleteRelationshipResponses = {
      * Default Response
      */
     200: {
-        deleted: boolean;
+        data: {
+            deleted: boolean;
+        };
+        errors?: Array<{
+            code: string;
+            message: string;
+            field?: string;
+            details?: unknown;
+        }>;
     };
 };
 
@@ -749,21 +947,29 @@ export type ListRelationshipsResponses = {
      * Default Response
      */
     200: {
-        relationships: Array<{
-            object: {
-                namespace: 'identity' | 'profile' | 'platform' | 'tenant' | 'workspace' | 'space' | 'list' | 'item' | 'role' | 'permission';
-                id: string;
-            };
-            relation: string;
-            subject?: {
-                namespace: 'identity' | 'profile' | 'platform' | 'tenant' | 'workspace' | 'space' | 'list' | 'item' | 'role' | 'permission';
-                id: string;
-            };
-            subjectSet?: {
-                namespace: 'identity' | 'profile' | 'platform' | 'tenant' | 'workspace' | 'space' | 'list' | 'item' | 'role' | 'permission';
-                id: string;
+        data: {
+            relationships: Array<{
+                object: {
+                    namespace: 'identity' | 'profile' | 'platform' | 'tenant' | 'workspace' | 'space' | 'list' | 'item' | 'role' | 'permission';
+                    id: string;
+                };
                 relation: string;
-            };
+                subject?: {
+                    namespace: 'identity' | 'profile' | 'platform' | 'tenant' | 'workspace' | 'space' | 'list' | 'item' | 'role' | 'permission';
+                    id: string;
+                };
+                subjectSet?: {
+                    namespace: 'identity' | 'profile' | 'platform' | 'tenant' | 'workspace' | 'space' | 'list' | 'item' | 'role' | 'permission';
+                    id: string;
+                    relation: string;
+                };
+            }>;
+        };
+        errors?: Array<{
+            code: string;
+            message: string;
+            field?: string;
+            details?: unknown;
         }>;
     };
 };

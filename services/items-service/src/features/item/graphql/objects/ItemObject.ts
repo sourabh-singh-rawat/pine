@@ -12,6 +12,8 @@ import {
 } from "@/features/checklists/graphql/objects/ChecklistObject";
 import type { IChecklistService } from "@/features/checklists/services";
 import { ListObject } from "@/features/lists/graphql/objects/ListObject";
+import { TagObject } from "@/features/tags/graphql/objects/TagObject";
+import type { ITagService } from "@/features/tags/services";
 
 type ItemObjectShape = Item & {
   list?: List;
@@ -70,6 +72,14 @@ ItemObject.implement({
     }),
     estimate: t.exposeInt("estimate", { nullable: true }),
     component: t.exposeString("component", { nullable: true }),
+    orderIndex: t.exposeInt("orderIndex"),
     dueDate: t.expose("dueDate", { type: "DateTimeISO", nullable: true }),
+    tags: t.field({
+      type: [TagObject],
+      resolve: async (parent) => {
+        const service = container.get<ITagService>(TYPES.TagService);
+        return service.getItemTags(parent.id);
+      },
+    }),
   }),
 });

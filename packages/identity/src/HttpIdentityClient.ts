@@ -1,3 +1,4 @@
+import { readApiData } from "@pine/common";
 import type { HttpRequest } from "@pine/server";
 import Value from "typebox/value";
 import type { IIdentityClient } from "./IIdentityClient";
@@ -63,11 +64,12 @@ export class HttpIdentityClient implements IIdentityClient {
       }
 
       const body: unknown = await response.json();
-      if (!Value.Check(GetIdentityFromSessionResponseSchema, body)) {
+      const data = readApiData(body);
+      if (!Value.Check(GetIdentityFromSessionResponseSchema, data)) {
         return null;
       }
 
-      return body.identity;
+      return data.identity;
     } catch {
       return null;
     }
@@ -88,11 +90,12 @@ export class HttpIdentityClient implements IIdentityClient {
       }
 
       const body: unknown = await response.json();
-      if (!Value.Check(GetIdentityFromAccessTokenResponseSchema, body)) {
+      const data = readApiData(body);
+      if (!Value.Check(GetIdentityFromAccessTokenResponseSchema, data)) {
         return null;
       }
 
-      return body.identity;
+      return data.identity;
     } catch {
       return null;
     }

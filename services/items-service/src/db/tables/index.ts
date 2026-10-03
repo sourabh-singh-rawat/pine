@@ -1,9 +1,4 @@
 export {
-  type CheckListItem,
-  type NewCheckListItem,
-  CheckListItems,
-} from "@/db/tables/CheckListItems";
-export {
   type ChecklistEntry,
   type NewChecklistEntry,
   ChecklistEntries,
@@ -36,3 +31,5 @@ export { type List, type NewList, Lists } from "@/db/tables/Lists";
 export { type Space, type NewSpace, Spaces } from "@/db/tables/Spaces";
 export { type StatusOption, type NewStatusOption, StatusOptions } from "@/db/tables/StatusOptions";
 export { type Identity, type NewIdentity, Identities } from "@/db/tables/Identities";
+export { type Tag, type NewTag, Tags, TagsRelations } from "@/db/tables/Tags";
+export { type ItemTag, type NewItemTag, ItemTags, ItemTagsRelations } from "@/db/tables/ItemTags";

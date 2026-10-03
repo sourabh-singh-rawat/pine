@@ -1,0 +1,1 @@
+ALTER TABLE "items" ADD COLUMN "order_index" integer DEFAULT 0 NOT NULL;

@@ -1,15 +1,19 @@
 import { type RowData } from "@tanstack/react-table";
-import { DataTableRow } from "./DataTableRow";
+import { type ComponentType } from "react";
+import { DataTableRow, type DataTableRowProps } from "./DataTableRow";
 import { usePineTableContext } from "./pineTableFeatures";
 
 export interface DataTableBodyProps<TData extends RowData = RowData> {
   onRowClick?: (row: TData) => void;
+  RowComponent?: ComponentType<DataTableRowProps<TData>>;
 }
 
 export const DataTableBody = <TData extends RowData = RowData>({
   onRowClick,
+  RowComponent,
 }: DataTableBodyProps<TData> = {}) => {
   const table = usePineTableContext<TData>();
+  const Row = RowComponent ?? DataTableRow;
 
   return (
     <table.Subscribe
@@ -21,7 +25,7 @@ export const DataTableBody = <TData extends RowData = RowData>({
       {() => (
         <tbody>
           {table.getRowModel().rows.map((row) => (
-            <DataTableRow<TData> key={row.id} row={row} onRowClick={onRowClick} />
+            <Row key={row.id} row={row} onRowClick={onRowClick} />
           ))}
         </tbody>
       )}

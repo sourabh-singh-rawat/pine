@@ -18,6 +18,7 @@ export const Items = pgTable("items", {
   parentItemId: uuid("parent_item_id"),
   estimate: integer("estimate"),
   component: text("component"),
+  orderIndex: integer("order_index").notNull().default(0),
   ...auditColumns,
 });
 

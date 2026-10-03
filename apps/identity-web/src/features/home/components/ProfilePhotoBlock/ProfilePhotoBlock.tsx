@@ -21,9 +21,9 @@ export const ProfilePhotoBlock = ({ photoUrl, fullName }: ProfilePhotoBlockProps
   const createPhotoUploadRequestMutation = useCreatePhotoUploadRequestMutation();
   const [isUploading, setIsUploading] = useState(false);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-  const identityId = currentUserQuery.data?.identity?.id;
+  const identityId = currentUserQuery.data?.data?.identity?.id;
 
-  const rawProfile = currentUserQuery.data?.profile;
+  const rawProfile = currentUserQuery.data?.data?.profile;
   const profile = isMeProfile(rawProfile) ? rawProfile : null;
 
   const isPending = createPhotoUploadRequestMutation.isPending || isUploading;

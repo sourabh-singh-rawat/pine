@@ -1,5 +1,22 @@
 # @pine/server
 
+## 1.2.0
+
+### Minor Changes
+
+- 47d8722: feat(http): return ApiResponse data and errors envelope on JSON APIs
+- b5760be: feat(server): file+OTLP logger; harden NATS consumer start
+
+### Patch Changes
+
+- 942d839: chore(deps): bump graphql to 17 and refresh related pins
+- Updated dependencies [2f61d7c]
+- Updated dependencies [942d839]
+- Updated dependencies [87d3856]
+- Updated dependencies [47d8722]
+- Updated dependencies [ad7c767]
+  - @pine/common@1.3.0
+
 ## 1.1.6
 
 ### Patch Changes

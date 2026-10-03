@@ -36,7 +36,7 @@ export class AuthorizationTenantRelationSyncConsumer extends Consumer<
     @inject(TYPES.AuthorizationGraphProvider)
     private readonly authorizationGraphProvider: IAuthorizationGraphProvider,
   ) {
-    super(broker.client);
+    super(broker);
   }
 
   async onMessage(message: JsMsg, payload: CloudEvent<TenantRelationCreatedData>): Promise<void> {

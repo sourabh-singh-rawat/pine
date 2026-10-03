@@ -7,7 +7,7 @@ import {
   SignInBodySchema,
   SignInQuerySchema,
   SignInResponseSchema,
-  type SignInResponse,
+  type SignInData,
 } from "@/features/signin/schemas";
 const readQueryString = (
   query: Record<string, string | string[] | undefined>,
@@ -61,15 +61,13 @@ export const signin: HttpRoute = {
       loginChallenge: readQueryString(request.query, "login_challenge"),
     });
 
-    const response: SignInResponse = {
-      data: {
-        identity: {
-          id: result.identity.id,
-          email: result.identity.email,
-          emailVerified: result.identity.emailVerified,
-        },
-        ...(result.redirectTo ? { redirectTo: result.redirectTo } : {}),
+    const response: SignInData = {
+      identity: {
+        id: result.identity.id,
+        email: result.identity.email,
+        emailVerified: result.identity.emailVerified,
       },
+      ...(result.redirectTo ? { redirectTo: result.redirectTo } : {}),
     };
 
     return {

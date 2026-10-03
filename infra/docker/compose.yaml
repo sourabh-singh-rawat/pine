@@ -30,6 +30,16 @@ services:
       - -m
       - "8222"
       - -js
+      - -sd
+      - /data
+    volumes:
+      - ../data/docker/nats-jetstream:/data
+    healthcheck:
+      test: ["CMD", "/nats-server", "--version"]
+      interval: 5s
+      timeout: 3s
+      retries: 12
+      start_period: 5s
     deploy:
       resources:
         limits:
@@ -38,6 +48,40 @@ services:
         reservations:
           cpus: "0.10"
           memory: 128M
+
+  nats-streams-init:
+    image: natsio/nats-box:0.18.1
+    restart: "no"
+    depends_on:
+      nats:
+        condition: service_healthy
+    environment:
+      NATS_URL: nats://nats:4222
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - |
+        set -eu
+        url="$${NATS_URL}"
+        i=1
+        while [ "$${i}" -le 60 ]; do
+          if nats -s "$${url}" server check connection >/dev/null 2>&1; then
+            break
+          fi
+          i=$$((i + 1))
+          sleep 1
+        done
+        if ! nats -s "$${url}" server check connection >/dev/null 2>&1; then
+          echo "nats-streams-init: NATS not reachable at $${url}" >&2
+          exit 1
+        fi
+        for stream in attachment authorization identity items platform; do
+          if nats -s "$${url}" stream info "$${stream}" >/dev/null 2>&1; then
+            echo "ok  $${stream} (exists)"
+            continue
+          fi
+          nats -s "$${url}" stream add "$${stream}" --subjects "$${stream}.>" --storage file --defaults >/dev/null
+          echo "add $${stream}"
+        done
 
   opensearch:
     image: opensearchproject/opensearch:3.9.0

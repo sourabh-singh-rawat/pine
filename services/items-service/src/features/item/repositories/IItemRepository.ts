@@ -16,6 +16,7 @@ export type CreateItemEntity = {
   dueDate?: Date | null;
   estimate?: number | null;
   component?: string | null;
+  orderIndex: number;
 };
 
 export type UpdateItemEntity = {
@@ -28,6 +29,7 @@ export type UpdateItemEntity = {
   estimate?: number | null;
   component?: string | null;
   updatedById?: string | null;
+  orderIndex?: number;
 };
 
 export type ItemWithList = Item & {
@@ -39,7 +41,7 @@ export type ItemWithHasChildren = Item & {
 };
 
 export type RootPageCursor = {
-  name: string;
+  orderIndex: number;
   id: string;
 };
 
@@ -54,6 +56,12 @@ export type RootCountByStatus = {
   totalCount: number;
 };
 
+export type FindMaxOrderIndexOptions = {
+  listId: string;
+  statusId: string;
+  parentItemId?: string | null;
+};
+
 export interface IItemRepository {
   save(entity: CreateItemEntity, options?: ItemRepositoryOptions): Promise<Item>;
   update(id: string, entity: UpdateItemEntity, options?: ItemRepositoryOptions): Promise<Item>;
@@ -61,6 +69,11 @@ export interface IItemRepository {
   findById(id: string, options?: ItemRepositoryOptions): Promise<Item | null>;
   findByIdWithList(id: string, options?: ItemRepositoryOptions): Promise<ItemWithList | null>;
   findRootsByList(listId: string, options?: ItemRepositoryOptions): Promise<ItemWithHasChildren[]>;
+  findRootsByStatus(
+    listId: string,
+    statusId: string,
+    options?: ItemRepositoryOptions,
+  ): Promise<Item[]>;
   findRootPageByStatus(
     listId: string,
     page: FindRootPageByStatusOptions,
@@ -76,6 +89,11 @@ export interface IItemRepository {
     options?: ItemRepositoryOptions,
   ): Promise<RootCountByStatus[]>;
   findChildren(parentItemId: string, options?: ItemRepositoryOptions): Promise<Item[]>;
+  findMaxOrderIndex(
+    query: FindMaxOrderIndexOptions,
+    options?: ItemRepositoryOptions,
+  ): Promise<number | null>;
+  replaceOrderIndexes(orderedIds: string[], options?: ItemRepositoryOptions): Promise<void>;
   countByStatusId: (statusId: string, options?: ItemRepositoryOptions) => Promise<number>;
   reassignStatus: (
     fromStatusId: string,

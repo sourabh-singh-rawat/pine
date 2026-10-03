@@ -5,12 +5,16 @@ import type { IOutboxService } from "@pine/outbox";
 import { describe, expect, it, vi } from "vitest";
 import type { DbClient, Item, StatusOption } from "@/db";
 import type { IChecklistRepository } from "@/features/checklists/repositories";
-import { ItemNotFoundError, ListItemsValidationError } from "@/features/item/errors";
-import type { IItemAssigneeRepository, IItemRepository } from "@/features/item/repositories";
+import {
+  ItemNotFoundError,
+  ItemReorderError,
+  ListItemsValidationError,
+} from "@/features/item/errors";
+import type { IItemRepository } from "@/features/item/repositories";
 import { StatusNotFoundError } from "@/features/item-statuses/errors";
 import type { IStatusRepository } from "@/features/item-statuses/repositories";
 import { type ItemDatabase, ItemService } from "@/features/item/services/ItemService";
-import { encodeItemListCursor } from "@/features/item/services/itemListCursor";
+import { encodeItemListCursor } from "@/features/item/utils";
 
 const item: Item = {
   id: "issue-1",
@@ -27,6 +31,7 @@ const item: Item = {
   parentItemId: null,
   estimate: null,
   component: null,
+  orderIndex: 0,
   version: 1,
   createdAt: new Date("2026-01-01T00:00:00.000Z"),
   updatedAt: null,
@@ -40,19 +45,15 @@ const createItemRepository = (overrides: Partial<IItemRepository> = {}): IItemRe
   findById: vi.fn().mockResolvedValue(null),
   findByIdWithList: vi.fn().mockResolvedValue(null),
   findRootsByList: vi.fn().mockResolvedValue([]),
+  findRootsByStatus: vi.fn().mockResolvedValue([]),
   findRootPageByStatus: vi.fn().mockResolvedValue([]),
   findRootFirstPagesByList: vi.fn().mockResolvedValue([]),
   countRootsByListGrouped: vi.fn().mockResolvedValue([]),
   findChildren: vi.fn().mockResolvedValue([]),
+  findMaxOrderIndex: vi.fn().mockResolvedValue(null),
+  replaceOrderIndexes: vi.fn().mockResolvedValue(undefined),
   countByStatusId: vi.fn().mockResolvedValue(0),
   reassignStatus: vi.fn().mockResolvedValue(0),
-  ...overrides,
-});
-
-const createItemAssigneeRepository = (
-  overrides: Partial<IItemAssigneeRepository> = {},
-): IItemAssigneeRepository => ({
-  saveMany: vi.fn().mockResolvedValue([]),
   ...overrides,
 });
 
@@ -143,7 +144,6 @@ const createService = (
   deps: {
     db?: ItemDatabase;
     itemRepository?: IItemRepository;
-    itemAssigneeRepository?: IItemAssigneeRepository;
     statusRepository?: IStatusRepository;
     checklistRepository?: IChecklistRepository;
     outboxService?: IOutboxService;
@@ -153,7 +153,6 @@ const createService = (
   new ItemService(
     deps.db ?? createDb(),
     deps.itemRepository ?? createItemRepository(),
-    deps.itemAssigneeRepository ?? createItemAssigneeRepository(),
     deps.statusRepository ?? createStatusRepository(),
     deps.checklistRepository ?? createChecklistRepository(),
     deps.outboxService ?? createOutboxService(),
@@ -163,27 +162,32 @@ const createService = (
 describe("ItemService", () => {
   it("schedules ItemCreatedEvent when an item is created", async () => {
     const itemRepository = createItemRepository();
-    const itemAssigneeRepository = createItemAssigneeRepository();
     const outboxService = createOutboxService();
 
     const service = createService({
       itemRepository,
-      itemAssigneeRepository,
       outboxService,
     });
 
     await expect(
       service.create({
-        userId: "user-1",
+        identityId: "user-1",
         listId: "list-1",
         type: "task",
         name: "Fix login",
-        assigneeIds: [],
         description: "Users cannot sign in",
         statusId: "status-1",
       }),
     ).resolves.toBe("issue-1");
 
+    expect(itemRepository.findMaxOrderIndex).toHaveBeenCalledWith(
+      {
+        listId: "list-1",
+        statusId: "status-1",
+        parentItemId: null,
+      },
+      { tx: {} },
+    );
     expect(itemRepository.save).toHaveBeenCalledWith(
       {
         listId: "list-1",
@@ -196,10 +200,10 @@ describe("ItemService", () => {
         component: undefined,
         createdById: "user-1",
         parentItemId: null,
+        orderIndex: 0,
       },
       { tx: {} },
     );
-    expect(itemAssigneeRepository.saveMany).not.toHaveBeenCalled();
     expect(outboxService.schedule).toHaveBeenCalledWith(
       expect.objectContaining({
         eventType: ItemCreatedEvent.type,
@@ -248,7 +252,7 @@ describe("ItemService", () => {
     await expect(
       service.update({
         itemId: "issue-1",
-        userId: "user-2",
+        identityId: "user-2",
         name: "Fix login again",
       }),
     ).resolves.toBeUndefined();
@@ -311,7 +315,7 @@ describe("ItemService", () => {
     const service = createService({ itemRepository, authorizationClient });
 
     await expect(
-      service.update({ itemId: "missing", userId: "user-1", name: "Nope" }),
+      service.update({ itemId: "missing", identityId: "user-1", name: "Nope" }),
     ).rejects.toBeInstanceOf(ItemNotFoundError);
     expect(authorizationClient.checkRelationship).not.toHaveBeenCalled();
     expect(itemRepository.update).not.toHaveBeenCalled();
@@ -327,7 +331,7 @@ describe("ItemService", () => {
     const service = createService({ itemRepository, authorizationClient });
 
     await expect(
-      service.update({ itemId: "issue-1", userId: "user-1", name: "Nope" }),
+      service.update({ itemId: "issue-1", identityId: "user-1", name: "Nope" }),
     ).rejects.toBeInstanceOf(InsufficientPermissionError);
     expect(itemRepository.update).not.toHaveBeenCalled();
   });
@@ -337,11 +341,10 @@ describe("ItemService", () => {
     const service = createService({ authorizationClient });
 
     await service.create({
-      userId: "user-1",
+      identityId: "user-1",
       listId: "list-1",
       type: "task",
       name: "Fix login",
-      assigneeIds: [],
       statusId: "status-1",
     });
 
@@ -362,45 +365,14 @@ describe("ItemService", () => {
 
     await expect(
       service.create({
-        userId: "user-1",
+        identityId: "user-1",
         listId: "list-1",
         type: "task",
         name: "Fix login",
-        assigneeIds: [],
         statusId: "status-1",
       }),
     ).rejects.toBeInstanceOf(InsufficientPermissionError);
     expect(itemRepository.save).not.toHaveBeenCalled();
-  });
-
-  it("saves assignees before scheduling ItemCreatedEvent", async () => {
-    const itemRepository = createItemRepository();
-    const itemAssigneeRepository = createItemAssigneeRepository();
-    const outboxService = createOutboxService();
-
-    const service = createService({
-      itemRepository,
-      itemAssigneeRepository,
-      outboxService,
-    });
-
-    await service.create({
-      userId: "user-1",
-      listId: "list-1",
-      type: "task",
-      name: "Fix login",
-      assigneeIds: ["user-2", "user-3"],
-      statusId: "status-1",
-    });
-
-    expect(itemAssigneeRepository.saveMany).toHaveBeenCalledWith(
-      [
-        { itemId: "issue-1", userId: "user-2" },
-        { itemId: "issue-1", userId: "user-3" },
-      ],
-      { tx: {} },
-    );
-    expect(outboxService.schedule).toHaveBeenCalled();
   });
 
   it("soft-deletes an item after authorizing delete on the list", async () => {
@@ -412,7 +384,7 @@ describe("ItemService", () => {
 
     const service = createService({ itemRepository, authorizationClient });
 
-    await expect(service.delete({ id: "issue-1", userId: "user-1" })).resolves.toBeUndefined();
+    await expect(service.delete({ id: "issue-1", identityId: "user-1" })).resolves.toBeUndefined();
 
     expect(authorizationClient.checkRelationship).toHaveBeenCalledWith({
       namespace: "list",
@@ -433,7 +405,7 @@ describe("ItemService", () => {
 
     const service = createService({ itemRepository, authorizationClient });
 
-    await expect(service.delete({ id: "issue-1", userId: "user-1" })).rejects.toBeInstanceOf(
+    await expect(service.delete({ id: "issue-1", identityId: "user-1" })).rejects.toBeInstanceOf(
       InsufficientPermissionError,
     );
     expect(itemRepository.softDelete).not.toHaveBeenCalled();
@@ -447,7 +419,7 @@ describe("ItemService", () => {
 
     const service = createService({ itemRepository, authorizationClient });
 
-    await expect(service.delete({ id: "missing", userId: "user-1" })).rejects.toBeInstanceOf(
+    await expect(service.delete({ id: "missing", identityId: "user-1" })).rejects.toBeInstanceOf(
       ItemNotFoundError,
     );
     expect(authorizationClient.checkRelationship).not.toHaveBeenCalled();
@@ -474,7 +446,7 @@ describe("ItemService", () => {
     });
     const service = createService({ itemRepository, statusRepository, checklistRepository });
 
-    await expect(service.list({ listId: "list-1", userId: "user-1" })).resolves.toEqual([
+    await expect(service.list({ listId: "list-1", identityId: "user-1" })).resolves.toEqual([
       {
         status: todoStatus,
         items: [
@@ -520,7 +492,7 @@ describe("ItemService", () => {
     });
     const service = createService({ itemRepository });
 
-    const groups = await service.list({ listId: "list-1", userId: "user-1", first: 2 });
+    const groups = await service.list({ listId: "list-1", identityId: "user-1", first: 2 });
 
     expect(groups[0]?.items.map((row) => row.id)).toEqual(["a", "b"]);
     expect(groups[0]?.pageInfo).toEqual({
@@ -535,7 +507,7 @@ describe("ItemService", () => {
   it("loads the next page for a single status when after is provided", async () => {
     const second = { ...item, id: "b", name: "B", statusId: "status-1", hasChildren: false };
     const third = { ...item, id: "c", name: "C", statusId: "status-1", hasChildren: false };
-    const after = encodeItemListCursor({ name: "A", id: "a" });
+    const after = encodeItemListCursor({ orderIndex: 0, id: "a" });
     const itemRepository = createItemRepository({
       findRootPageByStatus: vi.fn().mockResolvedValue([second, third]),
       countRootsByListGrouped: vi.fn().mockResolvedValue([{ statusId: "status-1", totalCount: 3 }]),
@@ -544,7 +516,7 @@ describe("ItemService", () => {
 
     const groups = await service.list({
       listId: "list-1",
-      userId: "user-1",
+      identityId: "user-1",
       statusId: "status-1",
       after,
       first: 2,
@@ -556,7 +528,7 @@ describe("ItemService", () => {
     expect(itemRepository.findRootPageByStatus).toHaveBeenCalledWith("list-1", {
       statusId: "status-1",
       limit: 3,
-      after: { name: "A", id: "a" },
+      after: { orderIndex: 0, id: "a" },
     });
   });
 
@@ -565,10 +537,61 @@ describe("ItemService", () => {
     await expect(
       service.list({
         listId: "list-1",
-        userId: "user-1",
-        after: encodeItemListCursor({ name: "A", id: "a" }),
+        identityId: "user-1",
+        after: encodeItemListCursor({ orderIndex: 0, id: "a" }),
       }),
     ).rejects.toBeInstanceOf(ListItemsValidationError);
+  });
+
+  it("reorders a contiguous segment of roots in a status group", async () => {
+    const first = { ...item, id: "a", name: "A", orderIndex: 0 };
+    const second = { ...item, id: "b", name: "B", orderIndex: 1 };
+    const third = { ...item, id: "c", name: "C", orderIndex: 2 };
+    const itemRepository = createItemRepository({
+      findRootsByStatus: vi
+        .fn()
+        .mockResolvedValueOnce([first, second, third])
+        .mockResolvedValueOnce([first, third, second]),
+      replaceOrderIndexes: vi.fn().mockResolvedValue(undefined),
+    });
+    const statusRepository = createStatusRepository({
+      findById: vi.fn().mockResolvedValue(todoStatus),
+    });
+    const service = createService({ itemRepository, statusRepository });
+
+    await expect(
+      service.reorder({
+        listId: "list-1",
+        statusId: "status-1",
+        itemIds: ["a", "c", "b"],
+        identityId: "user-1",
+      }),
+    ).resolves.toEqual([first, third, second]);
+
+    expect(itemRepository.replaceOrderIndexes).toHaveBeenCalledWith(["a", "c", "b"]);
+  });
+
+  it("rejects reorder when itemIds are not a contiguous segment", async () => {
+    const first = { ...item, id: "a", orderIndex: 0 };
+    const second = { ...item, id: "b", orderIndex: 1 };
+    const third = { ...item, id: "c", orderIndex: 2 };
+    const itemRepository = createItemRepository({
+      findRootsByStatus: vi.fn().mockResolvedValue([first, second, third]),
+    });
+    const statusRepository = createStatusRepository({
+      findById: vi.fn().mockResolvedValue(todoStatus),
+    });
+    const service = createService({ itemRepository, statusRepository });
+
+    await expect(
+      service.reorder({
+        listId: "list-1",
+        statusId: "status-1",
+        itemIds: ["a", "c"],
+        identityId: "user-1",
+      }),
+    ).rejects.toBeInstanceOf(ItemReorderError);
+    expect(itemRepository.replaceOrderIndexes).not.toHaveBeenCalled();
   });
 
   it("rejects unknown statusId", async () => {
@@ -576,7 +599,7 @@ describe("ItemService", () => {
     await expect(
       service.list({
         listId: "list-1",
-        userId: "user-1",
+        identityId: "user-1",
         statusId: "missing",
       }),
     ).rejects.toBeInstanceOf(StatusNotFoundError);
@@ -590,7 +613,7 @@ describe("ItemService", () => {
     });
     const service = createService({ itemRepository, authorizationClient });
 
-    await service.list({ listId: "list-1", userId: "user-1" });
+    await service.list({ listId: "list-1", identityId: "user-1" });
 
     expect(authorizationClient.checkRelationship).toHaveBeenCalledWith({
       namespace: "list",
@@ -607,7 +630,7 @@ describe("ItemService", () => {
     });
     const service = createService({ itemRepository, authorizationClient });
 
-    await expect(service.list({ listId: "list-1", userId: "user-1" })).rejects.toBeInstanceOf(
+    await expect(service.list({ listId: "list-1", identityId: "user-1" })).rejects.toBeInstanceOf(
       InsufficientPermissionError,
     );
     expect(itemRepository.findRootFirstPagesByList).not.toHaveBeenCalled();
@@ -620,7 +643,7 @@ describe("ItemService", () => {
     const authorizationClient = createAuthorizationClient();
     const service = createService({ itemRepository, authorizationClient });
 
-    await expect(service.getById({ userId: "user-1", itemId: "missing" })).resolves.toBeNull();
+    await expect(service.getById({ identityId: "user-1", itemId: "missing" })).resolves.toBeNull();
     expect(authorizationClient.checkRelationship).not.toHaveBeenCalled();
   });
 
@@ -632,7 +655,7 @@ describe("ItemService", () => {
     const authorizationClient = createAuthorizationClient();
     const service = createService({ itemRepository, authorizationClient });
 
-    await expect(service.getById({ userId: "user-1", itemId: "issue-1" })).resolves.toEqual(
+    await expect(service.getById({ identityId: "user-1", itemId: "issue-1" })).resolves.toEqual(
       itemWithList,
     );
     expect(authorizationClient.checkRelationship).toHaveBeenCalledWith({

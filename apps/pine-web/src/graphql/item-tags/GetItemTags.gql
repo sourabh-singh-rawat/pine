@@ -1,0 +1,10 @@
+query GetItemTags($itemId: String!) {
+  getItemTags(itemId: $itemId) {
+    id
+    workspaceId
+    spaceId
+    name
+    color
+    description
+  }
+}

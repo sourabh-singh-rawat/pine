@@ -10,6 +10,7 @@ describe("MetadataProcessingService", () => {
     const logInfo = vi.fn();
     const logger: ILogger = {
       info: logInfo,
+      error: vi.fn(),
     };
 
     const testImageBuffer = await sharp({

@@ -6,10 +6,11 @@ import {
   type TableState,
   type Updater,
 } from "@tanstack/react-table";
-import { useCallback, useState } from "react";
+import { type ComponentType, useCallback, useState } from "react";
 import { DataTableBody } from "./DataTableBody";
 import { DataTableHeader } from "./DataTableHeader";
 import { DataTableRoot } from "./DataTableRoot";
+import type { DataTableRowProps } from "./DataTableRow";
 import { pineTableFeatures, usePineTable } from "./pineTableFeatures";
 
 export type DataTableProps<TData extends RowData> = {
@@ -24,6 +25,7 @@ export type DataTableProps<TData extends RowData> = {
   grouping?: string[];
   showBorder?: boolean;
   groupedColumnMode?: "reorder" | "remove" | false;
+  RowComponent?: ComponentType<DataTableRowProps<TData>>;
 };
 
 export const DataTable = <TData extends RowData>({
@@ -38,6 +40,7 @@ export const DataTable = <TData extends RowData>({
   grouping,
   showBorder = false,
   groupedColumnMode = "remove",
+  RowComponent,
 }: DataTableProps<TData>) => {
   const [expanded, setExpanded] = useState<ExpandedState>(() => initialState?.expanded ?? true);
 
@@ -75,6 +78,7 @@ export const DataTable = <TData extends RowData>({
     (state) => ({
       grouping: state.grouping,
       expanded: state.expanded,
+      columnSizing: state.columnSizing,
     }),
   );
 
@@ -88,7 +92,7 @@ export const DataTable = <TData extends RowData>({
       showBorder={showBorder}
     >
       <DataTableHeader />
-      <DataTableBody<TData> onRowClick={onRowClick} />
+      <DataTableBody<TData> onRowClick={onRowClick} RowComponent={RowComponent} />
     </DataTableRoot>
   );
 };

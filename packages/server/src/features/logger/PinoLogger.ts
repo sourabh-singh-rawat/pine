@@ -1,8 +1,8 @@
 import { ILogger } from "./ILogger";
 
-/** Minimal pino-compatible surface used by {@link PinoLogger}. */
 export interface PinoLikeLogger {
   info(message: string): void;
+  error(message: string): void;
 }
 
 export class PinoLogger implements ILogger {
@@ -10,5 +10,9 @@ export class PinoLogger implements ILogger {
 
   info(message: string) {
     this.pino.info(message);
+  }
+
+  error(message: string) {
+    this.pino.error(message);
   }
 }

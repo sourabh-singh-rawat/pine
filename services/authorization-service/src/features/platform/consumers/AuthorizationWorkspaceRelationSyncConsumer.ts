@@ -36,7 +36,7 @@ export class AuthorizationWorkspaceRelationSyncConsumer extends Consumer<
     @inject(TYPES.AuthorizationGraphProvider)
     private readonly authorizationGraphProvider: IAuthorizationGraphProvider,
   ) {
-    super(broker.client);
+    super(broker);
   }
 
   async onMessage(

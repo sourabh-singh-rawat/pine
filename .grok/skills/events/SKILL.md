@@ -25,7 +25,7 @@ TYPES.Publisher → new NatsPublisher(broker)
 TYPES.Broker → broker
 ```
 
-Streams are a **deployment** concern (`infra/k8s/nats/` Stream CRs, laptop `pnpm nats:streams`). Brokers only connect. Consumers may listen to streams their process does not publish to.
+Streams are a **deployment** concern (`infra/k8s/nats/` Stream CRs; laptop `nats-streams-init` in Compose, host fallback `pnpm nats:streams`). Brokers only connect. Consumers may listen to streams their process does not publish to.
 
 ```ts
 const event = createCloudEvent({
@@ -46,7 +46,7 @@ New event:
 1. TypeBox schema under `packages/events/src/services/<service>/schemas/`
 2. `defineEvent({ type, version, schema })` next to it
 3. Add a `Streams` value only when the first type token is new
-4. Add/update the Stream CR under `infra/k8s/nats/` (and laptop `pnpm nats:streams` list)
+4. Add/update the Stream CR under `infra/k8s/nats/` (and laptop Compose `nats-streams-init` / `pnpm nats:streams` list)
 5. Publish via outbox (`service`) or `publisher.send`
 6. Consumer class + DI + `start()` after `broker.init()`
 
@@ -67,7 +67,7 @@ export class PlatformIdentitySyncConsumer extends Consumer<
     @inject(TYPES.Broker) private readonly broker: IBroker,
     @inject(TYPES.IdentityRepository) private readonly identityRepository: IIdentityRepository,
   ) {
-    super(broker.client);
+    super(broker);
   }
 
   async onMessage(
@@ -91,6 +91,8 @@ export class PlatformIdentitySyncConsumer extends Consumer<
 ```
 
 `start()` from `main.ts` after `broker.init()`. Always `validateEvent` + `message.ack()`. Group related types on one durable when they sync the same entity.
+
+`Consumer` takes `IBroker` (not bare `client`) so it can use `getConfig().logger`. `ensureConsumer` retries NATS `TIMEOUT` with backoff, uses a 10s JetStream timeout, logs failures through the broker logger, and does not rethrow from `start()` so `void consumer.start()` will not crash the process on a failed ensure.
 
 ## Durable consumers
 

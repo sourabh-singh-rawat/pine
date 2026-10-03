@@ -10,6 +10,7 @@ describe("ThumbnailProcessingService", () => {
     const logInfo = vi.fn();
     const logger: ILogger = {
       info: logInfo,
+      error: vi.fn(),
     };
 
     const testImageBuffer = await sharp({
@@ -79,6 +80,7 @@ describe("ThumbnailProcessingService", () => {
     const logInfo = vi.fn();
     const logger: ILogger = {
       info: logInfo,
+      error: vi.fn(),
     };
 
     const attachmentClient: IAttachmentClient = {

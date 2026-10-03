@@ -30,7 +30,7 @@ export class AuditAttachmentSyncConsumer extends Consumer<CloudEvent<AttachmentC
     @inject(TYPES.AuditLogRepository)
     private readonly auditLogRepository: IAuditLogRepository,
   ) {
-    super(broker.client);
+    super(broker);
   }
 
   onMessage = async (message: JsMsg, payload: CloudEvent<AttachmentCreatedData>): Promise<void> => {

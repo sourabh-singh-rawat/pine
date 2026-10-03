@@ -11,11 +11,11 @@ builder.mutationFields((t) => ({
       input: t.arg({ type: CreateItemInput, required: true }),
     },
     resolve: async (_root, { input }, ctx) => {
-      const userId = requireIdentityId(ctx);
+      const identityId = requireIdentityId(ctx);
       const service = container.get<IItemService>(TYPES.ItemService);
 
       return service.create({
-        userId,
+        identityId,
         name: input.name,
         type: input.type,
         listId: input.listId,
@@ -24,7 +24,6 @@ builder.mutationFields((t) => ({
         priority: parseItemPriority(input.priority),
         dueDate: input.dueDate ?? undefined,
         description: input.description ?? undefined,
-        assigneeIds: input.assigneeIds,
         estimate: input.estimate ?? undefined,
         component: input.component ?? undefined,
       });

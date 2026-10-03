@@ -47,7 +47,9 @@ describe("resendVerificationEmail route", () => {
     expect(response).toEqual({
       status: 200,
       body: {
-        message: "If an account exists for that email, a verification email has been sent.",
+        data: {
+          message: "If an account exists for that email, a verification email has been sent.",
+        },
       },
     });
   });

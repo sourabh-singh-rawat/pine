@@ -1,7 +1,8 @@
+import { isRetryableNetworkError, retry } from "@pine/common";
 import { drizzle } from "drizzle-orm/node-postgres";
 import { Pool } from "pg";
-import * as schema from "@/db/schema";
 import { env } from "@/bootstrap/env";
+import * as schema from "@/db/schema";
 
 const pool = new Pool({
   connectionString: env.PLATFORM_DATABASE_URL,
@@ -10,8 +11,17 @@ const pool = new Pool({
 export const db = drizzle(pool, { schema });
 
 export const initializeDb = async (): Promise<void> => {
-  const client = await pool.connect();
-  client.release();
+  await retry(
+    async () => {
+      const client = await pool.connect();
+      client.release();
+    },
+    {
+      maxAttempts: 8,
+      baseDelayMs: 500,
+      shouldRetry: isRetryableNetworkError,
+    },
+  );
 };
 
 export const closeDb = async (): Promise<void> => {

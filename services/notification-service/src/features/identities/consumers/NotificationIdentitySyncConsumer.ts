@@ -29,7 +29,7 @@ export class NotificationIdentitySyncConsumer extends Consumer<
     @inject(TYPES.IdentityRepository)
     private readonly identityRepository: IIdentityRepository,
   ) {
-    super(broker.client);
+    super(broker);
   }
 
   async onMessage(message: JsMsg, payload: CloudEvent<IdentityEmailVerifiedData>) {

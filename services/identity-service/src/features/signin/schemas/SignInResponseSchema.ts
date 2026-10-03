@@ -18,7 +18,6 @@ export const SignInDataSchema = Type.Object(
 
 export type SignInData = Type.Static<typeof SignInDataSchema>;
 
-/** Success body: `ApiResponse<SignInData>` (`data` envelope). */
 export const SignInResponseSchema = Type.Object(
   {
     data: SignInDataSchema,

@@ -271,6 +271,11 @@ export const ItemNameCell = ({
         onClick={handleLinkClick}
         onDoubleClick={handleLinkDoubleClick}
         sx={{
+          minWidth: 0,
+          flex: 1,
+          overflow: "hidden",
+          textOverflow: "ellipsis",
+          whiteSpace: "nowrap",
           color: theme.palette.text.primary,
           "&:hover": {
             color: theme.palette.primary.main,

@@ -2,6 +2,7 @@ import type { HttpRoute } from "@pine/server";
 import { authorizeRoutes } from "@/features/authorize";
 import { clientRoutes } from "@/features/clients";
 import { consentRoutes } from "@/features/consent";
+import { discoveryRoutes } from "@/features/discovery";
 import { loginRoutes } from "@/features/login";
 import { tokenRoutes } from "@/features/token";
 
@@ -11,4 +12,5 @@ export const routes: HttpRoute[] = [
   ...consentRoutes,
   ...tokenRoutes,
   ...clientRoutes,
+  ...discoveryRoutes,
 ];

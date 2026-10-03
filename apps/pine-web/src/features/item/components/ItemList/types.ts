@@ -11,6 +11,12 @@ export interface ItemListStyles {
   showBorder?: boolean;
 }
 
+export type ItemRowTag = {
+  id: string;
+  name: string;
+  color: string;
+};
+
 export type ItemRow = {
   id: string;
   name: string;
@@ -23,6 +29,7 @@ export type ItemRow = {
   isNestedExpanded: boolean;
   checklistCompletedCount: number;
   checklistTotalCount: number;
+  tags?: ItemRowTag[];
   children?: ItemRow[];
 };
 

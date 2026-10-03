@@ -1,0 +1,20 @@
+mutation ReorderListItems($input: ReorderListItemsInput!) {
+  reorderListItems(input: $input) {
+    id
+    name
+    statusId
+    priority
+    dueDate
+    hasChildren
+    orderIndex
+    checklistCounts {
+      completedCount
+      totalCount
+    }
+    tags {
+      id
+      name
+      color
+    }
+  }
+}
