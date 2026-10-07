@@ -1,0 +1,124 @@
+<mxfile host="65bd71144e">
+    <diagram id="WN3qkjmWGQAgNR0YQ7kx" name="Page-1">
+        <mxGraphModel dx="618" dy="430" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="TLhdm88-Dwhq098_9YVP-6" edge="1" parent="1" source="TLhdm88-Dwhq098_9YVP-1" style="edgeStyle=none;html=1;">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="59.999999999999886" y="600" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="TLhdm88-Dwhq098_9YVP-1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;roundedPerimeter=1;" value="pine-web" vertex="1">
+                    <mxGeometry height="40" width="120" y="120" as="geometry"/>
+                </mxCell>
+                <mxCell id="TLhdm88-Dwhq098_9YVP-7" edge="1" parent="1" source="TLhdm88-Dwhq098_9YVP-2" style="edgeStyle=none;html=1;">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="220" y="600" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="TLhdm88-Dwhq098_9YVP-2" parent="1" style="rounded=1;whiteSpace=wrap;html=1;roundedPerimeter=1;" value="identity-web" vertex="1">
+                    <mxGeometry height="40" width="120" x="160" y="120" as="geometry"/>
+                </mxCell>
+                <mxCell id="TLhdm88-Dwhq098_9YVP-9" edge="1" parent="1" source="TLhdm88-Dwhq098_9YVP-3" style="edgeStyle=none;html=1;">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="669.9999999999998" y="600" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="TLhdm88-Dwhq098_9YVP-3" parent="1" style="rounded=1;whiteSpace=wrap;html=1;roundedPerimeter=1;fillColor=#f8cecc;strokeColor=#b85450;" value="kratos" vertex="1">
+                    <mxGeometry height="40" width="120" x="610" y="120" as="geometry"/>
+                </mxCell>
+                <mxCell id="TLhdm88-Dwhq098_9YVP-8" edge="1" parent="1" source="TLhdm88-Dwhq098_9YVP-4" style="edgeStyle=none;html=1;">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="380" y="600" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="TLhdm88-Dwhq098_9YVP-4" parent="1" style="rounded=1;whiteSpace=wrap;html=1;roundedPerimeter=1;" value="oauth" vertex="1">
+                    <mxGeometry height="40" width="120" x="320" y="120" as="geometry"/>
+                </mxCell>
+                <mxCell id="TLhdm88-Dwhq098_9YVP-10" edge="1" parent="1" source="TLhdm88-Dwhq098_9YVP-5" style="edgeStyle=none;html=1;">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="830" y="600" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="TLhdm88-Dwhq098_9YVP-5" parent="1" style="rounded=1;whiteSpace=wrap;html=1;roundedPerimeter=1;fillColor=#f8cecc;strokeColor=#b85450;" value="hydra" vertex="1">
+                    <mxGeometry height="40" width="120" x="770" y="120" as="geometry"/>
+                </mxCell>
+                <mxCell id="TLhdm88-Dwhq098_9YVP-11" edge="1" parent="1" style="endArrow=classic;html=1;" value="">
+                    <mxGeometry height="50" relative="1" width="50" as="geometry">
+                        <mxPoint x="60" y="200" as="sourcePoint"/>
+                        <mxPoint x="380" y="200" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="TLhdm88-Dwhq098_9YVP-12" connectable="0" parent="TLhdm88-Dwhq098_9YVP-11" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="1. /oauth/authorize&lt;div&gt;?client_id&amp;amp;redirect_uri&amp;amp;code_challenge&lt;/div&gt;" vertex="1">
+                    <mxGeometry relative="1" x="-0.7948" y="1" as="geometry">
+                        <mxPoint x="87" y="21" as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="TLhdm88-Dwhq098_9YVP-14" edge="1" parent="1" style="endArrow=classic;html=1;" value="">
+                    <mxGeometry height="50" relative="1" width="50" as="geometry">
+                        <mxPoint x="380" y="200" as="sourcePoint"/>
+                        <mxPoint x="830" y="200" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="TLhdm88-Dwhq098_9YVP-15" connectable="0" parent="TLhdm88-Dwhq098_9YVP-14" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="2. /oauth2/auth" vertex="1">
+                    <mxGeometry relative="1" x="-0.3598" y="-2" as="geometry">
+                        <mxPoint x="-42" y="8" as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="TLhdm88-Dwhq098_9YVP-18" edge="1" parent="1" style="endArrow=classic;html=1;" value="">
+                    <mxGeometry height="50" relative="1" width="50" as="geometry">
+                        <mxPoint x="830" y="250" as="sourcePoint"/>
+                        <mxPoint x="380" y="250" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="TLhdm88-Dwhq098_9YVP-19" connectable="0" parent="TLhdm88-Dwhq098_9YVP-18" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="3. 302 Location .../signin?login_challenge" vertex="1">
+                    <mxGeometry relative="1" x="0.1321" y="-1" as="geometry">
+                        <mxPoint x="151" y="11" as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="TLhdm88-Dwhq098_9YVP-21" edge="1" parent="1" style="endArrow=classic;html=1;" value="">
+                    <mxGeometry height="50" relative="1" width="50" as="geometry">
+                        <mxPoint x="380" y="280" as="sourcePoint"/>
+                        <mxPoint x="60" y="280" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="TLhdm88-Dwhq098_9YVP-22" connectable="0" parent="TLhdm88-Dwhq098_9YVP-21" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="4.&amp;nbsp;&lt;span style=&quot;color: rgb(0, 0, 0);&quot;&gt;302 Location .../signin?login_challenge&lt;/span&gt;" vertex="1">
+                    <mxGeometry relative="1" x="0.1321" y="-1" as="geometry">
+                        <mxPoint x="12" y="11" as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="TLhdm88-Dwhq098_9YVP-23" edge="1" parent="1" style="endArrow=classic;html=1;" value="">
+                    <mxGeometry height="50" relative="1" width="50" as="geometry">
+                        <mxPoint x="60" y="331" as="sourcePoint"/>
+                        <mxPoint x="220" y="330.41" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="TLhdm88-Dwhq098_9YVP-24" connectable="0" parent="TLhdm88-Dwhq098_9YVP-23" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="5. GET .../sigin?login_challenge" vertex="1">
+                    <mxGeometry relative="1" x="-0.399" y="2" as="geometry">
+                        <mxPoint x="32" y="12" as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="TLhdm88-Dwhq098_9YVP-25" edge="1" parent="1" style="endArrow=classic;html=1;" value="">
+                    <mxGeometry height="50" relative="1" width="50" as="geometry">
+                        <mxPoint x="220" y="330.59" as="sourcePoint"/>
+                        <mxPoint x="380" y="330" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="TLhdm88-Dwhq098_9YVP-26" connectable="0" parent="TLhdm88-Dwhq098_9YVP-25" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="6. Email &amp;amp; Password&amp;nbsp;&lt;div&gt;&amp;amp; login_challenge&lt;/div&gt;" vertex="1">
+                    <mxGeometry relative="1" x="-0.399" y="2" as="geometry">
+                        <mxPoint x="25" y="19" as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="TLhdm88-Dwhq098_9YVP-28" edge="1" parent="1" source="TLhdm88-Dwhq098_9YVP-27" style="edgeStyle=none;html=1;">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="525" y="600" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="TLhdm88-Dwhq098_9YVP-27" parent="1" style="rounded=1;whiteSpace=wrap;html=1;roundedPerimeter=1;" value="identity" vertex="1">
+                    <mxGeometry height="40" width="120" x="465" y="120" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+</mxfile>
