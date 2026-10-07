@@ -9,7 +9,7 @@ when-to-use: >
 
 # HTTP route
 
-REST / OpenAPI transport. Canonical: `authorization-service` `features/authorization/routes`. Also: `identity-service` `features/verification`, `attachment-service` `features/attachment-upload`. Related: `service`, `service-feature`, `graphql`, `identity-auth`, `schema-codegen`.
+REST / OpenAPI transport. Canonical: `authorization-service` `features/authorization/routes`. Also: `identity-service` `features/verification`, `attachment-service` `features/attachment-upload`. Related: `service`, `service-feature`, `schema-files`, `graphql`, `identity-auth`, `schema-codegen`.
 
 ## Layout
 
