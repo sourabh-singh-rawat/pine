@@ -14,6 +14,7 @@ Global guardrails (migrations, changesets, naming, no `as`/`any`, arrows vs clas
 | [service](./service/SKILL.md)                 | `I*Service`, authz, tx, outbox                             |
 | [graphql](./graphql/SKILL.md)                 | Pothos fields / compose                                    |
 | [http-route](./http-route/SKILL.md)           | `HttpRoute` / `operationId` / OpenAPI                      |
+| [schema-files](./schema-files/SKILL.md)       | One TypeBox schema export per file under `schemas/`        |
 | [events](./events/SKILL.md)                   | NATS publish / consumers                                   |
 | [outbox](./outbox/SKILL.md)                   | `schedule` + `OutboxWorker`                                |
 | [workers](./workers/SKILL.md)                 | Background process kind (outbox / NATS / dedicated worker) |
