@@ -2,7 +2,7 @@ import type { HttpResponse, HttpRoute } from "@pine/server";
 import Value from "typebox/value";
 import { container } from "@/bootstrap";
 import { TYPES } from "@/bootstrap/container-types";
-import { AuthorizeQuerySchema, InitialAuthorizeQuerySchema } from "@/features/authorize/schemas";
+import { AuthorizeQuerySchema } from "@/features/authorize/schemas";
 import type { IAuthorizeService } from "@/features/authorize/services";
 import { InvalidOAuthRequestError } from "@/integrations/oauth/errors";
 
@@ -25,16 +25,6 @@ export const authorize: HttpRoute = {
   },
   handler: async (request): Promise<HttpResponse> => {
     if (!Value.Check(AuthorizeQuerySchema, request.query)) {
-      throw new InvalidOAuthRequestError("Invalid OAuth authorize query parameters");
-    }
-
-    const loginVerifier = request.query.login_verifier;
-    const consentVerifier = request.query.consent_verifier;
-    const hasVerifier =
-      (typeof loginVerifier === "string" && loginVerifier.length > 0) ||
-      (typeof consentVerifier === "string" && consentVerifier.length > 0);
-
-    if (!hasVerifier && !Value.Check(InitialAuthorizeQuerySchema, request.query)) {
       throw new InvalidOAuthRequestError("Invalid OAuth authorize query parameters");
     }
 
