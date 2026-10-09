@@ -6,28 +6,28 @@ description: >
   namespaces.
 when-to-use: >
   requirePermission, Keto, relation tuple, IAuthorizationClient,
-  ensureRelationship, workspace:id, InsufficientPermissionError, OPL namespace
+  ensureRelationship, organization:id, InsufficientPermissionError, OPL namespace
 ---
 
 # Authorization
 
-Checks in the owning service; tuple writes in `authorization-service` consumers. Canonical check: `platform-service` `WorkspaceService.getById`. Canonical HTTP: `authorization-service` `features/authorization`. OPL: `services/authorization-service/src/integrations/authorization/ory-keto/opl/namespaces.ts`. Related: `service`, `events`, `http-route`, `docker-infra`.
+Checks in the owning service; tuple writes in `authorization-service` consumers. Canonical check: `platform-service` `OrganizationService.getById`. Canonical HTTP: `authorization-service` `features/authorization`. OPL: `services/authorization-service/src/integrations/authorization/ory-keto/opl/namespaces.ts`. Related: `service`, `events`, `http-route`, `docker-infra`.
 
-Resource key: `` `${namespace}:${id}` `` (`workspace:…`, `tenant:…`, `platform:…`, `profile:…`). Namespaces and permits live in OPL class names (`identity`, `profile`, `platform`, `tenant`, `workspace`). Permissions are OPL `permits` keys (`read`, `manage_members`, `create_workspace`, …) — see `@pine/authorization` `WORKSPACE_PERMISSIONS` / `TENANT_PERMISSIONS` / `PLATFORM_PERMISSIONS`.
+Resource key: `` `${namespace}:${id}` `` (`organization:…`, `tenant:…`, `platform:…`, `profile:…`). Namespaces and permits live in OPL class names (`identity`, `profile`, `platform`, `tenant`, `organization`). Permissions are OPL `permits` keys (`read`, `manage_members`, `create_organization`, …) — see `@pine/authorization` `ORGANIZATION_PERMISSIONS` / `TENANT_PERMISSIONS` / `PLATFORM_PERMISSIONS`.
 
 ## Recipe — check
 
 ```ts
-await requirePermission(this.authorizationClient, identityId, "read", `workspace:${id}`);
+await requirePermission(this.authorizationClient, identityId, "read", `organization:${id}`);
 ```
 
 Throws `InsufficientPermissionError`. Inject `IAuthorizationClient` (`HttpAuthorizationClient` → `AUTHORIZATION_SERVICE_URL`). Do this in the **service**, not the resolver/route.
 
-Helpers for tuple shapes: `workspaceOwnerRelationship`, `tenantMemberRelationship`, `platformAdminRelationship`, … in `@pine/authorization`.
+Helpers for tuple shapes: `organizationOwnerRelationship`, `tenantMemberRelationship`, `platformAdminRelationship`, … in `@pine/authorization`.
 
 ## Recipe — write tuples
 
-Product services do **not** call `ensureRelationship` / `deleteRelationship` on the HTTP client for domain membership. They `requirePermission`, then `outbox.schedule` a relation CloudEvent (`WorkspaceRelationCreatedEvent`, …). `authorization-service` consumers map that event to Keto (`features/platform/consumers`, `features/identity/consumers`).
+Product services do **not** call `ensureRelationship` / `deleteRelationship` on the HTTP client for domain membership. They `requirePermission`, then `outbox.schedule` a relation CloudEvent (`OrganizationRelationCreatedEvent`, …). `authorization-service` consumers map that event to Keto (`features/platform/consumers`, `features/identity/consumers`).
 
 Direct graph HTTP (`checkRelationship`, `ensureRelationship`, `deleteRelationship`, `listRelationships`) is the authorization-service API (`http-route`). Use `HttpAuthorizationClient` from other services for **checks**.
 

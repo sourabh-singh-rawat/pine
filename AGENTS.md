@@ -80,25 +80,25 @@ Saying **publish** runs `git-publish` end to end: new branch → changeset → c
 
 ## Naming — features, repositories, services, routes/resolvers
 
-One **feature folder** is one **problem**. Name it after the resource (plural kebab-case: `workspaces`, `identities`) or the use-case (`signin`, `oauth`, `attachment-upload`). Keep `X` + `XRelation` (and similar) in that folder. Split only when the lifecycle or transport is a different problem (stored attachment vs upload pipeline; a foreign `identities` projection). Do not dump two aggregates into one feature, and do not create a feature per field.
+One **feature folder** is one **problem**. Name it after the resource (plural kebab-case: `organizations`, `identities`) or the use-case (`signin`, `oauth`, `attachment-upload`). Keep `X` + `XRelation` (and similar) in that folder. Split only when the lifecycle or transport is a different problem (stored attachment vs upload pipeline; a foreign `identities` projection). Do not dump two aggregates into one feature, and do not create a feature per field.
 
 **Drop the repeated noun** on repositories and services — the type already names the subject. **Keep the noun** where names share a flat namespace: GraphQL fields, HTTP `operationId`s, event types, error classes, table names.
 
-| Layer                              | One                           | Many            | Create            | Update            | Delete            |
-| ---------------------------------- | ----------------------------- | --------------- | ----------------- | ----------------- | ----------------- |
-| `IWorkspaceRepository`             | `findById` (null if missing)  | `findMany`      | `save`            | `update`          | `softDelete`      |
-| `IWorkspaceService`                | `getById` (throws if missing) | `list`          | `create`          | `update`          | `delete`          |
-| GraphQL field / HTTP `operationId` | `getWorkspace`                | `getWorkspaces` | `createWorkspace` | `updateWorkspace` | `deleteWorkspace` |
+| Layer                              | One                           | Many                 | Create                 | Update                 | Delete                 |
+| ---------------------------------- | ----------------------------- | -------------------- | ---------------------- | ---------------------- | ---------------------- |
+| `IOrganizationRepository`          | `findById` (null if missing)  | `findMany`           | `save`                 | `update`               | `softDelete`           |
+| `IOrganizationService`             | `getById` (throws if missing) | `list`               | `create`               | `update`               | `delete`               |
+| GraphQL field / HTTP `operationId` | `getOrganization`             | `getOrganizations`   | `createOrganization`   | `updateOrganization`   | `deleteOrganization`   |
 
-Call sites read `workspaceService.create(...)`. The GraphQL field stays `createWorkspace`.
+Call sites read `organizationService.create(...)`. The GraphQL field stays `createOrganization`.
 
 Same public identifier everywhere it is visible:
 
-- GraphQL: filename = field (`queries/getWorkspace.ts` → `getWorkspace`)
+- GraphQL: filename = field (`queries/getOrganization.ts` → `getOrganization`)
 - HTTP: filename = exported route = `operationId` (`verifyEmail.ts` → `export const verifyEmail` → `operationId: "verifyEmail"`)
-- Client `.gql`: PascalCase of that identifier (`GetWorkspace`)
+- Client `.gql`: PascalCase of that identifier (`GetOrganization`)
 
-New GraphQL reads use `get*`, not `find*`. Qualifiers stay when needed (`getMyWorkspaces`, `getById` vs `list`). When the type is **not** the resource, keep the resource (`IAdminService.createIdentity`).
+New GraphQL reads use `get*`, not `find*`. Qualifiers stay when needed (`getMyOrganizations`, `getById` vs `list`). When the type is **not** the resource, keep the resource (`IAdminService.createIdentity`).
 
 When editing a service that still uses the long form (`createIssue`, `getTenantById`), rename **that** service’s methods and its internal callers in the same change. Do not rename sibling services unless you are already in those files. Never rename GraphQL fields, HTTP `operationId`s, or event payloads as part of a service cleanup. Recipes: `.grok/skills/service-feature/SKILL.md` (slice), `repository`, `service`, `graphql`, `http-route`.
 

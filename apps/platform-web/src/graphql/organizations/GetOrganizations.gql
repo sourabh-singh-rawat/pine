@@ -1,0 +1,13 @@
+query GetOrganizations($tenantId: String!, $parentOrganizationId: String) {
+  getOrganizations(tenantId: $tenantId, parentOrganizationId: $parentOrganizationId) {
+    id
+    tenantId
+    parentOrganizationId
+    name
+    slug
+    description
+    isActive
+    createdAt
+    updatedAt
+  }
+}

@@ -17,7 +17,7 @@ import { Route as AuthenticatedTenantsRouteImport } from './../routes/_authentic
 import { Route as AuthenticatedIdentitiesIdentityIdRouteImport } from './../routes/_authenticated/identities_.$identityId'
 import { Route as AuthenticatedRolesRoleIdRouteImport } from './../routes/_authenticated/roles_.$roleId'
 import { Route as AuthenticatedTenantsTenantIdRouteImport } from './../routes/_authenticated/tenants_.$tenantId'
-import { Route as AuthenticatedTenantsTenantIdWorkspacesWorkspaceIdRouteImport } from './../routes/_authenticated/tenants_.$tenantId_.workspaces.$workspaceId'
+import { Route as AuthenticatedTenantsTenantIdOrganizationsOrganizationIdRouteImport } from './../routes/_authenticated/tenants_.$tenantId_.organizations.$organizationId'
 
 const AuthenticatedRoute = AuthenticatedRouteImport.update({
   id: '/_authenticated',
@@ -61,10 +61,10 @@ const AuthenticatedTenantsTenantIdRoute =
     path: '/tenants/$tenantId',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
-const AuthenticatedTenantsTenantIdWorkspacesWorkspaceIdRoute =
-  AuthenticatedTenantsTenantIdWorkspacesWorkspaceIdRouteImport.update({
-    id: '/tenants_/$tenantId_/workspaces/$workspaceId',
-    path: '/tenants/$tenantId/workspaces/$workspaceId',
+const AuthenticatedTenantsTenantIdOrganizationsOrganizationIdRoute =
+  AuthenticatedTenantsTenantIdOrganizationsOrganizationIdRouteImport.update({
+    id: '/tenants_/$tenantId_/organizations/$organizationId',
+    path: '/tenants/$tenantId/organizations/$organizationId',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
 
@@ -76,7 +76,7 @@ export interface FileRoutesByFullPath {
   '/identities/$identityId': typeof AuthenticatedIdentitiesIdentityIdRoute
   '/roles/$roleId': typeof AuthenticatedRolesRoleIdRoute
   '/tenants/$tenantId': typeof AuthenticatedTenantsTenantIdRoute
-  '/tenants/$tenantId/workspaces/$workspaceId': typeof AuthenticatedTenantsTenantIdWorkspacesWorkspaceIdRoute
+  '/tenants/$tenantId/organizations/$organizationId': typeof AuthenticatedTenantsTenantIdOrganizationsOrganizationIdRoute
 }
 export interface FileRoutesByTo {
   '/callback': typeof CallbackRoute
@@ -86,7 +86,7 @@ export interface FileRoutesByTo {
   '/identities/$identityId': typeof AuthenticatedIdentitiesIdentityIdRoute
   '/roles/$roleId': typeof AuthenticatedRolesRoleIdRoute
   '/tenants/$tenantId': typeof AuthenticatedTenantsTenantIdRoute
-  '/tenants/$tenantId/workspaces/$workspaceId': typeof AuthenticatedTenantsTenantIdWorkspacesWorkspaceIdRoute
+  '/tenants/$tenantId/organizations/$organizationId': typeof AuthenticatedTenantsTenantIdOrganizationsOrganizationIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -98,7 +98,7 @@ export interface FileRoutesById {
   '/_authenticated/identities_/$identityId': typeof AuthenticatedIdentitiesIdentityIdRoute
   '/_authenticated/roles_/$roleId': typeof AuthenticatedRolesRoleIdRoute
   '/_authenticated/tenants_/$tenantId': typeof AuthenticatedTenantsTenantIdRoute
-  '/_authenticated/tenants_/$tenantId_/workspaces/$workspaceId': typeof AuthenticatedTenantsTenantIdWorkspacesWorkspaceIdRoute
+  '/_authenticated/tenants_/$tenantId_/organizations/$organizationId': typeof AuthenticatedTenantsTenantIdOrganizationsOrganizationIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -110,7 +110,7 @@ export interface FileRouteTypes {
     | '/identities/$identityId'
     | '/roles/$roleId'
     | '/tenants/$tenantId'
-    | '/tenants/$tenantId/workspaces/$workspaceId'
+    | '/tenants/$tenantId/organizations/$organizationId'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/callback'
@@ -120,7 +120,7 @@ export interface FileRouteTypes {
     | '/identities/$identityId'
     | '/roles/$roleId'
     | '/tenants/$tenantId'
-    | '/tenants/$tenantId/workspaces/$workspaceId'
+    | '/tenants/$tenantId/organizations/$organizationId'
   id:
     | '__root__'
     | '/_authenticated'
@@ -131,7 +131,7 @@ export interface FileRouteTypes {
     | '/_authenticated/identities_/$identityId'
     | '/_authenticated/roles_/$roleId'
     | '/_authenticated/tenants_/$tenantId'
-    | '/_authenticated/tenants_/$tenantId_/workspaces/$workspaceId'
+    | '/_authenticated/tenants_/$tenantId_/organizations/$organizationId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -197,11 +197,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedTenantsTenantIdRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
-    '/_authenticated/tenants_/$tenantId_/workspaces/$workspaceId': {
-      id: '/_authenticated/tenants_/$tenantId_/workspaces/$workspaceId'
-      path: '/tenants/$tenantId/workspaces/$workspaceId'
-      fullPath: '/tenants/$tenantId/workspaces/$workspaceId'
-      preLoaderRoute: typeof AuthenticatedTenantsTenantIdWorkspacesWorkspaceIdRouteImport
+    '/_authenticated/tenants_/$tenantId_/organizations/$organizationId': {
+      id: '/_authenticated/tenants_/$tenantId_/organizations/$organizationId'
+      path: '/tenants/$tenantId/organizations/$organizationId'
+      fullPath: '/tenants/$tenantId/organizations/$organizationId'
+      preLoaderRoute: typeof AuthenticatedTenantsTenantIdOrganizationsOrganizationIdRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
   }
@@ -214,7 +214,7 @@ interface AuthenticatedRouteChildren {
   AuthenticatedIdentitiesIdentityIdRoute: typeof AuthenticatedIdentitiesIdentityIdRoute
   AuthenticatedRolesRoleIdRoute: typeof AuthenticatedRolesRoleIdRoute
   AuthenticatedTenantsTenantIdRoute: typeof AuthenticatedTenantsTenantIdRoute
-  AuthenticatedTenantsTenantIdWorkspacesWorkspaceIdRoute: typeof AuthenticatedTenantsTenantIdWorkspacesWorkspaceIdRoute
+  AuthenticatedTenantsTenantIdOrganizationsOrganizationIdRoute: typeof AuthenticatedTenantsTenantIdOrganizationsOrganizationIdRoute
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
@@ -225,8 +225,8 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
     AuthenticatedIdentitiesIdentityIdRoute,
   AuthenticatedRolesRoleIdRoute: AuthenticatedRolesRoleIdRoute,
   AuthenticatedTenantsTenantIdRoute: AuthenticatedTenantsTenantIdRoute,
-  AuthenticatedTenantsTenantIdWorkspacesWorkspaceIdRoute:
-    AuthenticatedTenantsTenantIdWorkspacesWorkspaceIdRoute,
+  AuthenticatedTenantsTenantIdOrganizationsOrganizationIdRoute:
+    AuthenticatedTenantsTenantIdOrganizationsOrganizationIdRoute,
 }
 
 const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(

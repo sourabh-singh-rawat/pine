@@ -1,8 +1,8 @@
 import { PLATFORM_OBJECT_ID } from "@pine/authorization";
 import {
   TenantCreatedEvent,
-  WorkspaceCreatedEvent,
-  WorkspaceRelationCreatedEvent,
+  OrganizationCreatedEvent,
+  OrganizationRelationCreatedEvent,
 } from "@pine/events";
 import { describe, expect, it, vi } from "vitest";
 import { OnboardingService } from "@/features/onboarding/services/OnboardingService";
@@ -21,13 +21,13 @@ const tenant = {
   deletedAt: null,
 };
 
-const workspace = {
-  id: "workspace-1",
+const organization = {
+  id: "organization-1",
   tenantId: tenant.id,
-  parentWorkspaceId: null,
-  name: "Personal workspace",
+  parentOrganizationId: null,
+  name: "Personal organization",
   slug: "default",
-  description: "Default personal workspace",
+  description: "Default personal organization",
   isActive: true,
   version: 1,
   createdAt: new Date("2026-01-01T00:00:00.000Z"),
@@ -42,8 +42,8 @@ const createDbMock = (tx: unknown = {}) => ({
 const createService = (deps: {
   identityRepository?: unknown;
   tenantRepository?: unknown;
-  workspaceRepository?: unknown;
-  workspacePreferenceRepository?: unknown;
+  organizationRepository?: unknown;
+  organizationPreferenceRepository?: unknown;
   authorizationClient?: unknown;
   outboxService?: unknown;
   db?: unknown;
@@ -56,11 +56,11 @@ const createService = (deps: {
       findBySlug: vi.fn().mockResolvedValue(null),
       save: vi.fn().mockResolvedValue(tenant),
     }) as never,
-    (deps.workspaceRepository ?? {
+    (deps.organizationRepository ?? {
       findMany: vi.fn().mockResolvedValue([]),
-      save: vi.fn().mockResolvedValue(workspace),
+      save: vi.fn().mockResolvedValue(organization),
     }) as never,
-    (deps.workspacePreferenceRepository ?? {
+    (deps.organizationPreferenceRepository ?? {
       upsert: vi.fn().mockResolvedValue({ id: "pref-1" }),
     }) as never,
     (deps.authorizationClient ?? {
@@ -73,7 +73,7 @@ const createService = (deps: {
   );
 
 describe("OnboardingService", () => {
-  it("provisions a personal tenant, workspace, owner relation, and preference", async () => {
+  it("provisions a personal tenant, organization, owner relation, and preference", async () => {
     const identityRepository = {
       upsert: vi.fn().mockResolvedValue({ id: identityId }),
     };
@@ -81,11 +81,11 @@ describe("OnboardingService", () => {
       findBySlug: vi.fn().mockResolvedValue(null),
       save: vi.fn().mockResolvedValue(tenant),
     };
-    const workspaceRepository = {
+    const organizationRepository = {
       findMany: vi.fn().mockResolvedValue([]),
-      save: vi.fn().mockResolvedValue(workspace),
+      save: vi.fn().mockResolvedValue(organization),
     };
-    const workspacePreferenceRepository = {
+    const organizationPreferenceRepository = {
       upsert: vi.fn().mockResolvedValue({ id: "pref-1" }),
     };
     const authorizationClient = {
@@ -98,15 +98,15 @@ describe("OnboardingService", () => {
     const service = createService({
       identityRepository,
       tenantRepository,
-      workspaceRepository,
-      workspacePreferenceRepository,
+      organizationRepository,
+      organizationPreferenceRepository,
       authorizationClient,
       outboxService,
     });
 
-    await expect(service.provisionPersonalWorkspace(identityId)).resolves.toEqual({
+    await expect(service.provisionPersonalOrganization(identityId)).resolves.toEqual({
       tenant,
-      workspace,
+      organization,
       created: true,
     });
 
@@ -125,20 +125,20 @@ describe("OnboardingService", () => {
       relation: "owner",
       subject: { namespace: "identity", id: identityId },
     });
-    expect(workspaceRepository.save).toHaveBeenCalledWith(
+    expect(organizationRepository.save).toHaveBeenCalledWith(
       {
         tenantId: tenant.id,
-        name: "Personal workspace",
+        name: "Personal organization",
         slug: "default",
-        description: "Default personal workspace",
+        description: "Default personal organization",
         isActive: true,
       },
       { tx: {} },
     );
-    expect(workspacePreferenceRepository.upsert).toHaveBeenCalledWith(
+    expect(organizationPreferenceRepository.upsert).toHaveBeenCalledWith(
       {
         identityId,
-        workspaceId: workspace.id,
+        organizationId: organization.id,
         tenantId: tenant.id,
       },
       { tx: {} },
@@ -161,19 +161,19 @@ describe("OnboardingService", () => {
     );
     expect(outboxService.schedule).toHaveBeenCalledWith(
       expect.objectContaining({
-        eventType: WorkspaceCreatedEvent.type,
-        aggregateType: "workspace",
-        aggregateId: workspace.id,
+        eventType: OrganizationCreatedEvent.type,
+        aggregateType: "organization",
+        aggregateId: organization.id,
       }),
       { tx: {} },
     );
     expect(outboxService.schedule).toHaveBeenCalledWith(
       expect.objectContaining({
-        eventType: WorkspaceRelationCreatedEvent.type,
-        aggregateType: "workspace-relation",
+        eventType: OrganizationRelationCreatedEvent.type,
+        aggregateType: "organization-relation",
         payload: expect.objectContaining({
           data: expect.objectContaining({
-            workspaceId: workspace.id,
+            organizationId: organization.id,
             identityId,
             relation: "owner",
           }),
@@ -183,7 +183,7 @@ describe("OnboardingService", () => {
     );
   });
 
-  it("is idempotent when the personal tenant and workspace already exist", async () => {
+  it("is idempotent when the personal tenant and organization already exist", async () => {
     const identityRepository = {
       upsert: vi.fn().mockResolvedValue({ id: identityId }),
     };
@@ -191,11 +191,11 @@ describe("OnboardingService", () => {
       findBySlug: vi.fn().mockResolvedValue(tenant),
       save: vi.fn(),
     };
-    const workspaceRepository = {
-      findMany: vi.fn().mockResolvedValue([workspace]),
+    const organizationRepository = {
+      findMany: vi.fn().mockResolvedValue([organization]),
       save: vi.fn(),
     };
-    const workspacePreferenceRepository = {
+    const organizationPreferenceRepository = {
       upsert: vi.fn().mockResolvedValue({ id: "pref-1" }),
     };
     const authorizationClient = {
@@ -208,41 +208,41 @@ describe("OnboardingService", () => {
     const service = createService({
       identityRepository,
       tenantRepository,
-      workspaceRepository,
-      workspacePreferenceRepository,
+      organizationRepository,
+      organizationPreferenceRepository,
       authorizationClient,
       outboxService,
     });
 
-    await expect(service.provisionPersonalWorkspace(identityId)).resolves.toEqual({
+    await expect(service.provisionPersonalOrganization(identityId)).resolves.toEqual({
       tenant,
-      workspace,
+      organization,
       created: false,
     });
 
     expect(identityRepository.upsert).toHaveBeenCalledWith({ identityId }, { tx: {} });
     expect(tenantRepository.save).not.toHaveBeenCalled();
-    expect(workspaceRepository.save).not.toHaveBeenCalled();
+    expect(organizationRepository.save).not.toHaveBeenCalled();
     expect(authorizationClient.ensureRelationship).not.toHaveBeenCalled();
     expect(outboxService.schedule).not.toHaveBeenCalled();
-    expect(workspacePreferenceRepository.upsert).toHaveBeenCalledWith(
+    expect(organizationPreferenceRepository.upsert).toHaveBeenCalledWith(
       {
         identityId,
-        workspaceId: workspace.id,
+        organizationId: organization.id,
         tenantId: tenant.id,
       },
       { tx: {} },
     );
   });
 
-  it("creates the default workspace when the personal tenant already exists", async () => {
+  it("creates the default organization when the personal tenant already exists", async () => {
     const tenantRepository = {
       findBySlug: vi.fn().mockResolvedValue(tenant),
       save: vi.fn(),
     };
-    const workspaceRepository = {
+    const organizationRepository = {
       findMany: vi.fn().mockResolvedValue([]),
-      save: vi.fn().mockResolvedValue(workspace),
+      save: vi.fn().mockResolvedValue(organization),
     };
     const outboxService = {
       schedule: vi.fn().mockResolvedValue({ id: "outbox-1" }),
@@ -253,24 +253,24 @@ describe("OnboardingService", () => {
         upsert: vi.fn().mockResolvedValue({ id: identityId }),
       },
       tenantRepository,
-      workspaceRepository,
+      organizationRepository,
       outboxService,
     });
 
-    await expect(service.provisionPersonalWorkspace(identityId)).resolves.toEqual({
+    await expect(service.provisionPersonalOrganization(identityId)).resolves.toEqual({
       tenant,
-      workspace,
+      organization,
       created: false,
     });
 
     expect(tenantRepository.save).not.toHaveBeenCalled();
-    expect(workspaceRepository.save).toHaveBeenCalledOnce();
+    expect(organizationRepository.save).toHaveBeenCalledOnce();
     expect(outboxService.schedule).toHaveBeenCalledWith(
-      expect.objectContaining({ eventType: WorkspaceCreatedEvent.type }),
+      expect.objectContaining({ eventType: OrganizationCreatedEvent.type }),
       { tx: {} },
     );
     expect(outboxService.schedule).toHaveBeenCalledWith(
-      expect.objectContaining({ eventType: WorkspaceRelationCreatedEvent.type }),
+      expect.objectContaining({ eventType: OrganizationRelationCreatedEvent.type }),
       { tx: {} },
     );
   });

@@ -7,5 +7,5 @@ export const createContext = async (request: HttpRequest): Promise<AttachmentCon
   headers: request.headers,
   ...(request.identity ? { identity: request.identity } : {}),
   ...(request.tenantId ? { tenantId: request.tenantId } : {}),
-  ...(request.workspaceId ? { workspaceId: request.workspaceId } : {}),
+  ...(request.organizationId ? { organizationId: request.organizationId } : {}),
 });

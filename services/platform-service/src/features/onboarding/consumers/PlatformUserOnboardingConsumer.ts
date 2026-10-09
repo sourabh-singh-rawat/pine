@@ -40,7 +40,7 @@ export class PlatformUserOnboardingConsumer extends Consumer<
       return;
     }
 
-    await this.onboardingService.provisionPersonalWorkspace(data.userId);
+    await this.onboardingService.provisionPersonalOrganization(data.userId);
     message.ack();
   };
 }

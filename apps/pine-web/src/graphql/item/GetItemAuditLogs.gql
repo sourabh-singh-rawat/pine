@@ -1,5 +1,5 @@
-query GetItemAuditLogs($itemId: String!, $workspaceId: String!) {
-  getItemAuditLogs(itemId: $itemId, workspaceId: $workspaceId) {
+query GetItemAuditLogs($itemId: String!, $organizationId: String!) {
+  getItemAuditLogs(itemId: $itemId, organizationId: $organizationId) {
     id
     entityType
     entityId
@@ -14,7 +14,7 @@ query GetItemAuditLogs($itemId: String!, $workspaceId: String!) {
       createdAt
       updatedAt
     }
-    workspaceId
+    organizationId
     createdAt
   }
 }

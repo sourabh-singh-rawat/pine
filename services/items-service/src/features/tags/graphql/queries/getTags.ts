@@ -13,7 +13,7 @@ builder.queryFields((t) => ({
     resolve: async (_root, { input }) => {
       const service = container.get<ITagService>(TYPES.TagService);
       return service.list({
-        workspaceId: input.workspaceId,
+        organizationId: input.organizationId,
         spaceId: input.spaceId,
       });
     },

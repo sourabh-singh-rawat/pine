@@ -1,4 +1,4 @@
-import type { WorkspaceRelation } from "@/features/workspaces/services/IWorkspaceRelationService";
+import type { OrganizationRelation } from "@/features/organizations/services/IOrganizationRelationService";
 import type { PlatformRelation } from "@/features/platform/services/IPlatformRelationService";
 import type { TenantRelation } from "@/features/tenants/services/ITenantRelationService";
 
@@ -6,7 +6,7 @@ export type IdentityRelations = {
   identityId: string;
   platform: PlatformRelation[];
   tenants: TenantRelation[];
-  workspaces: WorkspaceRelation[];
+  organizations: OrganizationRelation[];
 };
 
 export interface IIdentityRelationService {

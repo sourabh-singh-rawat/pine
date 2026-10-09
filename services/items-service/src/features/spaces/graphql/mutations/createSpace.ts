@@ -17,7 +17,7 @@ builder.mutationFields((t) => ({
 
       return service.create(
         {
-          workspaceId: input.workspaceId,
+          organizationId: input.organizationId,
           name: input.name,
         },
         requireIdentityId(ctx),

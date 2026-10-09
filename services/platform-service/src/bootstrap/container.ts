@@ -25,17 +25,17 @@ import { db } from "@/bootstrap/db";
 import { env } from "@/bootstrap/env";
 import { logger } from "@/bootstrap/logger";
 import {
-  type IWorkspacePreferenceRepository,
-  type IWorkspacePreferenceService,
-  type IWorkspaceRelationService,
-  type IWorkspaceRepository,
-  type IWorkspaceService,
-  WorkspacePreferenceRepository,
-  WorkspacePreferenceService,
-  WorkspaceRelationService,
-  WorkspaceRepository,
-  WorkspaceService,
-} from "@/features/workspaces";
+  type IOrganizationPreferenceRepository,
+  type IOrganizationPreferenceService,
+  type IOrganizationRelationService,
+  type IOrganizationRepository,
+  type IOrganizationService,
+  OrganizationPreferenceRepository,
+  OrganizationPreferenceService,
+  OrganizationRelationService,
+  OrganizationRepository,
+  OrganizationService,
+} from "@/features/organizations";
 import { type IIdentityRelationService, type IPlatformRelationService, IdentityRelationService, PlatformRelationService } from "@/features/platform";
 import { type IIdentityRepository, type IIdentityService, IdentityRepository, IdentityService, PlatformIdentitySyncConsumer } from "@/features/identities";
 import { type IOnboardingService, OnboardingService, PlatformUserOnboardingConsumer } from "@/features/onboarding";
@@ -68,11 +68,11 @@ container.bind<IAuthorizationClient>(TYPES.AuthorizationClient).toConstantValue(
 container.bind<ITenantRepository>(TYPES.TenantRepository).to(TenantRepository);
 container.bind<ITenantService>(TYPES.TenantService).to(TenantService);
 container.bind<ITenantRelationService>(TYPES.TenantRelationService).to(TenantRelationService);
-container.bind<IWorkspaceRepository>(TYPES.WorkspaceRepository).to(WorkspaceRepository);
-container.bind<IWorkspacePreferenceRepository>(TYPES.WorkspacePreferenceRepository).to(WorkspacePreferenceRepository);
-container.bind<IWorkspaceService>(TYPES.WorkspaceService).to(WorkspaceService);
-container.bind<IWorkspacePreferenceService>(TYPES.WorkspacePreferenceService).to(WorkspacePreferenceService);
-container.bind<IWorkspaceRelationService>(TYPES.WorkspaceRelationService).to(WorkspaceRelationService);
+container.bind<IOrganizationRepository>(TYPES.OrganizationRepository).to(OrganizationRepository);
+container.bind<IOrganizationPreferenceRepository>(TYPES.OrganizationPreferenceRepository).to(OrganizationPreferenceRepository);
+container.bind<IOrganizationService>(TYPES.OrganizationService).to(OrganizationService);
+container.bind<IOrganizationPreferenceService>(TYPES.OrganizationPreferenceService).to(OrganizationPreferenceService);
+container.bind<IOrganizationRelationService>(TYPES.OrganizationRelationService).to(OrganizationRelationService);
 container.bind<IPlatformRelationService>(TYPES.PlatformRelationService).to(PlatformRelationService);
 container.bind<IIdentityRelationService>(TYPES.IdentityRelationService).to(IdentityRelationService);
 container.bind<IIdentityRepository>(TYPES.IdentityRepository).to(IdentityRepository);
@@ -104,16 +104,16 @@ export const bindHttpServer = async (): Promise<void> => {
         info: {
           title: "Platform Service",
           version: "0.0.0",
-          description: "Tenant, workspace, and platform member APIs",
+          description: "Tenant, organization, and platform member APIs",
           license: { name: "ISC", url: "https://opensource.org/license/isc-license-txt" },
         },
         servers: [{ url: env.PLATFORM_SERVICE_URL }],
         tags: [
           { name: "tenants", description: "Tenant end-points" },
           { name: "tenant-members", description: "Tenant member end-points" },
-          { name: "workspaces", description: "Workspace end-points" },
+          { name: "organizations", description: "Organization end-points" },
           { name: "platform-relations", description: "Platform relation end-points" },
-          { name: "workspace-relations", description: "Workspace relation end-points" },
+          { name: "organization-relations", description: "Organization relation end-points" },
         ],
       },
       hooks: {

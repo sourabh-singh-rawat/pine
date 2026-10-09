@@ -11,7 +11,7 @@ when-to-use: >
 
 # Testing
 
-Colocated unit tests under `__tests__/` next to the impl (`__tests__/FooService.test.ts`). Canonical: `platform-service` `features/workspaces/services/__tests__/WorkspaceService.test.ts`. Related: `service`, `repository`, `http-route`, `events`, `outbox`. Run: `pnpm exec turbo run test --filter=@pine/<package>`.
+Colocated unit tests under `__tests__/` next to the impl (`__tests__/FooService.test.ts`). Canonical: `platform-service` `features/organizations/services/__tests__/OrganizationService.test.ts`. Related: `service`, `repository`, `http-route`, `events`, `outbox`. Run: `pnpm exec turbo run test --filter=@pine/<package>`.
 
 Do not boot compose, Kratos, or NATS for these tests. Construct the class with fakes; do not resolve the real Inversify container.
 
@@ -20,9 +20,9 @@ Do not boot compose, Kratos, or NATS for these tests. Construct the class with f
 Stub every constructor dependency with `vi.fn()` implementations that satisfy the interface — no `as`, `as never`, or `any`.
 
 ```ts
-const createWorkspaceRepository = (
-  overrides: Partial<IWorkspaceRepository> = {},
-): IWorkspaceRepository => ({
+const createOrganizationRepository = (
+  overrides: Partial<IOrganizationRepository> = {},
+): IOrganizationRepository => ({
   save: vi.fn(),
   update: vi.fn(),
   findById: vi.fn(),
@@ -49,7 +49,7 @@ Assert:
 - Authz: `checkRelationship` called with `namespace`, `object`, `relation`, `subject: \`identity:${id}\``
 - Persistence: repository method + args
 - Outbox: `schedule` called with `eventType` / `aggregateId`; not called on conflict/not-found paths
-- Errors: `rejects.toBeInstanceOf(WorkspaceNotFoundError)` / `InsufficientPermissionError`
+- Errors: `rejects.toBeInstanceOf(OrganizationNotFoundError)` / `InsufficientPermissionError`
 
 Route/resolver tests stay thin: mock the feature service, not repositories. Consumer tests: mock the feature service + ack; feed a valid CloudEvent.
 

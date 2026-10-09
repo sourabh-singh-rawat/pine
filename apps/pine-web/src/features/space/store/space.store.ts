@@ -3,7 +3,7 @@ import { create } from "zustand";
 export type CurrentSpace = {
   id: string;
   name: string;
-  workspaceId: string;
+  organizationId: string;
 };
 
 interface SpaceState {

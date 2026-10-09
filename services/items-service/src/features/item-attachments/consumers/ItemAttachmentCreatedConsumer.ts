@@ -52,7 +52,7 @@ export class ItemAttachmentCreatedConsumer extends Consumer<
       const event = validateEvent(AttachmentQuarantinedEvent, payload);
       const data = event.data;
 
-      if (!data || data.scopeType !== "WORKSPACE") {
+      if (!data || data.scopeType !== "ORGANIZATION") {
         message.ack();
         return;
       }
@@ -76,7 +76,7 @@ export class ItemAttachmentCreatedConsumer extends Consumer<
       const event = validateEvent(AttachmentCreatedEvent, payload);
       const data = event.data;
 
-      if (!data || data.scopeType !== "WORKSPACE") {
+      if (!data || data.scopeType !== "ORGANIZATION") {
         message.ack();
         return;
       }

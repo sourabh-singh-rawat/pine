@@ -71,6 +71,6 @@ One-line role. Canonical: `path`. Related: `other-skill`.
 | Dead package table                           | `orientation` only                                           |
 | Long token/mapping tables                    | `references/` (see M3)                                       |
 
-Do not add a second closing section (`Rules`, `Hard rules`, `Guardrails`, `Traps`, `Do / Don't`, `Package pitfalls`). Put dos in **Recipe**, don’ts in **Anti-patterns**. Samples have no `//` comments. Canonical examples come from the live tree (`platform-service` `workspaces`), not legacy-only happy paths.
+Do not add a second closing section (`Rules`, `Hard rules`, `Guardrails`, `Traps`, `Do / Don't`, `Package pitfalls`). Put dos in **Recipe**, don’ts in **Anti-patterns**. Samples have no `//` comments. Canonical examples come from the live tree (`platform-service` `organizations`), not legacy-only happy paths.
 
-`description` + `when-to-use` use concrete nouns (`getWorkspace`, `HttpRoute`, `pnpm changeset`). Avoid ultra-generic triggers alone (`query`, `mutation`, `build`, `test`).
+`description` + `when-to-use` use concrete nouns (`getOrganization`, `HttpRoute`, `pnpm changeset`). Avoid ultra-generic triggers alone (`query`, `mutation`, `build`, `test`).

@@ -7,7 +7,7 @@ export const AuditLogs = pgTable("audit_logs", {
   entityId: uuid("entity_id").notNull(),
   action: text("action").notNull(),
   actorId: uuid("actor_id"),
-  workspaceId: uuid("workspace_id"),
+  organizationId: uuid("organization_id"),
   tenantId: uuid("tenant_id"),
   payload: jsonb("payload"),
   ...auditColumns,

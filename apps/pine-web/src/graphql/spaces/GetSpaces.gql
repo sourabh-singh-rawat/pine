@@ -1,7 +1,7 @@
-query GetSpaces($workspaceId: String!) {
-  getSpaces(workspaceId: $workspaceId) {
+query GetSpaces($organizationId: String!) {
+  getSpaces(organizationId: $organizationId) {
     id
-    workspaceId
+    organizationId
     name
     createdById
     createdAt

@@ -21,8 +21,8 @@ import {
 } from "@/features/issues";
 
 import {
-  AuthorizationWorkspaceRelationSyncConsumer,
-  AuthorizationWorkspaceSyncConsumer,
+  AuthorizationOrganizationRelationSyncConsumer,
+  AuthorizationOrganizationSyncConsumer,
   AuthorizationPlatformRelationSyncConsumer,
   AuthorizationTenantRelationSyncConsumer,
   AuthorizationTenantSyncConsumer,
@@ -52,11 +52,11 @@ const main = async () => {
     .get<AuthorizationTenantSyncConsumer>(TYPES.AuthorizationTenantSyncConsumer)
     .start();
   void container
-    .get<AuthorizationWorkspaceSyncConsumer>(TYPES.AuthorizationWorkspaceSyncConsumer)
+    .get<AuthorizationOrganizationSyncConsumer>(TYPES.AuthorizationOrganizationSyncConsumer)
     .start();
   void container
-    .get<AuthorizationWorkspaceRelationSyncConsumer>(
-      TYPES.AuthorizationWorkspaceRelationSyncConsumer,
+    .get<AuthorizationOrganizationRelationSyncConsumer>(
+      TYPES.AuthorizationOrganizationRelationSyncConsumer,
     )
     .start();
   void container

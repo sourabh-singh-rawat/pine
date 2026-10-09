@@ -106,7 +106,7 @@ All JetStream consumers are durable. Names are **service-local** — never in `@
 | `items`         | `items-identity-sync`          |
 | `attachment`    | `attachment-identity-sync`     |
 | `notification`  | `notification-identity-sync`   |
-| `authorization` | `authorization-workspace-sync` |
+| `authorization` | `authorization-organization-sync` |
 
 Purpose is the projection, not one durable per event verb. One durable name per consumer class; never share across services.
 

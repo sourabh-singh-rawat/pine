@@ -42,7 +42,7 @@ export const CreateSpaceModal = ({ disabled = false }: CreateSpaceModalProps) =>
       <Modal open={open} onClose={onClose}>
         <ModalHeader
           title="Create Space"
-          subtitle="A Space groups related work in a workspace."
+          subtitle="A Space groups related work in a organization."
           onClose={onClose}
         />
         <ModalBody>

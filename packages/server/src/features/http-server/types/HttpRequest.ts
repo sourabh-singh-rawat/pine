@@ -23,7 +23,7 @@ export type HttpRequest = {
   body: unknown;
   identity?: HttpIdentity;
   tenantId?: string;
-  workspaceId?: string;
+  organizationId?: string;
   file: () => Promise<HttpUploadedFile | undefined>;
   isMultipart: () => boolean;
 };

@@ -4,8 +4,8 @@ description: >
   React features in pine-web / identity-web / platform-web: TanStack routes,
   .gql ops, codegen, Zustand. Use when adding a page, route, or client operation.
 when-to-use: >
-  add page, TanStack route, CreateWorkspace.gql, gen:gql, gen:api, Zustand,
-  useGetWorkspaceQuery
+  add page, TanStack route, CreateOrganization.gql, gen:gql, gen:api, Zustand,
+  useGetOrganizationQuery
 ---
 
 # Web feature
@@ -25,12 +25,12 @@ src/
   shared/  bootstrap/
 ```
 
-Routes are thin (page import only). `src/graphql/<domain>/` matches the server feature (`workspaces`, `tenants`, `identities`). Legacy singular folders (`issue`, `project`) stay until a dedicated rename.
+Routes are thin (page import only). `src/graphql/<domain>/` matches the server feature (`organizations`, `tenants`, `identities`). Legacy singular folders (`issue`, `project`) stay until a dedicated rename.
 
 ## Recipe
 
 1. **UI** under `features/<domain>/`; export from feature `index.ts`. Same problem as the server feature.
-2. **Route** under the correct auth group; match existing URL patterns (`i.$issueId`, `$workspaceId`, …).
+2. **Route** under the correct auth group; match existing URL patterns (`i.$issueId`, `$organizationId`, …).
 
 ```ts
 export const Route = createFileRoute("/_authenticated/i/$issueId")({
@@ -42,9 +42,9 @@ export const Route = createFileRoute("/_authenticated/i/$issueId")({
 
 | Server field      | Client file           | Operation                  |
 | ----------------- | --------------------- | -------------------------- |
-| `getWorkspace`    | `GetWorkspace.gql`    | `query GetWorkspace`       |
-| `getWorkspaces`   | `GetWorkspaces.gql`   | `query GetWorkspaces`      |
-| `createWorkspace` | `CreateWorkspace.gql` | `mutation CreateWorkspace` |
+| `getOrganization`    | `GetOrganization.gql`    | `query GetOrganization`       |
+| `getOrganizations`   | `GetOrganizations.gql`   | `query GetOrganizations`      |
+| `createOrganization` | `CreateOrganization.gql` | `mutation CreateOrganization` |
 
 Existing `FindIssue` / `FindProjects` match current `find*` server fields — leave until the schema is renamed.
 
@@ -57,7 +57,7 @@ Supergraph: `services/api-gateway/dist/supergraph.graphql`. Same `gen` / `gen:gq
 
 4. **State:** server → generated React Query hooks; UI → existing Zustand under feature `store/`.
 
-Hooks: `useXQuery` / `useXMutation` from `@generated/api/@tanstack/react-query.gen` or `@generated/gql`. Do not wrap `*Options` / `*Mutation` factories with `useQuery` / `useMutation` in components (factories are for prefetch, queryClient, tests). Assign the hook return; do not destructure (`const workspaceQuery = useGetWorkspaceQuery(...); workspaceQuery.data`). Enforced by `pine/no-destructure-query-mutation`.
+Hooks: `useXQuery` / `useXMutation` from `@generated/api/@tanstack/react-query.gen` or `@generated/gql`. Do not wrap `*Options` / `*Mutation` factories with `useQuery` / `useMutation` in components (factories are for prefetch, queryClient, tests). Assign the hook return; do not destructure (`const organizationQuery = useGetOrganizationQuery(...); organizationQuery.data`). Enforced by `pine/no-destructure-query-mutation`.
 
 Prefer `@pine/ui` + MUI + `shared` primitives. Build: `pnpm exec turbo run build --filter=@pine/<app>`.
 

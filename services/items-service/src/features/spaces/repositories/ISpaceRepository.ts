@@ -3,7 +3,7 @@ import type { DbClient, Space } from "@/db";
 export type SpaceRepositoryOptions = { tx: DbClient };
 
 export type CreateSpaceEntity = {
-  workspaceId: string;
+  organizationId: string;
   name: string;
   createdById: string;
   id?: string;
@@ -14,7 +14,7 @@ export type UpdateSpaceEntity = {
 };
 
 export type ListSpacesFilter = {
-  workspaceId: string;
+  organizationId: string;
 };
 
 export interface ISpaceRepository {

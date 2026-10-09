@@ -8,10 +8,10 @@ export const requireTenantId = (target: { tenantId?: string }): string => {
   return target.tenantId;
 };
 
-export const requireWorkspaceId = (target: { workspaceId?: string }): string => {
-  if (!target.workspaceId) {
-    throw new UnauthorizedError("Missing workspace context");
+export const requireOrganizationId = (target: { organizationId?: string }): string => {
+  if (!target.organizationId) {
+    throw new UnauthorizedError("Missing organization context");
   }
 
-  return target.workspaceId;
+  return target.organizationId;
 };

@@ -3,7 +3,7 @@ import type { AuditLog, Identity } from "@/db";
 export type ListAuditLogsInput = {
   entityType: string;
   entityId: string;
-  workspaceId: string;
+  organizationId: string;
 };
 
 export type AuditLogWithActor = AuditLog & {

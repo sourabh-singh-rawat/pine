@@ -13,11 +13,11 @@ import { useGetTenantQuery } from "@generated/gql";
 import { Link, useNavigate, useParams, useSearch } from "@tanstack/react-router";
 import { getErrorMessage } from "@shared/ui";
 import type { SyntheticEvent } from "react";
-import { TenantWorkspaces } from "./TenantWorkspaces";
+import { TenantOrganizations } from "./TenantOrganizations";
 import { TenantRelations } from "./TenantRelations";
 import { TenantRoles } from "./TenantRoles";
 
-type TenantDetailTab = "overview" | "relations" | "roles" | "workspaces";
+type TenantDetailTab = "overview" | "relations" | "roles" | "organizations";
 
 const formatDateTime = (value: unknown): string => {
   if (value == null) {
@@ -34,13 +34,13 @@ const formatDateTime = (value: unknown): string => {
 };
 
 const isTenantDetailTab = (value: unknown): value is TenantDetailTab =>
-  value === "overview" || value === "relations" || value === "roles" || value === "workspaces";
+  value === "overview" || value === "relations" || value === "roles" || value === "organizations";
 
 const tenantDetailTabs: ReadonlyArray<{ value: TenantDetailTab; label: string }> = [
   { value: "overview", label: "Overview" },
   { value: "relations", label: "Relations" },
   { value: "roles", label: "Roles" },
-  { value: "workspaces", label: "Workspaces" },
+  { value: "organizations", label: "Organizations" },
 ];
 
 export const TenantDetail = () => {
@@ -179,7 +179,7 @@ export const TenantDetail = () => {
 
           {tab === "roles" ? <TenantRoles tenantId={tenantId} /> : null}
 
-          {tab === "workspaces" ? <TenantWorkspaces tenantId={tenantId} /> : null}
+          {tab === "organizations" ? <TenantOrganizations tenantId={tenantId} /> : null}
         </Box>
       ) : null}
     </Container>

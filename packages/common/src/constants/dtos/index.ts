@@ -7,7 +7,7 @@ export * from "./user-details";
 export * from "./tokens";
 export * from "./user";
 export * from "./service-response";
-export * from "./workspace-registration-data";
+export * from "./organization-registration-data";
 export * from "./list-member";
 export * from "./item";
 export * from "./task-group-form-data";

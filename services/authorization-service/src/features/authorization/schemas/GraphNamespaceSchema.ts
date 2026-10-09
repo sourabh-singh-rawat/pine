@@ -5,7 +5,7 @@ export const GraphNamespaceSchema = Type.Union([
   Type.Literal("profile"),
   Type.Literal("platform"),
   Type.Literal("tenant"),
-  Type.Literal("workspace"),
+  Type.Literal("organization"),
   Type.Literal("space"),
   Type.Literal("list"),
   Type.Literal("item"),

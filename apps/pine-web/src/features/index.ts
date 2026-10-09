@@ -5,7 +5,7 @@ export * from "./item-attachments";
 export * from "./item-checklists";
 export * from "./item-statuses";
 export * from "./item-sub-items";
-export * from "./workspace";
+export * from "./organization";
 export * from "./space";
 export * from "./lists";
 export * from "./view";

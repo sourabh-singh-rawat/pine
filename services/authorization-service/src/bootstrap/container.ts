@@ -15,8 +15,8 @@ import { AuthorizationProfileSyncConsumer } from "@/features/identity";
 import { AuthorizationItemSyncConsumer, AuthorizationListSyncConsumer, AuthorizationSpaceSyncConsumer } from "@/features/issues";
 
 import {
-  AuthorizationWorkspaceRelationSyncConsumer,
-  AuthorizationWorkspaceSyncConsumer,
+  AuthorizationOrganizationRelationSyncConsumer,
+  AuthorizationOrganizationSyncConsumer,
   AuthorizationPlatformRelationSyncConsumer,
   AuthorizationTenantRelationSyncConsumer,
   AuthorizationTenantSyncConsumer,
@@ -35,8 +35,10 @@ container.bind<IAuthorizationGraphProvider>(TYPES.AuthorizationGraphProvider).to
 container.bind<IAuthorizationService>(TYPES.AuthorizationService).to(AuthorizationService);
 container.bind<IAuthorizationClient>(TYPES.AuthorizationClient).toConstantValue(new HttpAuthorizationClient({ baseUrl: env.AUTHORIZATION_SERVICE_URL }));
 container.bind<AuthorizationTenantSyncConsumer>(TYPES.AuthorizationTenantSyncConsumer).to(AuthorizationTenantSyncConsumer);
-container.bind<AuthorizationWorkspaceSyncConsumer>(TYPES.AuthorizationWorkspaceSyncConsumer).to(AuthorizationWorkspaceSyncConsumer);
-container.bind<AuthorizationWorkspaceRelationSyncConsumer>(TYPES.AuthorizationWorkspaceRelationSyncConsumer).to(AuthorizationWorkspaceRelationSyncConsumer);
+container.bind<AuthorizationOrganizationSyncConsumer>(TYPES.AuthorizationOrganizationSyncConsumer).to(AuthorizationOrganizationSyncConsumer);
+container
+  .bind<AuthorizationOrganizationRelationSyncConsumer>(TYPES.AuthorizationOrganizationRelationSyncConsumer)
+  .to(AuthorizationOrganizationRelationSyncConsumer);
 container.bind<AuthorizationTenantRelationSyncConsumer>(TYPES.AuthorizationTenantRelationSyncConsumer).to(AuthorizationTenantRelationSyncConsumer);
 container.bind<AuthorizationPlatformRelationSyncConsumer>(TYPES.AuthorizationPlatformRelationSyncConsumer).to(AuthorizationPlatformRelationSyncConsumer);
 container.bind<AuthorizationProfileSyncConsumer>(TYPES.AuthorizationProfileSyncConsumer).to(AuthorizationProfileSyncConsumer);

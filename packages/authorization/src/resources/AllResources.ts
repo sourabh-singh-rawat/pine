@@ -2,7 +2,7 @@ export type Resource =
   | "profile"
   | "platform"
   | "tenant"
-  | "workspace"
+  | "organization"
   | "space"
   | "list"
   | "item"
@@ -15,7 +15,7 @@ export const RESOURCES: readonly Resource[] = [
   "profile",
   "platform",
   "tenant",
-  "workspace",
+  "organization",
   "space",
   "list",
   "item",

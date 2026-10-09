@@ -1,0 +1,13 @@
+query GetOrganization($id: String!) {
+  getOrganization(id: $id) {
+    id
+    tenantId
+    parentOrganizationId
+    name
+    slug
+    description
+    isActive
+    createdAt
+    updatedAt
+  }
+}

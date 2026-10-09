@@ -8,7 +8,7 @@ export const TYPES = {
   IdentityRepository: Symbol.for("IdentityRepository"),
   SpaceRepository: Symbol.for("SpaceRepository"),
   ItemRepository: Symbol.for("ItemRepository"),
-  WorkspaceRepository: Symbol.for("WorkspaceRepository"),
+  OrganizationRepository: Symbol.for("OrganizationRepository"),
   AttachmentRepository: Symbol.for("AttachmentRepository"),
   AuditLogRepository: Symbol.for("AuditLogRepository"),
   AuditLogService: Symbol.for("IAuditLogService"),

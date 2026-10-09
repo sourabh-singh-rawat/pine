@@ -1,7 +1,0 @@
-mutation SetMyWorkspacePreference($workspaceId: String!) {
-  setMyWorkspacePreference(workspaceId: $workspaceId) {
-    workspaceId
-    tenantId
-    updatedAt
-  }
-}

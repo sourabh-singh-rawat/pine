@@ -3,7 +3,7 @@ import { Box, Chip, IconButton, Stack, Tooltip } from "@mui/material";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState, type MouseEvent } from "react";
 import { useCreateTagMutation, useGetTagsQuery, useSetItemTagsMutation } from "@generated/gql";
-import { useWorkspaceStore } from "@features/workspace/store";
+import { useOrganizationStore } from "@features/organization/store";
 import { TagPickerPopover, type TagItem } from "../ItemTagSelector";
 import type { ItemRowTag } from "../../types";
 
@@ -25,13 +25,13 @@ const PRESET_COLORS: string[] = [
 
 export const ItemTagsCell = ({ itemId, tags = [] }: ItemTagsCellProps) => {
   const queryClient = useQueryClient();
-  const workspaceId = useWorkspaceStore((state) => state.currentWorkspace?.id);
+  const organizationId = useOrganizationStore((state) => state.currentOrganization?.id);
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const [search, setSearch] = useState("");
 
   const tagsQuery = useGetTagsQuery(
-    { input: { workspaceId: workspaceId ?? "" } },
-    { enabled: Boolean(workspaceId) },
+    { input: { organizationId: organizationId ?? "" } },
+    { enabled: Boolean(organizationId) },
   );
 
   const createTagMutation = useCreateTagMutation();
@@ -79,7 +79,7 @@ export const ItemTagsCell = ({ itemId, tags = [] }: ItemTagsCellProps) => {
 
   const handleCreateTag = async () => {
     const trimmed = search.trim();
-    if (!trimmed || !workspaceId) return;
+    if (!trimmed || !organizationId) return;
 
     const existing = allTags.find((tag) => tag.name.toLowerCase() === trimmed.toLowerCase());
     if (existing) {
@@ -95,14 +95,14 @@ export const ItemTagsCell = ({ itemId, tags = [] }: ItemTagsCellProps) => {
 
     const response = await createTagMutation.mutateAsync({
       input: {
-        workspaceId,
+        organizationId,
         name: trimmed,
         color,
       },
     });
 
     void queryClient.invalidateQueries({
-      queryKey: useGetTagsQuery.getKey({ input: { workspaceId } }),
+      queryKey: useGetTagsQuery.getKey({ input: { organizationId } }),
     });
 
     const createdTag = response.createTag;

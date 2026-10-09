@@ -1,0 +1,8 @@
+mutation CreateOrganizationRelation($input: CreateOrganizationRelationInput!) {
+  createOrganizationRelation(input: $input) {
+    id
+    organizationId
+    identityId
+    relation
+  }
+}

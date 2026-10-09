@@ -20,7 +20,7 @@ export class SpaceRepository implements ISpaceRepository {
       .insert(Spaces)
       .values({
         id: entity.id,
-        workspaceId: entity.workspaceId,
+        organizationId: entity.organizationId,
         name: entity.name,
         createdById: entity.createdById,
         createdAt: now,

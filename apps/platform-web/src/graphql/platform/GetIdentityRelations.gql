@@ -12,9 +12,9 @@ query GetIdentityRelations($identityId: String!) {
       identityId
       relation
     }
-    workspaces {
+    organizations {
       id
-      workspaceId
+      organizationId
       identityId
       relation
     }

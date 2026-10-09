@@ -1,7 +1,7 @@
 mutation CreateTag($input: CreateTagInput!) {
   createTag(input: $input) {
     id
-    workspaceId
+    organizationId
     spaceId
     name
     color

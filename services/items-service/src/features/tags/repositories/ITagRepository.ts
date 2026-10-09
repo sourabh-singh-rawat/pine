@@ -6,7 +6,7 @@ export type TagRepositoryOptions = {
 
 export type CreateTagEntity = {
   id?: string;
-  workspaceId: string;
+  organizationId: string;
   spaceId?: string | null;
   name: string;
   color?: string;
@@ -20,7 +20,7 @@ export type UpdateTagEntity = {
 };
 
 export type FindTagsFilter = {
-  workspaceId: string;
+  organizationId: string;
   spaceId?: string | null;
 };
 

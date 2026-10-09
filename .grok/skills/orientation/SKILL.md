@@ -10,7 +10,7 @@ when-to-use: >
 
 # Orientation
 
-pnpm + Turborepo. Workspace: `apps/**`, `packages/**`, `services/**`. Related: `service-feature`, `dev-loop`, `shared-packages`.
+pnpm + Turborepo. Organization: `apps/**`, `packages/**`, `services/**`. Related: `service-feature`, `dev-loop`, `shared-packages`.
 
 ## Where to edit
 
@@ -37,9 +37,9 @@ Extract to `packages/*` only when **two** services need the same logic. Feature 
 | Domain                                                 | Owner                                                              |
 | ------------------------------------------------------ | ------------------------------------------------------------------ |
 | Auth / IdP / OAuth                                     | `identity-service` + Ory (Kratos/Hydra) + `identity-web`           |
-| Platform / tenants / workspaces                        | `platform-service` + `platform-web`                                |
+| Platform / tenants / organizations                        | `platform-service` + `platform-web`                                |
 | Graph authorization (Keto)                             | `authorization-service`                                            |
-| Workspaces / projects / items / statuses               | `items-service` + `pine-web`                                       |
+| Organizations / projects / items / statuses               | `items-service` + `pine-web`                                       |
 | Attachments                                            | `attachment-service`                                               |
 | Transactional email / notifications                    | `notification-service` (`integrations/email`)                      |
 | Federated GraphQL supergraph                           | `api-gateway` (`dist/supergraph.graphql`) — no feature fields here |

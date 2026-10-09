@@ -77,7 +77,7 @@ describe("AttachmentService", () => {
     it("creates attachment and attachment version within a transaction", async () => {
       const savedAttachment: Attachment = {
         id: "att-123",
-        scopeType: ATTACHMENT_SCOPE_TYPE.WORKSPACE,
+        scopeType: ATTACHMENT_SCOPE_TYPE.ORGANIZATION,
         scopeId: "org-1",
         tenantId: "tenant-1",
         currentVersionId: "ver-123",
@@ -99,7 +99,7 @@ describe("AttachmentService", () => {
         fileSize: 10,
         sha256: "abc",
         storageProvider: "seaweed",
-        storageObjectKey: "quarantine/workspace/org-1/att-123",
+        storageObjectKey: "quarantine/organization/org-1/att-123",
         createdBy: "user-1",
         createdAt: new Date(),
       };
@@ -112,21 +112,21 @@ describe("AttachmentService", () => {
       const expectedSha256 = createHash("sha256").update(data).digest("hex");
 
       const result = await service.createFromUpload({
-        scopeType: ATTACHMENT_SCOPE_TYPE.WORKSPACE,
+        scopeType: ATTACHMENT_SCOPE_TYPE.ORGANIZATION,
         scopeId: "org-1",
         tenantId: "tenant-1",
         filename: "test.png",
         contentType: "image/png",
         data,
         storageProvider: "seaweed",
-        storageObjectKey: "quarantine/workspace/org-1/att-123",
+        storageObjectKey: "quarantine/organization/org-1/att-123",
         createdBy: "user-1",
       });
 
       expect(result).toBe(savedAttachment);
       expect(attachmentRepository.save).toHaveBeenCalledWith(
         expect.objectContaining({
-          scopeType: ATTACHMENT_SCOPE_TYPE.WORKSPACE,
+          scopeType: ATTACHMENT_SCOPE_TYPE.ORGANIZATION,
           scopeId: "org-1",
           tenantId: "tenant-1",
           status: ATTACHMENT_STATUS.QUARANTINED,
@@ -143,7 +143,7 @@ describe("AttachmentService", () => {
           fileSize: data.byteLength,
           sha256: expectedSha256,
           storageProvider: "seaweed",
-          storageObjectKey: "quarantine/workspace/org-1/att-123",
+          storageObjectKey: "quarantine/organization/org-1/att-123",
           createdBy: "user-1",
         }),
         expect.anything(),
@@ -163,7 +163,7 @@ describe("AttachmentService", () => {
     it("deletes attachment when found", async () => {
       const existing: Attachment = {
         id: "att-1",
-        scopeType: ATTACHMENT_SCOPE_TYPE.WORKSPACE,
+        scopeType: ATTACHMENT_SCOPE_TYPE.ORGANIZATION,
         scopeId: "org-1",
         tenantId: "tenant-1",
         currentVersionId: "ver-1",
@@ -198,7 +198,7 @@ describe("AttachmentService", () => {
     it("throws NotFoundError when version is not found", async () => {
       const existingAttachment: Attachment = {
         id: "att-1",
-        scopeType: ATTACHMENT_SCOPE_TYPE.WORKSPACE,
+        scopeType: ATTACHMENT_SCOPE_TYPE.ORGANIZATION,
         scopeId: "org-1",
         tenantId: "tenant-1",
         currentVersionId: "ver-1",
@@ -223,7 +223,7 @@ describe("AttachmentService", () => {
     it("returns stream and metadata for valid version", async () => {
       const existingAttachment: Attachment = {
         id: "att-1",
-        scopeType: ATTACHMENT_SCOPE_TYPE.WORKSPACE,
+        scopeType: ATTACHMENT_SCOPE_TYPE.ORGANIZATION,
         scopeId: "org-1",
         tenantId: "tenant-1",
         currentVersionId: "ver-1",
@@ -244,7 +244,7 @@ describe("AttachmentService", () => {
         fileSize: 1024,
         sha256: "dummy-sha256",
         storageProvider: "seaweed",
-        storageObjectKey: "trusted/workspace/org-1/att-1/ver-1",
+        storageObjectKey: "trusted/organization/org-1/att-1/ver-1",
         createdBy: "user-1",
         createdAt: new Date(),
       };
@@ -265,7 +265,9 @@ describe("AttachmentService", () => {
       expect(result.filename).toBe("document.pdf");
       expect(result.contentType).toBe("application/pdf");
       expect(result.fileSize).toBe(1024);
-      expect(objectStorage.getObject).toHaveBeenCalledWith("trusted/workspace/org-1/att-1/ver-1");
+      expect(objectStorage.getObject).toHaveBeenCalledWith(
+        "trusted/organization/org-1/att-1/ver-1",
+      );
     });
   });
 });

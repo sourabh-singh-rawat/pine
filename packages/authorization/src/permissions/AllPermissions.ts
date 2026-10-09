@@ -9,13 +9,13 @@ export type TenantPermission =
   | "read_list"
   | "configure"
   | "manage_members"
-  | "create_workspace"
+  | "create_organization"
   | "assign_admin"
   | "assign_owner"
   | "suspend"
   | "delete";
 
-export type WorkspacePermission =
+export type OrganizationPermission =
   | "read"
   | "update"
   | "manage_members"
@@ -37,7 +37,7 @@ export type Permission =
   | ProfilePermission
   | PlatformPermission
   | TenantPermission
-  | WorkspacePermission
+  | OrganizationPermission
   | SpacePermission
   | ListPermission
   | ItemPermission
@@ -48,7 +48,7 @@ export type PermissionKey =
   | `profile:${ProfilePermission}`
   | `platform:${PlatformPermission}`
   | `tenant:${TenantPermission}`
-  | `workspace:${WorkspacePermission}`
+  | `organization:${OrganizationPermission}`
   | `space:${SpacePermission}`
   | `list:${ListPermission}`
   | `item:${ItemPermission}`
@@ -68,14 +68,14 @@ export const TENANT_PERMISSIONS: readonly TenantPermission[] = [
   "read_list",
   "configure",
   "manage_members",
-  "create_workspace",
+  "create_organization",
   "assign_admin",
   "assign_owner",
   "suspend",
   "delete",
 ];
 
-export const WORKSPACE_PERMISSIONS: readonly WorkspacePermission[] = [
+export const ORGANIZATION_PERMISSIONS: readonly OrganizationPermission[] = [
   "read",
   "update",
   "manage_members",
@@ -126,7 +126,7 @@ export const ALL_PERMISSIONS = [
   ...catalog("profile", PROFILE_PERMISSIONS),
   ...catalog("platform", PLATFORM_PERMISSIONS),
   ...catalog("tenant", TENANT_PERMISSIONS),
-  ...catalog("workspace", WORKSPACE_PERMISSIONS),
+  ...catalog("organization", ORGANIZATION_PERMISSIONS),
   ...catalog("space", SPACE_PERMISSIONS),
   ...catalog("list", LIST_PERMISSIONS),
   ...catalog("item", ITEM_PERMISSIONS),

@@ -5,7 +5,7 @@ import { useMemo } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import type { CreateSpaceInput } from "@generated/gql/graphql";
 import { useCreateSpaceMutation, useGetSpacesQuery } from "@generated/gql";
-import { useWorkspaceStore } from "@features/workspace";
+import { useOrganizationStore } from "@features/organization";
 import { PrimaryButton, TextField, useSnackbar } from "@shared";
 
 type SpaceFormValues = {
@@ -20,7 +20,7 @@ export const SpaceForm = ({ onSuccess }: SpaceFormProps) => {
   const messageBar = useSnackbar();
   const queryClient = useQueryClient();
   const createSpaceMutation = useCreateSpaceMutation();
-  const currentWorkspace = useWorkspaceStore((s) => s.currentWorkspace);
+  const currentOrganization = useOrganizationStore((s) => s.currentOrganization);
 
   const defaultValues: SpaceFormValues = useMemo(() => ({ name: "" }), []);
   const form = useForm({
@@ -29,20 +29,20 @@ export const SpaceForm = ({ onSuccess }: SpaceFormProps) => {
   });
 
   const onSubmit: SubmitHandler<SpaceFormValues> = async ({ name }) => {
-    if (!currentWorkspace) {
-      messageBar.error("Select a workspace before creating a space");
+    if (!currentOrganization) {
+      messageBar.error("Select a organization before creating a space");
       return;
     }
 
     const input: CreateSpaceInput = {
-      workspaceId: currentWorkspace.id,
+      organizationId: currentOrganization.id,
       name,
     };
 
     try {
       await createSpaceMutation.mutateAsync({ input });
       await queryClient.invalidateQueries({
-        queryKey: useGetSpacesQuery.getKey({ workspaceId: currentWorkspace.id }),
+        queryKey: useGetSpacesQuery.getKey({ organizationId: currentOrganization.id }),
       });
       messageBar.success("Created space successfully");
       onSuccess?.();

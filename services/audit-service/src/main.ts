@@ -15,7 +15,7 @@ import { logger } from "@/bootstrap/logger";
 import type { AuditAttachmentSyncConsumer } from "@/features/attachments";
 import type { AuditIdentitySyncConsumer } from "@/features/identities";
 import type { AuditItemsSyncConsumer } from "@/features/items";
-import type { AuditPlatformSyncConsumer } from "@/features/workspaces";
+import type { AuditPlatformSyncConsumer } from "@/features/organizations";
 
 export { container, db } from "@/bootstrap";
 export { builder, createContext } from "@/graphql";

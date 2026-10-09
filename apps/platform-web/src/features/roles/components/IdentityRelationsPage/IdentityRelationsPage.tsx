@@ -46,8 +46,8 @@ export const IdentityRelationsPage = () => {
   const relations = relationsQuery.data;
   const platform = relations?.platform ?? [];
   const tenants = relations?.tenants ?? [];
-  const workspaces = relations?.workspaces ?? [];
-  const hasAnyRelation = platform.length > 0 || tenants.length > 0 || workspaces.length > 0;
+  const organizations = relations?.organizations ?? [];
+  const hasAnyRelation = platform.length > 0 || tenants.length > 0 || organizations.length > 0;
 
   return (
     <Container maxWidth="lg" sx={{ py: 4 }}>
@@ -82,7 +82,7 @@ export const IdentityRelationsPage = () => {
       ) : null}
 
       {relationsQuery.isSuccess && !hasAnyRelation ? (
-        <Alert severity="info">No platform, tenant, or workspace relations found.</Alert>
+        <Alert severity="info">No platform, tenant, or organization relations found.</Alert>
       ) : null}
 
       {relationsQuery.isSuccess && hasAnyRelation ? (
@@ -92,7 +92,7 @@ export const IdentityRelationsPage = () => {
             displayName={displayName}
             platform={platform}
             tenants={tenants}
-            workspaces={workspaces}
+            organizations={organizations}
             height={480}
           />
 
@@ -122,13 +122,13 @@ export const IdentityRelationsPage = () => {
             ) : null}
           </RelationSection>
 
-          <RelationSection title="Workspaces" emptyLabel="No workspace relations.">
-            {workspaces.length > 0 ? (
+          <RelationSection title="Organizations" emptyLabel="No organization relations.">
+            {organizations.length > 0 ? (
               <RelationTable
-                columns={["Workspace ID", "Relation"]}
-                rows={workspaces.map((item) => ({
-                  key: item.id ?? `${item.workspaceId}:${item.relation}`,
-                  cells: [item.workspaceId, item.relation],
+                columns={["Organization ID", "Relation"]}
+                rows={organizations.map((item) => ({
+                  key: item.id ?? `${item.organizationId}:${item.relation}`,
+                  cells: [item.organizationId, item.relation],
                 }))}
               />
             ) : null}

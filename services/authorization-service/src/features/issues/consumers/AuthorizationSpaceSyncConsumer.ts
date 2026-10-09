@@ -1,6 +1,6 @@
 import {
   spaceOwnerRelationship,
-  spaceWorkspaceRelationship,
+  spaceOrganizationRelationship,
   type GraphRelationship,
 } from "@pine/authorization";
 import {
@@ -55,7 +55,7 @@ export class AuthorizationSpaceSyncConsumer extends Consumer<CloudEvent<SpaceDat
 
   private spaceGraph(data: SpaceData): GraphRelationship[] {
     return [
-      spaceWorkspaceRelationship(data.id, data.workspaceId),
+      spaceOrganizationRelationship(data.id, data.organizationId),
       spaceOwnerRelationship(data.id, data.createdById),
     ];
   }

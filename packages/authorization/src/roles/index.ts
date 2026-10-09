@@ -6,18 +6,18 @@ export {
   ALL_TENANT_ROLES,
   TENANT_ROLES,
   type TenantRoleKey,
-  ALL_WORKSPACE_ROLES,
-  WORKSPACE_ROLES,
-  type WorkspaceRoleKey,
+  ALL_ORGANIZATION_ROLES,
+  ORGANIZATION_ROLES,
+  type OrganizationRoleKey,
   ALL_SYSTEM_ROLES,
 } from "./SystemRoles";
 export {
   findPlatformRoleDefinition,
   findTenantRoleDefinition,
-  findWorkspaceRoleDefinition,
+  findOrganizationRoleDefinition,
   findSystemRoleDefinition,
   platformRolePermissionKeys,
   tenantRolePermissionKeys,
-  workspaceRolePermissionKeys,
+  organizationRolePermissionKeys,
   systemRolePermissionKeys,
 } from "./findSystemRoleDefinition";

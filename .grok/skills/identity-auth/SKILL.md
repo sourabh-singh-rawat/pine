@@ -36,7 +36,7 @@ HTTP: `http-route` (`signin`, `register`, `verifyEmail`, `getIdentityFromSession
 | Process               | How                                                                                                                                            |
 | --------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
 | `api-gateway`         | `HttpIdentityClient.resolveRequestIdentity` (Bearer or `accessToken` cookie → identity-service; else Kratos `session` cookie)                  |
-| Other services        | `resolveIdentityFromHeaders` (`x-identity-id`, `x-identity-auth-method`) + `resolveTenantContextFromHeaders` (`x-tenant-id`, `x-workspace-id`) |
+| Other services        | `resolveIdentityFromHeaders` (`x-identity-id`, `x-identity-auth-method`) + `resolveTenantContextFromHeaders` (`x-tenant-id`, `x-organization-id`) |
 | Resolvers / routes    | `requireIdentityId(ctx)` / `requireIdentity(request)` from `@pine/identity`                                                                    |
 | Call identity-service | `HttpIdentityClient`                                                                                                                           |
 

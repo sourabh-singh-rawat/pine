@@ -1,0 +1,7 @@
+query GetMyOrganizationPreference {
+  getMyOrganizationPreference {
+    organizationId
+    tenantId
+    updatedAt
+  }
+}

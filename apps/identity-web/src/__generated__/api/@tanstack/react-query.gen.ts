@@ -4,8 +4,8 @@ import { type DefaultError, queryOptions, useMutation, type UseMutationOptions, 
 import type { AxiosError } from 'axios';
 
 import { client } from '../client.gen';
-import { acceptConsentChallenge, acceptLoginChallenge, authorize, checkRelationship, createOAuthClient, createUploadTarget, deleteOAuthClient, deleteRelationship, ensureRelationship, exchangeToken, getAttachmentContent, getAttachmentDerivative, getAttachmentVersionContent, getConsentChallenge, getCurrentUser, getIdentityFromAccessToken, getIdentityFromSession, getOAuthClient, introspectToken, listRelationships, logout, type Options, register, rejectConsentChallenge, resendVerificationEmail, signInWithEmailAndPassword, storeAttachmentDerivative, storeAttachmentMetadata, updateSecurityStatus, uploadToTarget, verifyEmail } from '../sdk.gen';
-import type { AcceptConsentChallengeData, AcceptConsentChallengeResponse, AcceptLoginChallengeData, AcceptLoginChallengeResponse, AuthorizeData, CheckRelationshipData, CheckRelationshipResponse, CreateOAuthClientData, CreateOAuthClientResponse, CreateUploadTargetData, CreateUploadTargetResponse, DeleteOAuthClientData, DeleteOAuthClientResponse, DeleteRelationshipData, DeleteRelationshipResponse, EnsureRelationshipData, EnsureRelationshipResponse, ExchangeTokenData, ExchangeTokenResponse, GetAttachmentContentData, GetAttachmentDerivativeData, GetAttachmentVersionContentData, GetConsentChallengeData, GetConsentChallengeResponse, GetCurrentUserData, GetCurrentUserResponse, GetIdentityFromAccessTokenData, GetIdentityFromAccessTokenResponse, GetIdentityFromSessionData, GetIdentityFromSessionResponse, GetOAuthClientData, GetOAuthClientResponse, IntrospectTokenData, IntrospectTokenResponse, ListRelationshipsData, ListRelationshipsResponse, LogoutData, LogoutResponse, RegisterData, RegisterResponse, RejectConsentChallengeData, RejectConsentChallengeResponse, ResendVerificationEmailData, ResendVerificationEmailResponse, SignInWithEmailAndPasswordData, SignInWithEmailAndPasswordResponse, StoreAttachmentDerivativeData, StoreAttachmentDerivativeResponse, StoreAttachmentMetadataData, StoreAttachmentMetadataResponse, UpdateSecurityStatusData, UpdateSecurityStatusResponse, UploadToTargetData, UploadToTargetResponse, VerifyEmailData, VerifyEmailResponse } from '../types.gen';
+import { acceptConsentChallenge, acceptLoginChallenge, authorize, checkRelationship, createOAuthClient, createUploadTarget, deleteOAuthClient, deleteRelationship, ensureRelationship, exchangeToken, getAttachmentContent, getAttachmentDerivative, getAttachmentVersionContent, getConsentChallenge, getCurrentUser, getIdentityFromAccessToken, getIdentityFromSession, getJwks, getOAuthClient, getOpenIdConfiguration, introspectToken, listRelationships, logout, type Options, register, rejectConsentChallenge, resendVerificationEmail, signInWithEmailAndPassword, storeAttachmentDerivative, storeAttachmentMetadata, updateSecurityStatus, uploadToTarget, verifyEmail } from '../sdk.gen';
+import type { AcceptConsentChallengeData, AcceptConsentChallengeResponse, AcceptLoginChallengeData, AcceptLoginChallengeResponse, AuthorizeData, CheckRelationshipData, CheckRelationshipResponse, CreateOAuthClientData, CreateOAuthClientResponse, CreateUploadTargetData, CreateUploadTargetResponse, DeleteOAuthClientData, DeleteOAuthClientResponse, DeleteRelationshipData, DeleteRelationshipResponse, EnsureRelationshipData, EnsureRelationshipResponse, ExchangeTokenData, ExchangeTokenResponse, GetAttachmentContentData, GetAttachmentDerivativeData, GetAttachmentVersionContentData, GetConsentChallengeData, GetConsentChallengeResponse, GetCurrentUserData, GetCurrentUserResponse, GetIdentityFromAccessTokenData, GetIdentityFromAccessTokenResponse, GetIdentityFromSessionData, GetIdentityFromSessionResponse, GetJwksData, GetJwksResponse, GetOAuthClientData, GetOAuthClientResponse, GetOpenIdConfigurationData, GetOpenIdConfigurationResponse, IntrospectTokenData, IntrospectTokenResponse, ListRelationshipsData, ListRelationshipsResponse, LogoutData, LogoutResponse, RegisterData, RegisterResponse, RejectConsentChallengeData, RejectConsentChallengeResponse, ResendVerificationEmailData, ResendVerificationEmailResponse, SignInWithEmailAndPasswordData, SignInWithEmailAndPasswordResponse, StoreAttachmentDerivativeData, StoreAttachmentDerivativeResponse, StoreAttachmentMetadataData, StoreAttachmentMetadataResponse, UpdateSecurityStatusData, UpdateSecurityStatusResponse, UploadToTargetData, UploadToTargetResponse, VerifyEmailData, VerifyEmailResponse } from '../types.gen';
 
 /**
  * Sign in with email and password
@@ -514,6 +514,60 @@ export const getOAuthClientOptions = (options: Options<GetOAuthClientData>) => q
  * Fetch an OAuth 2.0 client by client id
  */
 export const useGetOAuthClientQuery = (options: Options<GetOAuthClientData>) => useQuery(getOAuthClientOptions(options));
+
+export const getOpenIdConfigurationQueryKey = (options?: Options<GetOpenIdConfigurationData>) => createQueryKey('getOpenIdConfiguration', options);
+
+/**
+ * OpenID Provider configuration
+ *
+ * OIDC discovery document for the public authorization server. Endpoint URLs use OAUTH_PUBLIC_URL.
+ */
+export const getOpenIdConfigurationOptions = (options?: Options<GetOpenIdConfigurationData>) => queryOptions<GetOpenIdConfigurationResponse, AxiosError<DefaultError>, GetOpenIdConfigurationResponse, ReturnType<typeof getOpenIdConfigurationQueryKey>>({
+    queryFn: async ({ queryKey, signal }) => {
+        const { data } = await getOpenIdConfiguration({
+            ...options,
+            ...queryKey[0],
+            signal,
+            throwOnError: true
+        });
+        return data;
+    },
+    queryKey: getOpenIdConfigurationQueryKey(options)
+});
+
+/**
+ * OpenID Provider configuration
+ *
+ * OIDC discovery document for the public authorization server. Endpoint URLs use OAUTH_PUBLIC_URL.
+ */
+export const useGetOpenIdConfigurationQuery = (options?: Options<GetOpenIdConfigurationData>) => useQuery(getOpenIdConfigurationOptions(options));
+
+export const getJwksQueryKey = (options?: Options<GetJwksData>) => createQueryKey('getJwks', options);
+
+/**
+ * JSON Web Key Set
+ *
+ * Public keys used to verify ID tokens issued by the authorization server.
+ */
+export const getJwksOptions = (options?: Options<GetJwksData>) => queryOptions<GetJwksResponse, AxiosError<DefaultError>, GetJwksResponse, ReturnType<typeof getJwksQueryKey>>({
+    queryFn: async ({ queryKey, signal }) => {
+        const { data } = await getJwks({
+            ...options,
+            ...queryKey[0],
+            signal,
+            throwOnError: true
+        });
+        return data;
+    },
+    queryKey: getJwksQueryKey(options)
+});
+
+/**
+ * JSON Web Key Set
+ *
+ * Public keys used to verify ID tokens issued by the authorization server.
+ */
+export const useGetJwksQuery = (options?: Options<GetJwksData>) => useQuery(getJwksOptions(options));
 
 export const getAttachmentDerivativeQueryKey = (options: Options<GetAttachmentDerivativeData>) => createQueryKey('getAttachmentDerivative', options);
 

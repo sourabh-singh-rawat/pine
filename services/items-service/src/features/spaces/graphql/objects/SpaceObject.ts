@@ -4,7 +4,7 @@ import type { Space } from "@/db";
 export const SpaceObject = builder.objectRef<Space>("SpaceObject").implement({
   fields: (t) => ({
     id: t.exposeString("id"),
-    workspaceId: t.exposeString("workspaceId"),
+    organizationId: t.exposeString("organizationId"),
     name: t.exposeString("name"),
     createdById: t.exposeString("createdById"),
     createdAt: t.expose("createdAt", { type: "DateTimeISO" }),

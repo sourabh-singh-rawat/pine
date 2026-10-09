@@ -9,7 +9,7 @@ import {
   useGetTagsQuery,
   useSetItemTagsMutation,
 } from "@generated/gql";
-import { useWorkspaceStore } from "@features/workspace/store";
+import { useOrganizationStore } from "@features/organization/store";
 import { TagPickerPopover } from "./TagPickerPopover";
 import type { ItemTagSelectorProps, TagItem } from "./types";
 
@@ -26,13 +26,13 @@ const PRESET_COLORS: string[] = [
 export const ItemTagSelector = ({ itemId }: ItemTagSelectorProps) => {
   const theme = useTheme();
   const queryClient = useQueryClient();
-  const workspaceId = useWorkspaceStore((state) => state.currentWorkspace?.id);
+  const organizationId = useOrganizationStore((state) => state.currentOrganization?.id);
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const [search, setSearch] = useState("");
 
   const tagsQuery = useGetTagsQuery(
-    { input: { workspaceId: workspaceId ?? "" } },
-    { enabled: Boolean(workspaceId) },
+    { input: { organizationId: organizationId ?? "" } },
+    { enabled: Boolean(organizationId) },
   );
 
   const itemTagsQuery = useGetItemTagsQuery({ itemId }, { enabled: Boolean(itemId) });
@@ -85,7 +85,7 @@ export const ItemTagSelector = ({ itemId }: ItemTagSelectorProps) => {
 
   const handleCreateTag = async () => {
     const trimmed = search.trim();
-    if (!trimmed || !workspaceId) return;
+    if (!trimmed || !organizationId) return;
 
     const existing = allTags.find((tag) => tag.name.toLowerCase() === trimmed.toLowerCase());
     if (existing) {
@@ -101,14 +101,14 @@ export const ItemTagSelector = ({ itemId }: ItemTagSelectorProps) => {
 
     const response = await createTagMutation.mutateAsync({
       input: {
-        workspaceId,
+        organizationId,
         name: trimmed,
         color,
       },
     });
 
     void queryClient.invalidateQueries({
-      queryKey: useGetTagsQuery.getKey({ input: { workspaceId } }),
+      queryKey: useGetTagsQuery.getKey({ input: { organizationId } }),
     });
 
     const createdTag = response.createTag;

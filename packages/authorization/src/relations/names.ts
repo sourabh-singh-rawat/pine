@@ -5,8 +5,8 @@ export const ROLE_MEMBER = "member";
 export const PERMISSION_HAS = "has";
 export const PLATFORM_TENANT = "tenant";
 export const TENANT_PLATFORM = "platform";
-export const WORKSPACE_TENANT = "tenant";
-export const SPACE_WORKSPACE = "workspace";
+export const ORGANIZATION_TENANT = "tenant";
+export const SPACE_ORGANIZATION = "organization";
 export const LIST_SPACE = "space";
 export const ITEM_LIST = "list";
 

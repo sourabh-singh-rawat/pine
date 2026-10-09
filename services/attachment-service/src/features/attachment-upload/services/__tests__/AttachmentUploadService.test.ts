@@ -90,7 +90,7 @@ describe("AttachmentUploadService", () => {
 
   const makeRecord = (overrides?: Partial<AttachmentUpload>): AttachmentUpload => ({
     id: "upload-1",
-    scopeType: ATTACHMENT_SCOPE_TYPE.WORKSPACE,
+    scopeType: ATTACHMENT_SCOPE_TYPE.ORGANIZATION,
     scopeId: "org-1",
     tenantId: "tenant-1",
     operationId: null,
@@ -100,7 +100,7 @@ describe("AttachmentUploadService", () => {
     contentType: "image/png",
     expectedSize: 1024,
     storageProvider: "seaweed",
-    storageObjectKey: "quarantine/workspace/org-1/upload-1",
+    storageObjectKey: "quarantine/organization/org-1/upload-1",
     expiresAt: new Date(Date.now() + 60_000),
     createdBy: "user-1",
     createdAt: new Date(),
@@ -116,7 +116,7 @@ describe("AttachmentUploadService", () => {
     it("creates target URL and saves pending upload record", async () => {
       const service = createService();
       const target = await service.createUploadTarget({
-        scopeType: ATTACHMENT_SCOPE_TYPE.WORKSPACE,
+        scopeType: ATTACHMENT_SCOPE_TYPE.ORGANIZATION,
         scopeId: "01a015a6-2e8f-74da-92ce-174d8adb00d4",
         tenantId: "tenant-1",
         filename: "avatar.png",
@@ -128,7 +128,7 @@ describe("AttachmentUploadService", () => {
       expect(target.url).toMatch(/^http:\/\/127\.0\.0\.1:4001\/attachments\/upload\/[0-9a-f-]+$/);
       expect(target.objectId).toMatch(
         new RegExp(
-          `^${ATTACHMENT_STORAGE_ZONE.QUARANTINE}/workspace/01a015a6-2e8f-74da-92ce-174d8adb00d4/[0-9a-f-]+$`,
+          `^${ATTACHMENT_STORAGE_ZONE.QUARANTINE}/organization/01a015a6-2e8f-74da-92ce-174d8adb00d4/[0-9a-f-]+$`,
         ),
       );
       expect(target.headers).toEqual({ "Content-Type": "image/png" });
@@ -136,7 +136,7 @@ describe("AttachmentUploadService", () => {
         expect.objectContaining({
           storageObjectKey: expect.stringMatching(
             new RegExp(
-              `^${ATTACHMENT_STORAGE_ZONE.QUARANTINE}/workspace/01a015a6-2e8f-74da-92ce-174d8adb00d4/[0-9a-f-]+$`,
+              `^${ATTACHMENT_STORAGE_ZONE.QUARANTINE}/organization/01a015a6-2e8f-74da-92ce-174d8adb00d4/[0-9a-f-]+$`,
             ),
           ),
         }),
@@ -154,7 +154,7 @@ describe("AttachmentUploadService", () => {
 
       const createdAttachment: Attachment = {
         id: "att-1",
-        scopeType: ATTACHMENT_SCOPE_TYPE.WORKSPACE,
+        scopeType: ATTACHMENT_SCOPE_TYPE.ORGANIZATION,
         scopeId: "org-1",
         tenantId: "tenant-1",
         currentVersionId: "ver-1",
@@ -173,21 +173,21 @@ describe("AttachmentUploadService", () => {
       await service.uploadToTarget({ uploadId: "upload-1", data, contentType: "image/png" });
 
       expect(objectStorage.putObject).toHaveBeenCalledWith({
-        storageObjectKey: "quarantine/workspace/org-1/upload-1",
+        storageObjectKey: "quarantine/organization/org-1/upload-1",
         contentType: "image/png",
         body: data,
         contentLength: data.byteLength,
       });
       expect(db.transaction).toHaveBeenCalled();
       expect(attachmentService.createFromUpload).toHaveBeenCalledWith({
-        scopeType: ATTACHMENT_SCOPE_TYPE.WORKSPACE,
+        scopeType: ATTACHMENT_SCOPE_TYPE.ORGANIZATION,
         scopeId: "org-1",
         tenantId: "tenant-1",
         filename: "photo.png",
         contentType: "image/png",
         data,
         storageProvider: "seaweed",
-        storageObjectKey: "quarantine/workspace/org-1/upload-1",
+        storageObjectKey: "quarantine/organization/org-1/upload-1",
         operationId: "upload-req-1",
         metadata: { itemId: "item-1", uploadRequestId: "upload-req-1" },
         createdBy: "user-1",
@@ -207,7 +207,7 @@ describe("AttachmentUploadService", () => {
             subject: "att-1",
             data: {
               id: "att-1",
-              scopeType: ATTACHMENT_SCOPE_TYPE.WORKSPACE,
+              scopeType: ATTACHMENT_SCOPE_TYPE.ORGANIZATION,
               scopeId: "org-1",
               tenantId: "tenant-1",
               currentVersionId: "ver-1",

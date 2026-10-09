@@ -3,7 +3,7 @@ import Type from "typebox";
 export const SpaceDataSchema = Type.Object(
   {
     id: Type.String(),
-    workspaceId: Type.String(),
+    organizationId: Type.String(),
     name: Type.String(),
     createdById: Type.String(),
     createdAt: Type.String(),

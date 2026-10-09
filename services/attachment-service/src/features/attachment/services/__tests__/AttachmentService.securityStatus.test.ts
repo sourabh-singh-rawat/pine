@@ -73,7 +73,7 @@ describe("AttachmentService.securityStatus", () => {
     it("moves object from quarantine to trusted, updates status to AVAILABLE and CLEAN, and schedules outbox event", async () => {
       const existing: Attachment = {
         id: "att-1",
-        scopeType: ATTACHMENT_SCOPE_TYPE.WORKSPACE,
+        scopeType: ATTACHMENT_SCOPE_TYPE.ORGANIZATION,
         scopeId: "org-1",
         tenantId: "tenant-1",
         currentVersionId: "ver-1",
@@ -95,7 +95,7 @@ describe("AttachmentService.securityStatus", () => {
         fileSize: 10,
         sha256: "abc",
         storageProvider: "seaweed",
-        storageObjectKey: "quarantine/workspace/org-1/att-1",
+        storageObjectKey: "quarantine/organization/org-1/att-1",
         createdBy: "user-1",
         createdAt: new Date(),
       };
@@ -115,12 +115,12 @@ describe("AttachmentService.securityStatus", () => {
       const result = await service.updateSecurityStatus({ id: "att-1", status: "CLEAN" });
 
       expect(objectStorage.moveObject).toHaveBeenCalledWith(
-        "quarantine/workspace/org-1/att-1",
-        "trusted/workspace/org-1/att-1",
+        "quarantine/organization/org-1/att-1",
+        "trusted/organization/org-1/att-1",
       );
       expect(attachmentRepository.updateVersionStorageKey).toHaveBeenCalledWith(
         "ver-1",
-        "trusted/workspace/org-1/att-1",
+        "trusted/organization/org-1/att-1",
         { tx: mockTx },
       );
       expect(attachmentRepository.updateStatus).toHaveBeenCalledWith(
@@ -155,7 +155,7 @@ describe("AttachmentService.securityStatus", () => {
     it("updates status to REJECTED and INFECTED when scan is infected and schedules created event", async () => {
       const existing: Attachment = {
         id: "att-2",
-        scopeType: ATTACHMENT_SCOPE_TYPE.WORKSPACE,
+        scopeType: ATTACHMENT_SCOPE_TYPE.ORGANIZATION,
         scopeId: "org-1",
         tenantId: "tenant-1",
         currentVersionId: "ver-2",
@@ -177,7 +177,7 @@ describe("AttachmentService.securityStatus", () => {
         fileSize: 10,
         sha256: "abc",
         storageProvider: "seaweed",
-        storageObjectKey: "quarantine/workspace/org-1/att-2",
+        storageObjectKey: "quarantine/organization/org-1/att-2",
         createdBy: "user-1",
         createdAt: new Date(),
       };
@@ -231,7 +231,7 @@ describe("AttachmentService.securityStatus", () => {
     it("updates status to REJECTED and FAILED when scan fails and schedules created event", async () => {
       const existing: Attachment = {
         id: "att-3",
-        scopeType: ATTACHMENT_SCOPE_TYPE.WORKSPACE,
+        scopeType: ATTACHMENT_SCOPE_TYPE.ORGANIZATION,
         scopeId: "org-1",
         tenantId: "tenant-1",
         currentVersionId: "ver-3",
@@ -253,7 +253,7 @@ describe("AttachmentService.securityStatus", () => {
         fileSize: 10,
         sha256: "abc",
         storageProvider: "seaweed",
-        storageObjectKey: "quarantine/workspace/org-1/att-3",
+        storageObjectKey: "quarantine/organization/org-1/att-3",
         createdBy: "user-1",
         createdAt: new Date(),
       };

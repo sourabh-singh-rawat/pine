@@ -28,7 +28,7 @@ export class TagRepository implements ITagRepository {
 
   async findMany(filter: FindTagsFilter, options?: TagRepositoryOptions): Promise<Tag[]> {
     const client = this.client(options);
-    const conditions = [eq(Tags.workspaceId, filter.workspaceId), isNull(Tags.deletedAt)];
+    const conditions = [eq(Tags.organizationId, filter.organizationId), isNull(Tags.deletedAt)];
 
     if (filter.spaceId !== undefined) {
       if (filter.spaceId === null) {
@@ -53,7 +53,7 @@ export class TagRepository implements ITagRepository {
       .insert(Tags)
       .values({
         id: entity.id ?? uuidv7(),
-        workspaceId: entity.workspaceId,
+        organizationId: entity.organizationId,
         spaceId: entity.spaceId ?? null,
         name: entity.name,
         color: entity.color ?? "#64748B",

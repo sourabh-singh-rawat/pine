@@ -1,0 +1,62 @@
+query GetMyOrganizations {
+  getMyOrganizations {
+    id
+    tenantId
+    parentOrganizationId
+    name
+    slug
+    description
+    isActive
+    createdAt
+    children {
+      id
+      tenantId
+      parentOrganizationId
+      name
+      slug
+      description
+      isActive
+      createdAt
+      children {
+        id
+        tenantId
+        parentOrganizationId
+        name
+        slug
+        description
+        isActive
+        createdAt
+        children {
+          id
+          tenantId
+          parentOrganizationId
+          name
+          slug
+          description
+          isActive
+          createdAt
+          children {
+            id
+            tenantId
+            parentOrganizationId
+            name
+            slug
+            description
+            isActive
+            createdAt
+            children {
+              id
+              tenantId
+              parentOrganizationId
+              name
+              slug
+              description
+              isActive
+              createdAt
+            }
+          }
+        }
+      }
+    }
+  }
+}

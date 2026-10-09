@@ -27,7 +27,7 @@ const list: List = {
 
 const space: Space = {
   id: "space-1",
-  workspaceId: "workspace-1",
+  organizationId: "organization-1",
   name: "Space",
   createdById: "user-1",
   version: 1,

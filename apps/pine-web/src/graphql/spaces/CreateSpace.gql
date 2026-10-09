@@ -1,7 +1,7 @@
 mutation CreateSpace($input: CreateSpaceInput!) {
   createSpace(input: $input) {
     id
-    workspaceId
+    organizationId
     name
     createdById
     createdAt

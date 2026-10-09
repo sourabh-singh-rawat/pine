@@ -91,15 +91,15 @@ describe("AuthorizationService", () => {
     const service = new AuthorizationService(authorizationGraphProvider);
 
     await service.listRelationships({
-      namespace: "workspace",
+      namespace: "organization",
       object: "org-1",
       relation: "admin",
       subject: { namespace: "identity", id: "user-1" },
     });
 
     expect(authorizationGraphProvider.listRelationships).toHaveBeenCalledWith({
-      namespace: "workspace",
-      object: { namespace: "workspace", id: "org-1" },
+      namespace: "organization",
+      object: { namespace: "organization", id: "org-1" },
       relation: "admin",
       subject: { namespace: "identity", id: "user-1" },
     });
