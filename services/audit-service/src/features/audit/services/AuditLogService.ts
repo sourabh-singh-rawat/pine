@@ -26,7 +26,7 @@ export class AuditLogService implements IAuditLogService {
       this.authorizationClient,
       identityId,
       "read",
-      `organization:${input.organizationId}`,
+      `Organization:${input.organizationId}`,
     );
 
     const logs = await this.auditLogRepository.findMany({

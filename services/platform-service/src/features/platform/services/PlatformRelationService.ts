@@ -49,7 +49,7 @@ export class PlatformRelationService implements IPlatformRelationService {
         this.authorizationClient,
         identityId,
         "manage_admins",
-        `platform:${PLATFORM_OBJECT_ID}`,
+        `Platform:${PLATFORM_OBJECT_ID}`,
       );
     }
 
@@ -99,7 +99,7 @@ export class PlatformRelationService implements IPlatformRelationService {
       this.authorizationClient,
       identityId,
       "read",
-      `platform:${PLATFORM_OBJECT_ID}`,
+      `Platform:${PLATFORM_OBJECT_ID}`,
     );
 
     const parts = id.split(":");
@@ -130,7 +130,7 @@ export class PlatformRelationService implements IPlatformRelationService {
       this.authorizationClient,
       identityId,
       "read",
-      `platform:${PLATFORM_OBJECT_ID}`,
+      `Platform:${PLATFORM_OBJECT_ID}`,
     );
 
     const relations = input.relation === undefined ? [ADMIN, MEMBER] : [input.relation];
@@ -157,7 +157,7 @@ export class PlatformRelationService implements IPlatformRelationService {
       this.authorizationClient,
       identityId,
       "manage_admins",
-      `platform:${PLATFORM_OBJECT_ID}`,
+      `Platform:${PLATFORM_OBJECT_ID}`,
     );
 
     const parts = id.split(":");
@@ -179,7 +179,7 @@ export class PlatformRelationService implements IPlatformRelationService {
     }
 
     await this.authorizationClient.deleteRelationship({
-      object: { namespace: "platform", id: PLATFORM_OBJECT_ID },
+      object: { namespace: "Platform", id: PLATFORM_OBJECT_ID },
       relation,
       subject: { namespace: IDENTITY, id: subjectIdentityId },
     });
@@ -187,7 +187,7 @@ export class PlatformRelationService implements IPlatformRelationService {
 
   private assignedFor = async (relation: string): Promise<PlatformRelation[]> => {
     const relationships = await this.authorizationClient.listRelationships({
-      namespace: "platform",
+      namespace: "Platform",
       object: PLATFORM_OBJECT_ID,
       relation,
     });

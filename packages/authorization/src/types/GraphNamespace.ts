@@ -1,26 +1,26 @@
 export type GraphNamespace =
-  | "identity"
-  | "profile"
-  | "platform"
-  | "tenant"
-  | "organization"
-  | "space"
-  | "list"
-  | "item"
-  | "role"
-  | "permission";
+  | "Identity"
+  | "Profile"
+  | "Platform"
+  | "Tenant"
+  | "Organization"
+  | "Space"
+  | "List"
+  | "Item"
+  | "Role"
+  | "Permission";
 
 export const GRAPH_NAMESPACES: readonly GraphNamespace[] = [
-  "identity",
-  "profile",
-  "platform",
-  "tenant",
-  "organization",
-  "space",
-  "list",
-  "item",
-  "role",
-  "permission",
+  "Identity",
+  "Profile",
+  "Platform",
+  "Tenant",
+  "Organization",
+  "Space",
+  "List",
+  "Item",
+  "Role",
+  "Permission",
 ];
 
 export const isGraphNamespace = (value: string): value is GraphNamespace => {

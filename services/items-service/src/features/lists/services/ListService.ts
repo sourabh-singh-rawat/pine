@@ -49,7 +49,7 @@ export class ListService implements IListService {
       this.authorizationClient,
       userId,
       "create_list",
-      `organization:${space.organizationId}`,
+      `Organization:${space.organizationId}`,
     );
 
     return this.db.transaction(async (tx) => {
@@ -133,7 +133,7 @@ export class ListService implements IListService {
       this.authorizationClient,
       userId,
       "read",
-      `organization:${space.organizationId}`,
+      `Organization:${space.organizationId}`,
     );
 
     return this.listRepository.findBySpaceId(spaceId, page, pageSize);
@@ -155,7 +155,7 @@ export class ListService implements IListService {
       this.authorizationClient,
       userId,
       "read",
-      `organization:${space.organizationId}`,
+      `Organization:${space.organizationId}`,
     );
 
     return list;
@@ -178,7 +178,7 @@ export class ListService implements IListService {
       this.authorizationClient,
       userId,
       "update",
-      `organization:${space.organizationId}`,
+      `Organization:${space.organizationId}`,
     );
 
     await this.db.transaction(async (tx) => {

@@ -42,9 +42,9 @@ describe("AuthorizationOrganizationRelationSyncConsumer", () => {
     await consumer.onMessage(message, event);
 
     expect(authorizationGraphProvider.createRelationship).toHaveBeenCalledWith({
-      object: { namespace: "organization", id: "org-1" },
+      object: { namespace: "Organization", id: "org-1" },
       relation: ADMIN,
-      subject: { namespace: "identity", id: "user-1" },
+      subject: { namespace: "Identity", id: "user-1" },
     });
     expect(message.ack).toHaveBeenCalled();
   });
@@ -94,14 +94,14 @@ describe("AuthorizationOrganizationRelationSyncConsumer", () => {
     );
 
     expect(authorizationGraphProvider.createRelationship).toHaveBeenCalledWith({
-      object: { namespace: "organization", id: "org-1" },
+      object: { namespace: "Organization", id: "org-1" },
       relation: OWNER,
-      subject: { namespace: "identity", id: "user-2" },
+      subject: { namespace: "Identity", id: "user-2" },
     });
     expect(authorizationGraphProvider.createRelationship).toHaveBeenCalledWith({
-      object: { namespace: "organization", id: "org-1" },
+      object: { namespace: "Organization", id: "org-1" },
       relation: MEMBER,
-      subject: { namespace: "identity", id: "user-3" },
+      subject: { namespace: "Identity", id: "user-3" },
     });
   });
 });

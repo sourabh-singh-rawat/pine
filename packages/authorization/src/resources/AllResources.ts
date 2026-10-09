@@ -1,26 +1,26 @@
 export type Resource =
-  | "profile"
-  | "platform"
-  | "tenant"
-  | "organization"
-  | "space"
-  | "list"
-  | "item"
-  | "role"
-  | "permission";
+  | "Profile"
+  | "Platform"
+  | "Tenant"
+  | "Organization"
+  | "Space"
+  | "List"
+  | "Item"
+  | "Role"
+  | "Permission";
 
 export type ResourceKey = `${Resource}:${string}`;
 
 export const RESOURCES: readonly Resource[] = [
-  "profile",
-  "platform",
-  "tenant",
-  "organization",
-  "space",
-  "list",
-  "item",
-  "role",
-  "permission",
+  "Profile",
+  "Platform",
+  "Tenant",
+  "Organization",
+  "Space",
+  "List",
+  "Item",
+  "Role",
+  "Permission",
 ];
 
 export const isResource = (value: string): value is Resource => {

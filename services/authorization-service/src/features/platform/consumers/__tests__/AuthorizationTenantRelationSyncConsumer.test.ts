@@ -42,9 +42,9 @@ describe("AuthorizationTenantRelationSyncConsumer", () => {
     await consumer.onMessage(message as never, event);
 
     expect(authorizationGraphProvider.createRelationship).toHaveBeenCalledWith({
-      object: { namespace: "tenant", id: "tenant-1" },
+      object: { namespace: "Tenant", id: "tenant-1" },
       relation: ADMIN,
-      subject: { namespace: "identity", id: "user-1" },
+      subject: { namespace: "Identity", id: "user-1" },
     });
     expect(message.ack).toHaveBeenCalled();
   });
@@ -94,14 +94,14 @@ describe("AuthorizationTenantRelationSyncConsumer", () => {
     );
 
     expect(authorizationGraphProvider.createRelationship).toHaveBeenCalledWith({
-      object: { namespace: "tenant", id: "tenant-1" },
+      object: { namespace: "Tenant", id: "tenant-1" },
       relation: OWNER,
-      subject: { namespace: "identity", id: "user-2" },
+      subject: { namespace: "Identity", id: "user-2" },
     });
     expect(authorizationGraphProvider.createRelationship).toHaveBeenCalledWith({
-      object: { namespace: "tenant", id: "tenant-1" },
+      object: { namespace: "Tenant", id: "tenant-1" },
       relation: MEMBER,
-      subject: { namespace: "identity", id: "user-3" },
+      subject: { namespace: "Identity", id: "user-3" },
     });
   });
 });

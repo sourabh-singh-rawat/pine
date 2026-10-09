@@ -71,7 +71,7 @@ export class ItemAttachmentService implements IItemAttachmentService {
       this.authorizationClient,
       identityId,
       "create_list",
-      `organization:${organizationId}`,
+      `Organization:${organizationId}`,
     );
 
     const existing = await this.itemAttachmentRepository.findByItemAndAttachment(
@@ -104,7 +104,7 @@ export class ItemAttachmentService implements IItemAttachmentService {
       this.authorizationClient,
       identityId,
       "read",
-      `organization:${organizationId}`,
+      `Organization:${organizationId}`,
     );
 
     return this.itemAttachmentRepository.findByItemId(itemId);
@@ -125,7 +125,7 @@ export class ItemAttachmentService implements IItemAttachmentService {
       this.authorizationClient,
       identityId,
       "create_list",
-      `organization:${organizationId}`,
+      `Organization:${organizationId}`,
     );
 
     const deleted = await this.itemAttachmentRepository.softDelete(id);
@@ -146,7 +146,7 @@ export class ItemAttachmentService implements IItemAttachmentService {
       this.authorizationClient,
       identityId,
       "create_list",
-      `organization:${organizationId}`,
+      `Organization:${organizationId}`,
     );
 
     const requestId = uuidv7();

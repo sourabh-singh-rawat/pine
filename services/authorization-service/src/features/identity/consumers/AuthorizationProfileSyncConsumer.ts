@@ -48,9 +48,9 @@ export class AuthorizationProfileSyncConsumer extends Consumer<
         }
 
         await ensureRelationship(this.authorizationGraphProvider, {
-          object: { namespace: "profile", id: data.id },
+          object: { namespace: "Profile", id: data.id },
           relation: "identity",
-          subject: { namespace: "identity", id: data.identityId },
+          subject: { namespace: "Identity", id: data.identityId },
         });
         break;
       }
@@ -62,9 +62,9 @@ export class AuthorizationProfileSyncConsumer extends Consumer<
         }
 
         await removeRelationship(this.authorizationGraphProvider, {
-          object: { namespace: "profile", id: data.id },
+          object: { namespace: "Profile", id: data.id },
           relation: "identity",
-          subject: { namespace: "identity", id: data.identityId },
+          subject: { namespace: "Identity", id: data.identityId },
         });
         break;
       }

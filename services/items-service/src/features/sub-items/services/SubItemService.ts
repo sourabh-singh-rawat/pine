@@ -26,7 +26,7 @@ export class SubItemService implements ISubItemService {
       this.authorizationClient,
       identityId,
       "read",
-      `list:${parentItem.listId}`,
+      `List:${parentItem.listId}`,
     );
 
     return this.itemRepository.findChildren(parentItemId);

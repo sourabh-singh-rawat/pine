@@ -209,17 +209,17 @@ export type ResendVerificationEmailResponse = ResendVerificationEmailResponses[k
 export type AuthorizeData = {
     body?: never;
     path?: never;
-    query?: {
-        response_type?: 'code';
-        client_id?: string;
-        redirect_uri?: string;
-        scope?: string;
-        state?: string;
+    query: {
+        response_type: 'code';
+        client_id: string;
+        redirect_uri: string;
+        scope: string;
+        state: string;
         code_challenge?: string;
         code_challenge_method?: 'S256' | 'plain';
         nonce?: string;
-        login_verifier?: string;
-        consent_verifier?: string;
+        login_verifier: string;
+        consent_verifier: string;
     };
     url: '/oauth/authorize';
 };
@@ -669,7 +669,7 @@ export type UpdateSecurityStatusResponse = UpdateSecurityStatusResponses[keyof U
 
 export type CreateUploadTargetData = {
     body: {
-        scopeType: 'IDENTITY' | 'WORKSPACE';
+        scopeType: 'IDENTITY' | 'ORGANIZATION';
         scopeId: string;
         tenantId?: string;
         filename: string;
@@ -727,7 +727,7 @@ export type UploadToTargetResponse = UploadToTargetResponses[keyof UploadToTarge
 
 export type CheckRelationshipData = {
     body: {
-        namespace: 'identity' | 'profile' | 'platform' | 'tenant' | 'organization' | 'space' | 'list' | 'item' | 'role' | 'permission';
+        namespace: 'Identity' | 'Profile' | 'Platform' | 'Tenant' | 'Organization' | 'Space' | 'List' | 'Item' | 'Role' | 'Permission';
         object: string;
         relation: string;
         subject: string;
@@ -753,16 +753,16 @@ export type CheckRelationshipResponse = CheckRelationshipResponses[keyof CheckRe
 export type EnsureRelationshipData = {
     body: {
         object: {
-            namespace: 'identity' | 'profile' | 'platform' | 'tenant' | 'organization' | 'space' | 'list' | 'item' | 'role' | 'permission';
+            namespace: 'Identity' | 'Profile' | 'Platform' | 'Tenant' | 'Organization' | 'Space' | 'List' | 'Item' | 'Role' | 'Permission';
             id: string;
         };
         relation: string;
         subject?: {
-            namespace: 'identity' | 'profile' | 'platform' | 'tenant' | 'organization' | 'space' | 'list' | 'item' | 'role' | 'permission';
+            namespace: 'Identity' | 'Profile' | 'Platform' | 'Tenant' | 'Organization' | 'Space' | 'List' | 'Item' | 'Role' | 'Permission';
             id: string;
         };
         subjectSet?: {
-            namespace: 'identity' | 'profile' | 'platform' | 'tenant' | 'organization' | 'space' | 'list' | 'item' | 'role' | 'permission';
+            namespace: 'Identity' | 'Profile' | 'Platform' | 'Tenant' | 'Organization' | 'Space' | 'List' | 'Item' | 'Role' | 'Permission';
             id: string;
             relation: string;
         };
@@ -788,16 +788,16 @@ export type EnsureRelationshipResponse = EnsureRelationshipResponses[keyof Ensur
 export type DeleteRelationshipData = {
     body: {
         object: {
-            namespace: 'identity' | 'profile' | 'platform' | 'tenant' | 'organization' | 'space' | 'list' | 'item' | 'role' | 'permission';
+            namespace: 'Identity' | 'Profile' | 'Platform' | 'Tenant' | 'Organization' | 'Space' | 'List' | 'Item' | 'Role' | 'Permission';
             id: string;
         };
         relation: string;
         subject?: {
-            namespace: 'identity' | 'profile' | 'platform' | 'tenant' | 'organization' | 'space' | 'list' | 'item' | 'role' | 'permission';
+            namespace: 'Identity' | 'Profile' | 'Platform' | 'Tenant' | 'Organization' | 'Space' | 'List' | 'Item' | 'Role' | 'Permission';
             id: string;
         };
         subjectSet?: {
-            namespace: 'identity' | 'profile' | 'platform' | 'tenant' | 'organization' | 'space' | 'list' | 'item' | 'role' | 'permission';
+            namespace: 'Identity' | 'Profile' | 'Platform' | 'Tenant' | 'Organization' | 'Space' | 'List' | 'Item' | 'Role' | 'Permission';
             id: string;
             relation: string;
         };
@@ -822,11 +822,11 @@ export type DeleteRelationshipResponse = DeleteRelationshipResponses[keyof Delet
 
 export type ListRelationshipsData = {
     body: {
-        namespace: 'identity' | 'profile' | 'platform' | 'tenant' | 'organization' | 'space' | 'list' | 'item' | 'role' | 'permission';
+        namespace: 'Identity' | 'Profile' | 'Platform' | 'Tenant' | 'Organization' | 'Space' | 'List' | 'Item' | 'Role' | 'Permission';
         object?: string;
         relation?: string;
         subject?: {
-            namespace: 'identity' | 'profile' | 'platform' | 'tenant' | 'organization' | 'space' | 'list' | 'item' | 'role' | 'permission';
+            namespace: 'Identity' | 'Profile' | 'Platform' | 'Tenant' | 'Organization' | 'Space' | 'List' | 'Item' | 'Role' | 'Permission';
             id: string;
         };
     };
@@ -843,16 +843,16 @@ export type ListRelationshipsResponses = {
         data: {
             relationships: Array<{
                 object: {
-                    namespace: 'identity' | 'profile' | 'platform' | 'tenant' | 'organization' | 'space' | 'list' | 'item' | 'role' | 'permission';
+                    namespace: 'Identity' | 'Profile' | 'Platform' | 'Tenant' | 'Organization' | 'Space' | 'List' | 'Item' | 'Role' | 'Permission';
                     id: string;
                 };
                 relation: string;
                 subject?: {
-                    namespace: 'identity' | 'profile' | 'platform' | 'tenant' | 'organization' | 'space' | 'list' | 'item' | 'role' | 'permission';
+                    namespace: 'Identity' | 'Profile' | 'Platform' | 'Tenant' | 'Organization' | 'Space' | 'List' | 'Item' | 'Role' | 'Permission';
                     id: string;
                 };
                 subjectSet?: {
-                    namespace: 'identity' | 'profile' | 'platform' | 'tenant' | 'organization' | 'space' | 'list' | 'item' | 'role' | 'permission';
+                    namespace: 'Identity' | 'Profile' | 'Platform' | 'Tenant' | 'Organization' | 'Space' | 'List' | 'Item' | 'Role' | 'Permission';
                     id: string;
                     relation: string;
                 };

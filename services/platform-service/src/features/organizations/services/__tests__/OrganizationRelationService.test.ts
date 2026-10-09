@@ -72,9 +72,9 @@ describe("OrganizationRelationService", () => {
     await service.delete(`${organizationId}:${ADMIN}:${identityId}`, actorId);
 
     expect(authorizationClient.deleteRelationship).toHaveBeenCalledWith({
-      object: { namespace: "organization", id: organizationId },
+      object: { namespace: "Organization", id: organizationId },
       relation: ADMIN,
-      subject: { namespace: "identity", id: identityId },
+      subject: { namespace: "Identity", id: identityId },
     });
   });
 
@@ -84,18 +84,18 @@ describe("OrganizationRelationService", () => {
       if (relation === OWNER) {
         return [
           {
-            object: { namespace: "organization", id: organizationId },
+            object: { namespace: "Organization", id: organizationId },
             relation: OWNER,
-            subject: { namespace: "identity", id: identityId },
+            subject: { namespace: "Identity", id: identityId },
           },
         ];
       }
       if (relation === MEMBER) {
         return [
           {
-            object: { namespace: "organization", id: organizationId },
+            object: { namespace: "Organization", id: organizationId },
             relation: MEMBER,
-            subject: { namespace: "identity", id: "user-2" },
+            subject: { namespace: "Identity", id: "user-2" },
           },
         ];
       }
@@ -128,9 +128,9 @@ describe("OrganizationRelationService", () => {
     const authorizationClient = allowAuth();
     authorizationClient.listRelationships.mockResolvedValue([
       {
-        object: { namespace: "organization", id: organizationId },
+        object: { namespace: "Organization", id: organizationId },
         relation: ADMIN,
-        subject: { namespace: "identity", id: identityId },
+        subject: { namespace: "Identity", id: identityId },
       },
     ]);
     const service = new OrganizationRelationService(

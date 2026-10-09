@@ -37,20 +37,20 @@ describe("checkRelationship route", () => {
     const response = await checkRelationship.handler(
       httpRequest({
         body: {
-          namespace: "permission",
-          object: "organization:update",
+          namespace: "Permission",
+          object: "Organization:update",
           relation: "has",
-          subject: "identity:user-1",
+          subject: "Identity:user-1",
         },
       }),
     );
 
     expect(get).toHaveBeenCalledWith(TYPES.AuthorizationService);
     expect(hasRelationship).toHaveBeenCalledWith({
-      namespace: "permission",
-      object: "organization:update",
+      namespace: "Permission",
+      object: "Organization:update",
       relation: "has",
-      subject: "identity:user-1",
+      subject: "Identity:user-1",
     });
     expect(response).toEqual({
       status: 200,
@@ -65,10 +65,10 @@ describe("checkRelationship route", () => {
     const response = await checkRelationship.handler(
       httpRequest({
         body: {
-          namespace: "permission",
-          object: "organization:update",
+          namespace: "Permission",
+          object: "Organization:update",
           relation: "has",
-          subject: "identity:user-1",
+          subject: "Identity:user-1",
         },
       }),
     );
@@ -102,8 +102,8 @@ describe("checkRelationship route", () => {
       checkRelationship.handler(
         httpRequest({
           body: {
-            namespace: "permission",
-            object: "organization:update",
+            namespace: "Permission",
+            object: "Organization:update",
             relation: "has",
           },
         }),

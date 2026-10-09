@@ -171,9 +171,9 @@ describe("ProfileService", () => {
       { tx: {} },
     );
     expect(authorizationClient.ensureRelationship).toHaveBeenCalledWith({
-      object: { namespace: "profile", id: "profile-1" },
+      object: { namespace: "Profile", id: "profile-1" },
       relation: "identity",
-      subject: { namespace: "identity", id: "identity-1" },
+      subject: { namespace: "Identity", id: "identity-1" },
     });
     expect(outboxService.schedule).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -292,10 +292,10 @@ describe("ProfileService", () => {
     });
 
     expect(authorizationClient.checkRelationship).toHaveBeenCalledWith({
-      namespace: "profile",
+      namespace: "Profile",
       object: "profile-1",
       relation: "update",
-      subject: "identity:identity-1",
+      subject: "Identity:identity-1",
     });
     expect(profileRepository.findByIdentityId).toHaveBeenCalledWith("identity-1");
     expect(db.transaction).toHaveBeenCalledOnce();
@@ -413,10 +413,10 @@ describe("ProfileService", () => {
     });
 
     expect(authorizationClient.checkRelationship).toHaveBeenCalledWith({
-      namespace: "profile",
+      namespace: "Profile",
       object: "profile-1",
       relation: "update",
-      subject: "identity:identity-1",
+      subject: "Identity:identity-1",
     });
     expect(profileRepository.update).toHaveBeenCalledWith("profile-1", {
       gender: ProfileGender.FEMALE,
@@ -604,10 +604,10 @@ describe("ProfileService", () => {
     });
 
     expect(authorizationClient.checkRelationship).toHaveBeenCalledWith({
-      namespace: "profile",
+      namespace: "Profile",
       object: "profile-1",
       relation: "update",
-      subject: "identity:identity-1",
+      subject: "Identity:identity-1",
     });
     expect(photoUploadRequestRepo.save).toHaveBeenCalledWith({
       profileId: "profile-1",

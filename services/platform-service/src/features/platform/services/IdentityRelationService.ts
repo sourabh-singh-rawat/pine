@@ -34,22 +34,22 @@ export class IdentityRelationService implements IIdentityRelationService {
       this.authorizationClient,
       callerIdentityId,
       "manage_admins",
-      `platform:${PLATFORM_OBJECT_ID}`,
+      `Platform:${PLATFORM_OBJECT_ID}`,
     );
 
     const subject = { namespace: IDENTITY, id: identityId };
     const [platformRelationships, tenantRelationships, organizationRelationships] =
       await Promise.all([
         this.authorizationClient.listRelationships({
-          namespace: "platform",
+          namespace: "Platform",
           subject,
         }),
         this.authorizationClient.listRelationships({
-          namespace: "tenant",
+          namespace: "Tenant",
           subject,
         }),
         this.authorizationClient.listRelationships({
-          namespace: "organization",
+          namespace: "Organization",
           subject,
         }),
       ]);
@@ -69,7 +69,7 @@ export class IdentityRelationService implements IIdentityRelationService {
     const platformRelations: PlatformRelation[] = [];
     for (const relationship of relationships) {
       if (
-        relationship.object.namespace !== "platform" ||
+        relationship.object.namespace !== "Platform" ||
         !PLATFORM_MEMBERSHIP_RELATIONS.has(relationship.relation) ||
         relationship.subject?.namespace !== IDENTITY ||
         relationship.subject.id !== identityId
@@ -92,7 +92,7 @@ export class IdentityRelationService implements IIdentityRelationService {
     const tenantRelations: TenantRelation[] = [];
     for (const relationship of relationships) {
       if (
-        relationship.object.namespace !== "tenant" ||
+        relationship.object.namespace !== "Tenant" ||
         !TENANT_MEMBERSHIP_RELATIONS.has(relationship.relation) ||
         relationship.subject?.namespace !== IDENTITY ||
         relationship.subject.id !== identityId
@@ -116,7 +116,7 @@ export class IdentityRelationService implements IIdentityRelationService {
     const organizationRelations: OrganizationRelation[] = [];
     for (const relationship of relationships) {
       if (
-        relationship.object.namespace !== "organization" ||
+        relationship.object.namespace !== "Organization" ||
         !ORGANIZATION_MEMBERSHIP_RELATIONS.has(relationship.relation) ||
         relationship.subject?.namespace !== IDENTITY ||
         relationship.subject.id !== identityId

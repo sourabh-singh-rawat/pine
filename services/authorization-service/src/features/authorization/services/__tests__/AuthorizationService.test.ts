@@ -12,10 +12,10 @@ describe("AuthorizationService", () => {
     const service = new AuthorizationService(authorizationGraphProvider);
 
     const input = {
-      namespace: "tenant",
+      namespace: "Tenant",
       object: "tenant-1",
       relation: "member",
-      subject: "identity:user-1",
+      subject: "Identity:user-1",
     };
 
     await expect(service.hasRelationship(input)).resolves.toBe(true);
@@ -32,9 +32,9 @@ describe("AuthorizationService", () => {
     const service = new AuthorizationService(authorizationGraphProvider);
 
     const relationship = {
-      object: { namespace: "permission", id: "platform:create_tenant" },
+      object: { namespace: "Permission", id: "Platform:create_tenant" },
       relation: "has",
-      subjectSet: { namespace: "role", id: "role-1", relation: "member" },
+      subjectSet: { namespace: "Role", id: "role-1", relation: "member" },
     };
 
     await expect(service.ensureRelationship(relationship)).resolves.toEqual({ created: true });
@@ -43,9 +43,9 @@ describe("AuthorizationService", () => {
 
   it("skips create when relationship already exists", async () => {
     const relationship = {
-      object: { namespace: "role", id: "role-1" },
+      object: { namespace: "Role", id: "role-1" },
       relation: "member",
-      subject: { namespace: "identity", id: "user-1" },
+      subject: { namespace: "Identity", id: "user-1" },
     };
     const authorizationGraphProvider = {
       checkPermission: vi.fn(),
@@ -69,15 +69,15 @@ describe("AuthorizationService", () => {
     const service = new AuthorizationService(authorizationGraphProvider);
 
     await service.listRelationships({
-      namespace: "tenant",
-      subject: { namespace: "identity", id: "user-1" },
+      namespace: "Tenant",
+      subject: { namespace: "Identity", id: "user-1" },
     });
 
     expect(authorizationGraphProvider.listRelationships).toHaveBeenCalledWith({
-      namespace: "tenant",
+      namespace: "Tenant",
       object: undefined,
       relation: undefined,
-      subject: { namespace: "identity", id: "user-1" },
+      subject: { namespace: "Identity", id: "user-1" },
     });
   });
 
@@ -91,17 +91,17 @@ describe("AuthorizationService", () => {
     const service = new AuthorizationService(authorizationGraphProvider);
 
     await service.listRelationships({
-      namespace: "organization",
+      namespace: "Organization",
       object: "org-1",
       relation: "admin",
-      subject: { namespace: "identity", id: "user-1" },
+      subject: { namespace: "Identity", id: "user-1" },
     });
 
     expect(authorizationGraphProvider.listRelationships).toHaveBeenCalledWith({
-      namespace: "organization",
-      object: { namespace: "organization", id: "org-1" },
+      namespace: "Organization",
+      object: { namespace: "Organization", id: "org-1" },
       relation: "admin",
-      subject: { namespace: "identity", id: "user-1" },
+      subject: { namespace: "Identity", id: "user-1" },
     });
   });
 });

@@ -32,7 +32,7 @@ export class OfficeTypeService implements IOfficeTypeService {
       this.authorizationClient,
       identityId,
       "manage_office_types",
-      `tenant:${input.tenantId}`,
+      `Tenant:${input.tenantId}`,
     );
 
     const tenant = await this.tenantRepository.findById(input.tenantId);
@@ -77,14 +77,14 @@ export class OfficeTypeService implements IOfficeTypeService {
       this.authorizationClient,
       identityId,
       "read",
-      `tenant:${officeType.tenantId}`,
+      `Tenant:${officeType.tenantId}`,
     );
 
     return officeType;
   }
 
   async list(tenantId: string, identityId: string): Promise<OrganizationOfficeType[]> {
-    await requirePermission(this.authorizationClient, identityId, "read", `tenant:${tenantId}`);
+    await requirePermission(this.authorizationClient, identityId, "read", `Tenant:${tenantId}`);
 
     return this.officeTypeRepository.findManyByTenant(tenantId);
   }
@@ -99,7 +99,7 @@ export class OfficeTypeService implements IOfficeTypeService {
       this.authorizationClient,
       identityId,
       "manage_office_types",
-      `tenant:${officeType.tenantId}`,
+      `Tenant:${officeType.tenantId}`,
     );
 
     if (await this.officeTypeRepository.existsByParentOfficeTypeId(id)) {

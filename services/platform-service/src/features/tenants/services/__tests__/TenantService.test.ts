@@ -62,10 +62,10 @@ describe("TenantService", () => {
 
     await expect(service.listTenants(platformId, identityId)).resolves.toEqual([tenant]);
     expect(authorizationClient.checkRelationship).toHaveBeenCalledWith({
-      namespace: "platform",
+      namespace: "Platform",
       object: PLATFORM_OBJECT_ID,
       relation: "read",
-      subject: `identity:${identityId}`,
+      subject: `Identity:${identityId}`,
     });
     expect(tenantRepository.findAll).toHaveBeenCalledOnce();
   });
@@ -77,9 +77,9 @@ describe("TenantService", () => {
     const authorizationClient = {
       listRelationships: vi.fn().mockResolvedValue([
         {
-          object: { namespace: "tenant", id: tenant.id },
+          object: { namespace: "Tenant", id: tenant.id },
           relation: "member",
-          subject: { namespace: "identity", id: identityId },
+          subject: { namespace: "Identity", id: identityId },
         },
       ]),
     };
@@ -88,8 +88,8 @@ describe("TenantService", () => {
 
     await expect(service.listMyTenants(identityId)).resolves.toEqual([tenant]);
     expect(authorizationClient.listRelationships).toHaveBeenCalledWith({
-      namespace: "tenant",
-      subject: { namespace: "identity", id: identityId },
+      namespace: "Tenant",
+      subject: { namespace: "Identity", id: identityId },
     });
     expect(tenantRepository.findByIds).toHaveBeenCalledWith([tenant.id]);
   });
@@ -122,10 +122,10 @@ describe("TenantService", () => {
 
     await expect(service.getTenantById(tenant.id, identityId)).resolves.toEqual(tenant);
     expect(authorizationClient.checkRelationship).toHaveBeenCalledWith({
-      namespace: "tenant",
+      namespace: "Tenant",
       object: tenant.id,
       relation: "read",
-      subject: `identity:${identityId}`,
+      subject: `Identity:${identityId}`,
     });
     expect(tenantRepository.findById).toHaveBeenCalledWith(tenant.id);
   });
@@ -215,10 +215,10 @@ describe("TenantService", () => {
     ).resolves.toEqual(tenant);
 
     expect(authorizationClient.checkRelationship).toHaveBeenCalledWith({
-      namespace: "platform",
+      namespace: "Platform",
       object: PLATFORM_OBJECT_ID,
       relation: "create_tenant",
-      subject: `identity:${identityId}`,
+      subject: `Identity:${identityId}`,
     });
     expect(tenantRepository.existsBySlug).toHaveBeenCalledWith("acme");
     expect(tenantRepository.existsByName).toHaveBeenCalledWith("Acme Corp");
@@ -233,9 +233,9 @@ describe("TenantService", () => {
       { tx },
     );
     expect(authorizationClient.ensureRelationship).toHaveBeenCalledWith({
-      object: { namespace: "tenant", id: tenant.id },
+      object: { namespace: "Tenant", id: tenant.id },
       relation: "owner",
-      subject: { namespace: "identity", id: identityId },
+      subject: { namespace: "Identity", id: identityId },
     });
     expect(outboxService.schedule).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -351,10 +351,10 @@ describe("TenantService", () => {
 
     await expect(service.deleteTenant("tenant-1", platformId, identityId)).resolves.toBeUndefined();
     expect(authorizationClient.checkRelationship).toHaveBeenCalledWith({
-      namespace: "tenant",
+      namespace: "Tenant",
       object: "tenant-1",
       relation: "suspend",
-      subject: `identity:${identityId}`,
+      subject: `Identity:${identityId}`,
     });
     expect(tenantRepository.softDelete).toHaveBeenCalledWith("tenant-1", {
       tx: expect.anything(),

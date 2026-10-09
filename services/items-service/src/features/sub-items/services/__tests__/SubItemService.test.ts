@@ -89,10 +89,10 @@ describe("SubItemService.list", () => {
     expect(result).toEqual([childItem]);
     expect(itemRepository.findById).toHaveBeenCalledWith("parent-1");
     expect(authorizationClient.checkRelationship).toHaveBeenCalledWith({
-      namespace: "list",
+      namespace: "List",
       object: "list-1",
       relation: "read",
-      subject: "identity:user-2",
+      subject: "Identity:user-2",
     });
     expect(itemRepository.findChildren).toHaveBeenCalledWith("parent-1");
   });

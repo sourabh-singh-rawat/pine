@@ -59,7 +59,7 @@ export class OrganizationService implements IOrganizationService {
       this.authorizationClient,
       identityId,
       "create_organization",
-      `tenant:${input.tenantId}`,
+      `Tenant:${input.tenantId}`,
     );
 
     const tenant = await this.tenantRepository.findById(input.tenantId);
@@ -191,7 +191,7 @@ export class OrganizationService implements IOrganizationService {
   }
 
   async getById(id: string, identityId: string): Promise<Organization> {
-    await requirePermission(this.authorizationClient, identityId, "read", `organization:${id}`);
+    await requirePermission(this.authorizationClient, identityId, "read", `Organization:${id}`);
 
     const organization = await this.organizationRepository.findById(id);
     if (!organization) {
@@ -206,7 +206,7 @@ export class OrganizationService implements IOrganizationService {
       this.authorizationClient,
       identityId,
       "read_list",
-      `tenant:${input.tenantId}`,
+      `Tenant:${input.tenantId}`,
     );
 
     const tenant = await this.tenantRepository.findById(input.tenantId);
@@ -222,8 +222,8 @@ export class OrganizationService implements IOrganizationService {
 
   async listMyOrganizations(identityId: string): Promise<OrganizationNode[]> {
     const relationships = await this.authorizationClient.listRelationships({
-      namespace: "organization",
-      subject: { namespace: "identity", id: identityId },
+      namespace: "Organization",
+      subject: { namespace: "Identity", id: identityId },
     });
 
     const organizationIds = Array.from(
@@ -241,7 +241,7 @@ export class OrganizationService implements IOrganizationService {
     input: UpdateOrganizationInput,
     identityId: string,
   ): Promise<Organization> {
-    await requirePermission(this.authorizationClient, identityId, "update", `organization:${id}`);
+    await requirePermission(this.authorizationClient, identityId, "update", `Organization:${id}`);
 
     const organization = await this.organizationRepository.findById(id);
     if (!organization) {
@@ -305,7 +305,7 @@ export class OrganizationService implements IOrganizationService {
   }
 
   async delete(id: string, identityId: string): Promise<void> {
-    await requirePermission(this.authorizationClient, identityId, "delete", `organization:${id}`);
+    await requirePermission(this.authorizationClient, identityId, "delete", `Organization:${id}`);
 
     const organization = await this.organizationRepository.findById(id);
     if (!organization) {

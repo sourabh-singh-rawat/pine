@@ -123,7 +123,7 @@ export class ChecklistService implements IChecklistService {
       this.authorizationClient,
       identityId,
       "read",
-      `organization:${organizationId}`,
+      `Organization:${organizationId}`,
     );
 
     const checklists = await this.checklistRepository.findByItemId(itemId);
@@ -155,7 +155,7 @@ export class ChecklistService implements IChecklistService {
       this.authorizationClient,
       identityId,
       "create_list",
-      `organization:${organizationId}`,
+      `Organization:${organizationId}`,
     );
 
     const checklist = await this.checklistRepository.save({
@@ -177,7 +177,7 @@ export class ChecklistService implements IChecklistService {
       this.authorizationClient,
       identityId,
       "create_list",
-      `organization:${organizationId}`,
+      `Organization:${organizationId}`,
     );
 
     const updated = await this.checklistRepository.update(id, {
@@ -201,7 +201,7 @@ export class ChecklistService implements IChecklistService {
       this.authorizationClient,
       identityId,
       "create_list",
-      `organization:${organizationId}`,
+      `Organization:${organizationId}`,
     );
 
     await this.db.transaction(async (tx) => {
@@ -223,7 +223,7 @@ export class ChecklistService implements IChecklistService {
       this.authorizationClient,
       identityId,
       "create_list",
-      `organization:${organizationId}`,
+      `Organization:${organizationId}`,
     );
 
     const maxOrderIndex = await this.checklistEntryRepository.findMaxOrderIndex(checklistId);
@@ -248,7 +248,7 @@ export class ChecklistService implements IChecklistService {
       this.authorizationClient,
       identityId,
       "create_list",
-      `organization:${organizationId}`,
+      `Organization:${organizationId}`,
     );
 
     const patch: { title?: string; completed?: boolean } = {};
@@ -281,7 +281,7 @@ export class ChecklistService implements IChecklistService {
       this.authorizationClient,
       identityId,
       "create_list",
-      `organization:${organizationId}`,
+      `Organization:${organizationId}`,
     );
 
     const deleted = await this.checklistEntryRepository.softDelete(id);
@@ -300,7 +300,7 @@ export class ChecklistService implements IChecklistService {
       this.authorizationClient,
       identityId,
       "create_list",
-      `organization:${organizationId}`,
+      `Organization:${organizationId}`,
     );
 
     return this.db.transaction(async (tx) => {

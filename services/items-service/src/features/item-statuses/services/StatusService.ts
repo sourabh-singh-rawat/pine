@@ -215,7 +215,7 @@ export class StatusService implements IStatusService {
 
   private async requireListRead(listId: string, identityId: string): Promise<void> {
     await this.requireList(listId);
-    await requirePermission(this.authorizationClient, identityId, "read", `list:${listId}`);
+    await requirePermission(this.authorizationClient, identityId, "read", `List:${listId}`);
   }
 
   private async requireListUpdate(listId: string, identityId: string): Promise<void> {
@@ -225,7 +225,7 @@ export class StatusService implements IStatusService {
       throw new SpaceNotFoundError();
     }
 
-    await requirePermission(this.authorizationClient, identityId, "update", `list:${listId}`);
+    await requirePermission(this.authorizationClient, identityId, "update", `List:${listId}`);
   }
 
   private isStatusType(value: string): value is StatusType {

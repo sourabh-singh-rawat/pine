@@ -3,20 +3,20 @@ import { describe, expect, it } from "vitest";
 
 describe("parseResource", () => {
   it("returns namespace and id from a resource key", () => {
-    expect(parseResource("tenant:01900000-0000-7000-8000-000000000001")).toEqual({
-      namespace: "tenant",
+    expect(parseResource("Tenant:01900000-0000-7000-8000-000000000001")).toEqual({
+      namespace: "Tenant",
       id: "01900000-0000-7000-8000-000000000001",
     });
-    expect(parseResource("platform:01900000-0000-7000-8000-000000000000")).toEqual({
-      namespace: "platform",
+    expect(parseResource("Platform:01900000-0000-7000-8000-000000000000")).toEqual({
+      namespace: "Platform",
       id: "01900000-0000-7000-8000-000000000000",
     });
   });
 
   it("rejects keys that are not namespace:id", () => {
-    expect(() => parseResource("tenant")).toThrow(InvalidResourceKeyError);
-    expect(() => parseResource("tenant:")).toThrow(InvalidResourceKeyError);
+    expect(() => parseResource("Tenant")).toThrow(InvalidResourceKeyError);
+    expect(() => parseResource("Tenant:")).toThrow(InvalidResourceKeyError);
     expect(() => parseResource(":id")).toThrow(InvalidResourceKeyError);
-    expect(() => parseResource("tenant:org:id")).toThrow(InvalidResourceKeyError);
+    expect(() => parseResource("Tenant:org:id")).toThrow(InvalidResourceKeyError);
   });
 });

@@ -1,11 +1,10 @@
 import { Context, Namespace } from "@ory/keto-namespace-types";
 
-export class identity implements Namespace {} // NOSONAR typescript:S101
+export class Identity implements Namespace {}
 
-export class profile implements Namespace {
-  // NOSONAR typescript:S101
+export class Profile implements Namespace {
   related: {
-    identity: identity[];
+    identity: Identity[];
   };
 
   permits = {
@@ -14,12 +13,11 @@ export class profile implements Namespace {
   };
 }
 
-export class platform implements Namespace {
-  // NOSONAR typescript:S101
+export class Platform implements Namespace {
   related: {
-    admin: identity[];
-    member: identity[];
-    tenant: tenant[];
+    admin: Identity[];
+    member: Identity[];
+    tenant: Tenant[];
   };
 
   permits = {
@@ -30,13 +28,12 @@ export class platform implements Namespace {
   };
 }
 
-export class tenant implements Namespace {
-  // NOSONAR typescript:S101
+export class Tenant implements Namespace {
   related: {
-    owner: identity[];
-    admin: identity[];
-    member: identity[];
-    platform: platform[];
+    owner: Identity[];
+    admin: Identity[];
+    member: Identity[];
+    platform: Platform[];
   };
 
   permits = {
@@ -79,14 +76,13 @@ export class tenant implements Namespace {
   };
 }
 
-export class organization implements Namespace {
-  // NOSONAR typescript:S101
+export class Organization implements Namespace {
   related: {
-    owner: identity[];
-    admin: identity[];
-    member: identity[];
-    tenant: tenant[];
-    parents: organization[];
+    owner: Identity[];
+    admin: Identity[];
+    member: Identity[];
+    tenant: Tenant[];
+    parents: Organization[];
   };
 
   permits = {
@@ -120,13 +116,12 @@ export class organization implements Namespace {
   };
 }
 
-export class space implements Namespace {
-  // NOSONAR typescript:S101
+export class Space implements Namespace {
   related: {
-    owner: identity[];
-    admin: identity[];
-    member: identity[];
-    organization: organization[];
+    owner: Identity[];
+    admin: Identity[];
+    member: Identity[];
+    organization: Organization[];
   };
 
   permits = {
@@ -154,13 +149,12 @@ export class space implements Namespace {
   };
 }
 
-export class list implements Namespace {
-  // NOSONAR typescript:S101
+export class List implements Namespace {
   related: {
-    owner: identity[];
-    admin: identity[];
-    member: identity[];
-    space: space[];
+    owner: Identity[];
+    admin: Identity[];
+    member: Identity[];
+    space: Space[];
   };
 
   permits = {
@@ -188,13 +182,12 @@ export class list implements Namespace {
   };
 }
 
-export class item implements Namespace {
-  // NOSONAR typescript:S101
+export class Item implements Namespace {
   related: {
-    owner: identity[];
-    admin: identity[];
-    member: identity[];
-    list: list[];
+    owner: Identity[];
+    admin: Identity[];
+    member: Identity[];
+    list: List[];
   };
 
   permits = {
@@ -202,31 +195,29 @@ export class item implements Namespace {
       this.related.member.includes(ctx.subject) ||
       this.related.admin.includes(ctx.subject) ||
       this.related.owner.includes(ctx.subject) ||
-      this.related.list.traverse((item) => item.permits.read(ctx)),
+      this.related.list.traverse((entry) => entry.permits.read(ctx)),
     update: (ctx: Context): boolean =>
       this.related.admin.includes(ctx.subject) ||
       this.related.owner.includes(ctx.subject) ||
-      this.related.list.traverse((item) => item.permits.update(ctx)),
+      this.related.list.traverse((entry) => entry.permits.update(ctx)),
     manage_members: (ctx: Context): boolean =>
       this.related.admin.includes(ctx.subject) ||
       this.related.owner.includes(ctx.subject) ||
-      this.related.list.traverse((item) => item.permits.manage_members(ctx)),
+      this.related.list.traverse((entry) => entry.permits.manage_members(ctx)),
     delete: (ctx: Context): boolean =>
       this.related.owner.includes(ctx.subject) ||
-      this.related.list.traverse((item) => item.permits.delete(ctx)),
+      this.related.list.traverse((entry) => entry.permits.delete(ctx)),
   };
 }
 
-export class role implements Namespace {
-  // NOSONAR typescript:S101
+export class Role implements Namespace {
   related: {
-    member: identity[];
+    member: Identity[];
   };
 }
 
-export class permission implements Namespace {
-  // NOSONAR typescript:S101
+export class Permission implements Namespace {
   related: {
-    has: role[];
+    has: Role[];
   };
 }
