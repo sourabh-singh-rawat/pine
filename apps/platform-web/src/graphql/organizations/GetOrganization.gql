@@ -3,6 +3,7 @@ query GetOrganization($id: String!) {
     id
     tenantId
     parentOrganizationId
+    officeTypeId
     name
     slug
     description

@@ -4,6 +4,7 @@ import type { OrganizationNode } from "@/features/organizations/utils";
 export type CreateOrganizationInput = {
   tenantId: string;
   parentOrganizationId?: string | null;
+  officeTypeId: string;
   name: string;
   slug: string;
   description?: string | null;

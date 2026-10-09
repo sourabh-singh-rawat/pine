@@ -28,6 +28,7 @@ export class OrganizationRepository implements IOrganizationRepository {
         id: uuidv7(),
         tenantId: entity.tenantId,
         parentOrganizationId: entity.parentOrganizationId ?? null,
+        officeTypeId: entity.officeTypeId,
         name: entity.name,
         slug: entity.slug,
         description: entity.description ?? null,

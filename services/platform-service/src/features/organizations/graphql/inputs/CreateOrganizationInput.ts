@@ -4,6 +4,7 @@ export const CreateOrganizationInput = builder.inputType("CreateOrganizationInpu
   fields: (t) => ({
     tenantId: t.string({ required: true }),
     parentOrganizationId: t.string({ required: false }),
+    officeTypeId: t.string({ required: true }),
     name: t.string({ required: true }),
     slug: t.string({ required: true }),
     description: t.string({ required: false }),

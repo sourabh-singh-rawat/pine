@@ -5,6 +5,7 @@ export type OrganizationRepositoryOptions = { tx: DbClient };
 export type CreateOrganizationEntity = {
   tenantId: string;
   parentOrganizationId?: string | null;
+  officeTypeId: string;
   name: string;
   slug: string;
   description?: string | null;

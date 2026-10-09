@@ -10,6 +10,7 @@ export type TenantPermission =
   | "configure"
   | "manage_members"
   | "create_organization"
+  | "manage_office_types"
   | "assign_admin"
   | "assign_owner"
   | "suspend"
@@ -69,6 +70,7 @@ export const TENANT_PERMISSIONS: readonly TenantPermission[] = [
   "configure",
   "manage_members",
   "create_organization",
+  "manage_office_types",
   "assign_admin",
   "assign_owner",
   "suspend",

@@ -25,6 +25,11 @@ import type {
   UpdateOrganizationInput,
 } from "@/features/organizations/services/IOrganizationService";
 import { buildOrganizationForest, type OrganizationNode } from "@/features/organizations/utils";
+import {
+  InvalidParentOfficeTypeError,
+  OfficeTypeNotFoundError,
+} from "@/features/office-types/errors";
+import type { IOfficeTypeRepository } from "@/features/office-types/repositories";
 import { TenantNotFoundError } from "@/features/tenants/errors";
 import type { ITenantRepository } from "@/features/tenants/repositories";
 
@@ -35,6 +40,8 @@ export class OrganizationService implements IOrganizationService {
     private readonly organizationRepository: IOrganizationRepository,
     @inject(TYPES.TenantRepository)
     private readonly tenantRepository: ITenantRepository,
+    @inject(TYPES.OfficeTypeRepository)
+    private readonly officeTypeRepository: IOfficeTypeRepository,
     @inject(TYPES.AuthorizationClient)
     private readonly authorizationClient: IAuthorizationClient,
     @inject(TYPES.OutboxService)
@@ -56,6 +63,11 @@ export class OrganizationService implements IOrganizationService {
       throw new TenantNotFoundError(`Tenant not found: ${input.tenantId}`);
     }
 
+    const officeType = await this.officeTypeRepository.findById(input.officeTypeId);
+    if (!officeType || officeType.tenantId !== input.tenantId) {
+      throw new OfficeTypeNotFoundError(`Office type not found in tenant: ${input.officeTypeId}`);
+    }
+
     if (input.parentOrganizationId) {
       const parent = await this.organizationRepository.findById(input.parentOrganizationId);
       if (!parent || parent.tenantId !== input.tenantId) {
@@ -63,6 +75,15 @@ export class OrganizationService implements IOrganizationService {
           `Parent organization not found in tenant: ${input.parentOrganizationId}`,
         );
       }
+      if (parent.officeTypeId !== officeType.parentOfficeTypeId) {
+        throw new InvalidParentOfficeTypeError(
+          `Parent organization type does not match office type: ${input.officeTypeId}`,
+        );
+      }
+    } else if (officeType.parentOfficeTypeId) {
+      throw new InvalidParentOrganizationError(
+        `Office type requires a parent organization: ${input.officeTypeId}`,
+      );
     }
 
     const slugExists = await this.organizationRepository.existsBySlugInTenant(
@@ -90,6 +111,7 @@ export class OrganizationService implements IOrganizationService {
         {
           tenantId: input.tenantId,
           parentOrganizationId: input.parentOrganizationId,
+          officeTypeId: input.officeTypeId,
           name: input.name,
           slug: input.slug,
           description: input.description,
@@ -109,6 +131,7 @@ export class OrganizationService implements IOrganizationService {
           tenantId: organization.tenantId,
           name: organization.name,
           slug: organization.slug,
+          officeTypeId: organization.officeTypeId,
           isActive: organization.isActive,
           version: organization.version,
           createdAt: organization.createdAt.toISOString(),
@@ -248,7 +271,19 @@ export class OrganizationService implements IOrganizationService {
     organization: Organization,
     parentOrganizationId: string | null,
   ): Promise<void> {
+    const officeType = await this.officeTypeRepository.findById(organization.officeTypeId);
+    if (!officeType || officeType.tenantId !== organization.tenantId) {
+      throw new OfficeTypeNotFoundError(
+        `Office type not found in tenant: ${organization.officeTypeId}`,
+      );
+    }
+
     if (!parentOrganizationId) {
+      if (officeType.parentOfficeTypeId) {
+        throw new InvalidParentOrganizationError(
+          `Office type requires a parent organization: ${organization.officeTypeId}`,
+        );
+      }
       return;
     }
 
@@ -262,6 +297,12 @@ export class OrganizationService implements IOrganizationService {
     if (!parent || parent.tenantId !== organization.tenantId) {
       throw new InvalidParentOrganizationError(
         `Parent organization not found in tenant: ${parentOrganizationId}`,
+      );
+    }
+
+    if (parent.officeTypeId !== officeType.parentOfficeTypeId) {
+      throw new InvalidParentOfficeTypeError(
+        `Parent organization type does not match office type: ${organization.officeTypeId}`,
       );
     }
 

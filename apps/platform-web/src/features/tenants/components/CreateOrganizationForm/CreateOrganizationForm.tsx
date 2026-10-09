@@ -4,7 +4,11 @@ import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
-import { useCreateOrganizationMutation, useGetOrganizationsQuery } from "@generated/gql";
+import {
+  useCreateOrganizationMutation,
+  useGetOfficeTypesQuery,
+  useGetOrganizationsQuery,
+} from "@generated/gql";
 import { PrimaryButton, SecondaryButton, TextField } from "@pine/ui";
 import { useForm } from "@tanstack/react-form";
 import { useQueryClient } from "@tanstack/react-query";
@@ -15,6 +19,7 @@ export type CreateOrganizationFormValues = {
   slug: string;
   description: string;
   parentOrganizationId: string;
+  officeTypeId: string;
 };
 
 export type CreateOrganizationFormProps = {
@@ -28,6 +33,7 @@ const defaultValues: CreateOrganizationFormValues = {
   slug: "",
   description: "",
   parentOrganizationId: "",
+  officeTypeId: "",
 };
 
 const requiredString = (value: string, label: string): string | undefined => {
@@ -55,6 +61,14 @@ export const CreateOrganizationForm = ({
   );
 
   const parentOptions = organizationsQuery.data ?? [];
+  const officeTypesQuery = useGetOfficeTypesQuery(
+    { tenantId },
+    {
+      select: (data) => data.getOfficeTypes ?? [],
+      enabled: Boolean(tenantId),
+    },
+  );
+  const officeTypes = officeTypesQuery.data ?? [];
 
   const form = useForm({
     defaultValues,
@@ -68,6 +82,7 @@ export const CreateOrganizationForm = ({
             slug: value.slug.trim(),
             description: value.description.trim() || undefined,
             parentOrganizationId: parentOrganizationId || undefined,
+            officeTypeId: value.officeTypeId.trim(),
           },
         });
 
@@ -124,6 +139,52 @@ export const CreateOrganizationForm = ({
               placeholder="e.g. engineering"
               description="URL-safe identifier unique within this tenant."
             />
+          )}
+        </form.Field>
+
+        <form.Field
+          name="officeTypeId"
+          validators={{
+            onChange: ({ value }) => requiredString(value, "Office type"),
+          }}
+        >
+          {(field) => (
+            <Box>
+              <Typography variant="body2" sx={{ pb: 1, fontWeight: 500 }}>
+                Office type
+              </Typography>
+              <FormControl fullWidth size="small">
+                <Select
+                  id={field.name}
+                  name={field.name}
+                  value={field.state.value}
+                  displayEmpty
+                  onBlur={field.handleBlur}
+                  onChange={(event) => {
+                    field.handleChange(event.target.value);
+                  }}
+                  disabled={officeTypesQuery.isPending}
+                >
+                  <MenuItem value="">
+                    <em>Select an office type</em>
+                  </MenuItem>
+                  {officeTypes.map((officeType) => {
+                    const id = officeType.id;
+                    if (!id) {
+                      return null;
+                    }
+                    return (
+                      <MenuItem key={id} value={id}>
+                        {officeType.name ?? officeType.slug ?? id}
+                      </MenuItem>
+                    );
+                  })}
+                </Select>
+              </FormControl>
+              <Typography variant="body1" color="text.secondary" sx={{ mt: 1 }}>
+                Create office types on the Office types tab when this list is empty.
+              </Typography>
+            </Box>
           )}
         </form.Field>
 

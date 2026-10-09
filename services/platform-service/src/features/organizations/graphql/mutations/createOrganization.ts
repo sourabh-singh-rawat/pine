@@ -19,6 +19,7 @@ builder.mutationFields((t) => ({
         {
           tenantId: input.tenantId,
           parentOrganizationId: input.parentOrganizationId ?? undefined,
+          officeTypeId: input.officeTypeId,
           name: input.name,
           slug: input.slug,
           description: input.description ?? undefined,

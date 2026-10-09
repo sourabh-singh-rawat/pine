@@ -39,6 +39,7 @@ import {
 import { type IIdentityRelationService, type IPlatformRelationService, IdentityRelationService, PlatformRelationService } from "@/features/platform";
 import { type IIdentityRepository, type IIdentityService, IdentityRepository, IdentityService, PlatformIdentitySyncConsumer } from "@/features/identities";
 import { type IOnboardingService, OnboardingService, PlatformUserOnboardingConsumer } from "@/features/onboarding";
+import { type IOfficeTypeRepository, type IOfficeTypeService, OfficeTypeRepository, OfficeTypeService } from "@/features/office-types";
 import { type ITenantRelationService, TenantRelationService, type ITenantRepository, type ITenantService, TenantRepository } from "@/features/tenants";
 import { TenantService } from "@/features/tenants/services/TenantService";
 import { createContext } from "@/graphql";
@@ -73,6 +74,8 @@ container.bind<IOrganizationPreferenceRepository>(TYPES.OrganizationPreferenceRe
 container.bind<IOrganizationService>(TYPES.OrganizationService).to(OrganizationService);
 container.bind<IOrganizationPreferenceService>(TYPES.OrganizationPreferenceService).to(OrganizationPreferenceService);
 container.bind<IOrganizationRelationService>(TYPES.OrganizationRelationService).to(OrganizationRelationService);
+container.bind<IOfficeTypeRepository>(TYPES.OfficeTypeRepository).to(OfficeTypeRepository);
+container.bind<IOfficeTypeService>(TYPES.OfficeTypeService).to(OfficeTypeService);
 container.bind<IPlatformRelationService>(TYPES.PlatformRelationService).to(PlatformRelationService);
 container.bind<IIdentityRelationService>(TYPES.IdentityRelationService).to(IdentityRelationService);
 container.bind<IIdentityRepository>(TYPES.IdentityRepository).to(IdentityRepository);

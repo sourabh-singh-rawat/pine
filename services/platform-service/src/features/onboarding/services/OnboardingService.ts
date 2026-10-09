@@ -24,6 +24,7 @@ import type {
   PersonalOrganizationProvision,
 } from "@/features/onboarding/services/IOnboardingService";
 import type { ITenantRepository } from "@/features/tenants/repositories";
+import type { IOfficeTypeRepository } from "@/features/office-types/repositories";
 import type {
   IOrganizationPreferenceRepository,
   IOrganizationRepository,
@@ -32,6 +33,8 @@ import type {
 const PERSONAL_TENANT_NAME = "Personal";
 const PERSONAL_ORGANIZATION_NAME = "Personal organization";
 const PERSONAL_ORGANIZATION_SLUG = "default";
+const PERSONAL_OFFICE_TYPE_NAME = "Personal";
+const PERSONAL_OFFICE_TYPE_SLUG = "personal";
 
 const personalTenantSlug = (identityId: string): string => `personal-${identityId}`;
 
@@ -44,6 +47,8 @@ export class OnboardingService implements IOnboardingService {
     private readonly tenantRepository: ITenantRepository,
     @inject(TYPES.OrganizationRepository)
     private readonly organizationRepository: IOrganizationRepository,
+    @inject(TYPES.OfficeTypeRepository)
+    private readonly officeTypeRepository: IOfficeTypeRepository,
     @inject(TYPES.OrganizationPreferenceRepository)
     private readonly organizationPreferenceRepository: IOrganizationPreferenceRepository,
     @inject(TYPES.AuthorizationClient)
@@ -151,14 +156,37 @@ export class OnboardingService implements IOnboardingService {
     return this.createDefaultOrganization(tenant, identityId, tx);
   }
 
+  private async ensurePersonalOfficeType(tenantId: string, tx: DbClient): Promise<string> {
+    const officeTypes = await this.officeTypeRepository.findManyByTenant(tenantId);
+    const existingOfficeType = officeTypes.find(
+      (officeType) => officeType.slug === PERSONAL_OFFICE_TYPE_SLUG,
+    );
+    if (existingOfficeType) {
+      return existingOfficeType.id;
+    }
+
+    const officeType = await this.officeTypeRepository.save(
+      {
+        tenantId,
+        name: PERSONAL_OFFICE_TYPE_NAME,
+        slug: PERSONAL_OFFICE_TYPE_SLUG,
+        isActive: true,
+      },
+      { tx },
+    );
+    return officeType.id;
+  }
+
   private async createDefaultOrganization(
     tenant: Tenant,
     identityId: string,
     tx: DbClient,
   ): Promise<Organization> {
+    const officeTypeId = await this.ensurePersonalOfficeType(tenant.id, tx);
     const organization = await this.organizationRepository.save(
       {
         tenantId: tenant.id,
+        officeTypeId,
         name: PERSONAL_ORGANIZATION_NAME,
         slug: PERSONAL_ORGANIZATION_SLUG,
         description: "Default personal organization",
@@ -178,6 +206,7 @@ export class OnboardingService implements IOnboardingService {
         tenantId: organization.tenantId,
         name: organization.name,
         slug: organization.slug,
+        officeTypeId: organization.officeTypeId,
         isActive: organization.isActive,
         version: organization.version,
         createdAt: organization.createdAt.toISOString(),

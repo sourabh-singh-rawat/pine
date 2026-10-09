@@ -26,6 +26,7 @@ const organization = {
   id: "org-1",
   tenantId: "tenant-1",
   parentOrganizationId: null,
+  officeTypeId: "type-root",
   name: "Acme Corp",
   slug: "acme",
   description: "Primary organization",
@@ -40,6 +41,7 @@ const childOrganization = {
   ...organization,
   id: "org-2",
   parentOrganizationId: "org-1",
+  officeTypeId: "type-child",
   name: "Acme Division",
   slug: "acme-division",
 };
@@ -49,6 +51,7 @@ const identityId = "user-1";
 const createService = (deps: {
   organizationRepository?: unknown;
   tenantRepository?: unknown;
+  officeTypeRepository?: unknown;
   authorizationClient?: unknown;
   outboxService?: unknown;
   db?: unknown;
@@ -57,6 +60,14 @@ const createService = (deps: {
     (deps.organizationRepository ?? {}) as never,
     (deps.tenantRepository ?? {
       findById: vi.fn().mockResolvedValue(tenant),
+    }) as never,
+    (deps.officeTypeRepository ?? {
+      findById: vi.fn().mockImplementation(async (id: string) => ({
+        id,
+        tenantId: "tenant-1",
+        parentOfficeTypeId:
+          id === "type-child" ? "type-root" : id === "type-under-child" ? "type-child" : null,
+      })),
     }) as never,
     (deps.authorizationClient ?? {
       checkRelationship: vi.fn().mockResolvedValue(true),
@@ -212,6 +223,7 @@ describe("OrganizationService", () => {
       service.create(
         {
           tenantId: "tenant-1",
+          officeTypeId: "type-root",
           name: "Acme Corp",
           slug: "acme",
           description: "Primary organization",
@@ -230,6 +242,7 @@ describe("OrganizationService", () => {
       {
         tenantId: "tenant-1",
         parentOrganizationId: undefined,
+        officeTypeId: "type-root",
         name: "Acme Corp",
         slug: "acme",
         description: "Primary organization",
@@ -301,6 +314,7 @@ describe("OrganizationService", () => {
         {
           tenantId: "tenant-1",
           parentOrganizationId: "org-1",
+          officeTypeId: "type-child",
           name: "Acme Division",
           slug: "acme-division",
         },
@@ -313,6 +327,7 @@ describe("OrganizationService", () => {
       {
         tenantId: "tenant-1",
         parentOrganizationId: "org-1",
+        officeTypeId: "type-child",
         name: "Acme Division",
         slug: "acme-division",
         description: undefined,
@@ -337,6 +352,7 @@ describe("OrganizationService", () => {
         {
           tenantId: "tenant-1",
           parentOrganizationId: "org-1",
+          officeTypeId: "type-child",
           name: "Acme Division",
           slug: "acme-division",
         },
@@ -357,7 +373,10 @@ describe("OrganizationService", () => {
     const service = createService({ organizationRepository, tenantRepository });
 
     await expect(
-      service.create({ tenantId: "missing", name: "Acme Corp", slug: "acme" }, identityId),
+      service.create(
+        { tenantId: "missing", officeTypeId: "type-root", name: "Acme Corp", slug: "acme" },
+        identityId,
+      ),
     ).rejects.toBeInstanceOf(TenantNotFoundError);
     expect(organizationRepository.save).not.toHaveBeenCalled();
   });
@@ -372,7 +391,10 @@ describe("OrganizationService", () => {
     const service = createService({ organizationRepository });
 
     await expect(
-      service.create({ tenantId: "tenant-1", name: "Acme Corp", slug: "acme" }, identityId),
+      service.create(
+        { tenantId: "tenant-1", officeTypeId: "type-root", name: "Acme Corp", slug: "acme" },
+        identityId,
+      ),
     ).rejects.toBeInstanceOf(OrganizationSlugConflictError);
     expect(organizationRepository.existsByNameInTenant).not.toHaveBeenCalled();
     expect(organizationRepository.save).not.toHaveBeenCalled();
@@ -388,7 +410,10 @@ describe("OrganizationService", () => {
     const service = createService({ organizationRepository });
 
     await expect(
-      service.create({ tenantId: "tenant-1", name: "Acme Corp", slug: "acme" }, identityId),
+      service.create(
+        { tenantId: "tenant-1", officeTypeId: "type-root", name: "Acme Corp", slug: "acme" },
+        identityId,
+      ),
     ).rejects.toBeInstanceOf(OrganizationNameConflictError);
     expect(organizationRepository.save).not.toHaveBeenCalled();
   });
@@ -396,7 +421,7 @@ describe("OrganizationService", () => {
   it("updates the parent organization", async () => {
     const updated = { ...childOrganization, parentOrganizationId: null };
     const organizationRepository = {
-      findById: vi.fn().mockResolvedValue(childOrganization),
+      findById: vi.fn().mockResolvedValue({ ...childOrganization, officeTypeId: "type-root" }),
       update: vi.fn().mockResolvedValue(updated),
     };
     const authorizationClient = {
@@ -425,7 +450,7 @@ describe("OrganizationService", () => {
     const organizationRepository = {
       findById: vi
         .fn()
-        .mockResolvedValueOnce(organization)
+        .mockResolvedValueOnce({ ...organization, officeTypeId: "type-under-child" })
         .mockResolvedValueOnce(childOrganization),
       update: vi.fn(),
     };
