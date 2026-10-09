@@ -39,7 +39,7 @@ export class SpaceService implements ISpaceService {
       this.authorizationClient,
       identityId,
       "create_space",
-      `workspace:${input.workspaceId}`,
+      `organization:${input.organizationId}`,
     );
 
     return this.db.transaction(async (tx) => {
@@ -50,7 +50,7 @@ export class SpaceService implements ISpaceService {
 
       const space = await this.spaceRepository.save(
         {
-          workspaceId: input.workspaceId,
+          organizationId: input.organizationId,
           name: input.name,
           createdById: identityId,
         },
@@ -92,7 +92,7 @@ export class SpaceService implements ISpaceService {
       this.authorizationClient,
       identityId,
       "read",
-      `workspace:${space.workspaceId}`,
+      `organization:${space.organizationId}`,
     );
 
     return space;
@@ -103,10 +103,10 @@ export class SpaceService implements ISpaceService {
       this.authorizationClient,
       identityId,
       "read",
-      `workspace:${input.workspaceId}`,
+      `organization:${input.organizationId}`,
     );
 
-    return this.spaceRepository.findMany({ workspaceId: input.workspaceId });
+    return this.spaceRepository.findMany({ organizationId: input.organizationId });
   }
 
   async update(options: UpdateSpaceOptions): Promise<void> {
@@ -121,7 +121,7 @@ export class SpaceService implements ISpaceService {
       this.authorizationClient,
       identityId,
       "update",
-      `workspace:${space.workspaceId}`,
+      `organization:${space.organizationId}`,
     );
 
     await this.db.transaction(async (tx) => {
@@ -153,7 +153,7 @@ export class SpaceService implements ISpaceService {
   private toSpaceEventData(space: Space) {
     return {
       id: space.id,
-      workspaceId: space.workspaceId,
+      organizationId: space.organizationId,
       name: space.name,
       createdById: space.createdById,
       createdAt: space.createdAt.toISOString(),

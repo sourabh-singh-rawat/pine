@@ -5,7 +5,7 @@ import { Spaces } from "@/db/tables/Spaces";
 
 export const Tags = pgTable("tags", {
   ...idColumn,
-  workspaceId: uuid("workspace_id").notNull(),
+  organizationId: uuid("organization_id").notNull(),
   spaceId: uuid("space_id"),
   name: text("name").notNull(),
   color: text("color").notNull().default("#64748B"),

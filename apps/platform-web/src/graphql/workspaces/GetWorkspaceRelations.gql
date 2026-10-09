@@ -1,8 +1,0 @@
-query GetWorkspaceRelations($workspaceId: String!) {
-  getWorkspaceRelations(workspaceId: $workspaceId) {
-    id
-    workspaceId
-    identityId
-    relation
-  }
-}

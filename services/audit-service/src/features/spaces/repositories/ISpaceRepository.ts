@@ -4,7 +4,7 @@ export type SpaceRepositoryOptions = { tx?: DbClient };
 
 export type UpsertSpaceEntity = {
   id: string;
-  workspaceId: string;
+  organizationId: string;
   name: string;
   createdById: string;
 };

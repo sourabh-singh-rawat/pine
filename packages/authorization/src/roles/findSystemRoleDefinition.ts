@@ -1,4 +1,4 @@
-import { ALL_WORKSPACE_ROLES, ALL_PLATFORM_ROLES, ALL_TENANT_ROLES } from "./SystemRoles";
+import { ALL_ORGANIZATION_ROLES, ALL_PLATFORM_ROLES, ALL_TENANT_ROLES } from "./SystemRoles";
 import type { RoleDefinition } from "./RoleDefinition";
 
 const matchesRole = (
@@ -41,7 +41,7 @@ export const findTenantRoleDefinition = (match: {
   return undefined;
 };
 
-export const findWorkspaceRoleDefinition = (match: {
+export const findOrganizationRoleDefinition = (match: {
   id?: string | null;
   key?: string | null;
 }): RoleDefinition | undefined => {
@@ -49,7 +49,7 @@ export const findWorkspaceRoleDefinition = (match: {
     return undefined;
   }
 
-  for (const role of ALL_WORKSPACE_ROLES) {
+  for (const role of ALL_ORGANIZATION_ROLES) {
     if (matchesRole(role, match)) {
       return role;
     }
@@ -64,7 +64,7 @@ export const findSystemRoleDefinition = (match: {
 }): RoleDefinition | undefined =>
   findPlatformRoleDefinition(match) ??
   findTenantRoleDefinition(match) ??
-  findWorkspaceRoleDefinition(match);
+  findOrganizationRoleDefinition(match);
 
 export const platformRolePermissionKeys = (match: {
   id?: string | null;
@@ -76,10 +76,10 @@ export const tenantRolePermissionKeys = (match: {
   key?: string | null;
 }): readonly string[] => findTenantRoleDefinition(match)?.permissionKeys ?? [];
 
-export const workspaceRolePermissionKeys = (match: {
+export const organizationRolePermissionKeys = (match: {
   id?: string | null;
   key?: string | null;
-}): readonly string[] => findWorkspaceRoleDefinition(match)?.permissionKeys ?? [];
+}): readonly string[] => findOrganizationRoleDefinition(match)?.permissionKeys ?? [];
 
 export const systemRolePermissionKeys = (match: {
   id?: string | null;

@@ -3,8 +3,8 @@ import { describe, expect, it } from "vitest";
 
 describe("parsePermission", () => {
   it("returns namespace and permission from a permission key", () => {
-    expect(parsePermission("workspace:read")).toEqual({
-      namespace: "workspace",
+    expect(parsePermission("organization:read")).toEqual({
+      namespace: "organization",
       permission: "read",
     });
     expect(parsePermission("platform:create_tenant")).toEqual({
@@ -14,9 +14,9 @@ describe("parsePermission", () => {
   });
 
   it("rejects keys that are not namespace:permission", () => {
-    expect(() => parsePermission("workspace")).toThrow(InvalidPermissionKeyError);
-    expect(() => parsePermission("workspace:")).toThrow(InvalidPermissionKeyError);
+    expect(() => parsePermission("organization")).toThrow(InvalidPermissionKeyError);
+    expect(() => parsePermission("organization:")).toThrow(InvalidPermissionKeyError);
     expect(() => parsePermission(":read")).toThrow(InvalidPermissionKeyError);
-    expect(() => parsePermission("workspace:role:create")).toThrow(InvalidPermissionKeyError);
+    expect(() => parsePermission("organization:role:create")).toThrow(InvalidPermissionKeyError);
   });
 });

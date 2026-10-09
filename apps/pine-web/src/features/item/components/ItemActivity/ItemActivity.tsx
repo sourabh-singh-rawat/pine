@@ -1,7 +1,7 @@
 import { Stack, Typography, useTheme } from "@mui/material";
 import { useGetItemAuditLogsQuery } from "@generated/gql";
 import { ProgressCircularIndicator } from "@pine/ui";
-import { useWorkspaceStore } from "@features/workspace/store";
+import { useOrganizationStore } from "@features/organization/store";
 
 interface ItemActivityProps {
   itemId: string;
@@ -59,14 +59,14 @@ const formatActorLabel = (log: ActorLabelSource): string => {
 
 export const ItemActivity = ({ itemId }: ItemActivityProps) => {
   const theme = useTheme();
-  const workspaceId = useWorkspaceStore((state) => state.currentWorkspace?.id);
+  const organizationId = useOrganizationStore((state) => state.currentOrganization?.id);
   const auditLogsQuery = useGetItemAuditLogsQuery(
     {
       itemId,
-      workspaceId: workspaceId ?? "",
+      organizationId: organizationId ?? "",
     },
     {
-      enabled: Boolean(workspaceId) && Boolean(itemId),
+      enabled: Boolean(organizationId) && Boolean(itemId),
       select: (data) => data.getItemAuditLogs ?? [],
     },
   );
@@ -79,29 +79,29 @@ export const ItemActivity = ({ itemId }: ItemActivityProps) => {
         Activity
       </Typography>
 
-      {!workspaceId && (
+      {!organizationId && (
         <Typography variant="body2" color="text.secondary">
-          Select a workspace to view activity.
+          Select a organization to view activity.
         </Typography>
       )}
 
-      {workspaceId && auditLogsQuery.isPending && (
+      {organizationId && auditLogsQuery.isPending && (
         <ProgressCircularIndicator size={32} aria-label="Loading activity" />
       )}
 
-      {workspaceId && auditLogsQuery.isError && (
+      {organizationId && auditLogsQuery.isError && (
         <Typography variant="body2" color="error">
           Failed to load activity.
         </Typography>
       )}
 
-      {workspaceId && auditLogsQuery.isSuccess && logs.length === 0 && (
+      {organizationId && auditLogsQuery.isSuccess && logs.length === 0 && (
         <Typography variant="body2" color="text.secondary">
           No activity yet.
         </Typography>
       )}
 
-      {workspaceId &&
+      {organizationId &&
         logs.map((log) => (
           <Stack
             key={log.id ?? `${log.action}-${String(log.createdAt)}`}

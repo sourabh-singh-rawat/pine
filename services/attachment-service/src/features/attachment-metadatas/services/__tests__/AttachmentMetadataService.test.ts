@@ -61,7 +61,7 @@ describe("AttachmentMetadataService", () => {
 
   const existingAttachment: Attachment = {
     id: "att-10",
-    scopeType: ATTACHMENT_SCOPE_TYPE.WORKSPACE,
+    scopeType: ATTACHMENT_SCOPE_TYPE.ORGANIZATION,
     scopeId: "org-1",
     tenantId: "tenant-1",
     currentVersionId: "ver-10",
@@ -83,7 +83,7 @@ describe("AttachmentMetadataService", () => {
     fileSize: 100,
     sha256: "abc",
     storageProvider: "seaweed",
-    storageObjectKey: "trusted/workspace/org-1/att-10",
+    storageObjectKey: "trusted/organization/org-1/att-10",
     createdBy: "user-1",
     createdAt: new Date(),
   };

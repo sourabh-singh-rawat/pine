@@ -1,12 +1,12 @@
 import type { Space } from "@/db";
 
 export type CreateSpaceInput = {
-  workspaceId: string;
+  organizationId: string;
   name: string;
 };
 
 export type ListSpacesInput = {
-  workspaceId: string;
+  organizationId: string;
 };
 
 export type UpdateSpaceOptions = {

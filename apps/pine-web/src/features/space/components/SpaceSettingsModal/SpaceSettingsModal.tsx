@@ -7,7 +7,7 @@ import { useSpaceStore } from "../../store";
 
 type SpaceSettingsModalProps = {
   spaceId: string;
-  workspaceId: string;
+  organizationId: string;
   name: string;
   open: boolean;
   onClose: () => void;
@@ -15,7 +15,7 @@ type SpaceSettingsModalProps = {
 
 export const SpaceSettingsModal = ({
   spaceId,
-  workspaceId,
+  organizationId,
   name,
   open,
   onClose,
@@ -52,13 +52,13 @@ export const SpaceSettingsModal = ({
         },
       });
       await queryClient.invalidateQueries({
-        queryKey: useGetSpacesQuery.getKey({ workspaceId }),
+        queryKey: useGetSpacesQuery.getKey({ organizationId }),
       });
       if (currentSpace?.id === spaceId) {
         setCurrentSpace({
           id: spaceId,
           name: nextName,
-          workspaceId,
+          organizationId,
         });
       }
       snackbar.success("Space updated");

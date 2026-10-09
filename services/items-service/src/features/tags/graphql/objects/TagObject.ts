@@ -3,7 +3,7 @@ import { builder } from "@pine/server";
 export const TagObject = builder
   .objectRef<{
     id: string;
-    workspaceId: string;
+    organizationId: string;
     spaceId?: string | null;
     name: string;
     color: string;
@@ -12,7 +12,7 @@ export const TagObject = builder
   .implement({
     fields: (t) => ({
       id: t.exposeString("id", { nullable: false }),
-      workspaceId: t.exposeString("workspaceId", { nullable: false }),
+      organizationId: t.exposeString("organizationId", { nullable: false }),
       spaceId: t.exposeString("spaceId", { nullable: true }),
       name: t.exposeString("name", { nullable: false }),
       color: t.exposeString("color", { nullable: false }),

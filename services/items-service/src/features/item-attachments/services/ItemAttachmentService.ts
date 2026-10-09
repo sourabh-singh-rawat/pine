@@ -65,13 +65,13 @@ export class ItemAttachmentService implements IItemAttachmentService {
     const { itemId, attachmentId, name, originalName, mimeType, size, identityId } = options;
 
     const item = await this.requireItem(itemId);
-    const workspaceId = await this.resolveWorkspaceId(item);
+    const organizationId = await this.resolveOrganizationId(item);
 
     await requirePermission(
       this.authorizationClient,
       identityId,
       "create_list",
-      `workspace:${workspaceId}`,
+      `organization:${organizationId}`,
     );
 
     const existing = await this.itemAttachmentRepository.findByItemAndAttachment(
@@ -98,13 +98,13 @@ export class ItemAttachmentService implements IItemAttachmentService {
     const { itemId, identityId } = options;
 
     const item = await this.requireItem(itemId);
-    const workspaceId = await this.resolveWorkspaceId(item);
+    const organizationId = await this.resolveOrganizationId(item);
 
     await requirePermission(
       this.authorizationClient,
       identityId,
       "read",
-      `workspace:${workspaceId}`,
+      `organization:${organizationId}`,
     );
 
     return this.itemAttachmentRepository.findByItemId(itemId);
@@ -119,13 +119,13 @@ export class ItemAttachmentService implements IItemAttachmentService {
     }
 
     const item = await this.requireItem(link.itemId);
-    const workspaceId = await this.resolveWorkspaceId(item);
+    const organizationId = await this.resolveOrganizationId(item);
 
     await requirePermission(
       this.authorizationClient,
       identityId,
       "create_list",
-      `workspace:${workspaceId}`,
+      `organization:${organizationId}`,
     );
 
     const deleted = await this.itemAttachmentRepository.softDelete(id);
@@ -140,13 +140,13 @@ export class ItemAttachmentService implements IItemAttachmentService {
     const { itemId, filename, contentType, size, identityId, authMethod } = options;
 
     const item = await this.requireItem(itemId);
-    const workspaceId = await this.resolveWorkspaceId(item);
+    const organizationId = await this.resolveOrganizationId(item);
 
     await requirePermission(
       this.authorizationClient,
       identityId,
       "create_list",
-      `workspace:${workspaceId}`,
+      `organization:${organizationId}`,
     );
 
     const requestId = uuidv7();
@@ -185,8 +185,8 @@ export class ItemAttachmentService implements IItemAttachmentService {
     try {
       const uploadTarget = await this.attachmentClient.createUploadTarget({
         input: {
-          scopeType: ATTACHMENT_SCOPE_TYPE.WORKSPACE,
-          scopeId: workspaceId,
+          scopeType: ATTACHMENT_SCOPE_TYPE.ORGANIZATION,
+          scopeId: organizationId,
           filename,
           contentType,
           size,
@@ -351,7 +351,7 @@ export class ItemAttachmentService implements IItemAttachmentService {
     return item;
   }
 
-  private async resolveWorkspaceId(item: Item): Promise<string> {
+  private async resolveOrganizationId(item: Item): Promise<string> {
     const list = await this.listRepository.findById(item.listId);
     if (!list) {
       throw new ItemNotFoundError(`List not found for item: ${item.id}`);
@@ -362,6 +362,6 @@ export class ItemAttachmentService implements IItemAttachmentService {
       throw new SpaceNotFoundError(`Space not found: ${list.spaceId}`);
     }
 
-    return space.workspaceId;
+    return space.organizationId;
   }
 }

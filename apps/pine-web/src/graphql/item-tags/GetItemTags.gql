@@ -1,7 +1,7 @@
 query GetItemTags($itemId: String!) {
   getItemTags(itemId: $itemId) {
     id
-    workspaceId
+    organizationId
     spaceId
     name
     color

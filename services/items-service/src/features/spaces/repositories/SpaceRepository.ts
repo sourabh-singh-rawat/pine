@@ -23,7 +23,7 @@ export class SpaceRepository implements ISpaceRepository {
       .insert(Spaces)
       .values({
         id: entity.id ?? uuidv7(),
-        workspaceId: entity.workspaceId,
+        organizationId: entity.organizationId,
         name: entity.name,
         createdById: entity.createdById,
         createdAt: now,
@@ -75,7 +75,7 @@ export class SpaceRepository implements ISpaceRepository {
     return client
       .select()
       .from(Spaces)
-      .where(and(eq(Spaces.workspaceId, filter.workspaceId), isNull(Spaces.deletedAt)));
+      .where(and(eq(Spaces.organizationId, filter.organizationId), isNull(Spaces.deletedAt)));
   }
 
   private client(options?: SpaceRepositoryOptions) {

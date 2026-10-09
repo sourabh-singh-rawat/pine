@@ -3,5 +3,5 @@ export interface GraphQLContext {
   headers: Record<string, string | undefined>;
   identity?: { id: string; authMethod: "access_token" | "session" };
   tenantId?: string;
-  workspaceId?: string;
+  organizationId?: string;
 }

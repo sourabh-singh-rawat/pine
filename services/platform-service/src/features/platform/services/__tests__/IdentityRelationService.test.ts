@@ -26,7 +26,7 @@ const createAuthorizationClient = (
 });
 
 describe("IdentityRelationService", () => {
-  it("lists platform, tenant, and workspace memberships for an identity", async () => {
+  it("lists platform, tenant, and organization memberships for an identity", async () => {
     const listRelationships = vi
       .fn()
       .mockImplementation(async (input: ListRelationshipsInput): Promise<GraphRelationship[]> => {
@@ -50,7 +50,7 @@ describe("IdentityRelationService", () => {
         }
         return [
           {
-            object: { namespace: "workspace", id: "org-1" },
+            object: { namespace: "organization", id: "org-1" },
             relation: MEMBER,
             subject: { namespace: IDENTITY, id: targetIdentityId },
           },
@@ -76,7 +76,7 @@ describe("IdentityRelationService", () => {
       subject: { namespace: IDENTITY, id: targetIdentityId },
     });
     expect(listRelationships).toHaveBeenCalledWith({
-      namespace: "workspace",
+      namespace: "organization",
       subject: { namespace: IDENTITY, id: targetIdentityId },
     });
     expect(listRelationships).toHaveBeenCalledTimes(3);
@@ -96,10 +96,10 @@ describe("IdentityRelationService", () => {
         relation: OWNER,
       },
     ]);
-    expect(result.workspaces).toEqual([
+    expect(result.organizations).toEqual([
       {
         id: `org-1:${MEMBER}:${targetIdentityId}`,
-        workspaceId: "org-1",
+        organizationId: "org-1",
         identityId: targetIdentityId,
         relation: MEMBER,
       },

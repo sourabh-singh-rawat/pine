@@ -3,7 +3,7 @@ import { auditColumns, idColumn } from "@/db/columns";
 
 export const Spaces = pgTable("spaces", {
   ...idColumn,
-  workspaceId: uuid("workspace_id").notNull(),
+  organizationId: uuid("organization_id").notNull(),
   name: text("name").notNull(),
   createdById: uuid("created_by_id").notNull(),
   ...auditColumns,

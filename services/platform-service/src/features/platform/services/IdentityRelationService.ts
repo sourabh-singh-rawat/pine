@@ -14,13 +14,13 @@ import type {
   IdentityRelations,
   IIdentityRelationService,
 } from "@/features/platform/services/IIdentityRelationService";
-import type { WorkspaceRelation } from "@/features/workspaces/services/IWorkspaceRelationService";
+import type { OrganizationRelation } from "@/features/organizations/services/IOrganizationRelationService";
 import type { PlatformRelation } from "@/features/platform/services/IPlatformRelationService";
 import type { TenantRelation } from "@/features/tenants/services/ITenantRelationService";
 
 const PLATFORM_MEMBERSHIP_RELATIONS = new Set([ADMIN, MEMBER]);
 const TENANT_MEMBERSHIP_RELATIONS = new Set([OWNER, ADMIN, MEMBER]);
-const WORKSPACE_MEMBERSHIP_RELATIONS = new Set([OWNER, ADMIN, MEMBER]);
+const ORGANIZATION_MEMBERSHIP_RELATIONS = new Set([OWNER, ADMIN, MEMBER]);
 
 @injectable()
 export class IdentityRelationService implements IIdentityRelationService {
@@ -38,26 +38,27 @@ export class IdentityRelationService implements IIdentityRelationService {
     );
 
     const subject = { namespace: IDENTITY, id: identityId };
-    const [platformRelationships, tenantRelationships, workspaceRelationships] = await Promise.all([
-      this.authorizationClient.listRelationships({
-        namespace: "platform",
-        subject,
-      }),
-      this.authorizationClient.listRelationships({
-        namespace: "tenant",
-        subject,
-      }),
-      this.authorizationClient.listRelationships({
-        namespace: "workspace",
-        subject,
-      }),
-    ]);
+    const [platformRelationships, tenantRelationships, organizationRelationships] =
+      await Promise.all([
+        this.authorizationClient.listRelationships({
+          namespace: "platform",
+          subject,
+        }),
+        this.authorizationClient.listRelationships({
+          namespace: "tenant",
+          subject,
+        }),
+        this.authorizationClient.listRelationships({
+          namespace: "organization",
+          subject,
+        }),
+      ]);
 
     return {
       identityId,
       platform: this.toPlatformRelations(identityId, platformRelationships),
       tenants: this.toTenantRelations(identityId, tenantRelationships),
-      workspaces: this.toWorkspaceRelations(identityId, workspaceRelationships),
+      organizations: this.toOrganizationRelations(identityId, organizationRelationships),
     };
   }
 
@@ -108,27 +109,27 @@ export class IdentityRelationService implements IIdentityRelationService {
     return tenantRelations;
   }
 
-  private toWorkspaceRelations(
+  private toOrganizationRelations(
     identityId: string,
     relationships: GraphRelationship[],
-  ): WorkspaceRelation[] {
-    const workspaceRelations: WorkspaceRelation[] = [];
+  ): OrganizationRelation[] {
+    const organizationRelations: OrganizationRelation[] = [];
     for (const relationship of relationships) {
       if (
-        relationship.object.namespace !== "workspace" ||
-        !WORKSPACE_MEMBERSHIP_RELATIONS.has(relationship.relation) ||
+        relationship.object.namespace !== "organization" ||
+        !ORGANIZATION_MEMBERSHIP_RELATIONS.has(relationship.relation) ||
         relationship.subject?.namespace !== IDENTITY ||
         relationship.subject.id !== identityId
       ) {
         continue;
       }
-      workspaceRelations.push({
+      organizationRelations.push({
         id: `${relationship.object.id}:${relationship.relation}:${identityId}`,
-        workspaceId: relationship.object.id,
+        organizationId: relationship.object.id,
         identityId,
         relation: relationship.relation,
       });
     }
-    return workspaceRelations;
+    return organizationRelations;
   }
 }

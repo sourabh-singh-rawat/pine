@@ -41,7 +41,7 @@ const createService = (
 });
 
 describe("ItemAttachmentCreatedConsumer", () => {
-  it("marks scanning on workspace quarantine with operationId", async () => {
+  it("marks scanning on organization quarantine with operationId", async () => {
     const itemAttachmentService = createService({
       markScanning: vi.fn().mockResolvedValue(null),
     });
@@ -60,8 +60,8 @@ describe("ItemAttachmentCreatedConsumer", () => {
       subject: "att-1",
       data: {
         id: "att-1",
-        scopeType: "WORKSPACE",
-        scopeId: "workspace-1",
+        scopeType: "ORGANIZATION",
+        scopeId: "organization-1",
         currentVersionId: "ver-1",
         operationId: "upload-req-1",
         status: "QUARANTINED",
@@ -100,8 +100,8 @@ describe("ItemAttachmentCreatedConsumer", () => {
       subject: "att-1",
       data: {
         id: "att-1",
-        scopeType: "WORKSPACE",
-        scopeId: "workspace-1",
+        scopeType: "ORGANIZATION",
+        scopeId: "organization-1",
         operationId: "upload-req-1",
         status: "AVAILABLE",
         securityStatus: "CLEAN",
@@ -139,8 +139,8 @@ describe("ItemAttachmentCreatedConsumer", () => {
       subject: "att-1",
       data: {
         id: "att-1",
-        scopeType: "WORKSPACE",
-        scopeId: "workspace-1",
+        scopeType: "ORGANIZATION",
+        scopeId: "organization-1",
         operationId: "upload-req-1",
         status: "REJECTED",
         securityStatus: "INFECTED",
@@ -175,8 +175,8 @@ describe("ItemAttachmentCreatedConsumer", () => {
       subject: "att-1",
       data: {
         id: "att-1",
-        scopeType: "WORKSPACE",
-        scopeId: "workspace-1",
+        scopeType: "ORGANIZATION",
+        scopeId: "organization-1",
         status: "QUARANTINED",
         securityStatus: "PENDING",
         createdBy: "user-1",

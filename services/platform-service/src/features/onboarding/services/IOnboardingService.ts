@@ -1,11 +1,11 @@
-import type { Tenant, Workspace } from "@/db";
+import type { Tenant, Organization } from "@/db";
 
-export type PersonalWorkspaceProvision = {
+export type PersonalOrganizationProvision = {
   tenant: Tenant;
-  workspace: Workspace;
+  organization: Organization;
   created: boolean;
 };
 
 export interface IOnboardingService {
-  provisionPersonalWorkspace: (identityId: string) => Promise<PersonalWorkspaceProvision>;
+  provisionPersonalOrganization: (identityId: string) => Promise<PersonalOrganizationProvision>;
 }

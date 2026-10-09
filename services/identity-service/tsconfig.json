@@ -101,7 +101,7 @@
     "skipLibCheck": true /* Skip type checking all .d.ts files. */
   },
   // Do not include ../../packages/*/src here: tsgo sets rootDir under this service and
-  // TS6059 if package sources are program roots. Workspace packages resolve via node_modules
+  // TS6059 if package sources are program roots. Organization packages resolve via node_modules
   // (main/types); each package has its own tsconfig for tsx/decorators.
   "include": ["src/**/*.ts"],
   "exclude": ["node_modules", "dist"]

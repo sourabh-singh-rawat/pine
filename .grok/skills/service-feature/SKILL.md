@@ -10,7 +10,7 @@ when-to-use: >
 
 # Service feature
 
-Wire layers; do not re-implement them. Canonical GraphQL: `platform-service` `features/workspaces`. Canonical HTTP: `authorization-service` `features/authorization`. Related: `repository`, `drizzle`, `service`, `graphql`, `http-route`, `events`, `outbox`, `workers`, `authorization`, `testing`.
+Wire layers; do not re-implement them. Canonical GraphQL: `platform-service` `features/organizations`. Canonical HTTP: `authorization-service` `features/authorization`. Related: `repository`, `drizzle`, `service`, `graphql`, `http-route`, `events`, `outbox`, `workers`, `authorization`, `testing`.
 
 | Layer                          | Skill                    |
 | ------------------------------ | ------------------------ |
@@ -41,7 +41,7 @@ services/<svc>/src/
 
 | Kind                | Folder             | Examples                                               |
 | ------------------- | ------------------ | ------------------------------------------------------ |
-| Entity aggregate    | plural kebab-case  | `workspaces`, `identities`, `tenants`                  |
+| Entity aggregate    | plural kebab-case  | `organizations`, `identities`, `tenants`                  |
 | Use-case / protocol | the problem        | `signin`, `oauth`, `verification`, `attachment-upload` |
 | Foreign projection  | source entity name | `identities` / `tenants` in a consuming service        |
 
@@ -57,10 +57,10 @@ Keep aggregate + relations + transport + repos + services + errors together. Spl
 6. Colocated `*.test.ts` for non-trivial service logic → `testing`
 
 ```ts
-TYPES.WorkspaceRepository = Symbol.for("IWorkspaceRepository");
-TYPES.WorkspaceService = Symbol.for("IWorkspaceService");
-container.bind<IWorkspaceRepository>(TYPES.WorkspaceRepository).to(WorkspaceRepository);
-container.bind<IWorkspaceService>(TYPES.WorkspaceService).to(WorkspaceService);
+TYPES.OrganizationRepository = Symbol.for("IOrganizationRepository");
+TYPES.OrganizationService = Symbol.for("IOrganizationService");
+container.bind<IOrganizationRepository>(TYPES.OrganizationRepository).to(OrganizationRepository);
+container.bind<IOrganizationService>(TYPES.OrganizationService).to(OrganizationService);
 ```
 
 ## Imports

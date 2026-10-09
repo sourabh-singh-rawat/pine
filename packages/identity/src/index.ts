@@ -3,8 +3,8 @@ export { HttpIdentityClient, type HttpIdentityClientOptions } from "./HttpIdenti
 export { resolveIdentityFromHeaders } from "./resolveIdentityFromHeaders";
 export { resolveTenantContextFromHeaders } from "./resolveTenantContextFromHeaders";
 export { requireIdentity, requireIdentityId } from "./requireIdentity";
-export { requireWorkspaceId, requireTenantId } from "./requireTenantContext";
-export { X_WORKSPACE_ID_HEADER, X_TENANT_ID_HEADER } from "./tenantContextHeaders";
+export { requireOrganizationId, requireTenantId } from "./requireTenantContext";
+export { X_ORGANIZATION_ID_HEADER, X_TENANT_ID_HEADER } from "./tenantContextHeaders";
 export {
   GetIdentityFromAccessTokenResponseSchema,
   GetIdentityFromSessionResponseSchema,

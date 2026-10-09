@@ -38,7 +38,7 @@ describe("checkRelationship route", () => {
       httpRequest({
         body: {
           namespace: "permission",
-          object: "workspace:update",
+          object: "organization:update",
           relation: "has",
           subject: "identity:user-1",
         },
@@ -48,7 +48,7 @@ describe("checkRelationship route", () => {
     expect(get).toHaveBeenCalledWith(TYPES.AuthorizationService);
     expect(hasRelationship).toHaveBeenCalledWith({
       namespace: "permission",
-      object: "workspace:update",
+      object: "organization:update",
       relation: "has",
       subject: "identity:user-1",
     });
@@ -66,7 +66,7 @@ describe("checkRelationship route", () => {
       httpRequest({
         body: {
           namespace: "permission",
-          object: "workspace:update",
+          object: "organization:update",
           relation: "has",
           subject: "identity:user-1",
         },
@@ -103,7 +103,7 @@ describe("checkRelationship route", () => {
         httpRequest({
           body: {
             namespace: "permission",
-            object: "workspace:update",
+            object: "organization:update",
             relation: "has",
           },
         }),

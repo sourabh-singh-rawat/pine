@@ -2,7 +2,7 @@
 
 import type { Client, ClientMeta, Options as Options2, RequestResult, TDataShape } from './client';
 import { client } from './client.gen';
-import type { AcceptConsentChallengeData, AcceptConsentChallengeResponses, AcceptLoginChallengeData, AcceptLoginChallengeResponses, AuthorizeData, CheckRelationshipData, CheckRelationshipResponses, CreateOAuthClientData, CreateOAuthClientResponses, CreateUploadTargetData, CreateUploadTargetResponses, DeleteOAuthClientData, DeleteOAuthClientResponses, DeleteRelationshipData, DeleteRelationshipResponses, EnsureRelationshipData, EnsureRelationshipResponses, ExchangeTokenData, ExchangeTokenResponses, GetAttachmentContentData, GetAttachmentContentResponses, GetAttachmentDerivativeData, GetAttachmentDerivativeResponses, GetAttachmentVersionContentData, GetAttachmentVersionContentResponses, GetConsentChallengeData, GetConsentChallengeResponses, GetCurrentUserData, GetCurrentUserResponses, GetIdentityFromAccessTokenData, GetIdentityFromAccessTokenResponses, GetIdentityFromSessionData, GetIdentityFromSessionResponses, GetOAuthClientData, GetOAuthClientResponses, IntrospectTokenData, IntrospectTokenResponses, ListRelationshipsData, ListRelationshipsResponses, LogoutData, LogoutResponses, RegisterData, RegisterResponses, RejectConsentChallengeData, RejectConsentChallengeResponses, ResendVerificationEmailData, ResendVerificationEmailResponses, SignInWithEmailAndPasswordData, SignInWithEmailAndPasswordResponses, StoreAttachmentDerivativeData, StoreAttachmentDerivativeResponses, StoreAttachmentMetadataData, StoreAttachmentMetadataResponses, UpdateSecurityStatusData, UpdateSecurityStatusResponses, UploadToTargetData, UploadToTargetResponses, VerifyEmailData, VerifyEmailResponses } from './types.gen';
+import type { AcceptConsentChallengeData, AcceptConsentChallengeResponses, AcceptLoginChallengeData, AcceptLoginChallengeResponses, AuthorizeData, CheckRelationshipData, CheckRelationshipResponses, CreateOAuthClientData, CreateOAuthClientResponses, CreateUploadTargetData, CreateUploadTargetResponses, DeleteOAuthClientData, DeleteOAuthClientResponses, DeleteRelationshipData, DeleteRelationshipResponses, EnsureRelationshipData, EnsureRelationshipResponses, ExchangeTokenData, ExchangeTokenResponses, GetAttachmentContentData, GetAttachmentContentResponses, GetAttachmentDerivativeData, GetAttachmentDerivativeResponses, GetAttachmentVersionContentData, GetAttachmentVersionContentResponses, GetConsentChallengeData, GetConsentChallengeResponses, GetCurrentUserData, GetCurrentUserResponses, GetIdentityFromAccessTokenData, GetIdentityFromAccessTokenResponses, GetIdentityFromSessionData, GetIdentityFromSessionResponses, GetJwksData, GetJwksResponses, GetOAuthClientData, GetOAuthClientResponses, GetOpenIdConfigurationData, GetOpenIdConfigurationResponses, IntrospectTokenData, IntrospectTokenResponses, ListRelationshipsData, ListRelationshipsResponses, LogoutData, LogoutResponses, RegisterData, RegisterResponses, RejectConsentChallengeData, RejectConsentChallengeResponses, ResendVerificationEmailData, ResendVerificationEmailResponses, SignInWithEmailAndPasswordData, SignInWithEmailAndPasswordResponses, StoreAttachmentDerivativeData, StoreAttachmentDerivativeResponses, StoreAttachmentMetadataData, StoreAttachmentMetadataResponses, UpdateSecurityStatusData, UpdateSecurityStatusResponses, UploadToTargetData, UploadToTargetResponses, VerifyEmailData, VerifyEmailResponses } from './types.gen';
 
 export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends boolean = boolean, TResponse = unknown> = Options2<TData, ThrowOnError, TResponse> & {
     /**
@@ -246,6 +246,28 @@ export const deleteOAuthClient = <ThrowOnError extends boolean = false>(options:
 export const getOAuthClient = <ThrowOnError extends boolean = false>(options: Options<GetOAuthClientData, ThrowOnError>): RequestResult<GetOAuthClientResponses, unknown, ThrowOnError> => (options.client ?? client).get<GetOAuthClientResponses, unknown, ThrowOnError>({
     responseType: 'json',
     url: '/oauth/clients/{clientId}',
+    ...options
+});
+
+/**
+ * OpenID Provider configuration
+ *
+ * OIDC discovery document for the public authorization server. Endpoint URLs use OAUTH_PUBLIC_URL.
+ */
+export const getOpenIdConfiguration = <ThrowOnError extends boolean = false>(options?: Options<GetOpenIdConfigurationData, ThrowOnError>): RequestResult<GetOpenIdConfigurationResponses, unknown, ThrowOnError> => (options?.client ?? client).get<GetOpenIdConfigurationResponses, unknown, ThrowOnError>({
+    responseType: 'json',
+    url: '/oauth/.well-known/openid-configuration',
+    ...options
+});
+
+/**
+ * JSON Web Key Set
+ *
+ * Public keys used to verify ID tokens issued by the authorization server.
+ */
+export const getJwks = <ThrowOnError extends boolean = false>(options?: Options<GetJwksData, ThrowOnError>): RequestResult<GetJwksResponses, unknown, ThrowOnError> => (options?.client ?? client).get<GetJwksResponses, unknown, ThrowOnError>({
+    responseType: 'json',
+    url: '/oauth/.well-known/jwks.json',
     ...options
 });
 

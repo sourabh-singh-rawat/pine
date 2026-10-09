@@ -1,0 +1,8 @@
+query GetOrganizationRelations($organizationId: String!) {
+  getOrganizationRelations(organizationId: $organizationId) {
+    id
+    organizationId
+    identityId
+    relation
+  }
+}

@@ -223,14 +223,14 @@ describe("KetoAuthorizationGraphProvider", () => {
 
     await provider.listRelationships({
       namespace: "tenant",
-      object: { namespace: "workspace", id: "org-1" },
+      object: { namespace: "organization", id: "org-1" },
       subject: { namespace: "identity", id: "user-1" },
     });
 
     expect(getRelationships).toHaveBeenCalledTimes(1);
     expect(getRelationships).toHaveBeenCalledWith(
       expect.objectContaining({
-        namespace: "workspace",
+        namespace: "organization",
         object: "org-1",
         subjectId: "identity:user-1",
       }),

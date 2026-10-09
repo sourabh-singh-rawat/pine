@@ -10,7 +10,7 @@ import { type SpaceDatabase, SpaceService } from "@/features/spaces/services/Spa
 
 const space: Space = {
   id: "space-1",
-  workspaceId: "workspace-1",
+  organizationId: "organization-1",
   name: "Engineering",
   createdById: "user-1",
   version: 1,
@@ -117,8 +117,8 @@ describe("SpaceService", () => {
     ).resolves.toBeUndefined();
 
     expect(authorizationClient.checkRelationship).toHaveBeenCalledWith({
-      namespace: "workspace",
-      object: "workspace-1",
+      namespace: "organization",
+      object: "organization-1",
       relation: "update",
       subject: "identity:user-1",
     });
@@ -138,7 +138,7 @@ describe("SpaceService", () => {
           subject: "space-1",
           data: expect.objectContaining({
             id: "space-1",
-            workspaceId: "workspace-1",
+            organizationId: "organization-1",
             name: "Platform",
           }),
         }),
@@ -166,7 +166,7 @@ describe("SpaceService", () => {
     expect(outboxService.schedule).not.toHaveBeenCalled();
   });
 
-  it("throws InsufficientPermissionError when workspace update is denied", async () => {
+  it("throws InsufficientPermissionError when organization update is denied", async () => {
     const authorizationClient = createAuthorizationClient({
       checkRelationship: vi.fn().mockResolvedValue(false),
     });

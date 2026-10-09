@@ -1,7 +1,7 @@
 export type ScanAttachmentInput = {
   attachmentId: string;
   versionId: string;
-  scopeType: "IDENTITY" | "WORKSPACE";
+  scopeType: "IDENTITY" | "ORGANIZATION";
   scopeId: string;
   tenantId?: string;
 };

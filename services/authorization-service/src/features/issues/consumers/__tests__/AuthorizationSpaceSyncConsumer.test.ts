@@ -1,4 +1,4 @@
-import { OWNER, SPACE_WORKSPACE } from "@pine/authorization";
+import { OWNER, SPACE_ORGANIZATION } from "@pine/authorization";
 import { createCloudEvent, SpaceCreatedEvent } from "@pine/events";
 import { describe, expect, it, vi } from "vitest";
 import { AuthorizationSpaceSyncConsumer } from "@/features/issues/consumers/AuthorizationSpaceSyncConsumer";
@@ -17,7 +17,7 @@ const createBroker = () => ({
 });
 
 describe("AuthorizationSpaceSyncConsumer", () => {
-  it("writes the space workspace and owner tuples when a space is created", async () => {
+  it("writes the space organization and owner tuples when a space is created", async () => {
     const authorizationGraphProvider = createGraphProvider();
     const consumer = new AuthorizationSpaceSyncConsumer(createBroker(), authorizationGraphProvider);
     const message = { ack: vi.fn() };
@@ -29,7 +29,7 @@ describe("AuthorizationSpaceSyncConsumer", () => {
       subject: "space-1",
       data: {
         id: "space-1",
-        workspaceId: "workspace-1",
+        organizationId: "organization-1",
         name: "Engineering",
         createdById: "user-1",
         createdAt: "2026-01-01T00:00:00.000Z",
@@ -40,8 +40,8 @@ describe("AuthorizationSpaceSyncConsumer", () => {
 
     expect(authorizationGraphProvider.createRelationship).toHaveBeenCalledWith({
       object: { namespace: "space", id: "space-1" },
-      relation: SPACE_WORKSPACE,
-      subject: { namespace: "workspace", id: "workspace-1" },
+      relation: SPACE_ORGANIZATION,
+      subject: { namespace: "organization", id: "organization-1" },
     });
     expect(authorizationGraphProvider.createRelationship).toHaveBeenCalledWith({
       object: { namespace: "space", id: "space-1" },

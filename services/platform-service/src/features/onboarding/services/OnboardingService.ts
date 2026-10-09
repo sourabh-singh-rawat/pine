@@ -8,30 +8,30 @@ import {
   CloudEvent,
   createCloudEvent,
   TenantCreatedEvent,
-  WorkspaceCreatedEvent,
-  WorkspaceRelationCreatedEvent,
+  OrganizationCreatedEvent,
+  OrganizationRelationCreatedEvent,
   type TenantCreatedData,
-  type WorkspaceCreatedData,
-  type WorkspaceRelationCreatedData,
+  type OrganizationCreatedData,
+  type OrganizationRelationCreatedData,
 } from "@pine/events";
 import type { IOutboxService } from "@pine/outbox";
 import { inject, injectable } from "inversify";
 import { TYPES } from "@/bootstrap/container-types";
-import type { Database, DbClient, Tenant, Workspace } from "@/db";
+import type { Database, DbClient, Tenant, Organization } from "@/db";
 import type { IIdentityRepository } from "@/features/identities/repositories";
 import type {
   IOnboardingService,
-  PersonalWorkspaceProvision,
+  PersonalOrganizationProvision,
 } from "@/features/onboarding/services/IOnboardingService";
 import type { ITenantRepository } from "@/features/tenants/repositories";
 import type {
-  IWorkspacePreferenceRepository,
-  IWorkspaceRepository,
-} from "@/features/workspaces/repositories";
+  IOrganizationPreferenceRepository,
+  IOrganizationRepository,
+} from "@/features/organizations/repositories";
 
 const PERSONAL_TENANT_NAME = "Personal";
-const PERSONAL_WORKSPACE_NAME = "Personal workspace";
-const PERSONAL_WORKSPACE_SLUG = "default";
+const PERSONAL_ORGANIZATION_NAME = "Personal organization";
+const PERSONAL_ORGANIZATION_SLUG = "default";
 
 const personalTenantSlug = (identityId: string): string => `personal-${identityId}`;
 
@@ -42,10 +42,10 @@ export class OnboardingService implements IOnboardingService {
     private readonly identityRepository: IIdentityRepository,
     @inject(TYPES.TenantRepository)
     private readonly tenantRepository: ITenantRepository,
-    @inject(TYPES.WorkspaceRepository)
-    private readonly workspaceRepository: IWorkspaceRepository,
-    @inject(TYPES.WorkspacePreferenceRepository)
-    private readonly workspacePreferenceRepository: IWorkspacePreferenceRepository,
+    @inject(TYPES.OrganizationRepository)
+    private readonly organizationRepository: IOrganizationRepository,
+    @inject(TYPES.OrganizationPreferenceRepository)
+    private readonly organizationPreferenceRepository: IOrganizationPreferenceRepository,
     @inject(TYPES.AuthorizationClient)
     private readonly authorizationClient: IAuthorizationClient,
     @inject(TYPES.OutboxService)
@@ -54,7 +54,7 @@ export class OnboardingService implements IOnboardingService {
     private readonly db: Database,
   ) {}
 
-  async provisionPersonalWorkspace(identityId: string): Promise<PersonalWorkspaceProvision> {
+  async provisionPersonalOrganization(identityId: string): Promise<PersonalOrganizationProvision> {
     const tenantSlug = personalTenantSlug(identityId);
 
     return this.db.transaction(async (tx) => {
@@ -62,16 +62,16 @@ export class OnboardingService implements IOnboardingService {
 
       const existingTenant = await this.tenantRepository.findBySlug(tenantSlug, { tx });
       if (existingTenant) {
-        const workspace = await this.ensureDefaultWorkspace(existingTenant, identityId, tx);
-        await this.workspacePreferenceRepository.upsert(
+        const organization = await this.ensureDefaultOrganization(existingTenant, identityId, tx);
+        await this.organizationPreferenceRepository.upsert(
           {
             identityId,
-            workspaceId: workspace.id,
+            organizationId: organization.id,
             tenantId: existingTenant.id,
           },
           { tx },
         );
-        return { tenant: existingTenant, workspace, created: false };
+        return { tenant: existingTenant, organization, created: false };
       }
 
       const tenant = await this.tenantRepository.save(
@@ -118,95 +118,95 @@ export class OnboardingService implements IOnboardingService {
         { tx },
       );
 
-      const workspace = await this.createDefaultWorkspace(tenant, identityId, tx);
+      const organization = await this.createDefaultOrganization(tenant, identityId, tx);
 
-      await this.workspacePreferenceRepository.upsert(
+      await this.organizationPreferenceRepository.upsert(
         {
           identityId,
-          workspaceId: workspace.id,
+          organizationId: organization.id,
           tenantId: tenant.id,
         },
         { tx },
       );
 
-      return { tenant, workspace, created: true };
+      return { tenant, organization, created: true };
     });
   }
 
-  private async ensureDefaultWorkspace(
+  private async ensureDefaultOrganization(
     tenant: Tenant,
     identityId: string,
     tx: DbClient,
-  ): Promise<Workspace> {
-    const existing = await this.workspaceRepository.findMany({
+  ): Promise<Organization> {
+    const existing = await this.organizationRepository.findMany({
       tenantId: tenant.id,
     });
-    const defaultWorkspace = existing.find(
-      (workspace) => workspace.slug === PERSONAL_WORKSPACE_SLUG,
+    const defaultOrganization = existing.find(
+      (organization) => organization.slug === PERSONAL_ORGANIZATION_SLUG,
     );
-    if (defaultWorkspace) {
-      return defaultWorkspace;
+    if (defaultOrganization) {
+      return defaultOrganization;
     }
 
-    return this.createDefaultWorkspace(tenant, identityId, tx);
+    return this.createDefaultOrganization(tenant, identityId, tx);
   }
 
-  private async createDefaultWorkspace(
+  private async createDefaultOrganization(
     tenant: Tenant,
     identityId: string,
     tx: DbClient,
-  ): Promise<Workspace> {
-    const workspace = await this.workspaceRepository.save(
+  ): Promise<Organization> {
+    const organization = await this.organizationRepository.save(
       {
         tenantId: tenant.id,
-        name: PERSONAL_WORKSPACE_NAME,
-        slug: PERSONAL_WORKSPACE_SLUG,
-        description: "Default personal workspace",
+        name: PERSONAL_ORGANIZATION_NAME,
+        slug: PERSONAL_ORGANIZATION_SLUG,
+        description: "Default personal organization",
         isActive: true,
       },
       { tx },
     );
 
-    const workspaceCreated: CloudEvent<WorkspaceCreatedData> = createCloudEvent({
-      type: WorkspaceCreatedEvent.type,
-      version: WorkspaceCreatedEvent.version,
-      schema: WorkspaceCreatedEvent.schema,
+    const organizationCreated: CloudEvent<OrganizationCreatedData> = createCloudEvent({
+      type: OrganizationCreatedEvent.type,
+      version: OrganizationCreatedEvent.version,
+      schema: OrganizationCreatedEvent.schema,
       source: "pine/platform-service",
-      subject: workspace.id,
+      subject: organization.id,
       data: {
-        id: workspace.id,
-        tenantId: workspace.tenantId,
-        name: workspace.name,
-        slug: workspace.slug,
-        isActive: workspace.isActive,
-        version: workspace.version,
-        createdAt: workspace.createdAt.toISOString(),
-        ...(workspace.description != null ? { description: workspace.description } : {}),
+        id: organization.id,
+        tenantId: organization.tenantId,
+        name: organization.name,
+        slug: organization.slug,
+        isActive: organization.isActive,
+        version: organization.version,
+        createdAt: organization.createdAt.toISOString(),
+        ...(organization.description != null ? { description: organization.description } : {}),
       },
     });
 
     await this.outboxService.schedule(
       {
-        eventId: workspaceCreated.id,
-        eventType: workspaceCreated.type,
-        eventVersion: WorkspaceCreatedEvent.version,
-        aggregateType: "workspace",
-        aggregateId: workspace.id,
-        payload: workspaceCreated,
+        eventId: organizationCreated.id,
+        eventType: organizationCreated.type,
+        eventVersion: OrganizationCreatedEvent.version,
+        aggregateType: "organization",
+        aggregateId: organization.id,
+        payload: organizationCreated,
       },
       { tx },
     );
 
-    const ownerRelationId = `${workspace.id}:${OWNER}:${identityId}`;
-    const ownerRelation: CloudEvent<WorkspaceRelationCreatedData> = createCloudEvent({
-      type: WorkspaceRelationCreatedEvent.type,
-      version: WorkspaceRelationCreatedEvent.version,
-      schema: WorkspaceRelationCreatedEvent.schema,
+    const ownerRelationId = `${organization.id}:${OWNER}:${identityId}`;
+    const ownerRelation: CloudEvent<OrganizationRelationCreatedData> = createCloudEvent({
+      type: OrganizationRelationCreatedEvent.type,
+      version: OrganizationRelationCreatedEvent.version,
+      schema: OrganizationRelationCreatedEvent.schema,
       source: "pine/platform-service",
       subject: ownerRelationId,
       data: {
         id: ownerRelationId,
-        workspaceId: workspace.id,
+        organizationId: organization.id,
         identityId,
         relation: OWNER,
         createdAt: new Date().toISOString(),
@@ -217,14 +217,14 @@ export class OnboardingService implements IOnboardingService {
       {
         eventId: ownerRelation.id,
         eventType: ownerRelation.type,
-        eventVersion: WorkspaceRelationCreatedEvent.version,
-        aggregateType: "workspace-relation",
-        aggregateId: workspace.id,
+        eventVersion: OrganizationRelationCreatedEvent.version,
+        aggregateType: "organization-relation",
+        aggregateId: organization.id,
         payload: ownerRelation,
       },
       { tx },
     );
 
-    return workspace;
+    return organization;
   }
 }

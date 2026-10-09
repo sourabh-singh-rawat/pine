@@ -1,6 +1,6 @@
 interface List {
   id: string;
-  workspaceId: string;
+  organizationId: string;
   ownerUserId: string;
   name: string;
   status: string;
@@ -13,7 +13,7 @@ interface List {
 
 export class ListDetails<M> {
   id: string;
-  workspaceId: string;
+  organizationId: string;
   ownerUserId: string;
   name: string;
   description?: string;
@@ -29,7 +29,7 @@ export class ListDetails<M> {
   constructor(
     {
       id,
-      workspaceId,
+      organizationId,
       ownerUserId,
       name,
       description,
@@ -44,7 +44,7 @@ export class ListDetails<M> {
     members: M[],
   ) {
     this.id = id;
-    this.workspaceId = workspaceId;
+    this.organizationId = organizationId;
     this.ownerUserId = ownerUserId;
     this.name = name;
     this.description = description;

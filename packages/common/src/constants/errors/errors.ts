@@ -25,5 +25,5 @@ export enum Errors {
 
   ERR_LIST_NOT_FOUND = "ERR_LIST_NOT_FOUND",
 
-  ERR_WORKSPACE_NOT_FOUND = "WorkspaceNotFound",
+  ERR_ORGANIZATION_NOT_FOUND = "OrganizationNotFound",
 }

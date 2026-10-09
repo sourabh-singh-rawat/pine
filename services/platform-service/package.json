@@ -2,12 +2,12 @@
   "$schema": "https://json.schemastore.org/package.json",
   "name": "@pine/platform-service",
   "version": "0.6.2",
-  "description": "Platform service — tenants, workspaces, and memberships",
+  "description": "Platform service — tenants, organizations, and memberships",
   "keywords": [
     "membership",
+    "organization",
     "platform",
-    "tenant",
-    "workspace"
+    "tenant"
   ],
   "homepage": "https://github.com/sourabh-singh-rawat/pine#readme",
   "bugs": {

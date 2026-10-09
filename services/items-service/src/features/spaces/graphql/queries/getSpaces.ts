@@ -9,11 +9,11 @@ builder.queryFields((t) => ({
   getSpaces: t.field({
     type: [SpaceObject],
     args: {
-      workspaceId: t.arg.string({ required: true }),
+      organizationId: t.arg.string({ required: true }),
     },
     resolve: async (_root, args, ctx) => {
       const service = container.get<ISpaceService>(TYPES.SpaceService);
-      return service.list({ workspaceId: args.workspaceId }, requireIdentityId(ctx));
+      return service.list({ organizationId: args.organizationId }, requireIdentityId(ctx));
     },
   }),
 }));

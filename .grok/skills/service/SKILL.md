@@ -9,7 +9,7 @@ when-to-use: >
 
 # Service
 
-Domain layer. Canonical: `platform-service` `features/workspaces/services`. Related: `repository`, `graphql`, `http-route`, `service-feature`, `events`, `outbox`, `authorization`, `testing`.
+Domain layer. Canonical: `platform-service` `features/organizations/services`. Related: `repository`, `graphql`, `http-route`, `service-feature`, `events`, `outbox`, `authorization`, `testing`.
 
 ## Layout
 
@@ -37,12 +37,12 @@ Drop the noun already on the type. Domain verbs — not repository `save` / `fin
 | `update` / `delete` | mutate                                                     |
 
 ```ts
-export interface IWorkspaceService {
-  create: (input: CreateWorkspaceInput, identityId: string) => Promise<Workspace>;
-  getById: (id: string, identityId: string) => Promise<Workspace>;
-  list: (input: ListWorkspacesInput, identityId: string) => Promise<Workspace[]>;
-  listMine: (identityId: string) => Promise<WorkspaceNode[]>;
-  update: (id: string, input: UpdateWorkspaceInput, identityId: string) => Promise<Workspace>;
+export interface IOrganizationService {
+  create: (input: CreateOrganizationInput, identityId: string) => Promise<Organization>;
+  getById: (id: string, identityId: string) => Promise<Organization>;
+  list: (input: ListOrganizationsInput, identityId: string) => Promise<Organization[]>;
+  listMine: (identityId: string) => Promise<OrganizationNode[]>;
+  update: (id: string, input: UpdateOrganizationInput, identityId: string) => Promise<Organization>;
   delete: (id: string, identityId: string) => Promise<void>;
 }
 ```
@@ -55,10 +55,10 @@ Do here: authz (`requirePermission`), conflict checks (`*ConflictError`), `db.tr
 
 ```ts
 @injectable()
-export class WorkspaceService implements IWorkspaceService {
+export class OrganizationService implements IOrganizationService {
   constructor(
-    @inject(TYPES.WorkspaceRepository)
-    private readonly workspaceRepository: IWorkspaceRepository,
+    @inject(TYPES.OrganizationRepository)
+    private readonly organizationRepository: IOrganizationRepository,
     @inject(TYPES.AuthorizationClient)
     private readonly authorizationClient: IAuthorizationClient,
     @inject(TYPES.OutboxService)
@@ -67,21 +67,21 @@ export class WorkspaceService implements IWorkspaceService {
     private readonly db: Database,
   ) {}
 
-  async getById(id: string, identityId: string): Promise<Workspace> {
-    await requirePermission(this.authorizationClient, identityId, "read", `workspace:${id}`);
-    const workspace = await this.workspaceRepository.findById(id);
-    if (!workspace) {
-      throw new WorkspaceNotFoundError(`Workspace not found: ${id}`);
+  async getById(id: string, identityId: string): Promise<Organization> {
+    await requirePermission(this.authorizationClient, identityId, "read", `organization:${id}`);
+    const organization = await this.organizationRepository.findById(id);
+    if (!organization) {
+      throw new OrganizationNotFoundError(`Organization not found: ${id}`);
     }
-    return workspace;
+    return organization;
   }
 }
 ```
 
 ```ts
-export class WorkspaceNotFoundError extends ApplicationError {
-  constructor(message = "Workspace not found") {
-    super("WORKSPACE_NOT_FOUND", message, true);
+export class OrganizationNotFoundError extends ApplicationError {
+  constructor(message = "Organization not found") {
+    super("ORGANIZATION_NOT_FOUND", message, true);
   }
 }
 ```
@@ -89,14 +89,14 @@ export class WorkspaceNotFoundError extends ApplicationError {
 Keep the noun on error class names. TYPES + bind:
 
 ```ts
-TYPES.WorkspaceService = Symbol.for("IWorkspaceService");
-container.bind<IWorkspaceService>(TYPES.WorkspaceService).to(WorkspaceService);
+TYPES.OrganizationService = Symbol.for("IOrganizationService");
+container.bind<IOrganizationService>(TYPES.OrganizationService).to(OrganizationService);
 ```
 
 | Transport                 | Call                            |
 | ------------------------- | ------------------------------- |
-| GraphQL `createWorkspace` | `workspaceService.create(...)`  |
-| GraphQL `getWorkspace`    | `workspaceService.getById(...)` |
+| GraphQL `createOrganization` | `organizationService.create(...)`  |
+| GraphQL `getOrganization`    | `organizationService.getById(...)` |
 | HTTP handler              | same short verbs                |
 
 Resolvers and routes: one service call after mapping args.

@@ -117,13 +117,13 @@ export class ChecklistService implements IChecklistService {
   async list(options: ListChecklistsOptions): Promise<ChecklistWithEntries[]> {
     const { itemId, identityId } = options;
     const item = await this.requireItem(itemId);
-    const workspaceId = await this.resolveWorkspaceId(item);
+    const organizationId = await this.resolveOrganizationId(item);
 
     await requirePermission(
       this.authorizationClient,
       identityId,
       "read",
-      `workspace:${workspaceId}`,
+      `organization:${organizationId}`,
     );
 
     const checklists = await this.checklistRepository.findByItemId(itemId);
@@ -149,13 +149,13 @@ export class ChecklistService implements IChecklistService {
   async create(options: CreateChecklistOptions): Promise<ChecklistWithEntries> {
     const { itemId, name, identityId } = options;
     const item = await this.requireItem(itemId);
-    const workspaceId = await this.resolveWorkspaceId(item);
+    const organizationId = await this.resolveOrganizationId(item);
 
     await requirePermission(
       this.authorizationClient,
       identityId,
       "create_list",
-      `workspace:${workspaceId}`,
+      `organization:${organizationId}`,
     );
 
     const checklist = await this.checklistRepository.save({
@@ -171,13 +171,13 @@ export class ChecklistService implements IChecklistService {
     const { id, name, identityId } = options;
     const checklist = await this.requireChecklist(id);
     const item = await this.requireItem(checklist.itemId);
-    const workspaceId = await this.resolveWorkspaceId(item);
+    const organizationId = await this.resolveOrganizationId(item);
 
     await requirePermission(
       this.authorizationClient,
       identityId,
       "create_list",
-      `workspace:${workspaceId}`,
+      `organization:${organizationId}`,
     );
 
     const updated = await this.checklistRepository.update(id, {
@@ -195,13 +195,13 @@ export class ChecklistService implements IChecklistService {
     const { id, identityId } = options;
     const checklist = await this.requireChecklist(id);
     const item = await this.requireItem(checklist.itemId);
-    const workspaceId = await this.resolveWorkspaceId(item);
+    const organizationId = await this.resolveOrganizationId(item);
 
     await requirePermission(
       this.authorizationClient,
       identityId,
       "create_list",
-      `workspace:${workspaceId}`,
+      `organization:${organizationId}`,
     );
 
     await this.db.transaction(async (tx) => {
@@ -217,13 +217,13 @@ export class ChecklistService implements IChecklistService {
     const { checklistId, title, identityId } = options;
     const checklist = await this.requireChecklist(checklistId);
     const item = await this.requireItem(checklist.itemId);
-    const workspaceId = await this.resolveWorkspaceId(item);
+    const organizationId = await this.resolveOrganizationId(item);
 
     await requirePermission(
       this.authorizationClient,
       identityId,
       "create_list",
-      `workspace:${workspaceId}`,
+      `organization:${organizationId}`,
     );
 
     const maxOrderIndex = await this.checklistEntryRepository.findMaxOrderIndex(checklistId);
@@ -242,13 +242,13 @@ export class ChecklistService implements IChecklistService {
     const entry = await this.requireEntry(id);
     const checklist = await this.requireChecklist(entry.checklistId);
     const item = await this.requireItem(checklist.itemId);
-    const workspaceId = await this.resolveWorkspaceId(item);
+    const organizationId = await this.resolveOrganizationId(item);
 
     await requirePermission(
       this.authorizationClient,
       identityId,
       "create_list",
-      `workspace:${workspaceId}`,
+      `organization:${organizationId}`,
     );
 
     const patch: { title?: string; completed?: boolean } = {};
@@ -275,13 +275,13 @@ export class ChecklistService implements IChecklistService {
     const entry = await this.requireEntry(id);
     const checklist = await this.requireChecklist(entry.checklistId);
     const item = await this.requireItem(checklist.itemId);
-    const workspaceId = await this.resolveWorkspaceId(item);
+    const organizationId = await this.resolveOrganizationId(item);
 
     await requirePermission(
       this.authorizationClient,
       identityId,
       "create_list",
-      `workspace:${workspaceId}`,
+      `organization:${organizationId}`,
     );
 
     const deleted = await this.checklistEntryRepository.softDelete(id);
@@ -294,13 +294,13 @@ export class ChecklistService implements IChecklistService {
     const { checklistId, ids, identityId } = options;
     const checklist = await this.requireChecklist(checklistId);
     const item = await this.requireItem(checklist.itemId);
-    const workspaceId = await this.resolveWorkspaceId(item);
+    const organizationId = await this.resolveOrganizationId(item);
 
     await requirePermission(
       this.authorizationClient,
       identityId,
       "create_list",
-      `workspace:${workspaceId}`,
+      `organization:${organizationId}`,
     );
 
     return this.db.transaction(async (tx) => {
@@ -339,7 +339,7 @@ export class ChecklistService implements IChecklistService {
     return entry;
   }
 
-  private async resolveWorkspaceId(item: Item): Promise<string> {
+  private async resolveOrganizationId(item: Item): Promise<string> {
     const list = await this.listRepository.findById(item.listId);
     if (!list) {
       throw new ItemNotFoundError(`List not found for item: ${item.id}`);
@@ -350,6 +350,6 @@ export class ChecklistService implements IChecklistService {
       throw new SpaceNotFoundError(`Space not found: ${list.spaceId}`);
     }
 
-    return space.workspaceId;
+    return space.organizationId;
   }
 }

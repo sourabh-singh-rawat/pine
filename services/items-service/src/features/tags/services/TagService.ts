@@ -22,7 +22,7 @@ export class TagService implements ITagService {
 
   async list(options: ListTagsOptions): Promise<Tag[]> {
     return this.tagRepository.findMany({
-      workspaceId: options.workspaceId,
+      organizationId: options.organizationId,
       spaceId: options.spaceId,
     });
   }
@@ -33,7 +33,7 @@ export class TagService implements ITagService {
 
   async create(options: CreateTagOptions): Promise<Tag> {
     return this.tagRepository.save({
-      workspaceId: options.workspaceId,
+      organizationId: options.organizationId,
       spaceId: options.spaceId,
       name: options.name.trim(),
       color: options.color,

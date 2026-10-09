@@ -11,7 +11,7 @@ when-to-use: >
 
 # Outbox
 
-Transactional outbox in `@pine/outbox`. Canonical wiring: `platform-service` `bootstrap/container.ts` + `features/workspaces`. Related: `service`, `events`, `workers`, `drizzle`.
+Transactional outbox in `@pine/outbox`. Canonical wiring: `platform-service` `bootstrap/container.ts` + `features/organizations`. Related: `service`, `events`, `workers`, `drizzle`.
 
 Write path: `createCloudEvent` + `outboxService.schedule(..., { tx })` inside `db.transaction`. Publish path: `OutboxWorker` claims due rows and `publisher.send`s the stored CloudEvent. Do not `publisher.send` from the service when the write must be atomic.
 
@@ -27,21 +27,21 @@ export { OutboxMessages } from "@pine/outbox";
 
 ```ts
 const created = createCloudEvent({
-  type: WorkspaceCreatedEvent.type,
-  version: WorkspaceCreatedEvent.version,
-  schema: WorkspaceCreatedEvent.schema,
+  type: OrganizationCreatedEvent.type,
+  version: OrganizationCreatedEvent.version,
+  schema: OrganizationCreatedEvent.schema,
   source: "pine/platform-service",
-  subject: workspace.id,
-  data: mappedWorkspaceCreatedDto,
+  subject: organization.id,
+  data: mappedOrganizationCreatedDto,
 });
 
 await this.outboxService.schedule(
   {
     eventId: created.id,
     eventType: created.type,
-    eventVersion: WorkspaceCreatedEvent.version,
-    aggregateType: "workspace",
-    aggregateId: workspace.id,
+    eventVersion: OrganizationCreatedEvent.version,
+    aggregateType: "organization",
+    aggregateId: organization.id,
     payload: created,
   },
   { tx },

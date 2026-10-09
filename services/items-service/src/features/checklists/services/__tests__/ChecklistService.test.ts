@@ -56,7 +56,7 @@ const list: List = {
 
 const space: Space = {
   id: "space-1",
-  workspaceId: "workspace-1",
+  organizationId: "organization-1",
   name: "Space",
   createdById: "user-1",
   version: 1,
@@ -209,7 +209,7 @@ const createService = (
   );
 
 describe("ChecklistService", () => {
-  it("lists checklists after authorizing read on the workspace", async () => {
+  it("lists checklists after authorizing read on the organization", async () => {
     const authorizationClient = createAuthorizationClient();
     const checklistRepository = createChecklistRepository();
     const checklistEntryRepository = createChecklistEntryRepository();
@@ -222,8 +222,8 @@ describe("ChecklistService", () => {
     const result = await service.list({ itemId: "item-1", identityId: "user-1" });
 
     expect(authorizationClient.checkRelationship).toHaveBeenCalledWith({
-      namespace: "workspace",
-      object: "workspace-1",
+      namespace: "organization",
+      object: "organization-1",
       relation: "read",
       subject: "identity:user-1",
     });
@@ -239,7 +239,7 @@ describe("ChecklistService", () => {
     ]);
   });
 
-  it("creates a checklist after authorizing create_list on the workspace", async () => {
+  it("creates a checklist after authorizing create_list on the organization", async () => {
     const authorizationClient = createAuthorizationClient();
     const checklistRepository = createChecklistRepository();
     const service = createService({ authorizationClient, checklistRepository });
@@ -251,8 +251,8 @@ describe("ChecklistService", () => {
     });
 
     expect(authorizationClient.checkRelationship).toHaveBeenCalledWith({
-      namespace: "workspace",
-      object: "workspace-1",
+      namespace: "organization",
+      object: "organization-1",
       relation: "create_list",
       subject: "identity:user-1",
     });
@@ -400,8 +400,8 @@ describe("ChecklistService", () => {
     });
 
     expect(authorizationClient.checkRelationship).toHaveBeenCalledWith({
-      namespace: "workspace",
-      object: "workspace-1",
+      namespace: "organization",
+      object: "organization-1",
       relation: "create_list",
       subject: "identity:user-1",
     });

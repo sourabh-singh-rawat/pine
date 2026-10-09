@@ -13,7 +13,7 @@ builder.mutationFields((t) => ({
     resolve: async (_root, { input }) => {
       const service = container.get<ITagService>(TYPES.TagService);
       return service.create({
-        workspaceId: input.workspaceId,
+        organizationId: input.organizationId,
         spaceId: input.spaceId,
         name: input.name,
         color: input.color ?? undefined,

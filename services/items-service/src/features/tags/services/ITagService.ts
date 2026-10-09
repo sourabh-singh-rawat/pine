@@ -1,7 +1,7 @@
 import type { Tag } from "@/db";
 
 export type CreateTagOptions = {
-  workspaceId: string;
+  organizationId: string;
   spaceId?: string | null;
   name: string;
   color?: string;
@@ -16,7 +16,7 @@ export type UpdateTagOptions = {
 };
 
 export type ListTagsOptions = {
-  workspaceId: string;
+  organizationId: string;
   spaceId?: string | null;
 };
 

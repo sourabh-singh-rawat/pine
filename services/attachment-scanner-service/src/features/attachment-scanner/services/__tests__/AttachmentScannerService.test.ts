@@ -79,7 +79,7 @@ describe("AttachmentScannerService", () => {
     await service.scan({
       attachmentId: "att-2",
       versionId: "ver-2",
-      scopeType: "WORKSPACE",
+      scopeType: "ORGANIZATION",
       scopeId: "org-1",
       tenantId: "tenant-1",
     });

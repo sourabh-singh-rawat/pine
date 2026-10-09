@@ -4,13 +4,13 @@ description: >
   Pothos GraphQL via @pine/server: inputs, objects, resolvers, schema compose.
   Use when adding or changing a GraphQL field or federated compose step.
 when-to-use: >
-  Pothos, CreateWorkspaceInput, builder.mutationFields, getWorkspace,
+  Pothos, CreateOrganizationInput, builder.mutationFields, getOrganization,
   schemas:compose, supergraph
 ---
 
 # GraphQL
 
-Pothos `builder` from `@pine/server` (scalars: `DateTimeISO`, `UUID`, `EmailAddress`). Canonical: `platform-service` `features/workspaces`. Related: `service`, `service-feature`, `web-feature`, `http-route`, `schema-codegen`.
+Pothos `builder` from `@pine/server` (scalars: `DateTimeISO`, `UUID`, `EmailAddress`). Canonical: `platform-service` `features/organizations`. Related: `service`, `service-feature`, `web-feature`, `http-route`, `schema-codegen`.
 
 Service emits `dist/schema.graphql`. Compose: `pnpm schemas:compose` → `services/api-gateway/dist/supergraph.graphql`. Clients: `web-feature`.
 
@@ -33,28 +33,28 @@ Field name = filename. Keep the resource. New reads use `get*`, not `find*`.
 
 | Thing                     | Style                                    | Example                   |
 | ------------------------- | ---------------------------------------- | ------------------------- |
-| Query (one)               | `get{Resource}`                          | `getWorkspace`            |
-| Query (many)              | `get{Resources}`                         | `getWorkspaces`           |
-| Query (caller)            | `getMy{Resources}`                       | `getMyWorkspaces`         |
-| Mutation                  | `create` / `update` / `delete{Resource}` | `createWorkspace`         |
-| GraphQL type / input file | PascalCase                               | `CreateWorkspaceInput.ts` |
-| Query / mutation module   | camelCase, one field per file            | `getWorkspace.ts`         |
+| Query (one)               | `get{Resource}`                          | `getOrganization`            |
+| Query (many)              | `get{Resources}`                         | `getOrganizations`           |
+| Query (caller)            | `getMy{Resources}`                       | `getMyOrganizations`         |
+| Mutation                  | `create` / `update` / `delete{Resource}` | `createOrganization`         |
+| GraphQL type / input file | PascalCase                               | `CreateOrganizationInput.ts` |
+| Query / mutation module   | camelCase, one field per file            | `getOrganization.ts`         |
 
 | Field             | Service                          |
 | ----------------- | -------------------------------- |
-| `createWorkspace` | `workspaceService.create(...)`   |
-| `getWorkspace`    | `workspaceService.getById(...)`  |
-| `getWorkspaces`   | `workspaceService.list(...)`     |
-| `getMyWorkspaces` | `workspaceService.listMine(...)` |
-| `updateWorkspace` | `workspaceService.update(...)`   |
-| `deleteWorkspace` | `workspaceService.delete(...)`   |
+| `createOrganization` | `organizationService.create(...)`   |
+| `getOrganization`    | `organizationService.getById(...)`  |
+| `getOrganizations`   | `organizationService.list(...)`     |
+| `getMyOrganizations` | `organizationService.listMine(...)` |
+| `updateOrganization` | `organizationService.update(...)`   |
+| `deleteOrganization` | `organizationService.delete(...)`   |
 
 Existing `findIssue` / `findProjects` / `findIdentities` stay until a dedicated schema rename. Do not mix `get` and `find` on the same resource.
 
 ## Recipe
 
 ```ts
-export const CreateWorkspaceInput = builder.inputType("CreateWorkspaceInput", {
+export const CreateOrganizationInput = builder.inputType("CreateOrganizationInput", {
   fields: (t) => ({
     tenantId: t.string({ required: true }),
     name: t.string({ required: true }),
@@ -65,11 +65,11 @@ export const CreateWorkspaceInput = builder.inputType("CreateWorkspaceInput", {
 
 ```ts
 builder.mutationFields((t) => ({
-  createWorkspace: t.field({
-    type: WorkspaceObject,
-    args: { input: t.arg({ type: CreateWorkspaceInput, required: true }) },
+  createOrganization: t.field({
+    type: OrganizationObject,
+    args: { input: t.arg({ type: CreateOrganizationInput, required: true }) },
     resolve: async (_root, { input }, ctx) => {
-      const service = container.get<IWorkspaceService>(TYPES.WorkspaceService);
+      const service = container.get<IOrganizationService>(TYPES.OrganizationService);
       return service.create(
         {
           tenantId: input.tenantId,
@@ -95,7 +95,7 @@ Same `gen:gql` on `platform-web` / `identity-web` when those apps consume the fi
 ## Anti-patterns
 
 - Domain logic or transactions in the resolver
-- Parallel client name (`FindWorkspace` over field `getWorkspace`)
+- Parallel client name (`FindOrganization` over field `getOrganization`)
 - Mixing `get*` and `find*` on the same resource in one change
 - Skipping the feature `graphql/index.ts` import
 - Hand-editing `api-gateway/dist` or `__generated__`

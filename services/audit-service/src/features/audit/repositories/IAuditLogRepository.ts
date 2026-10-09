@@ -8,7 +8,7 @@ export type CreateAuditLogEntity = {
   entityId: string;
   action: string;
   actorId?: string | null;
-  workspaceId?: string | null;
+  organizationId?: string | null;
   tenantId?: string | null;
   payload?: Record<string, unknown> | null;
 };

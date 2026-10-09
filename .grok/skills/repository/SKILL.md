@@ -10,7 +10,7 @@ when-to-use: >
 
 # Repository
 
-Persistence only. Canonical: `platform-service` `features/workspaces/repositories`. Related: `service-feature`, `service`, `drizzle`, `outbox`.
+Persistence only. Canonical: `platform-service` `features/organizations/repositories`. Related: `service-feature`, `service`, `drizzle`, `outbox`.
 
 ## Layout
 
@@ -35,8 +35,8 @@ services/<svc>/src/
 Export select/insert types from the table file. Re-export from `db/schema.ts` and `db/tables/index.ts`.
 
 ```ts
-export const Workspaces = pgTable(
-  "workspaces",
+export const Organizations = pgTable(
+  "organizations",
   {
     ...idColumn,
     tenantId: uuid("tenant_id")
@@ -49,8 +49,8 @@ export const Workspaces = pgTable(
   (table) => [unique().on(table.tenantId, table.slug)],
 );
 
-export type Workspace = typeof Workspaces.$inferSelect;
-export type NewWorkspace = typeof Workspaces.$inferInsert;
+export type Organization = typeof Organizations.$inferSelect;
+export type NewOrganization = typeof Organizations.$inferInsert;
 ```
 
 Table TS only. Migration generate/apply: `AGENTS.md`.
@@ -68,24 +68,24 @@ Drop the entity noun. Persistence verbs — not domain `create` / `getById`.
 | `softDelete` / `hardDelete`           | delete                                        |
 
 ```ts
-export type WorkspaceRepositoryOptions = { tx: DbClient };
+export type OrganizationRepositoryOptions = { tx: DbClient };
 
-export interface IWorkspaceRepository {
-  save: (entity: CreateWorkspaceEntity, options?: WorkspaceRepositoryOptions) => Promise<Workspace>;
+export interface IOrganizationRepository {
+  save: (entity: CreateOrganizationEntity, options?: OrganizationRepositoryOptions) => Promise<Organization>;
   update: (
     id: string,
-    entity: UpdateWorkspaceEntity,
-    options?: WorkspaceRepositoryOptions,
-  ) => Promise<Workspace | null>;
-  findById: (id: string) => Promise<Workspace | null>;
-  findByIds: (ids: string[]) => Promise<Workspace[]>;
-  findMany: (filter: ListWorkspacesFilter) => Promise<Workspace[]>;
+    entity: UpdateOrganizationEntity,
+    options?: OrganizationRepositoryOptions,
+  ) => Promise<Organization | null>;
+  findById: (id: string) => Promise<Organization | null>;
+  findByIds: (ids: string[]) => Promise<Organization[]>;
+  findMany: (filter: ListOrganizationsFilter) => Promise<Organization[]>;
   existsBySlugInTenant: (tenantId: string, slug: string) => Promise<boolean>;
-  softDelete: (id: string, options?: WorkspaceRepositoryOptions) => Promise<boolean>;
+  softDelete: (id: string, options?: OrganizationRepositoryOptions) => Promise<boolean>;
 }
 ```
 
-Qualify filters (`existsBySlugInTenant`), not the type name (`findWorkspaceById`).
+Qualify filters (`existsBySlugInTenant`), not the type name (`findOrganizationById`).
 
 ## Recipe
 
@@ -97,16 +97,16 @@ Qualify filters (`existsBySlugInTenant`), not the type name (`findWorkspaceById`
 
 ```ts
 @injectable()
-export class WorkspaceRepository implements IWorkspaceRepository {
+export class OrganizationRepository implements IOrganizationRepository {
   constructor(@inject(TYPES.Database) private readonly db: Database) {}
 
   async save(
-    entity: CreateWorkspaceEntity,
-    options?: WorkspaceRepositoryOptions,
-  ): Promise<Workspace> {
+    entity: CreateOrganizationEntity,
+    options?: OrganizationRepositoryOptions,
+  ): Promise<Organization> {
     const client = this.client(options);
     const [created] = await client
-      .insert(Workspaces)
+      .insert(Organizations)
       .values({
         id: uuidv7(),
         tenantId: entity.tenantId,
@@ -119,15 +119,15 @@ export class WorkspaceRepository implements IWorkspaceRepository {
     return created;
   }
 
-  private client(options?: WorkspaceRepositoryOptions) {
+  private client(options?: OrganizationRepositoryOptions) {
     return options?.tx ?? this.db;
   }
 }
 ```
 
 ```ts
-TYPES.WorkspaceRepository = Symbol.for("IWorkspaceRepository");
-container.bind<IWorkspaceRepository>(TYPES.WorkspaceRepository).to(WorkspaceRepository);
+TYPES.OrganizationRepository = Symbol.for("IOrganizationRepository");
+container.bind<IOrganizationRepository>(TYPES.OrganizationRepository).to(OrganizationRepository);
 ```
 
 Export interface + impl from the repositories barrel.

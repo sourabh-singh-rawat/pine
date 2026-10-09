@@ -130,7 +130,7 @@ export class AuditItemsSyncConsumer extends Consumer<
         await this.spaceRepository.upsert(
           {
             id: data.id,
-            workspaceId: data.workspaceId,
+            organizationId: data.organizationId,
             name: data.name,
             createdById: data.createdById,
           },
@@ -142,7 +142,7 @@ export class AuditItemsSyncConsumer extends Consumer<
             entityId: data.id,
             action: "created",
             actorId: data.createdById,
-            workspaceId: data.workspaceId,
+            organizationId: data.organizationId,
             payload: { ...data },
           },
           { tx },

@@ -20,6 +20,57 @@ export type GetIdentitiesQueryVariables = Exact<{
 
 export type GetIdentitiesQuery = { getIdentities: Array<{ id: string | null, displayName: string | null }> | null };
 
+export type CreateOrganizationMutationVariables = Exact<{
+  input: Types.CreateOrganizationInput;
+}>;
+
+
+export type CreateOrganizationMutation = { createOrganization: { id: string | null, tenantId: string | null, parentOrganizationId: string | null, name: string | null, slug: string | null, description: string | null, isActive: boolean | null, createdAt: unknown, updatedAt: unknown } | null };
+
+export type CreateOrganizationRelationMutationVariables = Exact<{
+  input: Types.CreateOrganizationRelationInput;
+}>;
+
+
+export type CreateOrganizationRelationMutation = { createOrganizationRelation: { id: string | null, organizationId: string | null, identityId: string | null, relation: string | null } | null };
+
+export type DeleteOrganizationRelationMutationVariables = Exact<{
+  id: string;
+}>;
+
+
+export type DeleteOrganizationRelationMutation = { deleteOrganizationRelation: boolean | null };
+
+export type GetOrganizationQueryVariables = Exact<{
+  id: string;
+}>;
+
+
+export type GetOrganizationQuery = { getOrganization: { id: string | null, tenantId: string | null, parentOrganizationId: string | null, name: string | null, slug: string | null, description: string | null, isActive: boolean | null, createdAt: unknown, updatedAt: unknown } | null };
+
+export type GetOrganizationRelationsQueryVariables = Exact<{
+  organizationId: string;
+}>;
+
+
+export type GetOrganizationRelationsQuery = { getOrganizationRelations: Array<{ id: string | null, organizationId: string | null, identityId: string | null, relation: string | null }> | null };
+
+export type GetOrganizationsQueryVariables = Exact<{
+  tenantId: string;
+  parentOrganizationId?: string | null | undefined;
+}>;
+
+
+export type GetOrganizationsQuery = { getOrganizations: Array<{ id: string | null, tenantId: string | null, parentOrganizationId: string | null, name: string | null, slug: string | null, description: string | null, isActive: boolean | null, createdAt: unknown, updatedAt: unknown }> | null };
+
+export type UpdateOrganizationMutationVariables = Exact<{
+  id: string;
+  input: Types.UpdateOrganizationInput;
+}>;
+
+
+export type UpdateOrganizationMutation = { updateOrganization: { id: string | null, tenantId: string | null, parentOrganizationId: string | null, name: string | null, slug: string | null, description: string | null, isActive: boolean | null, createdAt: unknown, updatedAt: unknown } | null };
+
 export type CreatePlatformRelationMutationVariables = Exact<{
   input: Types.CreatePlatformRelationInput;
 }>;
@@ -39,7 +90,7 @@ export type GetIdentityRelationsQueryVariables = Exact<{
 }>;
 
 
-export type GetIdentityRelationsQuery = { getIdentityRelations: { identityId: string | null, platform: Array<{ id: string | null, identityId: string | null, relation: string | null }> | null, tenants: Array<{ id: string | null, tenantId: string | null, identityId: string | null, relation: string | null }> | null, workspaces: Array<{ id: string | null, workspaceId: string | null, identityId: string | null, relation: string | null }> | null } | null };
+export type GetIdentityRelationsQuery = { getIdentityRelations: { identityId: string | null, platform: Array<{ id: string | null, identityId: string | null, relation: string | null }> | null, tenants: Array<{ id: string | null, tenantId: string | null, identityId: string | null, relation: string | null }> | null, organizations: Array<{ id: string | null, organizationId: string | null, identityId: string | null, relation: string | null }> | null } | null };
 
 export type GetPlatformRelationsQueryVariables = Exact<{
   relation?: string | null | undefined;
@@ -91,57 +142,6 @@ export type GetTenantsQueryVariables = Exact<{
 
 
 export type GetTenantsQuery = { getTenants: Array<{ id: string | null, name: string | null, slug: string | null, description: string | null, isActive: boolean | null, createdAt: unknown, updatedAt: unknown }> | null };
-
-export type CreateWorkspaceMutationVariables = Exact<{
-  input: Types.CreateWorkspaceInput;
-}>;
-
-
-export type CreateWorkspaceMutation = { createWorkspace: { id: string | null, tenantId: string | null, parentWorkspaceId: string | null, name: string | null, slug: string | null, description: string | null, isActive: boolean | null, createdAt: unknown, updatedAt: unknown } | null };
-
-export type CreateWorkspaceRelationMutationVariables = Exact<{
-  input: Types.CreateWorkspaceRelationInput;
-}>;
-
-
-export type CreateWorkspaceRelationMutation = { createWorkspaceRelation: { id: string | null, workspaceId: string | null, identityId: string | null, relation: string | null } | null };
-
-export type DeleteWorkspaceRelationMutationVariables = Exact<{
-  id: string;
-}>;
-
-
-export type DeleteWorkspaceRelationMutation = { deleteWorkspaceRelation: boolean | null };
-
-export type GetWorkspaceQueryVariables = Exact<{
-  id: string;
-}>;
-
-
-export type GetWorkspaceQuery = { getWorkspace: { id: string | null, tenantId: string | null, parentWorkspaceId: string | null, name: string | null, slug: string | null, description: string | null, isActive: boolean | null, createdAt: unknown, updatedAt: unknown } | null };
-
-export type GetWorkspaceRelationsQueryVariables = Exact<{
-  workspaceId: string;
-}>;
-
-
-export type GetWorkspaceRelationsQuery = { getWorkspaceRelations: Array<{ id: string | null, workspaceId: string | null, identityId: string | null, relation: string | null }> | null };
-
-export type GetWorkspacesQueryVariables = Exact<{
-  tenantId: string;
-  parentWorkspaceId?: string | null | undefined;
-}>;
-
-
-export type GetWorkspacesQuery = { getWorkspaces: Array<{ id: string | null, tenantId: string | null, parentWorkspaceId: string | null, name: string | null, slug: string | null, description: string | null, isActive: boolean | null, createdAt: unknown, updatedAt: unknown }> | null };
-
-export type UpdateWorkspaceMutationVariables = Exact<{
-  id: string;
-  input: Types.UpdateWorkspaceInput;
-}>;
-
-
-export type UpdateWorkspaceMutation = { updateWorkspace: { id: string | null, tenantId: string | null, parentWorkspaceId: string | null, name: string | null, slug: string | null, description: string | null, isActive: boolean | null, createdAt: unknown, updatedAt: unknown } | null };
 
 
 export class TypedDocumentString<TResult, TVariables>
@@ -220,6 +220,221 @@ useGetIdentitiesQuery.document = GetIdentitiesDocument;
 
 useGetIdentitiesQuery.getKey = (variables: GetIdentitiesQueryVariables) => ['GetIdentities', variables];
 
+export const CreateOrganizationDocument = new TypedDocumentString(`
+    mutation CreateOrganization($input: CreateOrganizationInput!) {
+  createOrganization(input: $input) {
+    id
+    tenantId
+    parentOrganizationId
+    name
+    slug
+    description
+    isActive
+    createdAt
+    updatedAt
+  }
+}
+    `);
+
+export const useCreateOrganizationMutation = <
+      TError = unknown,
+      TContext = unknown
+    >(options?: UseMutationOptions<CreateOrganizationMutation, TError, CreateOrganizationMutationVariables, TContext>) => {
+    
+    return useMutation<CreateOrganizationMutation, TError, CreateOrganizationMutationVariables, TContext>(
+      {
+    mutationKey: ['CreateOrganization'],
+    mutationFn: (variables?: CreateOrganizationMutationVariables) => graphQLFetcher<CreateOrganizationMutation, CreateOrganizationMutationVariables>(CreateOrganizationDocument, variables)(),
+    ...options
+  }
+    )};
+
+useCreateOrganizationMutation.getKey = () => ['CreateOrganization'];
+
+export const CreateOrganizationRelationDocument = new TypedDocumentString(`
+    mutation CreateOrganizationRelation($input: CreateOrganizationRelationInput!) {
+  createOrganizationRelation(input: $input) {
+    id
+    organizationId
+    identityId
+    relation
+  }
+}
+    `);
+
+export const useCreateOrganizationRelationMutation = <
+      TError = unknown,
+      TContext = unknown
+    >(options?: UseMutationOptions<CreateOrganizationRelationMutation, TError, CreateOrganizationRelationMutationVariables, TContext>) => {
+    
+    return useMutation<CreateOrganizationRelationMutation, TError, CreateOrganizationRelationMutationVariables, TContext>(
+      {
+    mutationKey: ['CreateOrganizationRelation'],
+    mutationFn: (variables?: CreateOrganizationRelationMutationVariables) => graphQLFetcher<CreateOrganizationRelationMutation, CreateOrganizationRelationMutationVariables>(CreateOrganizationRelationDocument, variables)(),
+    ...options
+  }
+    )};
+
+useCreateOrganizationRelationMutation.getKey = () => ['CreateOrganizationRelation'];
+
+export const DeleteOrganizationRelationDocument = new TypedDocumentString(`
+    mutation DeleteOrganizationRelation($id: String!) {
+  deleteOrganizationRelation(id: $id)
+}
+    `);
+
+export const useDeleteOrganizationRelationMutation = <
+      TError = unknown,
+      TContext = unknown
+    >(options?: UseMutationOptions<DeleteOrganizationRelationMutation, TError, DeleteOrganizationRelationMutationVariables, TContext>) => {
+    
+    return useMutation<DeleteOrganizationRelationMutation, TError, DeleteOrganizationRelationMutationVariables, TContext>(
+      {
+    mutationKey: ['DeleteOrganizationRelation'],
+    mutationFn: (variables?: DeleteOrganizationRelationMutationVariables) => graphQLFetcher<DeleteOrganizationRelationMutation, DeleteOrganizationRelationMutationVariables>(DeleteOrganizationRelationDocument, variables)(),
+    ...options
+  }
+    )};
+
+useDeleteOrganizationRelationMutation.getKey = () => ['DeleteOrganizationRelation'];
+
+export const GetOrganizationDocument = new TypedDocumentString(`
+    query GetOrganization($id: String!) {
+  getOrganization(id: $id) {
+    id
+    tenantId
+    parentOrganizationId
+    name
+    slug
+    description
+    isActive
+    createdAt
+    updatedAt
+  }
+}
+    `);
+
+export const useGetOrganizationQuery = <
+      TData = GetOrganizationQuery,
+      TError = unknown
+    >(
+      variables: GetOrganizationQueryVariables,
+      options?: Omit<UseQueryOptions<GetOrganizationQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<GetOrganizationQuery, TError, TData>['queryKey'] }
+    ) => {
+    
+    return useQuery<GetOrganizationQuery, TError, TData>(
+      {
+    queryKey: ['GetOrganization', variables],
+    queryFn: graphQLFetcher<GetOrganizationQuery, GetOrganizationQueryVariables>(GetOrganizationDocument, variables),
+    ...options
+  }
+    )};
+
+useGetOrganizationQuery.document = GetOrganizationDocument;
+
+useGetOrganizationQuery.getKey = (variables: GetOrganizationQueryVariables) => ['GetOrganization', variables];
+
+export const GetOrganizationRelationsDocument = new TypedDocumentString(`
+    query GetOrganizationRelations($organizationId: String!) {
+  getOrganizationRelations(organizationId: $organizationId) {
+    id
+    organizationId
+    identityId
+    relation
+  }
+}
+    `);
+
+export const useGetOrganizationRelationsQuery = <
+      TData = GetOrganizationRelationsQuery,
+      TError = unknown
+    >(
+      variables: GetOrganizationRelationsQueryVariables,
+      options?: Omit<UseQueryOptions<GetOrganizationRelationsQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<GetOrganizationRelationsQuery, TError, TData>['queryKey'] }
+    ) => {
+    
+    return useQuery<GetOrganizationRelationsQuery, TError, TData>(
+      {
+    queryKey: ['GetOrganizationRelations', variables],
+    queryFn: graphQLFetcher<GetOrganizationRelationsQuery, GetOrganizationRelationsQueryVariables>(GetOrganizationRelationsDocument, variables),
+    ...options
+  }
+    )};
+
+useGetOrganizationRelationsQuery.document = GetOrganizationRelationsDocument;
+
+useGetOrganizationRelationsQuery.getKey = (variables: GetOrganizationRelationsQueryVariables) => ['GetOrganizationRelations', variables];
+
+export const GetOrganizationsDocument = new TypedDocumentString(`
+    query GetOrganizations($tenantId: String!, $parentOrganizationId: String) {
+  getOrganizations(
+    tenantId: $tenantId
+    parentOrganizationId: $parentOrganizationId
+  ) {
+    id
+    tenantId
+    parentOrganizationId
+    name
+    slug
+    description
+    isActive
+    createdAt
+    updatedAt
+  }
+}
+    `);
+
+export const useGetOrganizationsQuery = <
+      TData = GetOrganizationsQuery,
+      TError = unknown
+    >(
+      variables: GetOrganizationsQueryVariables,
+      options?: Omit<UseQueryOptions<GetOrganizationsQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<GetOrganizationsQuery, TError, TData>['queryKey'] }
+    ) => {
+    
+    return useQuery<GetOrganizationsQuery, TError, TData>(
+      {
+    queryKey: ['GetOrganizations', variables],
+    queryFn: graphQLFetcher<GetOrganizationsQuery, GetOrganizationsQueryVariables>(GetOrganizationsDocument, variables),
+    ...options
+  }
+    )};
+
+useGetOrganizationsQuery.document = GetOrganizationsDocument;
+
+useGetOrganizationsQuery.getKey = (variables: GetOrganizationsQueryVariables) => ['GetOrganizations', variables];
+
+export const UpdateOrganizationDocument = new TypedDocumentString(`
+    mutation UpdateOrganization($id: String!, $input: UpdateOrganizationInput!) {
+  updateOrganization(id: $id, input: $input) {
+    id
+    tenantId
+    parentOrganizationId
+    name
+    slug
+    description
+    isActive
+    createdAt
+    updatedAt
+  }
+}
+    `);
+
+export const useUpdateOrganizationMutation = <
+      TError = unknown,
+      TContext = unknown
+    >(options?: UseMutationOptions<UpdateOrganizationMutation, TError, UpdateOrganizationMutationVariables, TContext>) => {
+    
+    return useMutation<UpdateOrganizationMutation, TError, UpdateOrganizationMutationVariables, TContext>(
+      {
+    mutationKey: ['UpdateOrganization'],
+    mutationFn: (variables?: UpdateOrganizationMutationVariables) => graphQLFetcher<UpdateOrganizationMutation, UpdateOrganizationMutationVariables>(UpdateOrganizationDocument, variables)(),
+    ...options
+  }
+    )};
+
+useUpdateOrganizationMutation.getKey = () => ['UpdateOrganization'];
+
 export const CreatePlatformRelationDocument = new TypedDocumentString(`
     mutation CreatePlatformRelation($input: CreatePlatformRelationInput!) {
   createPlatformRelation(input: $input) {
@@ -281,9 +496,9 @@ export const GetIdentityRelationsDocument = new TypedDocumentString(`
       identityId
       relation
     }
-    workspaces {
+    organizations {
       id
-      workspaceId
+      organizationId
       identityId
       relation
     }
@@ -515,215 +730,3 @@ export const useGetTenantsQuery = <
 useGetTenantsQuery.document = GetTenantsDocument;
 
 useGetTenantsQuery.getKey = (variables: GetTenantsQueryVariables) => ['GetTenants', variables];
-
-export const CreateWorkspaceDocument = new TypedDocumentString(`
-    mutation CreateWorkspace($input: CreateWorkspaceInput!) {
-  createWorkspace(input: $input) {
-    id
-    tenantId
-    parentWorkspaceId
-    name
-    slug
-    description
-    isActive
-    createdAt
-    updatedAt
-  }
-}
-    `);
-
-export const useCreateWorkspaceMutation = <
-      TError = unknown,
-      TContext = unknown
-    >(options?: UseMutationOptions<CreateWorkspaceMutation, TError, CreateWorkspaceMutationVariables, TContext>) => {
-    
-    return useMutation<CreateWorkspaceMutation, TError, CreateWorkspaceMutationVariables, TContext>(
-      {
-    mutationKey: ['CreateWorkspace'],
-    mutationFn: (variables?: CreateWorkspaceMutationVariables) => graphQLFetcher<CreateWorkspaceMutation, CreateWorkspaceMutationVariables>(CreateWorkspaceDocument, variables)(),
-    ...options
-  }
-    )};
-
-useCreateWorkspaceMutation.getKey = () => ['CreateWorkspace'];
-
-export const CreateWorkspaceRelationDocument = new TypedDocumentString(`
-    mutation CreateWorkspaceRelation($input: CreateWorkspaceRelationInput!) {
-  createWorkspaceRelation(input: $input) {
-    id
-    workspaceId
-    identityId
-    relation
-  }
-}
-    `);
-
-export const useCreateWorkspaceRelationMutation = <
-      TError = unknown,
-      TContext = unknown
-    >(options?: UseMutationOptions<CreateWorkspaceRelationMutation, TError, CreateWorkspaceRelationMutationVariables, TContext>) => {
-    
-    return useMutation<CreateWorkspaceRelationMutation, TError, CreateWorkspaceRelationMutationVariables, TContext>(
-      {
-    mutationKey: ['CreateWorkspaceRelation'],
-    mutationFn: (variables?: CreateWorkspaceRelationMutationVariables) => graphQLFetcher<CreateWorkspaceRelationMutation, CreateWorkspaceRelationMutationVariables>(CreateWorkspaceRelationDocument, variables)(),
-    ...options
-  }
-    )};
-
-useCreateWorkspaceRelationMutation.getKey = () => ['CreateWorkspaceRelation'];
-
-export const DeleteWorkspaceRelationDocument = new TypedDocumentString(`
-    mutation DeleteWorkspaceRelation($id: String!) {
-  deleteWorkspaceRelation(id: $id)
-}
-    `);
-
-export const useDeleteWorkspaceRelationMutation = <
-      TError = unknown,
-      TContext = unknown
-    >(options?: UseMutationOptions<DeleteWorkspaceRelationMutation, TError, DeleteWorkspaceRelationMutationVariables, TContext>) => {
-    
-    return useMutation<DeleteWorkspaceRelationMutation, TError, DeleteWorkspaceRelationMutationVariables, TContext>(
-      {
-    mutationKey: ['DeleteWorkspaceRelation'],
-    mutationFn: (variables?: DeleteWorkspaceRelationMutationVariables) => graphQLFetcher<DeleteWorkspaceRelationMutation, DeleteWorkspaceRelationMutationVariables>(DeleteWorkspaceRelationDocument, variables)(),
-    ...options
-  }
-    )};
-
-useDeleteWorkspaceRelationMutation.getKey = () => ['DeleteWorkspaceRelation'];
-
-export const GetWorkspaceDocument = new TypedDocumentString(`
-    query GetWorkspace($id: String!) {
-  getWorkspace(id: $id) {
-    id
-    tenantId
-    parentWorkspaceId
-    name
-    slug
-    description
-    isActive
-    createdAt
-    updatedAt
-  }
-}
-    `);
-
-export const useGetWorkspaceQuery = <
-      TData = GetWorkspaceQuery,
-      TError = unknown
-    >(
-      variables: GetWorkspaceQueryVariables,
-      options?: Omit<UseQueryOptions<GetWorkspaceQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<GetWorkspaceQuery, TError, TData>['queryKey'] }
-    ) => {
-    
-    return useQuery<GetWorkspaceQuery, TError, TData>(
-      {
-    queryKey: ['GetWorkspace', variables],
-    queryFn: graphQLFetcher<GetWorkspaceQuery, GetWorkspaceQueryVariables>(GetWorkspaceDocument, variables),
-    ...options
-  }
-    )};
-
-useGetWorkspaceQuery.document = GetWorkspaceDocument;
-
-useGetWorkspaceQuery.getKey = (variables: GetWorkspaceQueryVariables) => ['GetWorkspace', variables];
-
-export const GetWorkspaceRelationsDocument = new TypedDocumentString(`
-    query GetWorkspaceRelations($workspaceId: String!) {
-  getWorkspaceRelations(workspaceId: $workspaceId) {
-    id
-    workspaceId
-    identityId
-    relation
-  }
-}
-    `);
-
-export const useGetWorkspaceRelationsQuery = <
-      TData = GetWorkspaceRelationsQuery,
-      TError = unknown
-    >(
-      variables: GetWorkspaceRelationsQueryVariables,
-      options?: Omit<UseQueryOptions<GetWorkspaceRelationsQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<GetWorkspaceRelationsQuery, TError, TData>['queryKey'] }
-    ) => {
-    
-    return useQuery<GetWorkspaceRelationsQuery, TError, TData>(
-      {
-    queryKey: ['GetWorkspaceRelations', variables],
-    queryFn: graphQLFetcher<GetWorkspaceRelationsQuery, GetWorkspaceRelationsQueryVariables>(GetWorkspaceRelationsDocument, variables),
-    ...options
-  }
-    )};
-
-useGetWorkspaceRelationsQuery.document = GetWorkspaceRelationsDocument;
-
-useGetWorkspaceRelationsQuery.getKey = (variables: GetWorkspaceRelationsQueryVariables) => ['GetWorkspaceRelations', variables];
-
-export const GetWorkspacesDocument = new TypedDocumentString(`
-    query GetWorkspaces($tenantId: String!, $parentWorkspaceId: String) {
-  getWorkspaces(tenantId: $tenantId, parentWorkspaceId: $parentWorkspaceId) {
-    id
-    tenantId
-    parentWorkspaceId
-    name
-    slug
-    description
-    isActive
-    createdAt
-    updatedAt
-  }
-}
-    `);
-
-export const useGetWorkspacesQuery = <
-      TData = GetWorkspacesQuery,
-      TError = unknown
-    >(
-      variables: GetWorkspacesQueryVariables,
-      options?: Omit<UseQueryOptions<GetWorkspacesQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<GetWorkspacesQuery, TError, TData>['queryKey'] }
-    ) => {
-    
-    return useQuery<GetWorkspacesQuery, TError, TData>(
-      {
-    queryKey: ['GetWorkspaces', variables],
-    queryFn: graphQLFetcher<GetWorkspacesQuery, GetWorkspacesQueryVariables>(GetWorkspacesDocument, variables),
-    ...options
-  }
-    )};
-
-useGetWorkspacesQuery.document = GetWorkspacesDocument;
-
-useGetWorkspacesQuery.getKey = (variables: GetWorkspacesQueryVariables) => ['GetWorkspaces', variables];
-
-export const UpdateWorkspaceDocument = new TypedDocumentString(`
-    mutation UpdateWorkspace($id: String!, $input: UpdateWorkspaceInput!) {
-  updateWorkspace(id: $id, input: $input) {
-    id
-    tenantId
-    parentWorkspaceId
-    name
-    slug
-    description
-    isActive
-    createdAt
-    updatedAt
-  }
-}
-    `);
-
-export const useUpdateWorkspaceMutation = <
-      TError = unknown,
-      TContext = unknown
-    >(options?: UseMutationOptions<UpdateWorkspaceMutation, TError, UpdateWorkspaceMutationVariables, TContext>) => {
-    
-    return useMutation<UpdateWorkspaceMutation, TError, UpdateWorkspaceMutationVariables, TContext>(
-      {
-    mutationKey: ['UpdateWorkspace'],
-    mutationFn: (variables?: UpdateWorkspaceMutationVariables) => graphQLFetcher<UpdateWorkspaceMutation, UpdateWorkspaceMutationVariables>(UpdateWorkspaceDocument, variables)(),
-    ...options
-  }
-    )};
-
-useUpdateWorkspaceMutation.getKey = () => ['UpdateWorkspace'];

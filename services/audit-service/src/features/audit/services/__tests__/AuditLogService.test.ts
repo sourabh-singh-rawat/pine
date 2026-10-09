@@ -6,7 +6,7 @@ import { AuditLogService } from "@/features/audit/services/AuditLogService";
 import type { IIdentityRepository } from "@/features/identities/repositories";
 
 const identityId = "viewer-1";
-const workspaceId = "workspace-1";
+const organizationId = "organization-1";
 
 const createdAt = new Date("2026-01-01T00:00:00.000Z");
 
@@ -16,7 +16,7 @@ const logWithActor: AuditLog = {
   entityId: "item-1",
   action: "created",
   actorId: "user-1",
-  workspaceId,
+  organizationId,
   tenantId: null,
   payload: null,
   createdAt,
@@ -96,7 +96,7 @@ describe("AuditLogService", () => {
     );
 
     await expect(
-      service.list({ entityType: "item", entityId: "item-1", workspaceId }, identityId),
+      service.list({ entityType: "item", entityId: "item-1", organizationId }, identityId),
     ).resolves.toEqual([
       { ...logWithActor, actor: actorIdentity },
       { ...logWithoutActor, actor: null },
@@ -104,8 +104,8 @@ describe("AuditLogService", () => {
     ]);
 
     expect(authorizationClient.checkRelationship).toHaveBeenCalledWith({
-      namespace: "workspace",
-      object: workspaceId,
+      namespace: "organization",
+      object: organizationId,
       relation: "read",
       subject: `identity:${identityId}`,
     });
@@ -133,7 +133,7 @@ describe("AuditLogService", () => {
       createAuthorizationClient(),
     );
 
-    await service.list({ entityType: "item", entityId: "item-1", workspaceId }, identityId);
+    await service.list({ entityType: "item", entityId: "item-1", organizationId }, identityId);
 
     expect(identityRepository.findByIdentityIds).toHaveBeenCalledTimes(1);
     expect(identityRepository.findByIdentityIds).toHaveBeenCalledWith(["user-1"]);
@@ -150,13 +150,13 @@ describe("AuditLogService", () => {
     );
 
     await expect(
-      service.list({ entityType: "item", entityId: "item-1", workspaceId }, identityId),
+      service.list({ entityType: "item", entityId: "item-1", organizationId }, identityId),
     ).resolves.toEqual([{ ...logWithoutActor, actor: null }]);
 
     expect(identityRepository.findByIdentityIds).toHaveBeenCalledWith([]);
   });
 
-  it("rejects when the caller lacks workspace read permission", async () => {
+  it("rejects when the caller lacks organization read permission", async () => {
     const authorizationClient = createAuthorizationClient({
       checkRelationship: vi.fn().mockResolvedValue(false),
     });
@@ -169,7 +169,7 @@ describe("AuditLogService", () => {
     );
 
     await expect(
-      service.list({ entityType: "item", entityId: "item-1", workspaceId }, identityId),
+      service.list({ entityType: "item", entityId: "item-1", organizationId }, identityId),
     ).rejects.toBeInstanceOf(InsufficientPermissionError);
 
     expect(auditLogRepository.findMany).not.toHaveBeenCalled();

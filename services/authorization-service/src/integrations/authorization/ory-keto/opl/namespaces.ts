@@ -58,7 +58,7 @@ export class tenant implements Namespace {
       this.related.admin.includes(ctx.subject) ||
       this.related.owner.includes(ctx.subject) ||
       this.related.platform.traverse((item) => item.related.admin.includes(ctx.subject)),
-    create_workspace: (ctx: Context): boolean =>
+    create_organization: (ctx: Context): boolean =>
       this.related.admin.includes(ctx.subject) || this.related.owner.includes(ctx.subject),
     administer: (ctx: Context): boolean =>
       this.related.admin.includes(ctx.subject) || this.related.owner.includes(ctx.subject),
@@ -77,7 +77,7 @@ export class tenant implements Namespace {
   };
 }
 
-export class workspace implements Namespace {
+export class organization implements Namespace {
   // NOSONAR typescript:S101
   related: {
     owner: identity[];
@@ -122,7 +122,7 @@ export class space implements Namespace {
     owner: identity[];
     admin: identity[];
     member: identity[];
-    workspace: workspace[];
+    organization: organization[];
   };
 
   permits = {
@@ -130,23 +130,23 @@ export class space implements Namespace {
       this.related.member.includes(ctx.subject) ||
       this.related.admin.includes(ctx.subject) ||
       this.related.owner.includes(ctx.subject) ||
-      this.related.workspace.traverse((item) => item.permits.read(ctx)),
+      this.related.organization.traverse((item) => item.permits.read(ctx)),
     update: (ctx: Context): boolean =>
       this.related.admin.includes(ctx.subject) ||
       this.related.owner.includes(ctx.subject) ||
-      this.related.workspace.traverse((item) => item.permits.update(ctx)),
+      this.related.organization.traverse((item) => item.permits.update(ctx)),
     manage_members: (ctx: Context): boolean =>
       this.related.admin.includes(ctx.subject) ||
       this.related.owner.includes(ctx.subject) ||
-      this.related.workspace.traverse((item) => item.permits.manage_members(ctx)),
+      this.related.organization.traverse((item) => item.permits.manage_members(ctx)),
     create_list: (ctx: Context): boolean =>
       this.related.member.includes(ctx.subject) ||
       this.related.admin.includes(ctx.subject) ||
       this.related.owner.includes(ctx.subject) ||
-      this.related.workspace.traverse((item) => item.permits.create_list(ctx)),
+      this.related.organization.traverse((item) => item.permits.create_list(ctx)),
     delete: (ctx: Context): boolean =>
       this.related.owner.includes(ctx.subject) ||
-      this.related.workspace.traverse((item) => item.permits.delete(ctx)),
+      this.related.organization.traverse((item) => item.permits.delete(ctx)),
   };
 }
 

@@ -8,9 +8,9 @@ import {
   OWNER,
   PLATFORM_OBJECT_ID,
   PLATFORM_TENANT,
-  SPACE_WORKSPACE,
+  SPACE_ORGANIZATION,
   TENANT_PLATFORM,
-  WORKSPACE_TENANT,
+  ORGANIZATION_TENANT,
 } from "./names";
 
 export const platformAdminRelationship = (identityId: string): GraphRelationship => ({
@@ -52,29 +52,29 @@ export const tenantMemberRelationship = (
   subject: { namespace: IDENTITY, id: identityId },
 });
 
-export const workspaceOwnerRelationship = (
-  workspaceId: string,
+export const organizationOwnerRelationship = (
+  organizationId: string,
   identityId: string,
 ): GraphRelationship => ({
-  object: { namespace: "workspace", id: workspaceId },
+  object: { namespace: "organization", id: organizationId },
   relation: OWNER,
   subject: { namespace: IDENTITY, id: identityId },
 });
 
-export const workspaceAdminRelationship = (
-  workspaceId: string,
+export const organizationAdminRelationship = (
+  organizationId: string,
   identityId: string,
 ): GraphRelationship => ({
-  object: { namespace: "workspace", id: workspaceId },
+  object: { namespace: "organization", id: organizationId },
   relation: ADMIN,
   subject: { namespace: IDENTITY, id: identityId },
 });
 
-export const workspaceMemberRelationship = (
-  workspaceId: string,
+export const organizationMemberRelationship = (
+  organizationId: string,
   identityId: string,
 ): GraphRelationship => ({
-  object: { namespace: "workspace", id: workspaceId },
+  object: { namespace: "organization", id: organizationId },
   relation: MEMBER,
   subject: { namespace: IDENTITY, id: identityId },
 });
@@ -91,12 +91,12 @@ export const tenantPlatformRelationship = (tenantId: string): GraphRelationship 
   subject: { namespace: "platform", id: PLATFORM_OBJECT_ID },
 });
 
-export const workspaceTenantRelationship = (
-  workspaceId: string,
+export const organizationTenantRelationship = (
+  organizationId: string,
   tenantId: string,
 ): GraphRelationship => ({
-  object: { namespace: "workspace", id: workspaceId },
-  relation: WORKSPACE_TENANT,
+  object: { namespace: "organization", id: organizationId },
+  relation: ORGANIZATION_TENANT,
   subject: { namespace: "tenant", id: tenantId },
 });
 
@@ -121,13 +121,13 @@ export const spaceMemberRelationship = (
   subject: { namespace: IDENTITY, id: identityId },
 });
 
-export const spaceWorkspaceRelationship = (
+export const spaceOrganizationRelationship = (
   spaceId: string,
-  workspaceId: string,
+  organizationId: string,
 ): GraphRelationship => ({
   object: { namespace: "space", id: spaceId },
-  relation: SPACE_WORKSPACE,
-  subject: { namespace: "workspace", id: workspaceId },
+  relation: SPACE_ORGANIZATION,
+  subject: { namespace: "organization", id: organizationId },
 });
 
 export const listOwnerRelationship = (listId: string, identityId: string): GraphRelationship => ({

@@ -70,7 +70,7 @@ describe("AttachmentDerivativeService", () => {
     it("stores derivative bytes in object storage, saves derivative record, and schedules AttachmentDerivativeCreatedEvent", async () => {
       const existingAttachment: Attachment = {
         id: "att-10",
-        scopeType: ATTACHMENT_SCOPE_TYPE.WORKSPACE,
+        scopeType: ATTACHMENT_SCOPE_TYPE.ORGANIZATION,
         scopeId: "org-1",
         tenantId: "tenant-1",
         currentVersionId: "ver-10",
@@ -92,7 +92,7 @@ describe("AttachmentDerivativeService", () => {
         fileSize: 100,
         sha256: "abc",
         storageProvider: "seaweed",
-        storageObjectKey: "trusted/workspace/org-1/att-10",
+        storageObjectKey: "trusted/organization/org-1/att-10",
         createdBy: "user-1",
         createdAt: new Date(),
       };
@@ -107,7 +107,7 @@ describe("AttachmentDerivativeService", () => {
         width: 250,
         height: 250,
         storageProvider: "seaweed",
-        storageObjectKey: "trusted/workspace/org-1/att-10/derivatives/thumbnail",
+        storageObjectKey: "trusted/organization/org-1/att-10/derivatives/thumbnail",
         createdAt: new Date(),
       };
 
@@ -134,7 +134,7 @@ describe("AttachmentDerivativeService", () => {
       });
 
       expect(objectStorage.putObject).toHaveBeenCalledWith({
-        storageObjectKey: "trusted/workspace/org-1/att-10/derivatives/thumbnail",
+        storageObjectKey: "trusted/organization/org-1/att-10/derivatives/thumbnail",
         contentType: "image/png",
         body: data,
         contentLength: data.byteLength,
@@ -170,7 +170,7 @@ describe("AttachmentDerivativeService", () => {
     it("streams derivative bytes for the attachment current version", async () => {
       const existingAttachment: Attachment = {
         id: "att-10",
-        scopeType: ATTACHMENT_SCOPE_TYPE.WORKSPACE,
+        scopeType: ATTACHMENT_SCOPE_TYPE.ORGANIZATION,
         scopeId: "org-1",
         tenantId: "tenant-1",
         currentVersionId: "ver-10",
@@ -192,7 +192,7 @@ describe("AttachmentDerivativeService", () => {
         fileSize: 100,
         sha256: "abc",
         storageProvider: "seaweed",
-        storageObjectKey: "trusted/workspace/org-1/att-10",
+        storageObjectKey: "trusted/organization/org-1/att-10",
         createdBy: "user-1",
         createdAt: new Date(),
       };
@@ -207,7 +207,7 @@ describe("AttachmentDerivativeService", () => {
         width: 250,
         height: 250,
         storageProvider: "seaweed",
-        storageObjectKey: "trusted/workspace/org-1/att-10/derivatives/thumbnail",
+        storageObjectKey: "trusted/organization/org-1/att-10/derivatives/thumbnail",
         createdAt: new Date(),
       };
 
@@ -239,7 +239,7 @@ describe("AttachmentDerivativeService", () => {
         "thumbnail",
       );
       expect(objectStorage.getObject).toHaveBeenCalledWith(
-        "trusted/workspace/org-1/att-10/derivatives/thumbnail",
+        "trusted/organization/org-1/att-10/derivatives/thumbnail",
       );
       expect(result).toEqual({
         stream: body,
@@ -252,7 +252,7 @@ describe("AttachmentDerivativeService", () => {
     it("throws NotFoundError when derivative is missing", async () => {
       const existingAttachment: Attachment = {
         id: "att-11",
-        scopeType: ATTACHMENT_SCOPE_TYPE.WORKSPACE,
+        scopeType: ATTACHMENT_SCOPE_TYPE.ORGANIZATION,
         scopeId: "org-1",
         tenantId: "tenant-1",
         currentVersionId: "ver-11",
@@ -274,7 +274,7 @@ describe("AttachmentDerivativeService", () => {
         fileSize: 100,
         sha256: "abc",
         storageProvider: "seaweed",
-        storageObjectKey: "trusted/workspace/org-1/att-11",
+        storageObjectKey: "trusted/organization/org-1/att-11",
         createdBy: "user-1",
         createdAt: new Date(),
       };

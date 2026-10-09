@@ -57,7 +57,7 @@ const list: List = {
 
 const space: Space = {
   id: "space-1",
-  workspaceId: "workspace-1",
+  organizationId: "organization-1",
   name: "Space",
   createdById: "user-1",
   version: 1,
@@ -227,7 +227,7 @@ const createService = (
   );
 
 describe("ItemAttachmentService", () => {
-  it("creates a link after authorizing create_list on the workspace", async () => {
+  it("creates a link after authorizing create_list on the organization", async () => {
     const itemAttachmentRepository = createItemAttachmentRepository();
     const authorizationClient = createAuthorizationClient();
     const service = createService({ itemAttachmentRepository, authorizationClient });
@@ -243,8 +243,8 @@ describe("ItemAttachmentService", () => {
     });
 
     expect(authorizationClient.checkRelationship).toHaveBeenCalledWith({
-      namespace: "workspace",
-      object: "workspace-1",
+      namespace: "organization",
+      object: "organization-1",
       relation: "create_list",
       subject: "identity:user-1",
     });
@@ -306,7 +306,7 @@ describe("ItemAttachmentService", () => {
     expect(itemAttachmentRepository.save).not.toHaveBeenCalled();
   });
 
-  it("lists links after authorizing read on the workspace", async () => {
+  it("lists links after authorizing read on the organization", async () => {
     const itemAttachmentRepository = createItemAttachmentRepository();
     const authorizationClient = createAuthorizationClient();
     const service = createService({ itemAttachmentRepository, authorizationClient });
@@ -314,8 +314,8 @@ describe("ItemAttachmentService", () => {
     const result = await service.list({ itemId: "item-1", identityId: "user-1" });
 
     expect(authorizationClient.checkRelationship).toHaveBeenCalledWith({
-      namespace: "workspace",
-      object: "workspace-1",
+      namespace: "organization",
+      object: "organization-1",
       relation: "read",
       subject: "identity:user-1",
     });
@@ -323,7 +323,7 @@ describe("ItemAttachmentService", () => {
     expect(result).toEqual([attachmentLink]);
   });
 
-  it("soft-deletes a link after authorizing create_list on the workspace", async () => {
+  it("soft-deletes a link after authorizing create_list on the organization", async () => {
     const itemAttachmentRepository = createItemAttachmentRepository();
     const authorizationClient = createAuthorizationClient();
     const service = createService({ itemAttachmentRepository, authorizationClient });
@@ -331,8 +331,8 @@ describe("ItemAttachmentService", () => {
     await expect(service.delete({ id: "link-1", identityId: "user-1" })).resolves.toBeUndefined();
 
     expect(authorizationClient.checkRelationship).toHaveBeenCalledWith({
-      namespace: "workspace",
-      object: "workspace-1",
+      namespace: "organization",
+      object: "organization-1",
       relation: "create_list",
       subject: "identity:user-1",
     });
@@ -399,8 +399,8 @@ describe("ItemAttachmentService", () => {
     });
 
     expect(authorizationClient.checkRelationship).toHaveBeenCalledWith({
-      namespace: "workspace",
-      object: "workspace-1",
+      namespace: "organization",
+      object: "organization-1",
       relation: "create_list",
       subject: "identity:user-1",
     });
@@ -438,8 +438,8 @@ describe("ItemAttachmentService", () => {
 
     expect(attachmentClient.createUploadTarget).toHaveBeenCalledWith({
       input: {
-        scopeType: ATTACHMENT_SCOPE_TYPE.WORKSPACE,
-        scopeId: "workspace-1",
+        scopeType: ATTACHMENT_SCOPE_TYPE.ORGANIZATION,
+        scopeId: "organization-1",
         filename: "screenshot.png",
         contentType: "image/png",
         size: 1024,

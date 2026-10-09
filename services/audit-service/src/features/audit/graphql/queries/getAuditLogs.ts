@@ -11,15 +11,15 @@ builder.queryFields((t) => ({
     args: {
       entityType: t.arg.string({ required: true }),
       entityId: t.arg.string({ required: true }),
-      workspaceId: t.arg.string({ required: true }),
+      organizationId: t.arg.string({ required: true }),
     },
-    resolve: async (_root, { entityType, entityId, workspaceId }, ctx) => {
+    resolve: async (_root, { entityType, entityId, organizationId }, ctx) => {
       const service = container.get<IAuditLogService>(TYPES.AuditLogService);
       return service.list(
         {
           entityType,
           entityId,
-          workspaceId,
+          organizationId,
         },
         requireIdentityId(ctx),
       );

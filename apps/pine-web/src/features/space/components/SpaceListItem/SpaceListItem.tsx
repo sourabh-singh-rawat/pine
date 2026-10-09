@@ -23,10 +23,10 @@ import { SpaceSettingsModal } from "../SpaceSettingsModal";
 type SpaceListItemProps = {
   spaceId: string;
   name: string;
-  workspaceId: string;
+  organizationId: string;
 };
 
-export const SpaceListItem = ({ spaceId, name, workspaceId }: SpaceListItemProps) => {
+export const SpaceListItem = ({ spaceId, name, organizationId }: SpaceListItemProps) => {
   const currentSpace = useSpaceStore((s) => s.currentSpace);
   const setCurrentSpace = useSpaceStore((s) => s.setCurrentSpace);
   const selected = currentSpace?.id === spaceId;
@@ -59,7 +59,7 @@ export const SpaceListItem = ({ spaceId, name, workspaceId }: SpaceListItemProps
       setCurrentSpace({
         id: spaceId,
         name,
-        workspaceId,
+        organizationId,
       });
     }
   }, [
@@ -71,7 +71,7 @@ export const SpaceListItem = ({ spaceId, name, workspaceId }: SpaceListItemProps
     listsQuery.isPending,
     setCurrentSpace,
     spaceId,
-    workspaceId,
+    organizationId,
   ]);
 
   const closeMenu = () => {
@@ -107,7 +107,7 @@ export const SpaceListItem = ({ spaceId, name, workspaceId }: SpaceListItemProps
             setCurrentSpace({
               id: spaceId,
               name,
-              workspaceId,
+              organizationId,
             });
             setExpanded((prev) => !prev);
           }}
@@ -162,7 +162,7 @@ export const SpaceListItem = ({ spaceId, name, workspaceId }: SpaceListItemProps
       </Menu>
       <SpaceSettingsModal
         spaceId={spaceId}
-        workspaceId={workspaceId}
+        organizationId={organizationId}
         name={name}
         open={settingsOpen}
         onClose={() => {
