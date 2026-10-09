@@ -125,10 +125,20 @@ export type CreateListInput = {
   spaceId: Scalars['String']['input'];
 };
 
+export type CreateOfficeTypeInput = {
+  description?: InputMaybe<Scalars['String']['input']>;
+  isActive?: InputMaybe<Scalars['Boolean']['input']>;
+  name: Scalars['String']['input'];
+  parentOfficeTypeId?: InputMaybe<Scalars['String']['input']>;
+  slug: Scalars['String']['input'];
+  tenantId: Scalars['String']['input'];
+};
+
 export type CreateOrganizationInput = {
   description?: InputMaybe<Scalars['String']['input']>;
   isActive?: InputMaybe<Scalars['Boolean']['input']>;
   name: Scalars['String']['input'];
+  officeTypeId: Scalars['String']['input'];
   parentOrganizationId?: InputMaybe<Scalars['String']['input']>;
   slug: Scalars['String']['input'];
   tenantId: Scalars['String']['input'];
@@ -321,6 +331,7 @@ export type Mutation = {
   createItemAttachment?: Maybe<ItemAttachmentObject>;
   createItemAttachmentUploadRequest?: Maybe<ItemAttachmentUploadTargetObject>;
   createList?: Maybe<Scalars['String']['output']>;
+  createOfficeType?: Maybe<OfficeTypeObject>;
   createOrganization?: Maybe<OrganizationObject>;
   createOrganizationRelation?: Maybe<OrganizationRelationObject>;
   createPhotoUploadRequest?: Maybe<PhotoUploadTargetObject>;
@@ -337,6 +348,7 @@ export type Mutation = {
   deleteIdentity?: Maybe<Scalars['String']['output']>;
   deleteItem?: Maybe<Scalars['String']['output']>;
   deleteItemAttachment?: Maybe<Scalars['Boolean']['output']>;
+  deleteOfficeType?: Maybe<Scalars['String']['output']>;
   deleteOrganization?: Maybe<Scalars['String']['output']>;
   deleteOrganizationRelation?: Maybe<Scalars['Boolean']['output']>;
   deletePlatformRelation?: Maybe<Scalars['String']['output']>;
@@ -395,6 +407,11 @@ export type MutationCreateItemAttachmentUploadRequestArgs = {
 
 export type MutationCreateListArgs = {
   input: CreateListInput;
+};
+
+
+export type MutationCreateOfficeTypeArgs = {
+  input: CreateOfficeTypeInput;
 };
 
 
@@ -474,6 +491,11 @@ export type MutationDeleteItemArgs = {
 
 
 export type MutationDeleteItemAttachmentArgs = {
+  id: Scalars['String']['input'];
+};
+
+
+export type MutationDeleteOfficeTypeArgs = {
   id: Scalars['String']['input'];
 };
 
@@ -589,6 +611,19 @@ export type MutationUpdateTagArgs = {
   input: UpdateTagInput;
 };
 
+export type OfficeTypeObject = {
+  __typename?: 'OfficeTypeObject';
+  createdAt?: Maybe<Scalars['DateTimeISO']['output']>;
+  description?: Maybe<Scalars['String']['output']>;
+  id?: Maybe<Scalars['String']['output']>;
+  isActive?: Maybe<Scalars['Boolean']['output']>;
+  name?: Maybe<Scalars['String']['output']>;
+  parentOfficeTypeId?: Maybe<Scalars['String']['output']>;
+  slug?: Maybe<Scalars['String']['output']>;
+  tenantId?: Maybe<Scalars['String']['output']>;
+  updatedAt?: Maybe<Scalars['DateTimeISO']['output']>;
+};
+
 export type OrganizationObject = {
   __typename?: 'OrganizationObject';
   children?: Maybe<Array<OrganizationObject>>;
@@ -597,6 +632,7 @@ export type OrganizationObject = {
   id?: Maybe<Scalars['String']['output']>;
   isActive?: Maybe<Scalars['Boolean']['output']>;
   name?: Maybe<Scalars['String']['output']>;
+  officeTypeId?: Maybe<Scalars['String']['output']>;
   parentOrganizationId?: Maybe<Scalars['String']['output']>;
   slug?: Maybe<Scalars['String']['output']>;
   tenantId?: Maybe<Scalars['String']['output']>;
@@ -697,6 +733,8 @@ export type Query = {
   getMyOrganizationPreference?: Maybe<OrganizationPreferenceObject>;
   getMyOrganizations?: Maybe<Array<OrganizationObject>>;
   getMyTenants?: Maybe<Array<TenantObject>>;
+  getOfficeType?: Maybe<OfficeTypeObject>;
+  getOfficeTypes?: Maybe<Array<OfficeTypeObject>>;
   getOrganization?: Maybe<OrganizationObject>;
   getOrganizationRelation?: Maybe<OrganizationRelationObject>;
   getOrganizationRelations?: Maybe<Array<OrganizationRelationObject>>;
@@ -779,6 +817,16 @@ export type QueryGetListItemsArgs = {
 
 export type QueryGetListsArgs = {
   spaceId: Scalars['String']['input'];
+};
+
+
+export type QueryGetOfficeTypeArgs = {
+  id: Scalars['String']['input'];
+};
+
+
+export type QueryGetOfficeTypesArgs = {
+  tenantId: Scalars['String']['input'];
 };
 
 

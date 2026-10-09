@@ -3,6 +3,7 @@ mutation UpdateOrganization($id: String!, $input: UpdateOrganizationInput!) {
     id
     tenantId
     parentOrganizationId
+    officeTypeId
     name
     slug
     description

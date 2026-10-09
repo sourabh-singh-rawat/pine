@@ -1,0 +1,11 @@
+mutation CreateOfficeType($input: CreateOfficeTypeInput!) {
+  createOfficeType(input: $input) {
+    id
+    tenantId
+    parentOfficeTypeId
+    name
+    slug
+    description
+    isActive
+  }
+}

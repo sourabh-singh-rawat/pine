@@ -3,6 +3,7 @@ query GetMyOrganizations {
     id
     tenantId
     parentOrganizationId
+    officeTypeId
     name
     slug
     description
@@ -12,6 +13,7 @@ query GetMyOrganizations {
       id
       tenantId
       parentOrganizationId
+      officeTypeId
       name
       slug
       description
@@ -21,6 +23,7 @@ query GetMyOrganizations {
         id
         tenantId
         parentOrganizationId
+        officeTypeId
         name
         slug
         description
@@ -30,6 +33,7 @@ query GetMyOrganizations {
           id
           tenantId
           parentOrganizationId
+          officeTypeId
           name
           slug
           description
@@ -39,6 +43,7 @@ query GetMyOrganizations {
             id
             tenantId
             parentOrganizationId
+            officeTypeId
             name
             slug
             description
@@ -48,6 +53,7 @@ query GetMyOrganizations {
               id
               tenantId
               parentOrganizationId
+              officeTypeId
               name
               slug
               description

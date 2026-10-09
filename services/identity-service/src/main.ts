@@ -1,4 +1,5 @@
-import { configureTls, type IWorker } from "@pine/common";
+import { type IWorker } from "@pine/common";
+import { configureTls } from "@pine/common/tls";
 import { env } from "@/bootstrap/env";
 import "reflect-metadata";
 

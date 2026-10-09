@@ -1,4 +1,4 @@
-import { configureTls } from "@pine/common";
+import { configureTls } from "@pine/common/tls";
 import { env } from "./env";
 
 configureTls({

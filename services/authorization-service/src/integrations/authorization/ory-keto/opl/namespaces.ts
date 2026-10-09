@@ -60,6 +60,8 @@ export class tenant implements Namespace {
       this.related.platform.traverse((item) => item.related.admin.includes(ctx.subject)),
     create_organization: (ctx: Context): boolean =>
       this.related.admin.includes(ctx.subject) || this.related.owner.includes(ctx.subject),
+    manage_office_types: (ctx: Context): boolean =>
+      this.related.admin.includes(ctx.subject) || this.related.owner.includes(ctx.subject),
     administer: (ctx: Context): boolean =>
       this.related.admin.includes(ctx.subject) || this.related.owner.includes(ctx.subject),
     assign_admin: (ctx: Context): boolean =>

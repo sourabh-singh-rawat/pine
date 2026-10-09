@@ -3,6 +3,7 @@ mutation CreateOrganization($input: CreateOrganizationInput!) {
     id
     tenantId
     parentOrganizationId
+    officeTypeId
     name
     slug
     description

@@ -10,6 +10,7 @@ const base = {
   createdAt: new Date("2026-01-01T00:00:00.000Z"),
   updatedAt: null,
   deletedAt: null,
+  officeTypeId: "type-1",
 } satisfies Omit<Organization, "id" | "name" | "slug" | "parentOrganizationId">;
 
 const org = (

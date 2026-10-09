@@ -9,6 +9,7 @@ export const OrganizationCreatedDataSchema = Type.Object(
     isActive: Type.Boolean(),
     version: Type.Integer({ minimum: 1 }),
     createdAt: Type.String(),
+    officeTypeId: Type.String(),
     description: Type.Optional(Type.String()),
     parentOrganizationId: Type.Optional(Type.String()),
   },
