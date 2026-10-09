@@ -3,9 +3,13 @@ import {
   CloudEvent,
   createCloudEvent,
   OrganizationCreatedEvent,
+  OrganizationDeletedEvent,
   OrganizationRelationCreatedEvent,
+  OrganizationUpdatedEvent,
   type OrganizationCreatedData,
+  type OrganizationDeletedData,
   type OrganizationRelationCreatedData,
+  type OrganizationUpdatedData,
 } from "@pine/events";
 import type { IOutboxService } from "@pine/outbox";
 import { inject, injectable } from "inversify";
@@ -248,23 +252,100 @@ export class OrganizationService implements IOrganizationService {
       await this.assertValidParentOrganization(organization, input.parentOrganizationId);
     }
 
-    const updated = await this.organizationRepository.update(id, {
-      parentOrganizationId: input.parentOrganizationId,
-    });
-    if (!updated) {
-      throw new OrganizationNotFoundError(`Organization not found: ${id}`);
-    }
+    const previousParentOrganizationId = organization.parentOrganizationId;
+    const parentChanged =
+      input.parentOrganizationId !== undefined &&
+      (input.parentOrganizationId ?? null) !== (previousParentOrganizationId ?? null);
 
-    return updated;
+    return this.db.transaction(async (tx) => {
+      const updated = await this.organizationRepository.update(
+        id,
+        {
+          parentOrganizationId: input.parentOrganizationId,
+        },
+        { tx },
+      );
+      if (!updated) {
+        throw new OrganizationNotFoundError(`Organization not found: ${id}`);
+      }
+
+      if (parentChanged) {
+        const updatedEvent: CloudEvent<OrganizationUpdatedData> = createCloudEvent({
+          type: OrganizationUpdatedEvent.type,
+          version: OrganizationUpdatedEvent.version,
+          schema: OrganizationUpdatedEvent.schema,
+          source: "pine/platform-service",
+          subject: updated.id,
+          data: {
+            id: updated.id,
+            tenantId: updated.tenantId,
+            updatedAt: (updated.updatedAt ?? new Date()).toISOString(),
+            ...(previousParentOrganizationId != null ? { previousParentOrganizationId } : {}),
+            ...(updated.parentOrganizationId != null
+              ? { parentOrganizationId: updated.parentOrganizationId }
+              : {}),
+          },
+        });
+
+        await this.outboxService.schedule(
+          {
+            eventId: updatedEvent.id,
+            eventType: updatedEvent.type,
+            eventVersion: OrganizationUpdatedEvent.version,
+            aggregateType: "organization",
+            aggregateId: updated.id,
+            payload: updatedEvent,
+          },
+          { tx },
+        );
+      }
+
+      return updated;
+    });
   }
 
   async delete(id: string, identityId: string): Promise<void> {
     await requirePermission(this.authorizationClient, identityId, "delete", `organization:${id}`);
 
-    const deleted = await this.organizationRepository.softDelete(id);
-    if (!deleted) {
+    const organization = await this.organizationRepository.findById(id);
+    if (!organization) {
       throw new OrganizationNotFoundError(`Organization not found: ${id}`);
     }
+
+    await this.db.transaction(async (tx) => {
+      const deleted = await this.organizationRepository.softDelete(id, { tx });
+      if (!deleted) {
+        throw new OrganizationNotFoundError(`Organization not found: ${id}`);
+      }
+
+      const deletedEvent: CloudEvent<OrganizationDeletedData> = createCloudEvent({
+        type: OrganizationDeletedEvent.type,
+        version: OrganizationDeletedEvent.version,
+        schema: OrganizationDeletedEvent.schema,
+        source: "pine/platform-service",
+        subject: organization.id,
+        data: {
+          id: organization.id,
+          tenantId: organization.tenantId,
+          deletedAt: new Date().toISOString(),
+          ...(organization.parentOrganizationId != null
+            ? { parentOrganizationId: organization.parentOrganizationId }
+            : {}),
+        },
+      });
+
+      await this.outboxService.schedule(
+        {
+          eventId: deletedEvent.id,
+          eventType: deletedEvent.type,
+          eventVersion: OrganizationDeletedEvent.version,
+          aggregateType: "organization",
+          aggregateId: organization.id,
+          payload: deletedEvent,
+        },
+        { tx },
+      );
+    });
   }
 
   private async assertValidParentOrganization(

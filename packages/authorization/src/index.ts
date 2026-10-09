@@ -68,6 +68,7 @@ export {
   ROLE_MEMBER,
   SPACE_ORGANIZATION,
   TENANT_PLATFORM,
+  ORGANIZATION_PARENTS,
   ORGANIZATION_TENANT,
   itemAdminRelationship,
   itemListRelationship,
@@ -91,6 +92,7 @@ export {
   organizationAdminRelationship,
   organizationMemberRelationship,
   organizationOwnerRelationship,
+  organizationParentsRelationship,
   organizationTenantRelationship,
 } from "./relations";
 

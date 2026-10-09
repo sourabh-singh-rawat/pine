@@ -10,6 +10,7 @@ import {
   PLATFORM_TENANT,
   SPACE_ORGANIZATION,
   TENANT_PLATFORM,
+  ORGANIZATION_PARENTS,
   ORGANIZATION_TENANT,
 } from "./names";
 
@@ -98,6 +99,15 @@ export const organizationTenantRelationship = (
   object: { namespace: "organization", id: organizationId },
   relation: ORGANIZATION_TENANT,
   subject: { namespace: "tenant", id: tenantId },
+});
+
+export const organizationParentsRelationship = (
+  organizationId: string,
+  parentOrganizationId: string,
+): GraphRelationship => ({
+  object: { namespace: "organization", id: organizationId },
+  relation: ORGANIZATION_PARENTS,
+  subject: { namespace: "organization", id: parentOrganizationId },
 });
 
 export const spaceOwnerRelationship = (spaceId: string, identityId: string): GraphRelationship => ({

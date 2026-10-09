@@ -1,5 +1,10 @@
 import { InsufficientPermissionError } from "@pine/authorization";
-import { OrganizationCreatedEvent, OrganizationRelationCreatedEvent } from "@pine/events";
+import {
+  OrganizationCreatedEvent,
+  OrganizationDeletedEvent,
+  OrganizationRelationCreatedEvent,
+  OrganizationUpdatedEvent,
+} from "@pine/events";
 import { describe, expect, it, vi } from "vitest";
 import {
   InvalidParentOrganizationError,
@@ -419,7 +424,12 @@ describe("OrganizationService", () => {
   });
 
   it("updates the parent organization", async () => {
-    const updated = { ...childOrganization, parentOrganizationId: null };
+    const updated = {
+      ...childOrganization,
+      officeTypeId: "type-root",
+      parentOrganizationId: null,
+      updatedAt: new Date("2026-01-02T00:00:00.000Z"),
+    };
     const organizationRepository = {
       findById: vi.fn().mockResolvedValue({ ...childOrganization, officeTypeId: "type-root" }),
       update: vi.fn().mockResolvedValue(updated),
@@ -429,8 +439,11 @@ describe("OrganizationService", () => {
       ensureRelationship: vi.fn().mockResolvedValue(undefined),
       deleteRelationship: vi.fn().mockResolvedValue(undefined),
     };
+    const outboxService = {
+      schedule: vi.fn().mockResolvedValue({ id: "outbox-1" }),
+    };
 
-    const service = createService({ organizationRepository, authorizationClient });
+    const service = createService({ organizationRepository, authorizationClient, outboxService });
 
     await expect(
       service.update("org-2", { parentOrganizationId: null }, identityId),
@@ -441,9 +454,50 @@ describe("OrganizationService", () => {
       relation: "update",
       subject: `identity:${identityId}`,
     });
-    expect(organizationRepository.update).toHaveBeenCalledWith("org-2", {
-      parentOrganizationId: null,
-    });
+    expect(organizationRepository.update).toHaveBeenCalledWith(
+      "org-2",
+      {
+        parentOrganizationId: null,
+      },
+      { tx: {} },
+    );
+    expect(outboxService.schedule).toHaveBeenCalledWith(
+      expect.objectContaining({
+        eventType: OrganizationUpdatedEvent.type,
+        eventVersion: OrganizationUpdatedEvent.version,
+        aggregateType: "organization",
+        aggregateId: "org-2",
+        payload: expect.objectContaining({
+          type: OrganizationUpdatedEvent.type,
+          data: expect.objectContaining({
+            id: "org-2",
+            tenantId: "tenant-1",
+            previousParentOrganizationId: "org-1",
+          }),
+        }),
+      }),
+      { tx: {} },
+    );
+  });
+
+  it("skips organization updated outbox when parent is unchanged", async () => {
+    const organizationRepository = {
+      findById: vi
+        .fn()
+        .mockResolvedValueOnce(childOrganization)
+        .mockResolvedValueOnce(organization),
+      update: vi.fn().mockResolvedValue(childOrganization),
+    };
+    const outboxService = {
+      schedule: vi.fn().mockResolvedValue({ id: "outbox-1" }),
+    };
+
+    const service = createService({ organizationRepository, outboxService });
+
+    await expect(
+      service.update("org-2", { parentOrganizationId: "org-1" }, identityId),
+    ).resolves.toEqual(childOrganization);
+    expect(outboxService.schedule).not.toHaveBeenCalled();
   });
 
   it("rejects update when the parent would create a cycle", async () => {
@@ -479,6 +533,7 @@ describe("OrganizationService", () => {
 
   it("soft-deletes an organization", async () => {
     const organizationRepository = {
+      findById: vi.fn().mockResolvedValue(childOrganization),
       softDelete: vi.fn().mockResolvedValue(true),
     };
     const authorizationClient = {
@@ -486,21 +541,42 @@ describe("OrganizationService", () => {
       ensureRelationship: vi.fn().mockResolvedValue(undefined),
       deleteRelationship: vi.fn().mockResolvedValue(undefined),
     };
+    const outboxService = {
+      schedule: vi.fn().mockResolvedValue({ id: "outbox-1" }),
+    };
 
-    const service = createService({ organizationRepository, authorizationClient });
+    const service = createService({ organizationRepository, authorizationClient, outboxService });
 
-    await expect(service.delete("org-1", identityId)).resolves.toBeUndefined();
+    await expect(service.delete("org-2", identityId)).resolves.toBeUndefined();
     expect(authorizationClient.checkRelationship).toHaveBeenCalledWith({
       namespace: "organization",
-      object: "org-1",
+      object: "org-2",
       relation: "delete",
       subject: `identity:${identityId}`,
     });
-    expect(organizationRepository.softDelete).toHaveBeenCalledWith("org-1");
+    expect(organizationRepository.softDelete).toHaveBeenCalledWith("org-2", { tx: {} });
+    expect(outboxService.schedule).toHaveBeenCalledWith(
+      expect.objectContaining({
+        eventType: OrganizationDeletedEvent.type,
+        eventVersion: OrganizationDeletedEvent.version,
+        aggregateType: "organization",
+        aggregateId: "org-2",
+        payload: expect.objectContaining({
+          type: OrganizationDeletedEvent.type,
+          data: expect.objectContaining({
+            id: "org-2",
+            tenantId: "tenant-1",
+            parentOrganizationId: "org-1",
+          }),
+        }),
+      }),
+      { tx: {} },
+    );
   });
 
   it("throws OrganizationNotFoundError when deleting a missing organization", async () => {
     const organizationRepository = {
+      findById: vi.fn().mockResolvedValue(null),
       softDelete: vi.fn().mockResolvedValue(false),
     };
 
