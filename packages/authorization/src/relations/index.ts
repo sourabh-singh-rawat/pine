@@ -10,6 +10,7 @@ export {
   ROLE_MEMBER,
   SPACE_ORGANIZATION,
   TENANT_PLATFORM,
+  ORGANIZATION_PARENTS,
   ORGANIZATION_TENANT,
 } from "./names";
 export {
@@ -35,5 +36,6 @@ export {
   organizationAdminRelationship,
   organizationMemberRelationship,
   organizationOwnerRelationship,
+  organizationParentsRelationship,
   organizationTenantRelationship,
 } from "./relationships";

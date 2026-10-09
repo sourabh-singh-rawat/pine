@@ -21,6 +21,14 @@ export {
   type OrganizationCreatedData,
 } from "./OrganizationCreatedDataSchema";
 export {
+  OrganizationUpdatedDataSchema,
+  type OrganizationUpdatedData,
+} from "./OrganizationUpdatedDataSchema";
+export {
+  OrganizationDeletedDataSchema,
+  type OrganizationDeletedData,
+} from "./OrganizationDeletedDataSchema";
+export {
   OrganizationRelationCreatedDataSchema,
   type OrganizationRelationCreatedData,
 } from "./OrganizationRelationCreatedDataSchema";

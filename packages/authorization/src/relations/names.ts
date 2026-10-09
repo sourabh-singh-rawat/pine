@@ -6,6 +6,7 @@ export const PERMISSION_HAS = "has";
 export const PLATFORM_TENANT = "tenant";
 export const TENANT_PLATFORM = "platform";
 export const ORGANIZATION_TENANT = "tenant";
+export const ORGANIZATION_PARENTS = "parents";
 export const SPACE_ORGANIZATION = "organization";
 export const LIST_SPACE = "space";
 export const ITEM_LIST = "list";

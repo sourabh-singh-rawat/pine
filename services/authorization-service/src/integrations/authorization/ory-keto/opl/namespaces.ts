@@ -86,6 +86,7 @@ export class organization implements Namespace {
     admin: identity[];
     member: identity[];
     tenant: tenant[];
+    parents: organization[];
   };
 
   permits = {
@@ -93,7 +94,8 @@ export class organization implements Namespace {
       this.related.member.includes(ctx.subject) ||
       this.related.admin.includes(ctx.subject) ||
       this.related.owner.includes(ctx.subject) ||
-      this.related.tenant.traverse((item) => item.permits.administer(ctx)),
+      this.related.tenant.traverse((item) => item.permits.administer(ctx)) ||
+      this.related.parents.traverse((item) => item.permits.read(ctx)),
     update: (ctx: Context): boolean =>
       this.related.admin.includes(ctx.subject) ||
       this.related.owner.includes(ctx.subject) ||
