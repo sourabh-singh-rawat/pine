@@ -46,15 +46,15 @@ export type Permission =
   | PermissionGrantPermission;
 
 export type PermissionKey =
-  | `profile:${ProfilePermission}`
-  | `platform:${PlatformPermission}`
-  | `tenant:${TenantPermission}`
-  | `organization:${OrganizationPermission}`
-  | `space:${SpacePermission}`
-  | `list:${ListPermission}`
-  | `item:${ItemPermission}`
-  | `role:${RolePermission}`
-  | `permission:${PermissionGrantPermission}`;
+  | `Profile:${ProfilePermission}`
+  | `Platform:${PlatformPermission}`
+  | `Tenant:${TenantPermission}`
+  | `Organization:${OrganizationPermission}`
+  | `Space:${SpacePermission}`
+  | `List:${ListPermission}`
+  | `Item:${ItemPermission}`
+  | `Role:${RolePermission}`
+  | `Permission:${PermissionGrantPermission}`;
 
 export const PROFILE_PERMISSIONS: readonly ProfilePermission[] = ["read", "update"];
 
@@ -125,13 +125,13 @@ const catalog = (
   permissions.map((permission) => ({ namespace, permission }));
 
 export const ALL_PERMISSIONS = [
-  ...catalog("profile", PROFILE_PERMISSIONS),
-  ...catalog("platform", PLATFORM_PERMISSIONS),
-  ...catalog("tenant", TENANT_PERMISSIONS),
-  ...catalog("organization", ORGANIZATION_PERMISSIONS),
-  ...catalog("space", SPACE_PERMISSIONS),
-  ...catalog("list", LIST_PERMISSIONS),
-  ...catalog("item", ITEM_PERMISSIONS),
-  ...catalog("role", ROLE_PERMISSIONS),
-  ...catalog("permission", PERMISSION_GRANT_PERMISSIONS),
+  ...catalog("Profile", PROFILE_PERMISSIONS),
+  ...catalog("Platform", PLATFORM_PERMISSIONS),
+  ...catalog("Tenant", TENANT_PERMISSIONS),
+  ...catalog("Organization", ORGANIZATION_PERMISSIONS),
+  ...catalog("Space", SPACE_PERMISSIONS),
+  ...catalog("List", LIST_PERMISSIONS),
+  ...catalog("Item", ITEM_PERMISSIONS),
+  ...catalog("Role", ROLE_PERMISSIONS),
+  ...catalog("Permission", PERMISSION_GRANT_PERMISSIONS),
 ];

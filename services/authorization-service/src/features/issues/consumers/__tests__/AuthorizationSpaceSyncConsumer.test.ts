@@ -39,14 +39,14 @@ describe("AuthorizationSpaceSyncConsumer", () => {
     await consumer.onMessage(message, event);
 
     expect(authorizationGraphProvider.createRelationship).toHaveBeenCalledWith({
-      object: { namespace: "space", id: "space-1" },
+      object: { namespace: "Space", id: "space-1" },
       relation: SPACE_ORGANIZATION,
-      subject: { namespace: "organization", id: "organization-1" },
+      subject: { namespace: "Organization", id: "organization-1" },
     });
     expect(authorizationGraphProvider.createRelationship).toHaveBeenCalledWith({
-      object: { namespace: "space", id: "space-1" },
+      object: { namespace: "Space", id: "space-1" },
       relation: OWNER,
-      subject: { namespace: "identity", id: "user-1" },
+      subject: { namespace: "Identity", id: "user-1" },
     });
     expect(message.ack).toHaveBeenCalled();
   });

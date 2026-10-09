@@ -41,7 +41,7 @@ export class TenantService implements ITenantService {
       this.authorizationClient,
       identityId,
       "create_tenant",
-      `platform:${PLATFORM_OBJECT_ID}`,
+      `Platform:${PLATFORM_OBJECT_ID}`,
     );
 
     const slugExists = await this.tenantRepository.existsBySlug(input.slug);
@@ -104,7 +104,7 @@ export class TenantService implements ITenantService {
   }
 
   async getTenantById(id: string, identityId: string): Promise<Tenant> {
-    await requirePermission(this.authorizationClient, identityId, "read", `tenant:${id}`);
+    await requirePermission(this.authorizationClient, identityId, "read", `Tenant:${id}`);
 
     const tenant = await this.tenantRepository.findById(id);
     if (!tenant) {
@@ -119,7 +119,7 @@ export class TenantService implements ITenantService {
       this.authorizationClient,
       identityId,
       "read",
-      `platform:${PLATFORM_OBJECT_ID}`,
+      `Platform:${PLATFORM_OBJECT_ID}`,
     );
 
     return this.tenantRepository.findAll();
@@ -127,8 +127,8 @@ export class TenantService implements ITenantService {
 
   async listMyTenants(identityId: string): Promise<Tenant[]> {
     const relationships = await this.authorizationClient.listRelationships({
-      namespace: "tenant",
-      subject: { namespace: "identity", id: identityId },
+      namespace: "Tenant",
+      subject: { namespace: "Identity", id: identityId },
     });
 
     const tenantIds = Array.from(
@@ -143,7 +143,7 @@ export class TenantService implements ITenantService {
   }
 
   async deleteTenant(id: string, platformId: string, identityId: string): Promise<void> {
-    await requirePermission(this.authorizationClient, identityId, "suspend", `tenant:${id}`);
+    await requirePermission(this.authorizationClient, identityId, "suspend", `Tenant:${id}`);
 
     await this.db.transaction(async (tx) => {
       const deleted = await this.tenantRepository.softDelete(id, { tx });

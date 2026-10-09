@@ -54,7 +54,7 @@ export class TenantRelationService implements ITenantRelationService {
         this.authorizationClient,
         identityId,
         "assign_admin",
-        `tenant:${input.tenantId}`,
+        `Tenant:${input.tenantId}`,
       );
     }
 
@@ -117,7 +117,7 @@ export class TenantRelationService implements ITenantRelationService {
     const relation = parts[1];
     const subjectIdentityId = parts[2];
 
-    await requirePermission(this.authorizationClient, identityId, "read", `tenant:${tenantId}`);
+    await requirePermission(this.authorizationClient, identityId, "read", `Tenant:${tenantId}`);
 
     assertTenantRelation(relation);
 
@@ -135,7 +135,7 @@ export class TenantRelationService implements ITenantRelationService {
       this.authorizationClient,
       identityId,
       "read",
-      `tenant:${input.tenantId}`,
+      `Tenant:${input.tenantId}`,
     );
 
     const relations = input.relation === undefined ? [OWNER, ADMIN, MEMBER] : [input.relation];
@@ -179,13 +179,13 @@ export class TenantRelationService implements ITenantRelationService {
       this.authorizationClient,
       identityId,
       "assign_admin",
-      `tenant:${tenantId}`,
+      `Tenant:${tenantId}`,
     );
 
     assertTenantRelation(relation);
 
     await this.authorizationClient.deleteRelationship({
-      object: { namespace: "tenant", id: tenantId },
+      object: { namespace: "Tenant", id: tenantId },
       relation,
       subject: { namespace: IDENTITY, id: subjectIdentityId },
     });
@@ -193,7 +193,7 @@ export class TenantRelationService implements ITenantRelationService {
 
   private assignedFor = async (tenantId: string, relation: string): Promise<TenantRelation[]> => {
     const relationships = await this.authorizationClient.listRelationships({
-      namespace: "tenant",
+      namespace: "Tenant",
       object: tenantId,
       relation,
     });

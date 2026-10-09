@@ -41,9 +41,9 @@ describe("AuthorizationPlatformRelationSyncConsumer", () => {
     await consumer.onMessage(message as never, event);
 
     expect(authorizationGraphProvider.createRelationship).toHaveBeenCalledWith({
-      object: { namespace: "platform", id: PLATFORM_OBJECT_ID },
+      object: { namespace: "Platform", id: PLATFORM_OBJECT_ID },
       relation: ADMIN,
-      subject: { namespace: "identity", id: "user-1" },
+      subject: { namespace: "Identity", id: "user-1" },
     });
     expect(message.ack).toHaveBeenCalled();
   });
@@ -72,9 +72,9 @@ describe("AuthorizationPlatformRelationSyncConsumer", () => {
     await consumer.onMessage(message as never, event);
 
     expect(authorizationGraphProvider.createRelationship).toHaveBeenCalledWith({
-      object: { namespace: "platform", id: PLATFORM_OBJECT_ID },
+      object: { namespace: "Platform", id: PLATFORM_OBJECT_ID },
       relation: MEMBER,
-      subject: { namespace: "identity", id: "user-2" },
+      subject: { namespace: "Identity", id: "user-2" },
     });
     expect(message.ack).toHaveBeenCalled();
   });

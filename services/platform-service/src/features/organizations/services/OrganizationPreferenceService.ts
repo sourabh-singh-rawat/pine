@@ -32,7 +32,7 @@ export class OrganizationPreferenceService implements IOrganizationPreferenceSer
       this.authorizationClient,
       identityId,
       "read",
-      `organization:${organizationId}`,
+      `Organization:${organizationId}`,
     );
 
     return this.preferenceRepository.upsert({

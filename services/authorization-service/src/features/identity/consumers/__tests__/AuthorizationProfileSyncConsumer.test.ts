@@ -38,9 +38,9 @@ describe("AuthorizationProfileSyncConsumer", () => {
     await consumer.onMessage(message, event);
 
     expect(authorizationGraphProvider.createRelationship).toHaveBeenCalledWith({
-      object: { namespace: "profile", id: "profile-1" },
+      object: { namespace: "Profile", id: "profile-1" },
       relation: "identity",
-      subject: { namespace: "identity", id: "identity-1" },
+      subject: { namespace: "Identity", id: "identity-1" },
     });
     expect(message.ack).toHaveBeenCalled();
   });
@@ -49,9 +49,9 @@ describe("AuthorizationProfileSyncConsumer", () => {
     const authorizationGraphProvider = createGraphProvider();
     authorizationGraphProvider.listRelationships.mockResolvedValue([
       {
-        object: { namespace: "profile", id: "profile-1" },
+        object: { namespace: "Profile", id: "profile-1" },
         relation: "identity",
-        subject: { namespace: "identity", id: "identity-1" },
+        subject: { namespace: "Identity", id: "identity-1" },
       },
     ]);
     const consumer = new AuthorizationProfileSyncConsumer(
@@ -74,9 +74,9 @@ describe("AuthorizationProfileSyncConsumer", () => {
     await consumer.onMessage(message, event);
 
     expect(authorizationGraphProvider.deleteRelationship).toHaveBeenCalledWith({
-      object: { namespace: "profile", id: "profile-1" },
+      object: { namespace: "Profile", id: "profile-1" },
       relation: "identity",
-      subject: { namespace: "identity", id: "identity-1" },
+      subject: { namespace: "Identity", id: "identity-1" },
     });
     expect(message.ack).toHaveBeenCalled();
   });

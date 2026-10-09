@@ -258,10 +258,10 @@ describe("ItemService", () => {
     ).resolves.toBeUndefined();
 
     expect(authorizationClient.checkRelationship).toHaveBeenCalledWith({
-      namespace: "list",
+      namespace: "List",
       object: "list-1",
       relation: "update",
-      subject: "identity:user-2",
+      subject: "Identity:user-2",
     });
     expect(itemRepository.update).toHaveBeenCalledWith(
       "issue-1",
@@ -349,10 +349,10 @@ describe("ItemService", () => {
     });
 
     expect(authorizationClient.checkRelationship).toHaveBeenCalledWith({
-      namespace: "list",
+      namespace: "List",
       object: "list-1",
       relation: "create_item",
-      subject: "identity:user-1",
+      subject: "Identity:user-1",
     });
   });
 
@@ -387,10 +387,10 @@ describe("ItemService", () => {
     await expect(service.delete({ id: "issue-1", identityId: "user-1" })).resolves.toBeUndefined();
 
     expect(authorizationClient.checkRelationship).toHaveBeenCalledWith({
-      namespace: "list",
+      namespace: "List",
       object: "list-1",
       relation: "delete",
-      subject: "identity:user-1",
+      subject: "Identity:user-1",
     });
     expect(itemRepository.softDelete).toHaveBeenCalledWith("issue-1");
   });
@@ -616,10 +616,10 @@ describe("ItemService", () => {
     await service.list({ listId: "list-1", identityId: "user-1" });
 
     expect(authorizationClient.checkRelationship).toHaveBeenCalledWith({
-      namespace: "list",
+      namespace: "List",
       object: "list-1",
       relation: "read",
-      subject: "identity:user-1",
+      subject: "Identity:user-1",
     });
   });
 
@@ -659,10 +659,10 @@ describe("ItemService", () => {
       itemWithList,
     );
     expect(authorizationClient.checkRelationship).toHaveBeenCalledWith({
-      namespace: "list",
+      namespace: "List",
       object: "list-1",
       relation: "read",
-      subject: "identity:user-1",
+      subject: "Identity:user-1",
     });
   });
 });

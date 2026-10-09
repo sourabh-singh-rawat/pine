@@ -117,10 +117,10 @@ describe("SpaceService", () => {
     ).resolves.toBeUndefined();
 
     expect(authorizationClient.checkRelationship).toHaveBeenCalledWith({
-      namespace: "organization",
+      namespace: "Organization",
       object: "organization-1",
       relation: "update",
-      subject: "identity:user-1",
+      subject: "Identity:user-1",
     });
     expect(spaceRepository.update).toHaveBeenCalledWith(
       "space-1",

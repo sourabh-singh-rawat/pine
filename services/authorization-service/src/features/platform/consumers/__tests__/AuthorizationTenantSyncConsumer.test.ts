@@ -44,14 +44,14 @@ describe("AuthorizationTenantSyncConsumer", () => {
     await consumer.onMessage(message as never, event);
 
     expect(authorizationGraphProvider.createRelationship).toHaveBeenCalledWith({
-      object: { namespace: "platform", id: PLATFORM_OBJECT_ID },
+      object: { namespace: "Platform", id: PLATFORM_OBJECT_ID },
       relation: PLATFORM_TENANT,
-      subject: { namespace: "tenant", id: "tenant-1" },
+      subject: { namespace: "Tenant", id: "tenant-1" },
     });
     expect(authorizationGraphProvider.createRelationship).toHaveBeenCalledWith({
-      object: { namespace: "tenant", id: "tenant-1" },
+      object: { namespace: "Tenant", id: "tenant-1" },
       relation: TENANT_PLATFORM,
-      subject: { namespace: "platform", id: PLATFORM_OBJECT_ID },
+      subject: { namespace: "Platform", id: PLATFORM_OBJECT_ID },
     });
     expect(message.ack).toHaveBeenCalled();
   });
@@ -60,7 +60,7 @@ describe("AuthorizationTenantSyncConsumer", () => {
     const authorizationGraphProvider = createGraphProvider();
     authorizationGraphProvider.listRelationships.mockResolvedValue([
       {
-        object: { namespace: "platform", id: PLATFORM_OBJECT_ID },
+        object: { namespace: "Platform", id: PLATFORM_OBJECT_ID },
         relation: PLATFORM_TENANT,
       },
     ]);
@@ -84,14 +84,14 @@ describe("AuthorizationTenantSyncConsumer", () => {
     await consumer.onMessage(message as never, event);
 
     expect(authorizationGraphProvider.deleteRelationship).toHaveBeenCalledWith({
-      object: { namespace: "platform", id: PLATFORM_OBJECT_ID },
+      object: { namespace: "Platform", id: PLATFORM_OBJECT_ID },
       relation: PLATFORM_TENANT,
-      subject: { namespace: "tenant", id: "tenant-1" },
+      subject: { namespace: "Tenant", id: "tenant-1" },
     });
     expect(authorizationGraphProvider.deleteRelationship).toHaveBeenCalledWith({
-      object: { namespace: "tenant", id: "tenant-1" },
+      object: { namespace: "Tenant", id: "tenant-1" },
       relation: TENANT_PLATFORM,
-      subject: { namespace: "platform", id: PLATFORM_OBJECT_ID },
+      subject: { namespace: "Platform", id: PLATFORM_OBJECT_ID },
     });
     expect(message.ack).toHaveBeenCalled();
   });

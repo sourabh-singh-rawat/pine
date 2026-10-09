@@ -30,19 +30,19 @@ describe("IdentityRelationService", () => {
     const listRelationships = vi
       .fn()
       .mockImplementation(async (input: ListRelationshipsInput): Promise<GraphRelationship[]> => {
-        if (input.namespace === "platform") {
+        if (input.namespace === "Platform") {
           return [
             {
-              object: { namespace: "platform", id: PLATFORM_OBJECT_ID },
+              object: { namespace: "Platform", id: PLATFORM_OBJECT_ID },
               relation: ADMIN,
               subject: { namespace: IDENTITY, id: targetIdentityId },
             },
           ];
         }
-        if (input.namespace === "tenant") {
+        if (input.namespace === "Tenant") {
           return [
             {
-              object: { namespace: "tenant", id: "tenant-1" },
+              object: { namespace: "Tenant", id: "tenant-1" },
               relation: OWNER,
               subject: { namespace: IDENTITY, id: targetIdentityId },
             },
@@ -50,7 +50,7 @@ describe("IdentityRelationService", () => {
         }
         return [
           {
-            object: { namespace: "organization", id: "org-1" },
+            object: { namespace: "Organization", id: "org-1" },
             relation: MEMBER,
             subject: { namespace: IDENTITY, id: targetIdentityId },
           },
@@ -62,21 +62,21 @@ describe("IdentityRelationService", () => {
     const result = await service.list(targetIdentityId, callerIdentityId);
 
     expect(authorizationClient.checkRelationship).toHaveBeenCalledWith({
-      namespace: "platform",
+      namespace: "Platform",
       object: PLATFORM_OBJECT_ID,
       relation: "manage_admins",
       subject: `${IDENTITY}:${callerIdentityId}`,
     });
     expect(listRelationships).toHaveBeenCalledWith({
-      namespace: "platform",
+      namespace: "Platform",
       subject: { namespace: IDENTITY, id: targetIdentityId },
     });
     expect(listRelationships).toHaveBeenCalledWith({
-      namespace: "tenant",
+      namespace: "Tenant",
       subject: { namespace: IDENTITY, id: targetIdentityId },
     });
     expect(listRelationships).toHaveBeenCalledWith({
-      namespace: "organization",
+      namespace: "Organization",
       subject: { namespace: IDENTITY, id: targetIdentityId },
     });
     expect(listRelationships).toHaveBeenCalledTimes(3);

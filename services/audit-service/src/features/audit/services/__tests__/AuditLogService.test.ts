@@ -104,10 +104,10 @@ describe("AuditLogService", () => {
     ]);
 
     expect(authorizationClient.checkRelationship).toHaveBeenCalledWith({
-      namespace: "organization",
+      namespace: "Organization",
       object: organizationId,
       relation: "read",
-      subject: `identity:${identityId}`,
+      subject: `Identity:${identityId}`,
     });
     expect(auditLogRepository.findMany).toHaveBeenCalledWith({
       entityType: "item",

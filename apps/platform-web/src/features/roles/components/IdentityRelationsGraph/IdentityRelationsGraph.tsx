@@ -210,7 +210,7 @@ export const IdentityRelationsGraph = ({
   const theme = useTheme();
 
   const graph = useMemo(() => {
-    const identityNodeId = `identity:${identityId}`;
+    const identityNodeId = `Identity:${identityId}`;
     const targets = new Map<string, TargetEdgeState>();
 
     for (const item of platform) {
@@ -219,7 +219,7 @@ export const IdentityRelationsGraph = ({
       }
       addMembership(
         targets,
-        "platform:platform",
+        "Platform:platform",
         {
           kind: "platform",
           title: "Platform",
@@ -234,7 +234,7 @@ export const IdentityRelationsGraph = ({
       }
       addMembership(
         targets,
-        `tenant:${item.tenantId}`,
+        `Tenant:${item.tenantId}`,
         {
           kind: "tenant",
           title: truncateId(item.tenantId),
@@ -250,7 +250,7 @@ export const IdentityRelationsGraph = ({
       }
       addMembership(
         targets,
-        `organization:${item.organizationId}`,
+        `Organization:${item.organizationId}`,
         {
           kind: "organization",
           title: truncateId(item.organizationId),
@@ -262,10 +262,10 @@ export const IdentityRelationsGraph = ({
 
     const objectEntries = Array.from(targets.entries()).sort(([leftId], [rightId]) => {
       const kindOrder = (id: string): number => {
-        if (id.startsWith("platform:")) {
+        if (id.startsWith("Platform:")) {
           return 0;
         }
-        if (id.startsWith("tenant:")) {
+        if (id.startsWith("Tenant:")) {
           return 1;
         }
         return 2;

@@ -222,10 +222,10 @@ describe("ChecklistService", () => {
     const result = await service.list({ itemId: "item-1", identityId: "user-1" });
 
     expect(authorizationClient.checkRelationship).toHaveBeenCalledWith({
-      namespace: "organization",
+      namespace: "Organization",
       object: "organization-1",
       relation: "read",
-      subject: "identity:user-1",
+      subject: "Identity:user-1",
     });
     expect(checklistRepository.findByItemId).toHaveBeenCalledWith("item-1");
     expect(checklistEntryRepository.findByChecklistIds).toHaveBeenCalledWith(["checklist-1"]);
@@ -251,10 +251,10 @@ describe("ChecklistService", () => {
     });
 
     expect(authorizationClient.checkRelationship).toHaveBeenCalledWith({
-      namespace: "organization",
+      namespace: "Organization",
       object: "organization-1",
       relation: "create_list",
-      subject: "identity:user-1",
+      subject: "Identity:user-1",
     });
     expect(checklistRepository.save).toHaveBeenCalledWith({
       itemId: "item-1",
@@ -400,10 +400,10 @@ describe("ChecklistService", () => {
     });
 
     expect(authorizationClient.checkRelationship).toHaveBeenCalledWith({
-      namespace: "organization",
+      namespace: "Organization",
       object: "organization-1",
       relation: "create_list",
-      subject: "identity:user-1",
+      subject: "Identity:user-1",
     });
     expect(checklistEntryRepository.update).toHaveBeenCalledWith("entry-a", {
       completed: true,

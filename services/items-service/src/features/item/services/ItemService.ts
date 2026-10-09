@@ -60,7 +60,7 @@ export class ItemService implements IItemService {
       this.authorizationClient,
       identityId,
       "create_item",
-      `list:${input.listId}`,
+      `List:${input.listId}`,
     );
 
     return this.db.transaction(async (tx) => {
@@ -140,7 +140,7 @@ export class ItemService implements IItemService {
       throw new ListItemsValidationError("statusId is required when after is provided");
     }
 
-    await requirePermission(this.authorizationClient, identityId, "read", `list:${listId}`);
+    await requirePermission(this.authorizationClient, identityId, "read", `List:${listId}`);
 
     const statuses = await this.statusRepository.findByListId(listId);
 
@@ -229,7 +229,7 @@ export class ItemService implements IItemService {
       return null;
     }
 
-    await requirePermission(this.authorizationClient, identityId, "read", `list:${item.listId}`);
+    await requirePermission(this.authorizationClient, identityId, "read", `List:${item.listId}`);
     return item;
   }
 
@@ -256,7 +256,7 @@ export class ItemService implements IItemService {
       this.authorizationClient,
       identityId,
       "update",
-      `list:${existing.listId}`,
+      `List:${existing.listId}`,
     );
 
     await this.db.transaction(async (tx) => {
@@ -337,7 +337,7 @@ export class ItemService implements IItemService {
       throw new ItemNotFoundError(`Item not found: ${id}`);
     }
 
-    await requirePermission(this.authorizationClient, identityId, "delete", `list:${item.listId}`);
+    await requirePermission(this.authorizationClient, identityId, "delete", `List:${item.listId}`);
 
     const deleted = await this.itemRepository.softDelete(id);
     if (!deleted) {
@@ -348,7 +348,7 @@ export class ItemService implements IItemService {
   async reorder(options: ReorderListItemsOptions) {
     const { listId, statusId, itemIds, identityId } = options;
 
-    await requirePermission(this.authorizationClient, identityId, "update", `list:${listId}`);
+    await requirePermission(this.authorizationClient, identityId, "update", `List:${listId}`);
 
     const status = await this.statusRepository.findById(statusId);
     if (!status || status.listId !== listId) {

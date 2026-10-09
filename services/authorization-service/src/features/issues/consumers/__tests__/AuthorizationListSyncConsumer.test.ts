@@ -40,14 +40,14 @@ describe("AuthorizationListSyncConsumer", () => {
     await consumer.onMessage(message, event);
 
     expect(authorizationGraphProvider.createRelationship).toHaveBeenCalledWith({
-      object: { namespace: "list", id: "list-1" },
+      object: { namespace: "List", id: "list-1" },
       relation: LIST_SPACE,
-      subject: { namespace: "space", id: "space-1" },
+      subject: { namespace: "Space", id: "space-1" },
     });
     expect(authorizationGraphProvider.createRelationship).toHaveBeenCalledWith({
-      object: { namespace: "list", id: "list-1" },
+      object: { namespace: "List", id: "list-1" },
       relation: OWNER,
-      subject: { namespace: "identity", id: "user-1" },
+      subject: { namespace: "Identity", id: "user-1" },
     });
     expect(message.ack).toHaveBeenCalled();
   });

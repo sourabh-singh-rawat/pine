@@ -39,7 +39,7 @@ export class SpaceService implements ISpaceService {
       this.authorizationClient,
       identityId,
       "create_space",
-      `organization:${input.organizationId}`,
+      `Organization:${input.organizationId}`,
     );
 
     return this.db.transaction(async (tx) => {
@@ -92,7 +92,7 @@ export class SpaceService implements ISpaceService {
       this.authorizationClient,
       identityId,
       "read",
-      `organization:${space.organizationId}`,
+      `Organization:${space.organizationId}`,
     );
 
     return space;
@@ -103,7 +103,7 @@ export class SpaceService implements ISpaceService {
       this.authorizationClient,
       identityId,
       "read",
-      `organization:${input.organizationId}`,
+      `Organization:${input.organizationId}`,
     );
 
     return this.spaceRepository.findMany({ organizationId: input.organizationId });
@@ -121,7 +121,7 @@ export class SpaceService implements ISpaceService {
       this.authorizationClient,
       identityId,
       "update",
-      `organization:${space.organizationId}`,
+      `Organization:${space.organizationId}`,
     );
 
     await this.db.transaction(async (tx) => {

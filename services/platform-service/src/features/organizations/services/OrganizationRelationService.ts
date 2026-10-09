@@ -57,7 +57,7 @@ export class OrganizationRelationService implements IOrganizationRelationService
         this.authorizationClient,
         identityId,
         "manage_members",
-        `organization:${input.organizationId}`,
+        `Organization:${input.organizationId}`,
       );
     }
 
@@ -124,7 +124,7 @@ export class OrganizationRelationService implements IOrganizationRelationService
       this.authorizationClient,
       identityId,
       "read",
-      `organization:${organizationId}`,
+      `Organization:${organizationId}`,
     );
 
     assertOrganizationRelation(relation);
@@ -146,7 +146,7 @@ export class OrganizationRelationService implements IOrganizationRelationService
       this.authorizationClient,
       identityId,
       "read",
-      `organization:${input.organizationId}`,
+      `Organization:${input.organizationId}`,
     );
 
     const relations = input.relation === undefined ? [OWNER, ADMIN, MEMBER] : [input.relation];
@@ -193,13 +193,13 @@ export class OrganizationRelationService implements IOrganizationRelationService
       this.authorizationClient,
       identityId,
       "manage_members",
-      `organization:${organizationId}`,
+      `Organization:${organizationId}`,
     );
 
     assertOrganizationRelation(relation);
 
     await this.authorizationClient.deleteRelationship({
-      object: { namespace: "organization", id: organizationId },
+      object: { namespace: "Organization", id: organizationId },
       relation,
       subject: { namespace: IDENTITY, id: subjectIdentityId },
     });
@@ -210,7 +210,7 @@ export class OrganizationRelationService implements IOrganizationRelationService
     relation: string,
   ): Promise<OrganizationRelation[]> => {
     const relationships = await this.authorizationClient.listRelationships({
-      namespace: "organization",
+      namespace: "Organization",
       object: organizationId,
       relation,
     });

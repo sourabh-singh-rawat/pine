@@ -159,10 +159,10 @@ describe("StatusService", () => {
     const result = await service.list({ listId: "list-1", identityId: "user-1" });
 
     expect(authorizationClient.checkRelationship).toHaveBeenCalledWith({
-      namespace: "list",
+      namespace: "List",
       object: "list-1",
       relation: "read",
-      subject: "identity:user-1",
+      subject: "Identity:user-1",
     });
     expect(statusRepository.findByListId).toHaveBeenCalledWith("list-1");
     expect(result).toEqual([statusTodo, statusDone]);

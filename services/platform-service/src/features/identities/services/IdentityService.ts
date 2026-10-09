@@ -23,7 +23,7 @@ export class IdentityService implements IIdentityService {
       this.authorizationClient,
       identityId,
       "read",
-      `platform:${PLATFORM_OBJECT_ID}`,
+      `Platform:${PLATFORM_OBJECT_ID}`,
     );
     return this.identityRepository.findAll();
   };

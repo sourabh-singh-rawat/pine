@@ -72,10 +72,10 @@ describe("OrganizationPreferenceService", () => {
 
     await expect(service.set(organization.id, identityId)).resolves.toEqual(preference);
     expect(authorizationClient.checkRelationship).toHaveBeenCalledWith({
-      namespace: "organization",
+      namespace: "Organization",
       object: organization.id,
       relation: "read",
-      subject: `identity:${identityId}`,
+      subject: `Identity:${identityId}`,
     });
     expect(preferenceRepository.upsert).toHaveBeenCalledWith({
       identityId,

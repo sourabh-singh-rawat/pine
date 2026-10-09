@@ -243,10 +243,10 @@ describe("ItemAttachmentService", () => {
     });
 
     expect(authorizationClient.checkRelationship).toHaveBeenCalledWith({
-      namespace: "organization",
+      namespace: "Organization",
       object: "organization-1",
       relation: "create_list",
-      subject: "identity:user-1",
+      subject: "Identity:user-1",
     });
     expect(itemAttachmentRepository.save).toHaveBeenCalledWith({
       itemId: "item-1",
@@ -314,10 +314,10 @@ describe("ItemAttachmentService", () => {
     const result = await service.list({ itemId: "item-1", identityId: "user-1" });
 
     expect(authorizationClient.checkRelationship).toHaveBeenCalledWith({
-      namespace: "organization",
+      namespace: "Organization",
       object: "organization-1",
       relation: "read",
-      subject: "identity:user-1",
+      subject: "Identity:user-1",
     });
     expect(itemAttachmentRepository.findByItemId).toHaveBeenCalledWith("item-1");
     expect(result).toEqual([attachmentLink]);
@@ -331,10 +331,10 @@ describe("ItemAttachmentService", () => {
     await expect(service.delete({ id: "link-1", identityId: "user-1" })).resolves.toBeUndefined();
 
     expect(authorizationClient.checkRelationship).toHaveBeenCalledWith({
-      namespace: "organization",
+      namespace: "Organization",
       object: "organization-1",
       relation: "create_list",
-      subject: "identity:user-1",
+      subject: "Identity:user-1",
     });
     expect(itemAttachmentRepository.softDelete).toHaveBeenCalledWith("link-1");
   });
@@ -399,10 +399,10 @@ describe("ItemAttachmentService", () => {
     });
 
     expect(authorizationClient.checkRelationship).toHaveBeenCalledWith({
-      namespace: "organization",
+      namespace: "Organization",
       object: "organization-1",
       relation: "create_list",
-      subject: "identity:user-1",
+      subject: "Identity:user-1",
     });
     expect(db.transaction).toHaveBeenCalled();
     expect(uploadRequestRepository.save).toHaveBeenCalledWith(

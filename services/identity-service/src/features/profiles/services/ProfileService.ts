@@ -112,9 +112,9 @@ export class ProfileService implements IProfileService {
 
     if (ownsTransaction) {
       await this.authorizationClient.ensureRelationship({
-        object: { namespace: "profile", id: profile.id },
+        object: { namespace: "Profile", id: profile.id },
         relation: "identity",
-        subject: { namespace: "identity", id: identityId },
+        subject: { namespace: "Identity", id: identityId },
       });
     }
 
@@ -136,7 +136,7 @@ export class ProfileService implements IProfileService {
       this.authorizationClient,
       options.identityId,
       "update",
-      `profile:${profile.id}`,
+      `Profile:${profile.id}`,
     );
 
     return this.db.transaction(async (tx) => {
@@ -192,7 +192,7 @@ export class ProfileService implements IProfileService {
       this.authorizationClient,
       options.identityId,
       "update",
-      `profile:${profile.id}`,
+      `Profile:${profile.id}`,
     );
 
     const updated = await this.profileRepository.update(profile.id, {
@@ -289,7 +289,7 @@ export class ProfileService implements IProfileService {
       this.authorizationClient,
       options.identityId,
       "update",
-      `profile:${profile.id}`,
+      `Profile:${profile.id}`,
     );
 
     const requestRecord = await this.photoUploadRequestRepository.save({

@@ -127,9 +127,9 @@ describe("OnboardingService", () => {
       { tx: {} },
     );
     expect(authorizationClient.ensureRelationship).toHaveBeenCalledWith({
-      object: { namespace: "tenant", id: tenant.id },
+      object: { namespace: "Tenant", id: tenant.id },
       relation: "owner",
-      subject: { namespace: "identity", id: identityId },
+      subject: { namespace: "Identity", id: identityId },
     });
     expect(organizationRepository.save).toHaveBeenCalledWith(
       {

@@ -105,10 +105,10 @@ describe("OrganizationService", () => {
       organization,
     ]);
     expect(authorizationClient.checkRelationship).toHaveBeenCalledWith({
-      namespace: "tenant",
+      namespace: "Tenant",
       object: "tenant-1",
       relation: "read_list",
-      subject: `identity:${identityId}`,
+      subject: `Identity:${identityId}`,
     });
     expect(organizationRepository.findMany).toHaveBeenCalledWith({
       tenantId: "tenant-1",
@@ -130,10 +130,10 @@ describe("OrganizationService", () => {
 
     await expect(service.getById(organization.id, identityId)).resolves.toEqual(organization);
     expect(authorizationClient.checkRelationship).toHaveBeenCalledWith({
-      namespace: "organization",
+      namespace: "Organization",
       object: organization.id,
       relation: "read",
-      subject: `identity:${identityId}`,
+      subject: `Identity:${identityId}`,
     });
     expect(organizationRepository.findById).toHaveBeenCalledWith(organization.id);
   });
@@ -238,10 +238,10 @@ describe("OrganizationService", () => {
     ).resolves.toEqual(organization);
 
     expect(authorizationClient.checkRelationship).toHaveBeenCalledWith({
-      namespace: "tenant",
+      namespace: "Tenant",
       object: "tenant-1",
       relation: "create_organization",
-      subject: `identity:${identityId}`,
+      subject: `Identity:${identityId}`,
     });
     expect(organizationRepository.save).toHaveBeenCalledWith(
       {
@@ -449,10 +449,10 @@ describe("OrganizationService", () => {
       service.update("org-2", { parentOrganizationId: null }, identityId),
     ).resolves.toEqual(updated);
     expect(authorizationClient.checkRelationship).toHaveBeenCalledWith({
-      namespace: "organization",
+      namespace: "Organization",
       object: "org-2",
       relation: "update",
-      subject: `identity:${identityId}`,
+      subject: `Identity:${identityId}`,
     });
     expect(organizationRepository.update).toHaveBeenCalledWith(
       "org-2",
@@ -549,10 +549,10 @@ describe("OrganizationService", () => {
 
     await expect(service.delete("org-2", identityId)).resolves.toBeUndefined();
     expect(authorizationClient.checkRelationship).toHaveBeenCalledWith({
-      namespace: "organization",
+      namespace: "Organization",
       object: "org-2",
       relation: "delete",
-      subject: `identity:${identityId}`,
+      subject: `Identity:${identityId}`,
     });
     expect(organizationRepository.softDelete).toHaveBeenCalledWith("org-2", { tx: {} });
     expect(outboxService.schedule).toHaveBeenCalledWith(
@@ -594,14 +594,14 @@ describe("OrganizationService", () => {
     const authorizationClient = {
       listRelationships: vi.fn().mockResolvedValue([
         {
-          object: { namespace: "organization", id: organization.id },
+          object: { namespace: "Organization", id: organization.id },
           relation: "member",
-          subject: { namespace: "identity", id: identityId },
+          subject: { namespace: "Identity", id: identityId },
         },
         {
-          object: { namespace: "organization", id: childOrganization.id },
+          object: { namespace: "Organization", id: childOrganization.id },
           relation: "member",
-          subject: { namespace: "identity", id: identityId },
+          subject: { namespace: "Identity", id: identityId },
         },
       ]),
     };
@@ -620,8 +620,8 @@ describe("OrganizationService", () => {
       },
     ]);
     expect(authorizationClient.listRelationships).toHaveBeenCalledWith({
-      namespace: "organization",
-      subject: { namespace: "identity", id: identityId },
+      namespace: "Organization",
+      subject: { namespace: "Identity", id: identityId },
     });
     expect(organizationRepository.findByIds).toHaveBeenCalledWith([
       organization.id,
