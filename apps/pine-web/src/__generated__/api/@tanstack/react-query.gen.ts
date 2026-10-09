@@ -252,14 +252,14 @@ export const resendVerificationEmailMutation = (options?: Partial<Options<Resend
  */
 export const useResendVerificationEmailMutation = (mutationOptions?: Partial<Omit<UseMutationOptions<ResendVerificationEmailResponse, AxiosError<DefaultError>, Options<ResendVerificationEmailData>>, 'mutationFn'>>) => useMutation({ ...resendVerificationEmailMutation(), ...mutationOptions });
 
-export const authorizeQueryKey = (options: Options<AuthorizeData>) => createQueryKey('authorize', options);
+export const authorizeQueryKey = (options?: Options<AuthorizeData>) => createQueryKey('authorize', options);
 
 /**
  * OAuth authorize
  *
  * Start or continue the OAuth authorization code flow. Proxies the authorization server public authorize endpoint and returns its redirect.
  */
-export const authorizeOptions = (options: Options<AuthorizeData>) => queryOptions<unknown, AxiosError<DefaultError>, unknown, ReturnType<typeof authorizeQueryKey>>({
+export const authorizeOptions = (options?: Options<AuthorizeData>) => queryOptions<unknown, AxiosError<DefaultError>, unknown, ReturnType<typeof authorizeQueryKey>>({
     queryFn: async ({ queryKey, signal }) => {
         const { data } = await authorize({
             ...options,
@@ -277,7 +277,7 @@ export const authorizeOptions = (options: Options<AuthorizeData>) => queryOption
  *
  * Start or continue the OAuth authorization code flow. Proxies the authorization server public authorize endpoint and returns its redirect.
  */
-export const useAuthorizeQuery = (options: Options<AuthorizeData>) => useQuery(authorizeOptions(options));
+export const useAuthorizeQuery = (options?: Options<AuthorizeData>) => useQuery(authorizeOptions(options));
 
 /**
  * Accept OAuth login challenge

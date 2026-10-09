@@ -1,4 +1,8 @@
 export {
+  AuthorizeOpenApiQuerySchema,
+  type AuthorizeOpenApiQuery,
+} from "@/features/authorize/schemas/AuthorizeOpenApiQuerySchema";
+export {
   AuthorizeQuerySchema,
   type AuthorizeQuery,
 } from "@/features/authorize/schemas/AuthorizeQuerySchema";
