@@ -2,7 +2,7 @@ import type { HttpResponse, HttpRoute } from "@pine/server";
 import Value from "typebox/value";
 import { container } from "@/bootstrap";
 import { TYPES } from "@/bootstrap/container-types";
-import { AuthorizeQuerySchema } from "@/features/authorize/schemas";
+import { AuthorizeOpenApiQuerySchema, AuthorizeQuerySchema } from "@/features/authorize/schemas";
 import type { IAuthorizeService } from "@/features/authorize/services";
 import { InvalidOAuthRequestError } from "@/integrations/oauth/errors";
 
@@ -15,7 +15,7 @@ export const authorize: HttpRoute = {
     description:
       "Start or continue the OAuth authorization code flow. Proxies the authorization server public authorize endpoint and returns its redirect.",
     operationId: "authorize",
-    querystring: AuthorizeQuerySchema,
+    querystring: AuthorizeOpenApiQuerySchema,
     response: {
       302: {
         description: "Redirect to login, consent, or the client redirect URI",

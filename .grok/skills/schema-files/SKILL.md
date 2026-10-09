@@ -21,14 +21,15 @@ features/<feature>/schemas/
   index.ts
 ```
 
-| File                         | Exports                                      |
-| ---------------------------- | -------------------------------------------- |
-| `FooBodySchema.ts`           | `FooBodySchema`, `type FooBody`              |
-| `FooQuerySchema.ts`          | `FooQuerySchema`, `type FooQuery`            |
-| `FooParamsSchema.ts`         | `FooParamsSchema`, `type FooParams`          |
-| `FooResponseSchema.ts`       | `FooResponseSchema`, `type FooResponse`      |
-| `AuthorizeQuerySchema.ts`    | Union only; imports sibling schema files     |
-| `index.ts`                   | Re-exports only                              |
+| File                              | Exports                                      |
+| --------------------------------- | -------------------------------------------- |
+| `FooBodySchema.ts`                | `FooBodySchema`, `type FooBody`              |
+| `FooQuerySchema.ts`               | `FooQuerySchema`, `type FooQuery`            |
+| `FooParamsSchema.ts`              | `FooParamsSchema`, `type FooParams`          |
+| `FooResponseSchema.ts`            | `FooResponseSchema`, `type FooResponse`      |
+| `AuthorizeQuerySchema.ts`         | Union only; imports sibling schema files     |
+| `AuthorizeOpenApiQuerySchema.ts`  | Flat optional Object for route OpenAPI       |
+| `index.ts`                        | Re-exports only                              |
 
 Filename = exported schema const (`InitialAuthorizeQuerySchema.ts` → `InitialAuthorizeQuerySchema`).
 
@@ -70,6 +71,11 @@ export const AuthorizeQuerySchema = Type.Union([
 
 export type AuthorizeQuery = Type.Static<typeof AuthorizeQuerySchema>;
 ```
+
+When a route accepts a **union of query shapes**, do **not** put the `Type.Union` on `schema.querystring`. Fastify OpenAPI flattens union members into one parameter list and marks every branch-required field as `required: true`, which breaks Hey API client types. Use:
+
+- `AuthorizeOpenApiQuerySchema` — flat `Type.Object` with each field `Type.Optional(...)` on `schema.querystring` (OpenAPI + Fastify)
+- `AuthorizeQuerySchema` — `Type.Union([...])` only in `Value.Check` (real validation)
 
 ## Anti-patterns
 

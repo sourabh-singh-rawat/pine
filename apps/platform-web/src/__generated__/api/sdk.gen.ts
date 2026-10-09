@@ -124,7 +124,7 @@ export const resendVerificationEmail = <ThrowOnError extends boolean = false>(op
  *
  * Start or continue the OAuth authorization code flow. Proxies the authorization server public authorize endpoint and returns its redirect.
  */
-export const authorize = <ThrowOnError extends boolean = false>(options: Options<AuthorizeData, ThrowOnError>): RequestResult<unknown, unknown, ThrowOnError> => (options.client ?? client).get<unknown, unknown, ThrowOnError>({ url: '/oauth/authorize', ...options });
+export const authorize = <ThrowOnError extends boolean = false>(options?: Options<AuthorizeData, ThrowOnError>): RequestResult<unknown, unknown, ThrowOnError> => (options?.client ?? client).get<unknown, unknown, ThrowOnError>({ url: '/oauth/authorize', ...options });
 
 /**
  * Accept OAuth login challenge

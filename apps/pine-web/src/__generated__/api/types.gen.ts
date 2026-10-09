@@ -209,17 +209,17 @@ export type ResendVerificationEmailResponse = ResendVerificationEmailResponses[k
 export type AuthorizeData = {
     body?: never;
     path?: never;
-    query: {
-        response_type: 'code';
-        client_id: string;
-        redirect_uri: string;
-        scope: string;
-        state: string;
+    query?: {
+        response_type?: 'code';
+        client_id?: string;
+        redirect_uri?: string;
+        scope?: string;
+        state?: string;
         code_challenge?: string;
         code_challenge_method?: 'S256' | 'plain';
         nonce?: string;
-        login_verifier: string;
-        consent_verifier: string;
+        login_verifier?: string;
+        consent_verifier?: string;
     };
     url: '/oauth/authorize';
 };
