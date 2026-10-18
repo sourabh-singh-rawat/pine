@@ -142,6 +142,245 @@ services:
           cpus: "0.20"
           memory: 512M
 
+  postgres:
+    image: postgres:18.4
+    restart: unless-stopped
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=${POSTGRES_ADMIN_PASSWORD}
+      - POSTGRES_IDENTITY_PASSWORD=${POSTGRES_IDENTITY_PASSWORD}
+      - POSTGRES_ISSUES_PASSWORD=${POSTGRES_ISSUES_PASSWORD}
+      - POSTGRES_ATTACHMENT_PASSWORD=${POSTGRES_ATTACHMENT_PASSWORD}
+      - POSTGRES_NOTIFICATION_PASSWORD=${POSTGRES_NOTIFICATION_PASSWORD}
+      - POSTGRES_PLATFORM_PASSWORD=${POSTGRES_PLATFORM_PASSWORD}
+      - POSTGRES_AUTHZ_PASSWORD=${POSTGRES_AUTHZ_PASSWORD}
+      - POSTGRES_AUDIT_PASSWORD=${POSTGRES_AUDIT_PASSWORD}
+      - POSTGRES_KRATOS_PASSWORD=${POSTGRES_KRATOS_PASSWORD}
+      - POSTGRES_HYDRA_PASSWORD=${POSTGRES_HYDRA_PASSWORD}
+      - POSTGRES_KETO_PASSWORD=${POSTGRES_KETO_PASSWORD}
+    volumes:
+      - ../data/docker/pg-single-db-data:/var/lib/postgresql
+      - ./init-db:/docker-entrypoint-initdb.d:ro
+    ports:
+      - 5432:5432
+    command:
+      - postgres
+      - -c
+      - max_connections=200
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    deploy:
+      resources:
+        limits:
+          cpus: "0.50"
+          memory: 512M
+        reservations:
+          cpus: "0.10"
+          memory: 128M
+
+  kratos-migrate:
+    image: oryd/kratos:v26.2.0
+    environment:
+      - DSN=postgresql://kratos:${POSTGRES_KRATOS_PASSWORD}@postgres:5432/kratos?sslmode=disable
+    volumes:
+      - ./kratos:/etc/config/kratos:ro
+    command: migrate -c /etc/config/kratos/kratos.yaml sql -e --yes
+    restart: on-failure
+    depends_on:
+      postgres:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          cpus: "0.25"
+          memory: 128M
+        reservations:
+          cpus: "0.05"
+          memory: 32M
+
+  kratos:
+    image: oryd/kratos:v26.2.0
+    restart: unless-stopped
+    depends_on:
+      kratos-migrate:
+        condition: service_completed_successfully
+    environment:
+      - DSN=postgresql://kratos:${POSTGRES_KRATOS_PASSWORD}@postgres:5432/kratos?sslmode=disable
+      - LOG_LEVEL=debug
+      - SECRETS_COOKIE=${KRATOS_SECRETS_COOKIE}
+      - SECRETS_CIPHER=${KRATOS_SECRETS_CIPHER}
+      - COURIER_SMTP_CONNECTION_URI=${COURIER_SMTP_CONNECTION_URI}
+      - COURIER_SMTP_FROM_ADDRESS=${BREVO_EMAIL}
+      - COURIER_SMTP_FROM_NAME=${COURIER_SMTP_FROM_NAME:-Pine}
+    command: serve -c /etc/config/kratos/kratos.yaml --dev --watch-courier
+    ports:
+      - "4433:4433"
+      - "4434:4434"
+    volumes:
+      - ./kratos:/etc/config/kratos:ro
+    deploy:
+      resources:
+        limits:
+          cpus: "0.50"
+          memory: 256M
+        reservations:
+          cpus: "0.10"
+          memory: 64M
+
+  hydra-migrate:
+    image: oryd/hydra:v26.2.0
+    environment:
+      - DSN=postgresql://hydra:${POSTGRES_HYDRA_PASSWORD}@postgres:5432/hydra?sslmode=disable
+    volumes:
+      - ./hydra:/etc/config/hydra:ro
+    command: migrate -c /etc/config/hydra/hydra.yaml sql up -e --yes
+    restart: on-failure
+    depends_on:
+      postgres:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          cpus: "0.25"
+          memory: 128M
+        reservations:
+          cpus: "0.05"
+          memory: 32M
+
+  hydra:
+    image: oryd/hydra:v26.2.0
+    restart: unless-stopped
+    depends_on:
+      hydra-migrate:
+        condition: service_completed_successfully
+    environment:
+      - DSN=postgresql://hydra:${POSTGRES_HYDRA_PASSWORD}@postgres:5432/hydra?sslmode=disable
+      - SECRETS_SYSTEM=${HYDRA_SECRETS_SYSTEM}
+      - URLS_SELF_ISSUER=http://127.0.0.1:4444
+      - LOG_LEVEL=debug
+    command: serve -c /etc/config/hydra/hydra.yaml all --dev
+    ports:
+      - "4444:4444"
+      - "4445:4445"
+    volumes:
+      - ./hydra:/etc/config/hydra:ro
+    deploy:
+      resources:
+        limits:
+          cpus: "0.50"
+          memory: 256M
+        reservations:
+          cpus: "0.10"
+          memory: 64M
+
+  keto-migrate:
+    image: oryd/keto:v26.2.0
+    environment:
+      - DSN=postgresql://keto:${POSTGRES_KETO_PASSWORD}@postgres:5432/keto?sslmode=disable
+    volumes:
+      - ./keto/keto.yaml:/etc/config/keto/keto.yaml:ro
+      - ../../services/authorization-service/src/integrations/authorization/ory-keto/opl:/etc/config/keto/opl:ro
+    command: migrate -c /etc/config/keto/keto.yaml up -y
+    restart: on-failure
+    depends_on:
+      postgres:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          cpus: "0.25"
+          memory: 128M
+        reservations:
+          cpus: "0.05"
+          memory: 32M
+
+  keto:
+    image: oryd/keto:v26.2.0
+    restart: unless-stopped
+    depends_on:
+      keto-migrate:
+        condition: service_completed_successfully
+    environment:
+      - DSN=postgresql://keto:${POSTGRES_KETO_PASSWORD}@postgres:5432/keto?sslmode=disable
+      - LOG_LEVEL=debug
+    command: serve -c /etc/config/keto/keto.yaml
+    ports:
+      - "4466:4466"
+      - "4467:4467"
+    volumes:
+      - ./keto/keto.yaml:/etc/config/keto/keto.yaml:ro
+      - ../../services/authorization-service/src/integrations/authorization/ory-keto/opl:/etc/config/keto/opl:ro
+    deploy:
+      resources:
+        limits:
+          cpus: "0.50"
+          memory: 256M
+        reservations:
+          cpus: "0.10"
+          memory: 64M
+
+  seaweedfs:
+    image: chrislusf/seaweedfs:3.97
+    restart: unless-stopped
+    command:
+      - server
+      - -dir=/data
+      - -ip.bind=0.0.0.0
+      - -master.port=9333
+      - -volume.port=8080
+      - -filer
+      - -s3
+      - -s3.port=8333
+    ports:
+      - "8333:8333"
+      - "8888:8888"
+      - "9333:9333"
+    volumes:
+      - ../data/docker/seaweedfs-data:/data
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1:8333/"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+      start_period: 10s
+    deploy:
+      resources:
+        limits:
+          cpus: "0.50"
+          memory: 512M
+        reservations:
+          cpus: "0.10"
+          memory: 128M
+
+  seaweedfs-init:
+    image: curlimages/curl:8.12.1
+    restart: "no"
+    depends_on:
+      seaweedfs:
+        condition: service_healthy
+    environment:
+      S3_BUCKET: ${S3_BUCKET:-attachments}
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - |
+        set -eu
+        bucket="$${S3_BUCKET}"
+        echo "ensuring S3 bucket '$${bucket}'"
+        status="$$(curl -s -o /tmp/create-bucket.xml -w "%{http_code}" -X PUT "http://seaweedfs:8333/$${bucket}")"
+        echo "CreateBucket HTTP $${status}"
+        if [ "$${status}" != "200" ] && [ "$${status}" != "409" ]; then
+          cat /tmp/create-bucket.xml
+          exit 1
+        fi
+        head_status="$$(curl -s -o /dev/null -w "%{http_code}" -I "http://seaweedfs:8333/$${bucket}")"
+        echo "HeadBucket HTTP $${head_status}"
+        if [ "$${head_status}" != "200" ]; then
+          exit 1
+        fi
+
   nats-exporter:
     image: natsio/prometheus-nats-exporter:0.20.1
     profiles: [observability]
@@ -179,42 +418,11 @@ services:
           cpus: "0.05"
           memory: 16M
 
-  pgadmin:
-    image: dpage/pgadmin4:9.16
-    restart: unless-stopped
-    user: "0:0"
-    entrypoint: /custom/docker-entrypoint.sh
-    environment:
-      - PGADMIN_DEFAULT_EMAIL=${PGADMIN_DEFAULT_EMAIL}
-      - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_DEFAULT_PASSWORD}
-      - PGADMIN_REPLACE_SERVERS_ON_STARTUP=True
-      - PGADMIN_SERVER_JSON_FILE=/var/lib/pgadmin/servers.json
-      - PGPASS_FILE=/var/lib/pgadmin/pgpass
-      - POSTGRES_ADMIN_PASSWORD=${POSTGRES_ADMIN_PASSWORD}
-      - POSTGRES_IDENTITY_PASSWORD=${POSTGRES_IDENTITY_PASSWORD}
-      - POSTGRES_ISSUES_PASSWORD=${POSTGRES_ISSUES_PASSWORD}
-      - POSTGRES_NOTIFICATION_PASSWORD=${POSTGRES_NOTIFICATION_PASSWORD}
-      - POSTGRES_ATTACHMENT_PASSWORD=${POSTGRES_ATTACHMENT_PASSWORD}
-      - POSTGRES_AUDIT_PASSWORD=${POSTGRES_AUDIT_PASSWORD}
-    ports:
-      - 5555:80
-    volumes:
-      - ../data/docker/pgadmin-data:/var/lib/pgadmin
-      - ./pgadmin/docker-entrypoint.sh:/custom/docker-entrypoint.sh:ro
-    deploy:
-      resources:
-        limits:
-          cpus: "0.50"
-          memory: 512M
-        reservations:
-          cpus: "0.10"
-          memory: 128M
-
   loki:
     image: grafana/loki:3.5.0
     profiles: [observability]
     volumes:
-      - ./observability/loki.yaml:/etc/loki/loki.yaml:ro
+      - ./loki/loki.yaml:/etc/loki/loki.yaml:ro
       - ../data/docker/loki-data:/loki
     command: -config.file=/etc/loki/loki.yaml
     deploy:
@@ -230,7 +438,7 @@ services:
     image: grafana/tempo:3.0.2
     profiles: [observability]
     volumes:
-      - ./observability/tempo.yaml:/etc/tempo.yaml:ro
+      - ./tempo/tempo.yaml:/etc/tempo.yaml:ro
       - ../data/docker/tempo-data:/var/tempo
     command:
       - -config.file=/etc/tempo.yaml
@@ -262,7 +470,7 @@ services:
     image: prom/prometheus:v3.13.1
     profiles: [observability]
     volumes:
-      - ./observability/prometheus.yaml:/etc/prometheus/prometheus.yml:ro
+      - ./prometheus/prometheus.yaml:/etc/prometheus/prometheus.yml:ro
       - ../data/docker/prometheus-data:/prometheus
     command:
       - --config.file=/etc/prometheus/prometheus.yml
@@ -328,7 +536,7 @@ services:
     ports:
       - "4317:4317"
     volumes:
-      - ./observability/config.alloy:/etc/alloy/config.alloy:ro
+      - ./alloy/config.alloy:/etc/alloy/config.alloy:ro
       - ../data/docker/alloy-data:/var/lib/alloy/data
     command:
       - run
@@ -356,7 +564,7 @@ services:
     ports:
       - 3300:3000
     volumes:
-      - ./observability/grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./grafana/provisioning:/etc/grafana/provisioning:ro
     deploy:
       resources:
         limits:

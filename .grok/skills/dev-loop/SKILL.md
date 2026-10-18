@@ -27,12 +27,11 @@ pnpm dev:apps
 
 | Infra variant           | Script                                 |
 | ----------------------- | -------------------------------------- |
-| Default single-db + Ory | `dev:infra`                            |
-| Multi-db                | `dev:infra:multi-db`                   |
+| Default stack           | `dev:infra`                            |
 | + OTEL stack            | `dev:infra:observability`              |
-| Kratos / Hydra only     | `dev:infra:kratos` / `dev:infra:hydra` |
+| Kratos / Hydra / Keto   | `dev:infra:kratos` / `:hydra` / `:keto` |
 
-Compose overlays and ports: `docker-infra`. Env: single root `.env` (from `.env.example`).
+Compose file and ports: `docker-infra`. Env: single root `.env` (from `.env.example`).
 
 ```bash
 pnpm exec turbo run dev --filter=@pine/items-service

@@ -13,18 +13,6 @@ const dockerComposeArgs: readonly string[] = [
   ".env",
   "-f",
   "infra/docker/compose.yaml",
-  "-f",
-  "infra/docker/compose.single-db.yaml",
-  "-f",
-  "infra/docker/compose.ory-db.yaml",
-  "-f",
-  "infra/docker/compose.kratos.yaml",
-  "-f",
-  "infra/docker/compose.hydra.yaml",
-  "-f",
-  "infra/docker/compose.keto.yaml",
-  "-f",
-  "infra/docker/storage.compose.yaml",
 ];
 const postgresReadyTimeoutMs = 180_000;
 const postgresReadyPollMs = 2_000;

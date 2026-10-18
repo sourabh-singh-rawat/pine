@@ -51,7 +51,7 @@ export const logger = createLogger({ serviceName: "identity-service" });
 pnpm dev:infra:observability
 ```
 
-Without the profile, **:4317 is closed**. Point services at Alloy, not Tempo. Config: `infra/docker/observability/{config.alloy,tempo,loki,prometheus}.yaml`. Grafana: `GRAFANA_ADMIN_PASSWORD` in root `.env`.
+Without the profile, **:4317 is closed**. Point services at Alloy, not Tempo. Config: `infra/docker/{alloy,loki,tempo,prometheus,grafana}/`. Grafana: `GRAFANA_ADMIN_PASSWORD` in root `.env`.
 
 ## Anti-patterns
 
