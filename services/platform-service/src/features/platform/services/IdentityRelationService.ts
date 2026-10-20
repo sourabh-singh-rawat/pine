@@ -9,11 +9,11 @@ import { inject, injectable } from "inversify";
 import { TYPES } from "@/bootstrap/container-types";
 import type {
   IdentityRelations,
+  IdentityTenantRelation,
   IIdentityRelationService,
 } from "@/features/platform/services/IIdentityRelationService";
 import type { OrganizationRelation } from "@/features/organizations/services/IOrganizationRelationService";
 import type { PlatformRelation } from "@/features/platform/services/IPlatformRelationService";
-import type { TenantRelation } from "@/features/tenants/services/ITenantRelationService";
 
 const PLATFORM_MEMBERSHIP_RELATIONS = new Set<string>(["owners", "admins", "members"]);
 const TENANT_MEMBERSHIP_RELATIONS = new Set<string>(["owners", "admins", "members"]);
@@ -85,8 +85,8 @@ export class IdentityRelationService implements IIdentityRelationService {
   private toTenantRelations(
     identityId: string,
     relationships: GraphRelationship[],
-  ): TenantRelation[] {
-    const tenantRelations: TenantRelation[] = [];
+  ): IdentityTenantRelation[] {
+    const tenantRelations: IdentityTenantRelation[] = [];
     for (const relationship of relationships) {
       if (
         relationship.object.namespace !== "Tenant" ||

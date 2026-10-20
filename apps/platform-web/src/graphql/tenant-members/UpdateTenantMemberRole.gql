@@ -1,0 +1,9 @@
+mutation UpdateTenantMemberRole($input: UpdateTenantMemberRoleInput!) {
+  updateTenantMemberRole(input: $input) {
+    id
+    tenantId
+    identityId
+    role
+    updatedAt
+  }
+}

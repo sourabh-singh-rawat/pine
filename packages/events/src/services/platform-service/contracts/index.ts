@@ -8,3 +8,5 @@ export { TenantCreatedEvent } from "./TenantCreatedEvent";
 export { TenantDeletedEvent } from "./TenantDeletedEvent";
 export { TenantRelationCreatedEvent } from "./TenantRelationCreatedEvent";
 export { TenantRelationDeletedEvent } from "./TenantRelationDeletedEvent";
+export { TenantMemberCreatedEvent } from "./TenantMemberCreatedEvent";
+export { TenantMemberDeletedEvent } from "./TenantMemberDeletedEvent";

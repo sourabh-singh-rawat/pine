@@ -1,4 +1,5 @@
 import "@/features/platform/graphql/objects/PlatformRelationObject";
+import "@/features/platform/graphql/objects/IdentityTenantRelationObject";
 import "@/features/platform/graphql/objects/IdentityRelationsObject";
 import "@/features/platform/graphql/inputs/CreatePlatformRelationInput";
 import "@/features/platform/graphql/queries/getPlatformRelation";

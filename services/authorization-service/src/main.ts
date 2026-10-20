@@ -24,8 +24,7 @@ import {
   AuthorizationOrganizationRelationSyncConsumer,
   AuthorizationOrganizationSyncConsumer,
   AuthorizationPlatformRelationSyncConsumer,
-  AuthorizationTenantRelationSyncConsumer,
-  AuthorizationTenantSyncConsumer,
+  AuthorizationTenantMemberSyncConsumer,
 } from "@/features/platform";
 
 export { container } from "@/bootstrap";
@@ -49,9 +48,6 @@ const main = async () => {
   await broker.init();
 
   void container
-    .get<AuthorizationTenantSyncConsumer>(TYPES.AuthorizationTenantSyncConsumer)
-    .start();
-  void container
     .get<AuthorizationOrganizationSyncConsumer>(TYPES.AuthorizationOrganizationSyncConsumer)
     .start();
   void container
@@ -60,11 +56,12 @@ const main = async () => {
     )
     .start();
   void container
-    .get<AuthorizationTenantRelationSyncConsumer>(TYPES.AuthorizationTenantRelationSyncConsumer)
+    .get<AuthorizationTenantMemberSyncConsumer>(TYPES.AuthorizationTenantMemberSyncConsumer)
     .start();
   void container
     .get<AuthorizationPlatformRelationSyncConsumer>(TYPES.AuthorizationPlatformRelationSyncConsumer)
     .start();
+
   void container
     .get<AuthorizationProfileSyncConsumer>(TYPES.AuthorizationProfileSyncConsumer)
     .start();

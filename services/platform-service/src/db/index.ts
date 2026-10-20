@@ -19,5 +19,10 @@ export {
   type NewOrganizationType,
   OrganizationTypes,
   OrganizationTypesRelations,
+  type TenantMember,
+  type NewTenantMember,
+  TenantMembers,
+  TenantMembersRelations,
 } from "@/db/tables";
+
 export type { Database, DbClient, Transaction } from "@/db/types";

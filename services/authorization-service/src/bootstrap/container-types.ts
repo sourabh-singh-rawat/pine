@@ -6,12 +6,11 @@ export const TYPES = {
   AuthorizationClient: Symbol.for("IAuthorizationClient"),
   KetoClient: Symbol.for("KetoClient"),
   AuthorizationGraphProvider: Symbol.for("IAuthorizationGraphProvider"),
-  AuthorizationTenantSyncConsumer: Symbol.for("AuthorizationTenantSyncConsumer"),
   AuthorizationOrganizationSyncConsumer: Symbol.for("AuthorizationOrganizationSyncConsumer"),
   AuthorizationOrganizationRelationSyncConsumer: Symbol.for(
     "AuthorizationOrganizationRelationSyncConsumer",
   ),
-  AuthorizationTenantRelationSyncConsumer: Symbol.for("AuthorizationTenantRelationSyncConsumer"),
+  AuthorizationTenantMemberSyncConsumer: Symbol.for("AuthorizationTenantMemberSyncConsumer"),
   AuthorizationPlatformRelationSyncConsumer: Symbol.for(
     "AuthorizationPlatformRelationSyncConsumer",
   ),
