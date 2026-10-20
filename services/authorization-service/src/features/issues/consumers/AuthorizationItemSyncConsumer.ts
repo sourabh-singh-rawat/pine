@@ -1,8 +1,4 @@
-import {
-  itemListRelationship,
-  itemOwnerRelationship,
-  type GraphRelationship,
-} from "@pine/authorization";
+import { relationship, type GraphRelationship } from "@pine/authorization";
 import {
   type CloudEvent,
   type IBroker,
@@ -55,8 +51,16 @@ export class AuthorizationItemSyncConsumer extends Consumer<CloudEvent<ItemCreat
 
   private itemGraph(data: ItemCreatedData): GraphRelationship[] {
     return [
-      itemListRelationship(data.id, data.listId),
-      itemOwnerRelationship(data.id, data.ownerId),
+      relationship({
+        object: { namespace: "Item", id: data.id },
+        relation: "list",
+        subject: { namespace: "List", id: data.listId },
+      }),
+      relationship({
+        object: { namespace: "Item", id: data.id },
+        relation: "owners",
+        subject: { namespace: "Identity", id: data.ownerId },
+      }),
     ];
   }
 }

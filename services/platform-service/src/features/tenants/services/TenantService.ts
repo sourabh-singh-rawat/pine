@@ -1,7 +1,7 @@
 import {
   PLATFORM_OBJECT_ID,
+  relationship,
   requirePermission,
-  tenantOwnerRelationship,
   type IAuthorizationClient,
 } from "@pine/authorization";
 import {
@@ -66,7 +66,11 @@ export class TenantService implements ITenantService {
       );
 
       await this.authorizationClient.ensureRelationship(
-        tenantOwnerRelationship(tenant.id, identityId),
+        relationship({
+          object: { namespace: "Tenant", id: tenant.id },
+          relation: "owners",
+          subject: { namespace: "Identity", id: identityId },
+        }),
       );
 
       const event: CloudEvent<TenantCreatedData> = createCloudEvent({

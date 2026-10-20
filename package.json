@@ -56,6 +56,8 @@
     "openapi:compose": "tsx tools/scripts/schemas/compose-schemas.ts --openapi",
     "schemas:compose": "tsx tools/scripts/schemas/compose-schemas.ts",
     "schemas:watch": "tsx tools/scripts/schemas/compose-schemas.ts --watch",
+    "permissions:generate": "tsx tools/scripts/authorization/generate-permissions.ts",
+    "permissions:check": "tsx tools/scripts/authorization/generate-permissions.ts --check",
     "tls:generate": "tsx infra/tls/generate-dev-certs.ts",
     "tls:secrets": "tsx infra/tls/apply-dev-certs-to-k8s.ts",
     "tls:k8s": "pnpm tls:generate && pnpm tls:secrets",

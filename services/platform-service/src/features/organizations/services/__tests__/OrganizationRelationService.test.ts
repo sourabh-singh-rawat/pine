@@ -1,4 +1,3 @@
-import { ADMIN, MEMBER, OWNER } from "@pine/authorization";
 import { OrganizationRelationCreatedEvent } from "@pine/events";
 import { describe, expect, it, vi } from "vitest";
 import { InvalidOrganizationRelationError } from "@/features/organizations/errors";
@@ -31,7 +30,7 @@ describe("OrganizationRelationService", () => {
     const relation = await service.create(
       {
         organizationId,
-        relation: ADMIN,
+        relation: "admins",
         identityId,
       },
       actorId,
@@ -46,17 +45,17 @@ describe("OrganizationRelationService", () => {
         aggregateId: organizationId,
         payload: expect.objectContaining({
           type: OrganizationRelationCreatedEvent.type,
-          subject: `${organizationId}:${ADMIN}:${identityId}`,
+          subject: `${organizationId}:admins:${identityId}`,
           data: expect.objectContaining({
             organizationId,
             identityId,
-            relation: ADMIN,
+            relation: "admins",
           }),
         }),
       }),
       { tx: { tx: true } },
     );
-    expect(relation.relation).toBe(ADMIN);
+    expect(relation.relation).toBe("admins");
     expect(relation.organizationId).toBe(organizationId);
     expect(relation.identityId).toBe(identityId);
   });
@@ -69,11 +68,11 @@ describe("OrganizationRelationService", () => {
       createDbMock(),
     );
 
-    await service.delete(`${organizationId}:${ADMIN}:${identityId}`, actorId);
+    await service.delete(`${organizationId}:admins:${identityId}`, actorId);
 
     expect(authorizationClient.deleteRelationship).toHaveBeenCalledWith({
       object: { namespace: "Organization", id: organizationId },
-      relation: ADMIN,
+      relation: "admins",
       subject: { namespace: "Identity", id: identityId },
     });
   });
@@ -81,20 +80,20 @@ describe("OrganizationRelationService", () => {
   it("lists owner, admin, and member relations", async () => {
     const authorizationClient = allowAuth();
     authorizationClient.listRelationships.mockImplementation(async ({ relation }) => {
-      if (relation === OWNER) {
+      if (relation === "owners") {
         return [
           {
             object: { namespace: "Organization", id: organizationId },
-            relation: OWNER,
+            relation: "owners",
             subject: { namespace: "Identity", id: identityId },
           },
         ];
       }
-      if (relation === MEMBER) {
+      if (relation === "members") {
         return [
           {
             object: { namespace: "Organization", id: organizationId },
-            relation: MEMBER,
+            relation: "members",
             subject: { namespace: "Identity", id: "user-2" },
           },
         ];
@@ -109,16 +108,16 @@ describe("OrganizationRelationService", () => {
 
     await expect(service.list({ organizationId }, actorId)).resolves.toEqual([
       {
-        id: `${organizationId}:${OWNER}:${identityId}`,
+        id: `${organizationId}:owners:${identityId}`,
         organizationId,
         identityId,
-        relation: OWNER,
+        relation: "owners",
       },
       {
-        id: `${organizationId}:${MEMBER}:user-2`,
+        id: `${organizationId}:members:user-2`,
         organizationId,
         identityId: "user-2",
-        relation: MEMBER,
+        relation: "members",
       },
     ]);
     expect(authorizationClient.checkRelationship).toHaveBeenCalled();
@@ -129,7 +128,7 @@ describe("OrganizationRelationService", () => {
     authorizationClient.listRelationships.mockResolvedValue([
       {
         object: { namespace: "Organization", id: organizationId },
-        relation: ADMIN,
+        relation: "admins",
         subject: { namespace: "Identity", id: identityId },
       },
     ]);
@@ -139,12 +138,12 @@ describe("OrganizationRelationService", () => {
       createDbMock(),
     );
 
-    await expect(service.list({ organizationId, relation: ADMIN }, actorId)).resolves.toEqual([
+    await expect(service.list({ organizationId, relation: "admins" }, actorId)).resolves.toEqual([
       {
-        id: `${organizationId}:${ADMIN}:${identityId}`,
+        id: `${organizationId}:admins:${identityId}`,
         organizationId,
         identityId,
-        relation: ADMIN,
+        relation: "admins",
       },
     ]);
     expect(authorizationClient.listRelationships).toHaveBeenCalledTimes(1);

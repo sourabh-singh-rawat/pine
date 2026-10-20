@@ -1,8 +1,4 @@
-import {
-  spaceOwnerRelationship,
-  spaceOrganizationRelationship,
-  type GraphRelationship,
-} from "@pine/authorization";
+import { relationship, type GraphRelationship } from "@pine/authorization";
 import {
   type CloudEvent,
   type IBroker,
@@ -55,8 +51,16 @@ export class AuthorizationSpaceSyncConsumer extends Consumer<CloudEvent<SpaceDat
 
   private spaceGraph(data: SpaceData): GraphRelationship[] {
     return [
-      spaceOrganizationRelationship(data.id, data.organizationId),
-      spaceOwnerRelationship(data.id, data.createdById),
+      relationship({
+        object: { namespace: "Space", id: data.id },
+        relation: "organization",
+        subject: { namespace: "Organization", id: data.organizationId },
+      }),
+      relationship({
+        object: { namespace: "Space", id: data.id },
+        relation: "owners",
+        subject: { namespace: "Identity", id: data.createdById },
+      }),
     ];
   }
 }

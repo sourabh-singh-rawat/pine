@@ -14,7 +14,7 @@ describe("AuthorizationService", () => {
     const input = {
       namespace: "Tenant",
       object: "tenant-1",
-      relation: "member",
+      relation: "members",
       subject: "Identity:user-1",
     };
 
@@ -34,7 +34,7 @@ describe("AuthorizationService", () => {
     const relationship = {
       object: { namespace: "Permission", id: "Platform:create_tenant" },
       relation: "has",
-      subjectSet: { namespace: "Role", id: "role-1", relation: "member" },
+      subjectSet: { namespace: "Role", id: "role-1", relation: "members" },
     };
 
     await expect(service.ensureRelationship(relationship)).resolves.toEqual({ created: true });
@@ -44,7 +44,7 @@ describe("AuthorizationService", () => {
   it("skips create when relationship already exists", async () => {
     const relationship = {
       object: { namespace: "Role", id: "role-1" },
-      relation: "member",
+      relation: "members",
       subject: { namespace: "Identity", id: "user-1" },
     };
     const authorizationGraphProvider = {
@@ -93,14 +93,14 @@ describe("AuthorizationService", () => {
     await service.listRelationships({
       namespace: "Organization",
       object: "org-1",
-      relation: "admin",
+      relation: "admins",
       subject: { namespace: "Identity", id: "user-1" },
     });
 
     expect(authorizationGraphProvider.listRelationships).toHaveBeenCalledWith({
       namespace: "Organization",
       object: { namespace: "Organization", id: "org-1" },
-      relation: "admin",
+      relation: "admins",
       subject: { namespace: "Identity", id: "user-1" },
     });
   });

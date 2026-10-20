@@ -20,26 +20,26 @@ export type GetIdentitiesQueryVariables = Exact<{
 
 export type GetIdentitiesQuery = { getIdentities: Array<{ id: string | null, displayName: string | null }> | null };
 
-export type CreateOfficeTypeMutationVariables = Exact<{
-  input: Types.CreateOfficeTypeInput;
+export type CreateOrganizationTypeMutationVariables = Exact<{
+  input: Types.CreateOrganizationTypeInput;
 }>;
 
 
-export type CreateOfficeTypeMutation = { createOfficeType: { id: string | null, tenantId: string | null, parentOfficeTypeId: string | null, name: string | null, slug: string | null, description: string | null, isActive: boolean | null } | null };
+export type CreateOrganizationTypeMutation = { createOrganizationType: { id: string | null, tenantId: string | null, parentOrganizationTypeId: string | null, name: string | null, slug: string | null, description: string | null, isActive: boolean | null } | null };
 
-export type GetOfficeTypesQueryVariables = Exact<{
+export type GetOrganizationTypesQueryVariables = Exact<{
   tenantId: string;
 }>;
 
 
-export type GetOfficeTypesQuery = { getOfficeTypes: Array<{ id: string | null, tenantId: string | null, parentOfficeTypeId: string | null, name: string | null, slug: string | null, description: string | null, isActive: boolean | null }> | null };
+export type GetOrganizationTypesQuery = { getOrganizationTypes: Array<{ id: string | null, tenantId: string | null, parentOrganizationTypeId: string | null, name: string | null, slug: string | null, description: string | null, isActive: boolean | null }> | null };
 
 export type CreateOrganizationMutationVariables = Exact<{
   input: Types.CreateOrganizationInput;
 }>;
 
 
-export type CreateOrganizationMutation = { createOrganization: { id: string | null, tenantId: string | null, parentOrganizationId: string | null, officeTypeId: string | null, name: string | null, slug: string | null, description: string | null, isActive: boolean | null, createdAt: unknown, updatedAt: unknown } | null };
+export type CreateOrganizationMutation = { createOrganization: { id: string | null, tenantId: string | null, parentOrganizationId: string | null, organizationTypeId: string | null, name: string | null, slug: string | null, description: string | null, isActive: boolean | null, createdAt: unknown, updatedAt: unknown } | null };
 
 export type CreateOrganizationRelationMutationVariables = Exact<{
   input: Types.CreateOrganizationRelationInput;
@@ -60,7 +60,7 @@ export type GetOrganizationQueryVariables = Exact<{
 }>;
 
 
-export type GetOrganizationQuery = { getOrganization: { id: string | null, tenantId: string | null, parentOrganizationId: string | null, officeTypeId: string | null, name: string | null, slug: string | null, description: string | null, isActive: boolean | null, createdAt: unknown, updatedAt: unknown } | null };
+export type GetOrganizationQuery = { getOrganization: { id: string | null, tenantId: string | null, parentOrganizationId: string | null, organizationTypeId: string | null, name: string | null, slug: string | null, description: string | null, isActive: boolean | null, createdAt: unknown, updatedAt: unknown } | null };
 
 export type GetOrganizationRelationsQueryVariables = Exact<{
   organizationId: string;
@@ -75,7 +75,7 @@ export type GetOrganizationsQueryVariables = Exact<{
 }>;
 
 
-export type GetOrganizationsQuery = { getOrganizations: Array<{ id: string | null, tenantId: string | null, parentOrganizationId: string | null, officeTypeId: string | null, name: string | null, slug: string | null, description: string | null, isActive: boolean | null, createdAt: unknown, updatedAt: unknown }> | null };
+export type GetOrganizationsQuery = { getOrganizations: Array<{ id: string | null, tenantId: string | null, parentOrganizationId: string | null, organizationTypeId: string | null, name: string | null, slug: string | null, description: string | null, isActive: boolean | null, createdAt: unknown, updatedAt: unknown }> | null };
 
 export type UpdateOrganizationMutationVariables = Exact<{
   id: string;
@@ -83,7 +83,7 @@ export type UpdateOrganizationMutationVariables = Exact<{
 }>;
 
 
-export type UpdateOrganizationMutation = { updateOrganization: { id: string | null, tenantId: string | null, parentOrganizationId: string | null, officeTypeId: string | null, name: string | null, slug: string | null, description: string | null, isActive: boolean | null, createdAt: unknown, updatedAt: unknown } | null };
+export type UpdateOrganizationMutation = { updateOrganization: { id: string | null, tenantId: string | null, parentOrganizationId: string | null, organizationTypeId: string | null, name: string | null, slug: string | null, description: string | null, isActive: boolean | null, createdAt: unknown, updatedAt: unknown } | null };
 
 export type CreatePlatformRelationMutationVariables = Exact<{
   input: Types.CreatePlatformRelationInput;
@@ -234,12 +234,12 @@ useGetIdentitiesQuery.document = GetIdentitiesDocument;
 
 useGetIdentitiesQuery.getKey = (variables: GetIdentitiesQueryVariables) => ['GetIdentities', variables];
 
-export const CreateOfficeTypeDocument = new TypedDocumentString(`
-    mutation CreateOfficeType($input: CreateOfficeTypeInput!) {
-  createOfficeType(input: $input) {
+export const CreateOrganizationTypeDocument = new TypedDocumentString(`
+    mutation CreateOrganizationType($input: CreateOrganizationTypeInput!) {
+  createOrganizationType(input: $input) {
     id
     tenantId
-    parentOfficeTypeId
+    parentOrganizationTypeId
     name
     slug
     description
@@ -248,27 +248,27 @@ export const CreateOfficeTypeDocument = new TypedDocumentString(`
 }
     `);
 
-export const useCreateOfficeTypeMutation = <
+export const useCreateOrganizationTypeMutation = <
       TError = unknown,
       TContext = unknown
-    >(options?: UseMutationOptions<CreateOfficeTypeMutation, TError, CreateOfficeTypeMutationVariables, TContext>) => {
+    >(options?: UseMutationOptions<CreateOrganizationTypeMutation, TError, CreateOrganizationTypeMutationVariables, TContext>) => {
     
-    return useMutation<CreateOfficeTypeMutation, TError, CreateOfficeTypeMutationVariables, TContext>(
+    return useMutation<CreateOrganizationTypeMutation, TError, CreateOrganizationTypeMutationVariables, TContext>(
       {
-    mutationKey: ['CreateOfficeType'],
-    mutationFn: (variables?: CreateOfficeTypeMutationVariables) => graphQLFetcher<CreateOfficeTypeMutation, CreateOfficeTypeMutationVariables>(CreateOfficeTypeDocument, variables)(),
+    mutationKey: ['CreateOrganizationType'],
+    mutationFn: (variables?: CreateOrganizationTypeMutationVariables) => graphQLFetcher<CreateOrganizationTypeMutation, CreateOrganizationTypeMutationVariables>(CreateOrganizationTypeDocument, variables)(),
     ...options
   }
     )};
 
-useCreateOfficeTypeMutation.getKey = () => ['CreateOfficeType'];
+useCreateOrganizationTypeMutation.getKey = () => ['CreateOrganizationType'];
 
-export const GetOfficeTypesDocument = new TypedDocumentString(`
-    query GetOfficeTypes($tenantId: String!) {
-  getOfficeTypes(tenantId: $tenantId) {
+export const GetOrganizationTypesDocument = new TypedDocumentString(`
+    query GetOrganizationTypes($tenantId: String!) {
+  getOrganizationTypes(tenantId: $tenantId) {
     id
     tenantId
-    parentOfficeTypeId
+    parentOrganizationTypeId
     name
     slug
     description
@@ -277,25 +277,25 @@ export const GetOfficeTypesDocument = new TypedDocumentString(`
 }
     `);
 
-export const useGetOfficeTypesQuery = <
-      TData = GetOfficeTypesQuery,
+export const useGetOrganizationTypesQuery = <
+      TData = GetOrganizationTypesQuery,
       TError = unknown
     >(
-      variables: GetOfficeTypesQueryVariables,
-      options?: Omit<UseQueryOptions<GetOfficeTypesQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<GetOfficeTypesQuery, TError, TData>['queryKey'] }
+      variables: GetOrganizationTypesQueryVariables,
+      options?: Omit<UseQueryOptions<GetOrganizationTypesQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<GetOrganizationTypesQuery, TError, TData>['queryKey'] }
     ) => {
     
-    return useQuery<GetOfficeTypesQuery, TError, TData>(
+    return useQuery<GetOrganizationTypesQuery, TError, TData>(
       {
-    queryKey: ['GetOfficeTypes', variables],
-    queryFn: graphQLFetcher<GetOfficeTypesQuery, GetOfficeTypesQueryVariables>(GetOfficeTypesDocument, variables),
+    queryKey: ['GetOrganizationTypes', variables],
+    queryFn: graphQLFetcher<GetOrganizationTypesQuery, GetOrganizationTypesQueryVariables>(GetOrganizationTypesDocument, variables),
     ...options
   }
     )};
 
-useGetOfficeTypesQuery.document = GetOfficeTypesDocument;
+useGetOrganizationTypesQuery.document = GetOrganizationTypesDocument;
 
-useGetOfficeTypesQuery.getKey = (variables: GetOfficeTypesQueryVariables) => ['GetOfficeTypes', variables];
+useGetOrganizationTypesQuery.getKey = (variables: GetOrganizationTypesQueryVariables) => ['GetOrganizationTypes', variables];
 
 export const CreateOrganizationDocument = new TypedDocumentString(`
     mutation CreateOrganization($input: CreateOrganizationInput!) {
@@ -303,7 +303,7 @@ export const CreateOrganizationDocument = new TypedDocumentString(`
     id
     tenantId
     parentOrganizationId
-    officeTypeId
+    organizationTypeId
     name
     slug
     description
@@ -382,7 +382,7 @@ export const GetOrganizationDocument = new TypedDocumentString(`
     id
     tenantId
     parentOrganizationId
-    officeTypeId
+    organizationTypeId
     name
     slug
     description
@@ -453,7 +453,7 @@ export const GetOrganizationsDocument = new TypedDocumentString(`
     id
     tenantId
     parentOrganizationId
-    officeTypeId
+    organizationTypeId
     name
     slug
     description
@@ -490,7 +490,7 @@ export const UpdateOrganizationDocument = new TypedDocumentString(`
     id
     tenantId
     parentOrganizationId
-    officeTypeId
+    organizationTypeId
     name
     slug
     description

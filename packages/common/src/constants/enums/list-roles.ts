@@ -1,5 +1,5 @@
 export enum ListRoles {
-  Owner = "owner",
-  Admin = "admin",
-  Member = "member",
+  Owner = "owners",
+  Admin = "admins",
+  Member = "members",
 }

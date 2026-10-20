@@ -1,11 +1,4 @@
-import {
-  ADMIN,
-  IDENTITY,
-  MEMBER,
-  OWNER,
-  requirePermission,
-  type IAuthorizationClient,
-} from "@pine/authorization";
+import { IDENTITY, requirePermission, type IAuthorizationClient } from "@pine/authorization";
 import {
   CloudEvent,
   createCloudEvent,
@@ -28,7 +21,7 @@ import type {
   OrganizationRelation,
 } from "@/features/organizations/services/IOrganizationRelationService";
 
-const organizationRelations = new Set([OWNER, ADMIN, MEMBER]);
+const organizationRelations = new Set<string>(["owners", "admins", "members"]);
 
 const assertOrganizationRelation = (relation: string) => {
   if (!organizationRelations.has(relation)) {
@@ -149,7 +142,8 @@ export class OrganizationRelationService implements IOrganizationRelationService
       `Organization:${input.organizationId}`,
     );
 
-    const relations = input.relation === undefined ? [OWNER, ADMIN, MEMBER] : [input.relation];
+    const relations =
+      input.relation === undefined ? ["owners", "admins", "members"] : [input.relation];
     if (input.relation !== undefined) {
       assertOrganizationRelation(input.relation);
     }

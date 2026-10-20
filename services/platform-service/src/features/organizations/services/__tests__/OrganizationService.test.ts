@@ -31,7 +31,7 @@ const organization = {
   id: "org-1",
   tenantId: "tenant-1",
   parentOrganizationId: null,
-  officeTypeId: "type-root",
+  organizationTypeId: "type-root",
   name: "Acme Corp",
   slug: "acme",
   description: "Primary organization",
@@ -46,7 +46,7 @@ const childOrganization = {
   ...organization,
   id: "org-2",
   parentOrganizationId: "org-1",
-  officeTypeId: "type-child",
+  organizationTypeId: "type-child",
   name: "Acme Division",
   slug: "acme-division",
 };
@@ -56,7 +56,7 @@ const identityId = "user-1";
 const createService = (deps: {
   organizationRepository?: unknown;
   tenantRepository?: unknown;
-  officeTypeRepository?: unknown;
+  organizationTypeRepository?: unknown;
   authorizationClient?: unknown;
   outboxService?: unknown;
   db?: unknown;
@@ -66,11 +66,11 @@ const createService = (deps: {
     (deps.tenantRepository ?? {
       findById: vi.fn().mockResolvedValue(tenant),
     }) as never,
-    (deps.officeTypeRepository ?? {
+    (deps.organizationTypeRepository ?? {
       findById: vi.fn().mockImplementation(async (id: string) => ({
         id,
         tenantId: "tenant-1",
-        parentOfficeTypeId:
+        parentOrganizationTypeId:
           id === "type-child" ? "type-root" : id === "type-under-child" ? "type-child" : null,
       })),
     }) as never,
@@ -228,7 +228,7 @@ describe("OrganizationService", () => {
       service.create(
         {
           tenantId: "tenant-1",
-          officeTypeId: "type-root",
+          organizationTypeId: "type-root",
           name: "Acme Corp",
           slug: "acme",
           description: "Primary organization",
@@ -247,7 +247,7 @@ describe("OrganizationService", () => {
       {
         tenantId: "tenant-1",
         parentOrganizationId: undefined,
-        officeTypeId: "type-root",
+        organizationTypeId: "type-root",
         name: "Acme Corp",
         slug: "acme",
         description: "Primary organization",
@@ -283,11 +283,11 @@ describe("OrganizationService", () => {
         aggregateId: organization.id,
         payload: expect.objectContaining({
           type: OrganizationRelationCreatedEvent.type,
-          subject: `${organization.id}:owner:${identityId}`,
+          subject: `${organization.id}:owners:${identityId}`,
           data: expect.objectContaining({
             organizationId: organization.id,
             identityId,
-            relation: "owner",
+            relation: "owners",
           }),
         }),
       }),
@@ -319,7 +319,7 @@ describe("OrganizationService", () => {
         {
           tenantId: "tenant-1",
           parentOrganizationId: "org-1",
-          officeTypeId: "type-child",
+          organizationTypeId: "type-child",
           name: "Acme Division",
           slug: "acme-division",
         },
@@ -332,7 +332,7 @@ describe("OrganizationService", () => {
       {
         tenantId: "tenant-1",
         parentOrganizationId: "org-1",
-        officeTypeId: "type-child",
+        organizationTypeId: "type-child",
         name: "Acme Division",
         slug: "acme-division",
         description: undefined,
@@ -357,7 +357,7 @@ describe("OrganizationService", () => {
         {
           tenantId: "tenant-1",
           parentOrganizationId: "org-1",
-          officeTypeId: "type-child",
+          organizationTypeId: "type-child",
           name: "Acme Division",
           slug: "acme-division",
         },
@@ -379,7 +379,7 @@ describe("OrganizationService", () => {
 
     await expect(
       service.create(
-        { tenantId: "missing", officeTypeId: "type-root", name: "Acme Corp", slug: "acme" },
+        { tenantId: "missing", organizationTypeId: "type-root", name: "Acme Corp", slug: "acme" },
         identityId,
       ),
     ).rejects.toBeInstanceOf(TenantNotFoundError);
@@ -397,7 +397,7 @@ describe("OrganizationService", () => {
 
     await expect(
       service.create(
-        { tenantId: "tenant-1", officeTypeId: "type-root", name: "Acme Corp", slug: "acme" },
+        { tenantId: "tenant-1", organizationTypeId: "type-root", name: "Acme Corp", slug: "acme" },
         identityId,
       ),
     ).rejects.toBeInstanceOf(OrganizationSlugConflictError);
@@ -416,7 +416,7 @@ describe("OrganizationService", () => {
 
     await expect(
       service.create(
-        { tenantId: "tenant-1", officeTypeId: "type-root", name: "Acme Corp", slug: "acme" },
+        { tenantId: "tenant-1", organizationTypeId: "type-root", name: "Acme Corp", slug: "acme" },
         identityId,
       ),
     ).rejects.toBeInstanceOf(OrganizationNameConflictError);
@@ -426,12 +426,14 @@ describe("OrganizationService", () => {
   it("updates the parent organization", async () => {
     const updated = {
       ...childOrganization,
-      officeTypeId: "type-root",
+      organizationTypeId: "type-root",
       parentOrganizationId: null,
       updatedAt: new Date("2026-01-02T00:00:00.000Z"),
     };
     const organizationRepository = {
-      findById: vi.fn().mockResolvedValue({ ...childOrganization, officeTypeId: "type-root" }),
+      findById: vi
+        .fn()
+        .mockResolvedValue({ ...childOrganization, organizationTypeId: "type-root" }),
       update: vi.fn().mockResolvedValue(updated),
     };
     const authorizationClient = {
@@ -504,7 +506,7 @@ describe("OrganizationService", () => {
     const organizationRepository = {
       findById: vi
         .fn()
-        .mockResolvedValueOnce({ ...organization, officeTypeId: "type-under-child" })
+        .mockResolvedValueOnce({ ...organization, organizationTypeId: "type-under-child" })
         .mockResolvedValueOnce(childOrganization),
       update: vi.fn(),
     };
@@ -595,12 +597,12 @@ describe("OrganizationService", () => {
       listRelationships: vi.fn().mockResolvedValue([
         {
           object: { namespace: "Organization", id: organization.id },
-          relation: "member",
+          relation: "members",
           subject: { namespace: "Identity", id: identityId },
         },
         {
           object: { namespace: "Organization", id: childOrganization.id },
-          relation: "member",
+          relation: "members",
           subject: { namespace: "Identity", id: identityId },
         },
       ]),

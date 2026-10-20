@@ -1,4 +1,3 @@
-import { ORGANIZATION_PARENTS, ORGANIZATION_TENANT } from "@pine/authorization";
 import {
   createCloudEvent,
   OrganizationCreatedEvent,
@@ -43,7 +42,7 @@ describe("AuthorizationOrganizationSyncConsumer", () => {
         isActive: true,
         version: 1,
         createdAt: "2026-01-01T00:00:00.000Z",
-        officeTypeId: "type-root",
+        organizationTypeId: "type-root",
       },
     });
 
@@ -51,7 +50,7 @@ describe("AuthorizationOrganizationSyncConsumer", () => {
 
     expect(authorizationGraphProvider.createRelationship).toHaveBeenCalledWith({
       object: { namespace: "Organization", id: "org-1" },
-      relation: ORGANIZATION_TENANT,
+      relation: "tenant",
       subject: { namespace: "Tenant", id: "tenant-1" },
     });
     expect(message.ack).toHaveBeenCalled();
@@ -78,7 +77,7 @@ describe("AuthorizationOrganizationSyncConsumer", () => {
         isActive: true,
         version: 1,
         createdAt: "2026-01-01T00:00:00.000Z",
-        officeTypeId: "type-child",
+        organizationTypeId: "type-child",
         parentOrganizationId: "org-1",
       },
     });
@@ -87,12 +86,12 @@ describe("AuthorizationOrganizationSyncConsumer", () => {
 
     expect(authorizationGraphProvider.createRelationship).toHaveBeenCalledWith({
       object: { namespace: "Organization", id: "org-2" },
-      relation: ORGANIZATION_TENANT,
+      relation: "tenant",
       subject: { namespace: "Tenant", id: "tenant-1" },
     });
     expect(authorizationGraphProvider.createRelationship).toHaveBeenCalledWith({
       object: { namespace: "Organization", id: "org-2" },
-      relation: ORGANIZATION_PARENTS,
+      relation: "parents",
       subject: { namespace: "Organization", id: "org-1" },
     });
     expect(message.ack).toHaveBeenCalled();
@@ -106,7 +105,7 @@ describe("AuthorizationOrganizationSyncConsumer", () => {
           return [
             {
               object: { namespace: "Organization", id: "org-2" },
-              relation: ORGANIZATION_PARENTS,
+              relation: "parents",
               subject: { namespace: "Organization", id: "org-1" },
             },
           ];
@@ -138,12 +137,12 @@ describe("AuthorizationOrganizationSyncConsumer", () => {
 
     expect(authorizationGraphProvider.deleteRelationship).toHaveBeenCalledWith({
       object: { namespace: "Organization", id: "org-2" },
-      relation: ORGANIZATION_PARENTS,
+      relation: "parents",
       subject: { namespace: "Organization", id: "org-1" },
     });
     expect(authorizationGraphProvider.createRelationship).toHaveBeenCalledWith({
       object: { namespace: "Organization", id: "org-2" },
-      relation: ORGANIZATION_PARENTS,
+      relation: "parents",
       subject: { namespace: "Organization", id: "org-3" },
     });
     expect(message.ack).toHaveBeenCalled();
@@ -154,7 +153,7 @@ describe("AuthorizationOrganizationSyncConsumer", () => {
     authorizationGraphProvider.listRelationships.mockResolvedValue([
       {
         object: { namespace: "Organization", id: "org-2" },
-        relation: ORGANIZATION_PARENTS,
+        relation: "parents",
         subject: { namespace: "Organization", id: "org-1" },
       },
     ]);
@@ -181,7 +180,7 @@ describe("AuthorizationOrganizationSyncConsumer", () => {
 
     expect(authorizationGraphProvider.deleteRelationship).toHaveBeenCalledWith({
       object: { namespace: "Organization", id: "org-2" },
-      relation: ORGANIZATION_PARENTS,
+      relation: "parents",
       subject: { namespace: "Organization", id: "org-1" },
     });
     expect(authorizationGraphProvider.createRelationship).not.toHaveBeenCalled();
@@ -193,7 +192,7 @@ describe("AuthorizationOrganizationSyncConsumer", () => {
     authorizationGraphProvider.listRelationships.mockResolvedValue([
       {
         object: { namespace: "Organization", id: "org-2" },
-        relation: ORGANIZATION_TENANT,
+        relation: "tenant",
         subject: { namespace: "Tenant", id: "tenant-1" },
       },
     ]);
@@ -220,12 +219,12 @@ describe("AuthorizationOrganizationSyncConsumer", () => {
 
     expect(authorizationGraphProvider.deleteRelationship).toHaveBeenCalledWith({
       object: { namespace: "Organization", id: "org-2" },
-      relation: ORGANIZATION_TENANT,
+      relation: "tenant",
       subject: { namespace: "Tenant", id: "tenant-1" },
     });
     expect(authorizationGraphProvider.deleteRelationship).toHaveBeenCalledWith({
       object: { namespace: "Organization", id: "org-2" },
-      relation: ORGANIZATION_PARENTS,
+      relation: "parents",
       subject: { namespace: "Organization", id: "org-1" },
     });
     expect(message.ack).toHaveBeenCalled();

@@ -13,12 +13,11 @@ import { useGetTenantQuery } from "@generated/gql";
 import { Link, useNavigate, useParams, useSearch } from "@tanstack/react-router";
 import { getErrorMessage } from "@shared/ui";
 import type { SyntheticEvent } from "react";
-import { TenantOfficeTypes } from "./TenantOfficeTypes";
+import { TenantOrganizationTypes } from "./TenantOrganizationTypes";
 import { TenantOrganizations } from "./TenantOrganizations";
 import { TenantRelations } from "./TenantRelations";
-import { TenantRoles } from "./TenantRoles";
 
-type TenantDetailTab = "overview" | "relations" | "roles" | "organizations" | "office-types";
+type TenantDetailTab = "overview" | "relations" | "organizations" | "organization-types";
 
 const formatDateTime = (value: unknown): string => {
   if (value == null) {
@@ -37,16 +36,14 @@ const formatDateTime = (value: unknown): string => {
 const isTenantDetailTab = (value: unknown): value is TenantDetailTab =>
   value === "overview" ||
   value === "relations" ||
-  value === "roles" ||
   value === "organizations" ||
-  value === "office-types";
+  value === "organization-types";
 
 const tenantDetailTabs: ReadonlyArray<{ value: TenantDetailTab; label: string }> = [
   { value: "overview", label: "Overview" },
   { value: "relations", label: "Relations" },
-  { value: "roles", label: "Roles" },
   { value: "organizations", label: "Organizations" },
-  { value: "office-types", label: "Office types" },
+  { value: "organization-types", label: "Organization types" },
 ];
 
 export const TenantDetail = () => {
@@ -183,11 +180,9 @@ export const TenantDetail = () => {
 
           {tab === "relations" ? <TenantRelations tenantId={tenantId} /> : null}
 
-          {tab === "roles" ? <TenantRoles tenantId={tenantId} /> : null}
-
           {tab === "organizations" ? <TenantOrganizations tenantId={tenantId} /> : null}
 
-          {tab === "office-types" ? <TenantOfficeTypes tenantId={tenantId} /> : null}
+          {tab === "organization-types" ? <TenantOrganizationTypes tenantId={tenantId} /> : null}
         </Box>
       ) : null}
     </Container>

@@ -1,8 +1,5 @@
 import {
-  ADMIN,
   IDENTITY,
-  MEMBER,
-  OWNER,
   PLATFORM_OBJECT_ID,
   InsufficientPermissionError,
   type GraphRelationship,
@@ -34,7 +31,7 @@ describe("IdentityRelationService", () => {
           return [
             {
               object: { namespace: "Platform", id: PLATFORM_OBJECT_ID },
-              relation: ADMIN,
+              relation: "admins",
               subject: { namespace: IDENTITY, id: targetIdentityId },
             },
           ];
@@ -43,7 +40,7 @@ describe("IdentityRelationService", () => {
           return [
             {
               object: { namespace: "Tenant", id: "tenant-1" },
-              relation: OWNER,
+              relation: "owners",
               subject: { namespace: IDENTITY, id: targetIdentityId },
             },
           ];
@@ -51,7 +48,7 @@ describe("IdentityRelationService", () => {
         return [
           {
             object: { namespace: "Organization", id: "org-1" },
-            relation: MEMBER,
+            relation: "members",
             subject: { namespace: IDENTITY, id: targetIdentityId },
           },
         ];
@@ -83,25 +80,25 @@ describe("IdentityRelationService", () => {
     expect(result.identityId).toBe(targetIdentityId);
     expect(result.platform).toEqual([
       {
-        id: `${PLATFORM_OBJECT_ID}:${ADMIN}:${targetIdentityId}`,
+        id: `${PLATFORM_OBJECT_ID}:admins:${targetIdentityId}`,
         identityId: targetIdentityId,
-        relation: ADMIN,
+        relation: "admins",
       },
     ]);
     expect(result.tenants).toEqual([
       {
-        id: `tenant-1:${OWNER}:${targetIdentityId}`,
+        id: `tenant-1:owners:${targetIdentityId}`,
         tenantId: "tenant-1",
         identityId: targetIdentityId,
-        relation: OWNER,
+        relation: "owners",
       },
     ]);
     expect(result.organizations).toEqual([
       {
-        id: `org-1:${MEMBER}:${targetIdentityId}`,
+        id: `org-1:members:${targetIdentityId}`,
         organizationId: "org-1",
         identityId: targetIdentityId,
-        relation: MEMBER,
+        relation: "members",
       },
     ]);
   });

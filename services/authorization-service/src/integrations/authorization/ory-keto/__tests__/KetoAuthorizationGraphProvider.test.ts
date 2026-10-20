@@ -37,7 +37,7 @@ describe("KetoAuthorizationGraphProvider", () => {
 
     await provider.createRelationship({
       object: { namespace: "Role", id: "role-1" },
-      relation: "member",
+      relation: "members",
       subject: { namespace: "Identity", id: "user-1" },
     });
 
@@ -45,7 +45,7 @@ describe("KetoAuthorizationGraphProvider", () => {
       createRelationshipBody: {
         namespace: "Role",
         object: "role-1",
-        relation: "member",
+        relation: "members",
         subject_id: "Identity:user-1",
       },
     });
@@ -57,7 +57,7 @@ describe("KetoAuthorizationGraphProvider", () => {
     await provider.createRelationship({
       object: { namespace: "Permission", id: "Role:create" },
       relation: "has",
-      subjectSet: { namespace: "Role", id: "role-1", relation: "member" },
+      subjectSet: { namespace: "Role", id: "role-1", relation: "members" },
     });
 
     expect(createRelationship).toHaveBeenCalledWith({
@@ -68,7 +68,7 @@ describe("KetoAuthorizationGraphProvider", () => {
         subject_set: {
           namespace: "Role",
           object: "role-1",
-          relation: "member",
+          relation: "members",
         },
       },
     });
@@ -80,7 +80,7 @@ describe("KetoAuthorizationGraphProvider", () => {
     await provider.deleteRelationship({
       object: { namespace: "Permission", id: "Role:create" },
       relation: "has",
-      subjectSet: { namespace: "Role", id: "role-1", relation: "member" },
+      subjectSet: { namespace: "Role", id: "role-1", relation: "members" },
     });
 
     expect(deleteRelationships).toHaveBeenCalledWith({
@@ -89,7 +89,7 @@ describe("KetoAuthorizationGraphProvider", () => {
       relation: "has",
       subjectSetNamespace: "Role",
       subjectSetObject: "role-1",
-      subjectSetRelation: "member",
+      subjectSetRelation: "members",
     });
   });
 
@@ -105,7 +105,7 @@ describe("KetoAuthorizationGraphProvider", () => {
             subject_set: {
               namespace: "Role",
               object: "role-1",
-              relation: "member",
+              relation: "members",
             },
           },
         ],
@@ -115,7 +115,7 @@ describe("KetoAuthorizationGraphProvider", () => {
     const results = await provider.listRelationships({
       object: { namespace: "Permission", id: "Role:create" },
       relation: "has",
-      subjectSet: { namespace: "Role", id: "role-1", relation: "member" },
+      subjectSet: { namespace: "Role", id: "role-1", relation: "members" },
     });
 
     expect(getRelationships).toHaveBeenCalledWith({
@@ -125,14 +125,14 @@ describe("KetoAuthorizationGraphProvider", () => {
       subjectId: undefined,
       subjectSetNamespace: "Role",
       subjectSetObject: "role-1",
-      subjectSetRelation: "member",
+      subjectSetRelation: "members",
     });
 
     expect(results).toEqual([
       {
         object: { namespace: "Permission", id: "Role:create" },
         relation: "has",
-        subjectSet: { namespace: "Role", id: "role-1", relation: "member" },
+        subjectSet: { namespace: "Role", id: "role-1", relation: "members" },
       },
     ]);
   });
@@ -163,7 +163,7 @@ describe("KetoAuthorizationGraphProvider", () => {
     await expect(
       provider.createRelationship({
         object: { namespace: "Role", id: "role-1" },
-        relation: "member",
+        relation: "members",
       }),
     ).rejects.toThrow("exactly one of subject or subjectSet");
   });
@@ -174,7 +174,7 @@ describe("KetoAuthorizationGraphProvider", () => {
     await expect(
       provider.listRelationships({
         subject: { namespace: "Identity", id: "user-1" },
-        subjectSet: { namespace: "Role", id: "role-1", relation: "member" },
+        subjectSet: { namespace: "Role", id: "role-1", relation: "members" },
       }),
     ).rejects.toThrow("must not set both subject and subjectSet");
   });
@@ -187,7 +187,7 @@ describe("KetoAuthorizationGraphProvider", () => {
           {
             namespace: "Tenant",
             object: "tenant-1",
-            relation: "member",
+            relation: "members",
             subject_id: "Identity:user-1",
           },
         ],
@@ -212,7 +212,7 @@ describe("KetoAuthorizationGraphProvider", () => {
     expect(results).toEqual([
       {
         object: { namespace: "Tenant", id: "tenant-1" },
-        relation: "member",
+        relation: "members",
         subject: { namespace: "Identity", id: "user-1" },
       },
     ]);

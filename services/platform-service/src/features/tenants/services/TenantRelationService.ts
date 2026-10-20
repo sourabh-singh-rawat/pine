@@ -1,11 +1,4 @@
-import {
-  ADMIN,
-  IDENTITY,
-  MEMBER,
-  OWNER,
-  requirePermission,
-  type IAuthorizationClient,
-} from "@pine/authorization";
+import { IDENTITY, requirePermission, type IAuthorizationClient } from "@pine/authorization";
 import {
   CloudEvent,
   createCloudEvent,
@@ -25,7 +18,7 @@ import type {
   TenantRelation,
 } from "@/features/tenants/services/ITenantRelationService";
 
-const tenantRelations = new Set([OWNER, ADMIN, MEMBER]);
+const tenantRelations = new Set<string>(["owners", "admins", "members"]);
 
 const assertTenantRelation = (relation: string) => {
   if (!tenantRelations.has(relation)) {
@@ -138,7 +131,8 @@ export class TenantRelationService implements ITenantRelationService {
       `Tenant:${input.tenantId}`,
     );
 
-    const relations = input.relation === undefined ? [OWNER, ADMIN, MEMBER] : [input.relation];
+    const relations =
+      input.relation === undefined ? ["owners", "admins", "members"] : [input.relation];
     if (input.relation !== undefined) {
       assertTenantRelation(input.relation);
     }

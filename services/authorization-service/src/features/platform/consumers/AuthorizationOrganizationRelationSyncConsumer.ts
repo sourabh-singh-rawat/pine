@@ -1,12 +1,4 @@
-import {
-  ADMIN,
-  MEMBER,
-  OWNER,
-  organizationAdminRelationship,
-  organizationMemberRelationship,
-  organizationOwnerRelationship,
-  type GraphRelationship,
-} from "@pine/authorization";
+import { relationship, type GraphRelationship } from "@pine/authorization";
 import {
   type CloudEvent,
   type IBroker,
@@ -64,14 +56,26 @@ export class AuthorizationOrganizationRelationSyncConsumer extends Consumer<
   }
 
   private relationshipFor(data: OrganizationRelationCreatedData): GraphRelationship | undefined {
-    if (data.relation === OWNER) {
-      return organizationOwnerRelationship(data.organizationId, data.identityId);
+    if (data.relation === "owners") {
+      return relationship({
+        object: { namespace: "Organization", id: data.organizationId },
+        relation: "owners",
+        subject: { namespace: "Identity", id: data.identityId },
+      });
     }
-    if (data.relation === ADMIN) {
-      return organizationAdminRelationship(data.organizationId, data.identityId);
+    if (data.relation === "admins") {
+      return relationship({
+        object: { namespace: "Organization", id: data.organizationId },
+        relation: "admins",
+        subject: { namespace: "Identity", id: data.identityId },
+      });
     }
-    if (data.relation === MEMBER) {
-      return organizationMemberRelationship(data.organizationId, data.identityId);
+    if (data.relation === "members") {
+      return relationship({
+        object: { namespace: "Organization", id: data.organizationId },
+        relation: "members",
+        subject: { namespace: "Identity", id: data.identityId },
+      });
     }
     return undefined;
   }

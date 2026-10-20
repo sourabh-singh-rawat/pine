@@ -1,4 +1,3 @@
-import { ADMIN, MEMBER, OWNER } from "@pine/authorization";
 import { createCloudEvent, TenantRelationCreatedEvent } from "@pine/events";
 import { describe, expect, it, vi } from "vitest";
 import { AuthorizationTenantRelationSyncConsumer } from "@/features/platform/consumers/AuthorizationTenantRelationSyncConsumer";
@@ -29,12 +28,12 @@ describe("AuthorizationTenantRelationSyncConsumer", () => {
       version: TenantRelationCreatedEvent.version,
       schema: TenantRelationCreatedEvent.schema,
       source: "pine/platform-service",
-      subject: "tenant-1:admin:user-1",
+      subject: "tenant-1:admins:user-1",
       data: {
-        id: "tenant-1:admin:user-1",
+        id: "tenant-1:admins:user-1",
         tenantId: "tenant-1",
         identityId: "user-1",
-        relation: ADMIN,
+        relation: "admins",
         createdAt: "2026-01-01T00:00:00.000Z",
       },
     });
@@ -43,7 +42,7 @@ describe("AuthorizationTenantRelationSyncConsumer", () => {
 
     expect(authorizationGraphProvider.createRelationship).toHaveBeenCalledWith({
       object: { namespace: "Tenant", id: "tenant-1" },
-      relation: ADMIN,
+      relation: "admins",
       subject: { namespace: "Identity", id: "user-1" },
     });
     expect(message.ack).toHaveBeenCalled();
@@ -64,12 +63,12 @@ describe("AuthorizationTenantRelationSyncConsumer", () => {
         version: TenantRelationCreatedEvent.version,
         schema: TenantRelationCreatedEvent.schema,
         source: "pine/platform-service",
-        subject: "tenant-1:owner:user-2",
+        subject: "tenant-1:owners:user-2",
         data: {
-          id: "tenant-1:owner:user-2",
+          id: "tenant-1:owners:user-2",
           tenantId: "tenant-1",
           identityId: "user-2",
-          relation: OWNER,
+          relation: "owners",
           createdAt: "2026-01-01T00:00:00.000Z",
         },
       }),
@@ -82,12 +81,12 @@ describe("AuthorizationTenantRelationSyncConsumer", () => {
         version: TenantRelationCreatedEvent.version,
         schema: TenantRelationCreatedEvent.schema,
         source: "pine/platform-service",
-        subject: "tenant-1:member:user-3",
+        subject: "tenant-1:members:user-3",
         data: {
-          id: "tenant-1:member:user-3",
+          id: "tenant-1:members:user-3",
           tenantId: "tenant-1",
           identityId: "user-3",
-          relation: MEMBER,
+          relation: "members",
           createdAt: "2026-01-01T00:00:00.000Z",
         },
       }),
@@ -95,12 +94,12 @@ describe("AuthorizationTenantRelationSyncConsumer", () => {
 
     expect(authorizationGraphProvider.createRelationship).toHaveBeenCalledWith({
       object: { namespace: "Tenant", id: "tenant-1" },
-      relation: OWNER,
+      relation: "owners",
       subject: { namespace: "Identity", id: "user-2" },
     });
     expect(authorizationGraphProvider.createRelationship).toHaveBeenCalledWith({
       object: { namespace: "Tenant", id: "tenant-1" },
-      relation: MEMBER,
+      relation: "members",
       subject: { namespace: "Identity", id: "user-3" },
     });
   });

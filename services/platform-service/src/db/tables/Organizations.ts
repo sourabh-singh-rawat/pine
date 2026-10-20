@@ -9,7 +9,7 @@ import {
   varchar,
 } from "drizzle-orm/pg-core";
 import { auditColumns, idColumn } from "@/db/columns";
-import { OrganizationOfficeTypes } from "@/db/tables/OrganizationOfficeTypes";
+import { OrganizationTypes } from "@/db/tables/OrganizationTypes";
 import { Tenants } from "@/db/tables/Tenants";
 
 export const Organizations = pgTable(
@@ -22,9 +22,9 @@ export const Organizations = pgTable(
     parentOrganizationId: uuid("parent_organization_id").references(
       (): AnyPgColumn => Organizations.id,
     ),
-    officeTypeId: uuid("office_type_id")
+    organizationTypeId: uuid("organization_type_id")
       .notNull()
-      .references(() => OrganizationOfficeTypes.id),
+      .references(() => OrganizationTypes.id),
     name: varchar("name", { length: 255 }).notNull(),
     slug: varchar("slug", { length: 100 }).notNull(),
     description: text("description"),
@@ -39,9 +39,9 @@ export const OrganizationsRelations = relations(Organizations, ({ one, many }) =
     fields: [Organizations.tenantId],
     references: [Tenants.id],
   }),
-  officeType: one(OrganizationOfficeTypes, {
-    fields: [Organizations.officeTypeId],
-    references: [OrganizationOfficeTypes.id],
+  organizationType: one(OrganizationTypes, {
+    fields: [Organizations.organizationTypeId],
+    references: [OrganizationTypes.id],
   }),
   parentOrganization: one(Organizations, {
     fields: [Organizations.parentOrganizationId],

@@ -1,9 +1,4 @@
-import {
-  OWNER,
-  PLATFORM_OBJECT_ID,
-  tenantOwnerRelationship,
-  type IAuthorizationClient,
-} from "@pine/authorization";
+import { PLATFORM_OBJECT_ID, relationship, type IAuthorizationClient } from "@pine/authorization";
 import {
   CloudEvent,
   createCloudEvent,
@@ -24,7 +19,7 @@ import type {
   PersonalOrganizationProvision,
 } from "@/features/onboarding/services/IOnboardingService";
 import type { ITenantRepository } from "@/features/tenants/repositories";
-import type { IOfficeTypeRepository } from "@/features/office-types/repositories";
+import type { IOrganizationTypeRepository } from "@/features/organization-types/repositories";
 import type {
   IOrganizationPreferenceRepository,
   IOrganizationRepository,
@@ -33,8 +28,8 @@ import type {
 const PERSONAL_TENANT_NAME = "Personal";
 const PERSONAL_ORGANIZATION_NAME = "Personal organization";
 const PERSONAL_ORGANIZATION_SLUG = "default";
-const PERSONAL_OFFICE_TYPE_NAME = "Personal";
-const PERSONAL_OFFICE_TYPE_SLUG = "personal";
+const PERSONAL_ORGANIZATION_TYPE_NAME = "Personal";
+const PERSONAL_ORGANIZATION_TYPE_SLUG = "personal";
 
 const personalTenantSlug = (identityId: string): string => `personal-${identityId}`;
 
@@ -47,8 +42,8 @@ export class OnboardingService implements IOnboardingService {
     private readonly tenantRepository: ITenantRepository,
     @inject(TYPES.OrganizationRepository)
     private readonly organizationRepository: IOrganizationRepository,
-    @inject(TYPES.OfficeTypeRepository)
-    private readonly officeTypeRepository: IOfficeTypeRepository,
+    @inject(TYPES.OrganizationTypeRepository)
+    private readonly organizationTypeRepository: IOrganizationTypeRepository,
     @inject(TYPES.OrganizationPreferenceRepository)
     private readonly organizationPreferenceRepository: IOrganizationPreferenceRepository,
     @inject(TYPES.AuthorizationClient)
@@ -90,7 +85,11 @@ export class OnboardingService implements IOnboardingService {
       );
 
       await this.authorizationClient.ensureRelationship(
-        tenantOwnerRelationship(tenant.id, identityId),
+        relationship({
+          object: { namespace: "Tenant", id: tenant.id },
+          relation: "owners",
+          subject: { namespace: "Identity", id: identityId },
+        }),
       );
 
       const tenantCreated: CloudEvent<TenantCreatedData> = createCloudEvent({
@@ -156,25 +155,25 @@ export class OnboardingService implements IOnboardingService {
     return this.createDefaultOrganization(tenant, identityId, tx);
   }
 
-  private async ensurePersonalOfficeType(tenantId: string, tx: DbClient): Promise<string> {
-    const officeTypes = await this.officeTypeRepository.findManyByTenant(tenantId);
-    const existingOfficeType = officeTypes.find(
-      (officeType) => officeType.slug === PERSONAL_OFFICE_TYPE_SLUG,
+  private async ensurePersonalOrganizationType(tenantId: string, tx: DbClient): Promise<string> {
+    const organizationTypes = await this.organizationTypeRepository.findManyByTenant(tenantId);
+    const existingOrganizationType = organizationTypes.find(
+      (organizationType) => organizationType.slug === PERSONAL_ORGANIZATION_TYPE_SLUG,
     );
-    if (existingOfficeType) {
-      return existingOfficeType.id;
+    if (existingOrganizationType) {
+      return existingOrganizationType.id;
     }
 
-    const officeType = await this.officeTypeRepository.save(
+    const organizationType = await this.organizationTypeRepository.save(
       {
         tenantId,
-        name: PERSONAL_OFFICE_TYPE_NAME,
-        slug: PERSONAL_OFFICE_TYPE_SLUG,
+        name: PERSONAL_ORGANIZATION_TYPE_NAME,
+        slug: PERSONAL_ORGANIZATION_TYPE_SLUG,
         isActive: true,
       },
       { tx },
     );
-    return officeType.id;
+    return organizationType.id;
   }
 
   private async createDefaultOrganization(
@@ -182,11 +181,11 @@ export class OnboardingService implements IOnboardingService {
     identityId: string,
     tx: DbClient,
   ): Promise<Organization> {
-    const officeTypeId = await this.ensurePersonalOfficeType(tenant.id, tx);
+    const organizationTypeId = await this.ensurePersonalOrganizationType(tenant.id, tx);
     const organization = await this.organizationRepository.save(
       {
         tenantId: tenant.id,
-        officeTypeId,
+        organizationTypeId,
         name: PERSONAL_ORGANIZATION_NAME,
         slug: PERSONAL_ORGANIZATION_SLUG,
         description: "Default personal organization",
@@ -206,7 +205,7 @@ export class OnboardingService implements IOnboardingService {
         tenantId: organization.tenantId,
         name: organization.name,
         slug: organization.slug,
-        officeTypeId: organization.officeTypeId,
+        organizationTypeId: organization.organizationTypeId,
         isActive: organization.isActive,
         version: organization.version,
         createdAt: organization.createdAt.toISOString(),
@@ -226,7 +225,7 @@ export class OnboardingService implements IOnboardingService {
       { tx },
     );
 
-    const ownerRelationId = `${organization.id}:${OWNER}:${identityId}`;
+    const ownerRelationId = `${organization.id}:owners:${identityId}`;
     const ownerRelation: CloudEvent<OrganizationRelationCreatedData> = createCloudEvent({
       type: OrganizationRelationCreatedEvent.type,
       version: OrganizationRelationCreatedEvent.version,
@@ -237,7 +236,7 @@ export class OnboardingService implements IOnboardingService {
         id: ownerRelationId,
         organizationId: organization.id,
         identityId,
-        relation: OWNER,
+        relation: "owners",
         createdAt: new Date().toISOString(),
       },
     });

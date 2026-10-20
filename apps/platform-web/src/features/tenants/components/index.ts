@@ -1,5 +1,5 @@
-export * from "./CreateOfficeTypeForm";
-export * from "./CreateOfficeTypeModal";
+export * from "./CreateOrganizationTypeForm";
+export * from "./CreateOrganizationTypeModal";
 export * from "./CreateOrganizationForm";
 export * from "./CreateOrganizationModal";
 export * from "./CreateOrganizationRelationForm";

@@ -1,8 +1,5 @@
 import {
-  ADMIN,
   IDENTITY,
-  MEMBER,
-  OWNER,
   PLATFORM_OBJECT_ID,
   requirePermission,
   type GraphRelationship,
@@ -18,9 +15,9 @@ import type { OrganizationRelation } from "@/features/organizations/services/IOr
 import type { PlatformRelation } from "@/features/platform/services/IPlatformRelationService";
 import type { TenantRelation } from "@/features/tenants/services/ITenantRelationService";
 
-const PLATFORM_MEMBERSHIP_RELATIONS = new Set([ADMIN, MEMBER]);
-const TENANT_MEMBERSHIP_RELATIONS = new Set([OWNER, ADMIN, MEMBER]);
-const ORGANIZATION_MEMBERSHIP_RELATIONS = new Set([OWNER, ADMIN, MEMBER]);
+const PLATFORM_MEMBERSHIP_RELATIONS = new Set<string>(["owners", "admins", "members"]);
+const TENANT_MEMBERSHIP_RELATIONS = new Set<string>(["owners", "admins", "members"]);
+const ORGANIZATION_MEMBERSHIP_RELATIONS = new Set<string>(["owners", "admins", "members"]);
 
 @injectable()
 export class IdentityRelationService implements IIdentityRelationService {

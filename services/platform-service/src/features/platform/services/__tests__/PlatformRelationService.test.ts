@@ -1,4 +1,4 @@
-import { ADMIN, PLATFORM_OBJECT_ID } from "@pine/authorization";
+import { PLATFORM_OBJECT_ID } from "@pine/authorization";
 import { PlatformRelationCreatedEvent } from "@pine/events";
 import { describe, expect, it, vi } from "vitest";
 import { PlatformRelationService } from "@/features/platform/services/PlatformRelationService";
@@ -30,7 +30,7 @@ describe("PlatformRelationService", () => {
 
     const relation = await service.create(
       {
-        relation: ADMIN,
+        relation: "admins",
         identityId,
       },
       actorId,
@@ -45,16 +45,16 @@ describe("PlatformRelationService", () => {
         aggregateId: PLATFORM_OBJECT_ID,
         payload: expect.objectContaining({
           type: PlatformRelationCreatedEvent.type,
-          subject: `${PLATFORM_OBJECT_ID}:${ADMIN}:${identityId}`,
+          subject: `${PLATFORM_OBJECT_ID}:admins:${identityId}`,
           data: expect.objectContaining({
             identityId,
-            relation: ADMIN,
+            relation: "admins",
           }),
         }),
       }),
       { tx: { tx: true } },
     );
-    expect(relation.relation).toBe(ADMIN);
+    expect(relation.relation).toBe("admins");
     expect(relation.identityId).toBe(identityId);
   });
 });

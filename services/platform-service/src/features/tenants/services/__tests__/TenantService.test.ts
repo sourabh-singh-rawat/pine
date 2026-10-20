@@ -78,7 +78,7 @@ describe("TenantService", () => {
       listRelationships: vi.fn().mockResolvedValue([
         {
           object: { namespace: "Tenant", id: tenant.id },
-          relation: "member",
+          relation: "members",
           subject: { namespace: "Identity", id: identityId },
         },
       ]),
@@ -234,7 +234,7 @@ describe("TenantService", () => {
     );
     expect(authorizationClient.ensureRelationship).toHaveBeenCalledWith({
       object: { namespace: "Tenant", id: tenant.id },
-      relation: "owner",
+      relation: "owners",
       subject: { namespace: "Identity", id: identityId },
     });
     expect(outboxService.schedule).toHaveBeenCalledWith(

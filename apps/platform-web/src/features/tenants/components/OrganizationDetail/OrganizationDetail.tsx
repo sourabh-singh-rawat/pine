@@ -22,9 +22,8 @@ import { useNavigate, useParams, useSearch } from "@tanstack/react-router";
 import { getErrorMessage, useSnackbar } from "@shared/ui";
 import type { SyntheticEvent } from "react";
 import { OrganizationRelations } from "./OrganizationRelations";
-import { OrganizationRoles } from "./OrganizationRoles";
 
-type OrganizationDetailTab = "overview" | "relations" | "roles";
+type OrganizationDetailTab = "overview" | "relations";
 
 const formatDateTime = (value: unknown): string => {
   if (value == null) {
@@ -41,12 +40,11 @@ const formatDateTime = (value: unknown): string => {
 };
 
 const isOrganizationDetailTab = (value: unknown): value is OrganizationDetailTab =>
-  value === "overview" || value === "relations" || value === "roles";
+  value === "overview" || value === "relations";
 
 const organizationDetailTabs: ReadonlyArray<{ value: OrganizationDetailTab; label: string }> = [
   { value: "overview", label: "Overview" },
   { value: "relations", label: "Relations" },
-  { value: "roles", label: "Roles" },
 ];
 
 type ParentOrganizationFieldProps = {
@@ -293,8 +291,6 @@ export const OrganizationDetail = () => {
           ) : null}
 
           {tab === "relations" ? <OrganizationRelations organizationId={organizationId} /> : null}
-
-          {tab === "roles" ? <OrganizationRoles organizationId={organizationId} /> : null}
         </Box>
       ) : null}
     </Container>

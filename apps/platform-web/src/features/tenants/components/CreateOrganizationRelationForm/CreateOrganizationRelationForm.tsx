@@ -4,19 +4,13 @@ import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
-import { ADMIN, ALL_ORGANIZATION_ROLES, MEMBER, OWNER } from "@pine/authorization";
 import { useCreateOrganizationRelationMutation, useFindIdentitiesQuery } from "@generated/gql";
 import { PrimaryButton, SecondaryButton } from "@pine/ui";
 import { useForm } from "@tanstack/react-form";
 import { useQueryClient } from "@tanstack/react-query";
 import { getErrorMessage, useSnackbar } from "@shared/ui";
 
-const organizationRelations = [OWNER, ADMIN, MEMBER];
-
-const relationLabel = (relation: string): string => {
-  const definition = ALL_ORGANIZATION_ROLES.find((role) => role.relation === relation);
-  return definition?.name ?? relation;
-};
+const organizationRelations = ["owners", "admins", "members"];
 
 export type CreateOrganizationRelationFormValues = {
   identityId: string;
@@ -168,7 +162,7 @@ export const CreateOrganizationRelationForm = ({
                   </MenuItem>
                   {organizationRelations.map((relation) => (
                     <MenuItem key={relation} value={relation}>
-                      {relationLabel(relation)}
+                      {relation}
                     </MenuItem>
                   ))}
                 </Select>

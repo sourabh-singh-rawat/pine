@@ -1,8 +1,4 @@
-import {
-  platformTenantRelationship,
-  tenantPlatformRelationship,
-  type GraphRelationship,
-} from "@pine/authorization";
+import { PLATFORM_OBJECT_ID, relationship } from "@pine/authorization";
 import {
   type CloudEvent,
   type IBroker,
@@ -52,9 +48,14 @@ export class AuthorizationTenantSyncConsumer extends Consumer<
         return;
       }
 
-      for (const relationship of this.tenantGraph(data.id)) {
-        await ensureRelationship(this.authorizationGraphProvider, relationship);
-      }
+      await ensureRelationship(
+        this.authorizationGraphProvider,
+        relationship({
+          object: { namespace: "Tenant", id: data.id },
+          relation: "platform",
+          subject: { namespace: "Platform", id: PLATFORM_OBJECT_ID },
+        }),
+      );
       message.ack();
       return;
     }
@@ -67,17 +68,18 @@ export class AuthorizationTenantSyncConsumer extends Consumer<
         return;
       }
 
-      for (const relationship of this.tenantGraph(data.id)) {
-        await removeRelationship(this.authorizationGraphProvider, relationship);
-      }
+      await removeRelationship(
+        this.authorizationGraphProvider,
+        relationship({
+          object: { namespace: "Tenant", id: data.id },
+          relation: "platform",
+          subject: { namespace: "Platform", id: PLATFORM_OBJECT_ID },
+        }),
+      );
       message.ack();
       return;
     }
 
     message.ack();
-  }
-
-  private tenantGraph(tenantId: string): GraphRelationship[] {
-    return [platformTenantRelationship(tenantId), tenantPlatformRelationship(tenantId)];
   }
 }

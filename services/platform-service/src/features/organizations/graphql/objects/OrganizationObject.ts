@@ -13,7 +13,7 @@ OrganizationObject.implement({
     id: t.exposeString("id"),
     tenantId: t.exposeString("tenantId"),
     parentOrganizationId: t.exposeString("parentOrganizationId", { nullable: true }),
-    officeTypeId: t.exposeString("officeTypeId"),
+    organizationTypeId: t.exposeString("organizationTypeId"),
     name: t.exposeString("name"),
     slug: t.exposeString("slug"),
     description: t.exposeString("description", { nullable: true }),

@@ -1,4 +1,4 @@
-import { PLATFORM_OBJECT_ID, PLATFORM_TENANT, TENANT_PLATFORM } from "@pine/authorization";
+import { PLATFORM_OBJECT_ID } from "@pine/authorization";
 import { createCloudEvent, TenantCreatedEvent, TenantDeletedEvent } from "@pine/events";
 import { describe, expect, it, vi } from "vitest";
 import { AuthorizationTenantSyncConsumer } from "@/features/platform/consumers/AuthorizationTenantSyncConsumer";
@@ -17,7 +17,7 @@ const createBroker = () => ({
 });
 
 describe("AuthorizationTenantSyncConsumer", () => {
-  it("writes platform and tenant parent tuples when a tenant is created", async () => {
+  it("writes the tenant platform tuple when a tenant is created", async () => {
     const authorizationGraphProvider = createGraphProvider();
     const consumer = new AuthorizationTenantSyncConsumer(
       createBroker() as never,
@@ -44,24 +44,20 @@ describe("AuthorizationTenantSyncConsumer", () => {
     await consumer.onMessage(message as never, event);
 
     expect(authorizationGraphProvider.createRelationship).toHaveBeenCalledWith({
-      object: { namespace: "Platform", id: PLATFORM_OBJECT_ID },
-      relation: PLATFORM_TENANT,
-      subject: { namespace: "Tenant", id: "tenant-1" },
-    });
-    expect(authorizationGraphProvider.createRelationship).toHaveBeenCalledWith({
       object: { namespace: "Tenant", id: "tenant-1" },
-      relation: TENANT_PLATFORM,
+      relation: "platform",
       subject: { namespace: "Platform", id: PLATFORM_OBJECT_ID },
     });
     expect(message.ack).toHaveBeenCalled();
   });
 
-  it("deletes platform and tenant parent tuples when a tenant is deleted", async () => {
+  it("deletes the tenant platform tuple when a tenant is deleted", async () => {
     const authorizationGraphProvider = createGraphProvider();
     authorizationGraphProvider.listRelationships.mockResolvedValue([
       {
-        object: { namespace: "Platform", id: PLATFORM_OBJECT_ID },
-        relation: PLATFORM_TENANT,
+        object: { namespace: "Tenant", id: "tenant-1" },
+        relation: "platform",
+        subject: { namespace: "Platform", id: PLATFORM_OBJECT_ID },
       },
     ]);
     const consumer = new AuthorizationTenantSyncConsumer(
@@ -84,13 +80,8 @@ describe("AuthorizationTenantSyncConsumer", () => {
     await consumer.onMessage(message as never, event);
 
     expect(authorizationGraphProvider.deleteRelationship).toHaveBeenCalledWith({
-      object: { namespace: "Platform", id: PLATFORM_OBJECT_ID },
-      relation: PLATFORM_TENANT,
-      subject: { namespace: "Tenant", id: "tenant-1" },
-    });
-    expect(authorizationGraphProvider.deleteRelationship).toHaveBeenCalledWith({
       object: { namespace: "Tenant", id: "tenant-1" },
-      relation: TENANT_PLATFORM,
+      relation: "platform",
       subject: { namespace: "Platform", id: PLATFORM_OBJECT_ID },
     });
     expect(message.ack).toHaveBeenCalled();

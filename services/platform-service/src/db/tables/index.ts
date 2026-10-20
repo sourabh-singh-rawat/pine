@@ -12,8 +12,8 @@ export {
   IdentityOrganizationPreferences,
 } from "@/db/tables/IdentityOrganizationPreferences";
 export {
-  type OrganizationOfficeType,
-  type NewOrganizationOfficeType,
-  OrganizationOfficeTypes,
-  OrganizationOfficeTypesRelations,
-} from "@/db/tables/OrganizationOfficeTypes";
+  type OrganizationType,
+  type NewOrganizationType,
+  OrganizationTypes,
+  OrganizationTypesRelations,
+} from "@/db/tables/OrganizationTypes";
