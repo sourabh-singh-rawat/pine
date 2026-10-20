@@ -1,4 +1,4 @@
-import { ADMIN, MEMBER, PLATFORM_OBJECT_ID } from "@pine/authorization";
+import { PLATFORM_OBJECT_ID } from "@pine/authorization";
 import { createCloudEvent, PlatformRelationCreatedEvent } from "@pine/events";
 import { describe, expect, it, vi } from "vitest";
 import { AuthorizationPlatformRelationSyncConsumer } from "@/features/platform/consumers/AuthorizationPlatformRelationSyncConsumer";
@@ -29,11 +29,11 @@ describe("AuthorizationPlatformRelationSyncConsumer", () => {
       version: PlatformRelationCreatedEvent.version,
       schema: PlatformRelationCreatedEvent.schema,
       source: "pine/platform-service",
-      subject: `${PLATFORM_OBJECT_ID}:${ADMIN}:user-1`,
+      subject: `${PLATFORM_OBJECT_ID}:admins:user-1`,
       data: {
-        id: `${PLATFORM_OBJECT_ID}:${ADMIN}:user-1`,
+        id: `${PLATFORM_OBJECT_ID}:admins:user-1`,
         identityId: "user-1",
-        relation: ADMIN,
+        relation: "admins",
         createdAt: "2026-01-01T00:00:00.000Z",
       },
     });
@@ -42,8 +42,39 @@ describe("AuthorizationPlatformRelationSyncConsumer", () => {
 
     expect(authorizationGraphProvider.createRelationship).toHaveBeenCalledWith({
       object: { namespace: "Platform", id: PLATFORM_OBJECT_ID },
-      relation: ADMIN,
+      relation: "admins",
       subject: { namespace: "Identity", id: "user-1" },
+    });
+    expect(message.ack).toHaveBeenCalled();
+  });
+
+  it("writes the platform owner tuple when the relation is owner", async () => {
+    const authorizationGraphProvider = createGraphProvider();
+    const consumer = new AuthorizationPlatformRelationSyncConsumer(
+      createBroker() as never,
+      authorizationGraphProvider as never,
+    );
+    const message = { ack: vi.fn() };
+    const event = createCloudEvent({
+      type: PlatformRelationCreatedEvent.type,
+      version: PlatformRelationCreatedEvent.version,
+      schema: PlatformRelationCreatedEvent.schema,
+      source: "pine/platform-service",
+      subject: `${PLATFORM_OBJECT_ID}:owners:user-3`,
+      data: {
+        id: `${PLATFORM_OBJECT_ID}:owners:user-3`,
+        identityId: "user-3",
+        relation: "owners",
+        createdAt: "2026-01-01T00:00:00.000Z",
+      },
+    });
+
+    await consumer.onMessage(message as never, event);
+
+    expect(authorizationGraphProvider.createRelationship).toHaveBeenCalledWith({
+      object: { namespace: "Platform", id: PLATFORM_OBJECT_ID },
+      relation: "owners",
+      subject: { namespace: "Identity", id: "user-3" },
     });
     expect(message.ack).toHaveBeenCalled();
   });
@@ -60,11 +91,11 @@ describe("AuthorizationPlatformRelationSyncConsumer", () => {
       version: PlatformRelationCreatedEvent.version,
       schema: PlatformRelationCreatedEvent.schema,
       source: "pine/platform-service",
-      subject: `${PLATFORM_OBJECT_ID}:${MEMBER}:user-2`,
+      subject: `${PLATFORM_OBJECT_ID}:members:user-2`,
       data: {
-        id: `${PLATFORM_OBJECT_ID}:${MEMBER}:user-2`,
+        id: `${PLATFORM_OBJECT_ID}:members:user-2`,
         identityId: "user-2",
-        relation: MEMBER,
+        relation: "members",
         createdAt: "2026-01-01T00:00:00.000Z",
       },
     });
@@ -73,7 +104,7 @@ describe("AuthorizationPlatformRelationSyncConsumer", () => {
 
     expect(authorizationGraphProvider.createRelationship).toHaveBeenCalledWith({
       object: { namespace: "Platform", id: PLATFORM_OBJECT_ID },
-      relation: MEMBER,
+      relation: "members",
       subject: { namespace: "Identity", id: "user-2" },
     });
     expect(message.ack).toHaveBeenCalled();

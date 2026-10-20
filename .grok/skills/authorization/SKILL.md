@@ -23,15 +23,23 @@ await requirePermission(this.authorizationClient, identityId, "read", `organizat
 
 Throws `InsufficientPermissionError`. Inject `IAuthorizationClient` (`HttpAuthorizationClient` → `AUTHORIZATION_SERVICE_URL`). Do this in the **service**, not the resolver/route.
 
-Helpers for tuple shapes: `organizationOwnerRelationship`, `tenantMemberRelationship`, `platformAdminRelationship`, … in `@pine/authorization`.
-
 ## Recipe — write tuples
+
+Tuple shape: `relationship({ object, relation, subject })` from `@pine/authorization`. Relation strings come from the generated unions (`PlatformRelation`, `OrganizationRelation`, …).
+
+```ts
+relationship({
+  object: { namespace: "Organization", id },
+  relation: "owners",
+  subject: { namespace: "Identity", id: identityId },
+});
+```
 
 Product services do **not** call `ensureRelationship` / `deleteRelationship` on the HTTP client for domain membership. They `requirePermission`, then `outbox.schedule` a relation CloudEvent (`OrganizationRelationCreatedEvent`, …). `authorization-service` consumers map that event to Keto (`features/platform/consumers`, `features/identity/consumers`).
 
 Direct graph HTTP (`checkRelationship`, `ensureRelationship`, `deleteRelationship`, `listRelationships`) is the authorization-service API (`http-route`). Use `HttpAuthorizationClient` from other services for **checks**.
 
-New namespace or permit: edit OPL + `@pine/authorization` resource/permission unions + relation helpers in the same change. OPL mount: `docker-infra`. Switching namespace IDs requires recreating the keto DB (confirm with the user).
+New namespace or permit: add the key on the OPL class, add the namespace to `RESOURCES` when it is new, then run `pnpm permissions:generate`. That rewrites `packages/authorization/src/permissions/AllPermissions.ts` from the `permits` keys and `packages/authorization/src/relations/__generated__/generated.ts` from the `related` keys. `Tenant.administer` is left out. `Role` and `Permission` have no `permits` block, so their catalogs stay in `tools/scripts/authorization/generate-permissions.ts` until those classes define permits. OPL mount: `docker-infra`. Switching namespace IDs requires recreating the keto DB (confirm with the user).
 
 ## Anti-patterns
 
@@ -39,10 +47,11 @@ New namespace or permit: edit OPL + `@pine/authorization` resource/permission un
 - Writing Keto tuples from `platform-service` / `items-service` via `ensureRelationship`
 - Inventing a resource string that is not `namespace:id`
 - Parallel `id`/`name` namespace lists beside OPL
+- Hand-editing `AllPermissions.ts` or `relations/__generated__/generated.ts` instead of running `pnpm permissions:generate`
 - Calling Keto from a feature folder in a non-authorization service
 
 ## Done when
 
 - Checks use `requirePermission` in the service
 - Tuple changes ride outbox events consumed by `authorization-service`
-- New permits exist in OPL and `@pine/authorization` types
+- New permits and relations exist in OPL and the generated `@pine/authorization` catalog (`pnpm permissions:generate`)

@@ -244,7 +244,7 @@ export type GetMyOrganizationPreferenceQuery = { getMyOrganizationPreference: { 
 export type GetMyOrganizationsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetMyOrganizationsQuery = { getMyOrganizations: Array<{ id: string | null, tenantId: string | null, parentOrganizationId: string | null, name: string | null, slug: string | null, description: string | null, isActive: boolean | null, createdAt: unknown, children: Array<{ id: string | null, tenantId: string | null, parentOrganizationId: string | null, name: string | null, slug: string | null, description: string | null, isActive: boolean | null, createdAt: unknown, children: Array<{ id: string | null, tenantId: string | null, parentOrganizationId: string | null, name: string | null, slug: string | null, description: string | null, isActive: boolean | null, createdAt: unknown, children: Array<{ id: string | null, tenantId: string | null, parentOrganizationId: string | null, name: string | null, slug: string | null, description: string | null, isActive: boolean | null, createdAt: unknown, children: Array<{ id: string | null, tenantId: string | null, parentOrganizationId: string | null, name: string | null, slug: string | null, description: string | null, isActive: boolean | null, createdAt: unknown, children: Array<{ id: string | null, tenantId: string | null, parentOrganizationId: string | null, name: string | null, slug: string | null, description: string | null, isActive: boolean | null, createdAt: unknown }> | null }> | null }> | null }> | null }> | null }> | null };
+export type GetMyOrganizationsQuery = { getMyOrganizations: Array<{ id: string | null, tenantId: string | null, parentOrganizationId: string | null, organizationTypeId: string | null, name: string | null, slug: string | null, description: string | null, isActive: boolean | null, createdAt: unknown, children: Array<{ id: string | null, tenantId: string | null, parentOrganizationId: string | null, organizationTypeId: string | null, name: string | null, slug: string | null, description: string | null, isActive: boolean | null, createdAt: unknown, children: Array<{ id: string | null, tenantId: string | null, parentOrganizationId: string | null, organizationTypeId: string | null, name: string | null, slug: string | null, description: string | null, isActive: boolean | null, createdAt: unknown, children: Array<{ id: string | null, tenantId: string | null, parentOrganizationId: string | null, organizationTypeId: string | null, name: string | null, slug: string | null, description: string | null, isActive: boolean | null, createdAt: unknown, children: Array<{ id: string | null, tenantId: string | null, parentOrganizationId: string | null, organizationTypeId: string | null, name: string | null, slug: string | null, description: string | null, isActive: boolean | null, createdAt: unknown, children: Array<{ id: string | null, tenantId: string | null, parentOrganizationId: string | null, organizationTypeId: string | null, name: string | null, slug: string | null, description: string | null, isActive: boolean | null, createdAt: unknown }> | null }> | null }> | null }> | null }> | null }> | null };
 
 export type SetMyOrganizationPreferenceMutationVariables = Exact<{
   organizationId: string;
@@ -1313,6 +1313,7 @@ export const GetMyOrganizationsDocument = new TypedDocumentString(`
     id
     tenantId
     parentOrganizationId
+    organizationTypeId
     name
     slug
     description
@@ -1322,6 +1323,7 @@ export const GetMyOrganizationsDocument = new TypedDocumentString(`
       id
       tenantId
       parentOrganizationId
+      organizationTypeId
       name
       slug
       description
@@ -1331,6 +1333,7 @@ export const GetMyOrganizationsDocument = new TypedDocumentString(`
         id
         tenantId
         parentOrganizationId
+        organizationTypeId
         name
         slug
         description
@@ -1340,6 +1343,7 @@ export const GetMyOrganizationsDocument = new TypedDocumentString(`
           id
           tenantId
           parentOrganizationId
+          organizationTypeId
           name
           slug
           description
@@ -1349,6 +1353,7 @@ export const GetMyOrganizationsDocument = new TypedDocumentString(`
             id
             tenantId
             parentOrganizationId
+            organizationTypeId
             name
             slug
             description
@@ -1358,6 +1363,7 @@ export const GetMyOrganizationsDocument = new TypedDocumentString(`
               id
               tenantId
               parentOrganizationId
+              organizationTypeId
               name
               slug
               description

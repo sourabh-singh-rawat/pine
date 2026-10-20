@@ -25,7 +25,7 @@ const organization = {
   id: "organization-1",
   tenantId: tenant.id,
   parentOrganizationId: null,
-  officeTypeId: "type-personal",
+  organizationTypeId: "type-personal",
   name: "Personal organization",
   slug: "default",
   description: "Default personal organization",
@@ -44,7 +44,7 @@ const createService = (deps: {
   identityRepository?: unknown;
   tenantRepository?: unknown;
   organizationRepository?: unknown;
-  officeTypeRepository?: unknown;
+  organizationTypeRepository?: unknown;
   organizationPreferenceRepository?: unknown;
   authorizationClient?: unknown;
   outboxService?: unknown;
@@ -62,7 +62,7 @@ const createService = (deps: {
       findMany: vi.fn().mockResolvedValue([]),
       save: vi.fn().mockResolvedValue(organization),
     }) as never,
-    (deps.officeTypeRepository ?? {
+    (deps.organizationTypeRepository ?? {
       findManyByTenant: vi.fn().mockResolvedValue([]),
       save: vi.fn().mockResolvedValue({ id: "type-personal" }),
     }) as never,
@@ -128,13 +128,13 @@ describe("OnboardingService", () => {
     );
     expect(authorizationClient.ensureRelationship).toHaveBeenCalledWith({
       object: { namespace: "Tenant", id: tenant.id },
-      relation: "owner",
+      relation: "owners",
       subject: { namespace: "Identity", id: identityId },
     });
     expect(organizationRepository.save).toHaveBeenCalledWith(
       {
         tenantId: tenant.id,
-        officeTypeId: "type-personal",
+        organizationTypeId: "type-personal",
         name: "Personal organization",
         slug: "default",
         description: "Default personal organization",
@@ -182,7 +182,7 @@ describe("OnboardingService", () => {
           data: expect.objectContaining({
             organizationId: organization.id,
             identityId,
-            relation: "owner",
+            relation: "owners",
           }),
         }),
       }),

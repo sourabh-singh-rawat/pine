@@ -1,7 +1,5 @@
 import {
-  ADMIN,
   IDENTITY,
-  MEMBER,
   PLATFORM_OBJECT_ID,
   requirePermission,
   type IAuthorizationClient,
@@ -28,6 +26,14 @@ import type {
   PlatformRelation,
 } from "@/features/platform/services/IPlatformRelationService";
 
+const platformRelations = new Set<string>(["owners", "admins", "members"]);
+
+const assertPlatformRelation = (relation: string) => {
+  if (!platformRelations.has(relation)) {
+    throw new InvalidPlatformRelationError(`Invalid platform relation: ${relation}`);
+  }
+};
+
 @injectable()
 export class PlatformRelationService implements IPlatformRelationService {
   constructor(
@@ -53,9 +59,7 @@ export class PlatformRelationService implements IPlatformRelationService {
       );
     }
 
-    if (input.relation !== ADMIN && input.relation !== MEMBER) {
-      throw new InvalidPlatformRelationError(`Invalid platform relation: ${input.relation}`);
-    }
+    assertPlatformRelation(input.relation);
 
     const relation: PlatformRelation = {
       id: `${PLATFORM_OBJECT_ID}:${input.relation}:${input.identityId}`,
@@ -133,10 +137,12 @@ export class PlatformRelationService implements IPlatformRelationService {
       `Platform:${PLATFORM_OBJECT_ID}`,
     );
 
-    const relations = input.relation === undefined ? [ADMIN, MEMBER] : [input.relation];
-    if (input.relation !== undefined && input.relation !== ADMIN && input.relation !== MEMBER) {
-      throw new InvalidPlatformRelationError(`Invalid platform relation: ${input.relation}`);
+    if (input.relation !== undefined) {
+      assertPlatformRelation(input.relation);
     }
+
+    const relations =
+      input.relation === undefined ? ["owners", "admins", "members"] : [input.relation];
 
     const platformRelations: PlatformRelation[] = [];
     for (const relation of relations) {
@@ -174,9 +180,7 @@ export class PlatformRelationService implements IPlatformRelationService {
 
     const relation = parts[1];
     const subjectIdentityId = parts[2];
-    if (relation !== ADMIN && relation !== MEMBER) {
-      throw new InvalidPlatformRelationError(`Invalid platform relation: ${relation}`);
-    }
+    assertPlatformRelation(relation);
 
     await this.authorizationClient.deleteRelationship({
       object: { namespace: "Platform", id: PLATFORM_OBJECT_ID },

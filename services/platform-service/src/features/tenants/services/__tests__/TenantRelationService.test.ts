@@ -1,4 +1,3 @@
-import { ADMIN } from "@pine/authorization";
 import { TenantRelationCreatedEvent } from "@pine/events";
 import { describe, expect, it, vi } from "vitest";
 import { TenantRelationService } from "@/features/tenants/services/TenantRelationService";
@@ -32,7 +31,7 @@ describe("TenantRelationService", () => {
     const relation = await service.create(
       {
         tenantId,
-        relation: ADMIN,
+        relation: "admins",
         identityId,
       },
       actorId,
@@ -47,17 +46,17 @@ describe("TenantRelationService", () => {
         aggregateId: tenantId,
         payload: expect.objectContaining({
           type: TenantRelationCreatedEvent.type,
-          subject: `${tenantId}:${ADMIN}:${identityId}`,
+          subject: `${tenantId}:admins:${identityId}`,
           data: expect.objectContaining({
             tenantId,
             identityId,
-            relation: ADMIN,
+            relation: "admins",
           }),
         }),
       }),
       { tx: { tx: true } },
     );
-    expect(relation.relation).toBe(ADMIN);
+    expect(relation.relation).toBe("admins");
     expect(relation.tenantId).toBe(tenantId);
     expect(relation.identityId).toBe(identityId);
   });

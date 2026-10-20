@@ -1,27 +1,8 @@
-export type GraphNamespace =
-  | "Identity"
-  | "Profile"
-  | "Platform"
-  | "Tenant"
-  | "Organization"
-  | "Space"
-  | "List"
-  | "Item"
-  | "Role"
-  | "Permission";
+import { NAMESPACES, type NamespaceName } from "../relations/__generated__/generated";
 
-export const GRAPH_NAMESPACES: readonly GraphNamespace[] = [
-  "Identity",
-  "Profile",
-  "Platform",
-  "Tenant",
-  "Organization",
-  "Space",
-  "List",
-  "Item",
-  "Role",
-  "Permission",
-];
+export type GraphNamespace = NamespaceName;
+
+export const GRAPH_NAMESPACES: readonly GraphNamespace[] = NAMESPACES;
 
 export const isGraphNamespace = (value: string): value is GraphNamespace => {
   for (const namespace of GRAPH_NAMESPACES) {

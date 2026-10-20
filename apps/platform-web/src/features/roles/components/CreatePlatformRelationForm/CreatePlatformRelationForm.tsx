@@ -4,19 +4,14 @@ import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
-import { ADMIN, ALL_PLATFORM_ROLES, MEMBER, PLATFORM_OBJECT_ID } from "@pine/authorization";
+import { PLATFORM_OBJECT_ID } from "@pine/authorization";
 import { useCreatePlatformRelationMutation, useGetIdentitiesQuery } from "@generated/gql";
 import { PrimaryButton, SecondaryButton } from "@pine/ui";
 import { useForm } from "@tanstack/react-form";
 import { useQueryClient } from "@tanstack/react-query";
 import { getErrorMessage, useSnackbar } from "@shared/ui";
 
-const platformRelations = [ADMIN, MEMBER];
-
-const relationLabel = (relation: string): string => {
-  const definition = ALL_PLATFORM_ROLES.find((role) => role.relation === relation);
-  return definition?.name ?? relation;
-};
+const platformRelations = ["owners", "admins", "members"];
 
 export type CreatePlatformRelationFormValues = {
   identityId: string;
@@ -168,7 +163,7 @@ export const CreatePlatformRelationForm = ({
                   </MenuItem>
                   {platformRelations.map((relation) => (
                     <MenuItem key={relation} value={relation}>
-                      {relationLabel(relation)}
+                      {relation}
                     </MenuItem>
                   ))}
                 </Select>

@@ -1,4 +1,3 @@
-import { ADMIN, MEMBER, OWNER } from "@pine/authorization";
 import { createCloudEvent, OrganizationRelationCreatedEvent } from "@pine/events";
 import { describe, expect, it, vi } from "vitest";
 import { AuthorizationOrganizationRelationSyncConsumer } from "@/features/platform/consumers/AuthorizationOrganizationRelationSyncConsumer";
@@ -29,12 +28,12 @@ describe("AuthorizationOrganizationRelationSyncConsumer", () => {
       version: OrganizationRelationCreatedEvent.version,
       schema: OrganizationRelationCreatedEvent.schema,
       source: "pine/platform-service",
-      subject: "org-1:admin:user-1",
+      subject: "org-1:admins:user-1",
       data: {
-        id: "org-1:admin:user-1",
+        id: "org-1:admins:user-1",
         organizationId: "org-1",
         identityId: "user-1",
-        relation: ADMIN,
+        relation: "admins",
         createdAt: "2026-01-01T00:00:00.000Z",
       },
     });
@@ -43,7 +42,7 @@ describe("AuthorizationOrganizationRelationSyncConsumer", () => {
 
     expect(authorizationGraphProvider.createRelationship).toHaveBeenCalledWith({
       object: { namespace: "Organization", id: "org-1" },
-      relation: ADMIN,
+      relation: "admins",
       subject: { namespace: "Identity", id: "user-1" },
     });
     expect(message.ack).toHaveBeenCalled();
@@ -64,12 +63,12 @@ describe("AuthorizationOrganizationRelationSyncConsumer", () => {
         version: OrganizationRelationCreatedEvent.version,
         schema: OrganizationRelationCreatedEvent.schema,
         source: "pine/platform-service",
-        subject: "org-1:owner:user-2",
+        subject: "org-1:owners:user-2",
         data: {
-          id: "org-1:owner:user-2",
+          id: "org-1:owners:user-2",
           organizationId: "org-1",
           identityId: "user-2",
-          relation: OWNER,
+          relation: "owners",
           createdAt: "2026-01-01T00:00:00.000Z",
         },
       }),
@@ -82,12 +81,12 @@ describe("AuthorizationOrganizationRelationSyncConsumer", () => {
         version: OrganizationRelationCreatedEvent.version,
         schema: OrganizationRelationCreatedEvent.schema,
         source: "pine/platform-service",
-        subject: "org-1:member:user-3",
+        subject: "org-1:members:user-3",
         data: {
-          id: "org-1:member:user-3",
+          id: "org-1:members:user-3",
           organizationId: "org-1",
           identityId: "user-3",
-          relation: MEMBER,
+          relation: "members",
           createdAt: "2026-01-01T00:00:00.000Z",
         },
       }),
@@ -95,12 +94,12 @@ describe("AuthorizationOrganizationRelationSyncConsumer", () => {
 
     expect(authorizationGraphProvider.createRelationship).toHaveBeenCalledWith({
       object: { namespace: "Organization", id: "org-1" },
-      relation: OWNER,
+      relation: "owners",
       subject: { namespace: "Identity", id: "user-2" },
     });
     expect(authorizationGraphProvider.createRelationship).toHaveBeenCalledWith({
       object: { namespace: "Organization", id: "org-1" },
-      relation: MEMBER,
+      relation: "members",
       subject: { namespace: "Identity", id: "user-3" },
     });
   });

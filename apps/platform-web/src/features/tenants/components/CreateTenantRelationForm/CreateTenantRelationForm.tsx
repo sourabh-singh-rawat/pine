@@ -4,19 +4,13 @@ import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
-import { ADMIN, ALL_TENANT_ROLES, MEMBER, OWNER } from "@pine/authorization";
 import { useCreateTenantRelationMutation, useFindIdentitiesQuery } from "@generated/gql";
 import { PrimaryButton, SecondaryButton } from "@pine/ui";
 import { useForm } from "@tanstack/react-form";
 import { useQueryClient } from "@tanstack/react-query";
 import { getErrorMessage, useSnackbar } from "@shared/ui";
 
-const tenantRelations = [OWNER, ADMIN, MEMBER];
-
-const relationLabel = (relation: string): string => {
-  const definition = ALL_TENANT_ROLES.find((role) => role.relation === relation);
-  return definition?.name ?? relation;
-};
+const tenantRelations = ["owners", "admins", "members"];
 
 export type CreateTenantRelationFormValues = {
   identityId: string;
@@ -168,7 +162,7 @@ export const CreateTenantRelationForm = ({
                   </MenuItem>
                   {tenantRelations.map((relation) => (
                     <MenuItem key={relation} value={relation}>
-                      {relationLabel(relation)}
+                      {relation}
                     </MenuItem>
                   ))}
                 </Select>

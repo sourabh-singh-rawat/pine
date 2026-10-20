@@ -1,4 +1,3 @@
-import { LIST_SPACE, OWNER } from "@pine/authorization";
 import { createCloudEvent, ListCreatedEvent } from "@pine/events";
 import { describe, expect, it, vi } from "vitest";
 import { AuthorizationListSyncConsumer } from "@/features/issues/consumers/AuthorizationListSyncConsumer";
@@ -41,12 +40,12 @@ describe("AuthorizationListSyncConsumer", () => {
 
     expect(authorizationGraphProvider.createRelationship).toHaveBeenCalledWith({
       object: { namespace: "List", id: "list-1" },
-      relation: LIST_SPACE,
+      relation: "space",
       subject: { namespace: "Space", id: "space-1" },
     });
     expect(authorizationGraphProvider.createRelationship).toHaveBeenCalledWith({
       object: { namespace: "List", id: "list-1" },
-      relation: OWNER,
+      relation: "owners",
       subject: { namespace: "Identity", id: "user-1" },
     });
     expect(message.ack).toHaveBeenCalled();

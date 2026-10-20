@@ -1,10 +1,4 @@
-import {
-  ADMIN,
-  MEMBER,
-  platformAdminRelationship,
-  platformMemberRelationship,
-  type GraphRelationship,
-} from "@pine/authorization";
+import { PLATFORM_OBJECT_ID, relationship, type GraphRelationship } from "@pine/authorization";
 import {
   type CloudEvent,
   type IBroker,
@@ -59,11 +53,26 @@ export class AuthorizationPlatformRelationSyncConsumer extends Consumer<
   }
 
   private relationshipFor(data: PlatformRelationCreatedData): GraphRelationship | undefined {
-    if (data.relation === ADMIN) {
-      return platformAdminRelationship(data.identityId);
+    if (data.relation === "owners") {
+      return relationship({
+        object: { namespace: "Platform", id: PLATFORM_OBJECT_ID },
+        relation: "owners",
+        subject: { namespace: "Identity", id: data.identityId },
+      });
     }
-    if (data.relation === MEMBER) {
-      return platformMemberRelationship(data.identityId);
+    if (data.relation === "admins") {
+      return relationship({
+        object: { namespace: "Platform", id: PLATFORM_OBJECT_ID },
+        relation: "admins",
+        subject: { namespace: "Identity", id: data.identityId },
+      });
+    }
+    if (data.relation === "members") {
+      return relationship({
+        object: { namespace: "Platform", id: PLATFORM_OBJECT_ID },
+        relation: "members",
+        subject: { namespace: "Identity", id: data.identityId },
+      });
     }
     return undefined;
   }

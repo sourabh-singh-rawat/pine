@@ -1,0 +1,11 @@
+query GetOrganizationTypes($tenantId: String!) {
+  getOrganizationTypes(tenantId: $tenantId) {
+    id
+    tenantId
+    parentOrganizationTypeId
+    name
+    slug
+    description
+    isActive
+  }
+}

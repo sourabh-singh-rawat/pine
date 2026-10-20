@@ -1,12 +1,4 @@
-import {
-  ADMIN,
-  MEMBER,
-  OWNER,
-  tenantAdminRelationship,
-  tenantMemberRelationship,
-  tenantOwnerRelationship,
-  type GraphRelationship,
-} from "@pine/authorization";
+import { relationship, type GraphRelationship } from "@pine/authorization";
 import {
   type CloudEvent,
   type IBroker,
@@ -61,14 +53,26 @@ export class AuthorizationTenantRelationSyncConsumer extends Consumer<
   }
 
   private relationshipFor(data: TenantRelationCreatedData): GraphRelationship | undefined {
-    if (data.relation === OWNER) {
-      return tenantOwnerRelationship(data.tenantId, data.identityId);
+    if (data.relation === "owners") {
+      return relationship({
+        object: { namespace: "Tenant", id: data.tenantId },
+        relation: "owners",
+        subject: { namespace: "Identity", id: data.identityId },
+      });
     }
-    if (data.relation === ADMIN) {
-      return tenantAdminRelationship(data.tenantId, data.identityId);
+    if (data.relation === "admins") {
+      return relationship({
+        object: { namespace: "Tenant", id: data.tenantId },
+        relation: "admins",
+        subject: { namespace: "Identity", id: data.identityId },
+      });
     }
-    if (data.relation === MEMBER) {
-      return tenantMemberRelationship(data.tenantId, data.identityId);
+    if (data.relation === "members") {
+      return relationship({
+        object: { namespace: "Tenant", id: data.tenantId },
+        relation: "members",
+        subject: { namespace: "Identity", id: data.identityId },
+      });
     }
     return undefined;
   }

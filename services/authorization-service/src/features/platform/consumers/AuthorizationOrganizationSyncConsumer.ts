@@ -1,8 +1,4 @@
-import {
-  organizationParentsRelationship,
-  organizationTenantRelationship,
-  type GraphRelationship,
-} from "@pine/authorization";
+import { relationship, type GraphRelationship } from "@pine/authorization";
 import {
   type CloudEvent,
   type IBroker,
@@ -78,14 +74,22 @@ export class AuthorizationOrganizationSyncConsumer extends Consumer<
       if (data.previousParentOrganizationId) {
         await removeRelationship(
           this.authorizationGraphProvider,
-          organizationParentsRelationship(data.id, data.previousParentOrganizationId),
+          relationship({
+            object: { namespace: "Organization", id: data.id },
+            relation: "parents",
+            subject: { namespace: "Organization", id: data.previousParentOrganizationId },
+          }),
         );
       }
 
       if (data.parentOrganizationId) {
         await ensureRelationship(
           this.authorizationGraphProvider,
-          organizationParentsRelationship(data.id, data.parentOrganizationId),
+          relationship({
+            object: { namespace: "Organization", id: data.id },
+            relation: "parents",
+            subject: { namespace: "Organization", id: data.parentOrganizationId },
+          }),
         );
       }
 
@@ -113,11 +117,21 @@ export class AuthorizationOrganizationSyncConsumer extends Consumer<
 
   private createdGraph(data: OrganizationCreatedData): GraphRelationship[] {
     const relationships: GraphRelationship[] = [
-      organizationTenantRelationship(data.id, data.tenantId),
+      relationship({
+        object: { namespace: "Organization", id: data.id },
+        relation: "tenant",
+        subject: { namespace: "Tenant", id: data.tenantId },
+      }),
     ];
 
     if (data.parentOrganizationId) {
-      relationships.push(organizationParentsRelationship(data.id, data.parentOrganizationId));
+      relationships.push(
+        relationship({
+          object: { namespace: "Organization", id: data.id },
+          relation: "parents",
+          subject: { namespace: "Organization", id: data.parentOrganizationId },
+        }),
+      );
     }
 
     return relationships;
@@ -125,11 +139,21 @@ export class AuthorizationOrganizationSyncConsumer extends Consumer<
 
   private deletedGraph(data: OrganizationDeletedData): GraphRelationship[] {
     const relationships: GraphRelationship[] = [
-      organizationTenantRelationship(data.id, data.tenantId),
+      relationship({
+        object: { namespace: "Organization", id: data.id },
+        relation: "tenant",
+        subject: { namespace: "Tenant", id: data.tenantId },
+      }),
     ];
 
     if (data.parentOrganizationId) {
-      relationships.push(organizationParentsRelationship(data.id, data.parentOrganizationId));
+      relationships.push(
+        relationship({
+          object: { namespace: "Organization", id: data.id },
+          relation: "parents",
+          subject: { namespace: "Organization", id: data.parentOrganizationId },
+        }),
+      );
     }
 
     return relationships;

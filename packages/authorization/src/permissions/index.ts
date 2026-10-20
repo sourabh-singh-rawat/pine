@@ -12,7 +12,6 @@ export {
   PERMISSION_GRANT_PERMISSIONS,
   ALL_PERMISSIONS,
   type Permission,
-  type PermissionKey,
   type ProfilePermission,
   type PlatformPermission,
   type TenantPermission,

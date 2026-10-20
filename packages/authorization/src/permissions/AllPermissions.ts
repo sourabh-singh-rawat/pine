@@ -10,7 +10,7 @@ export type TenantPermission =
   | "configure"
   | "manage_members"
   | "create_organization"
-  | "manage_office_types"
+  | "manage_organization_types"
   | "assign_admin"
   | "assign_owner"
   | "suspend"
@@ -45,17 +45,6 @@ export type Permission =
   | RolePermission
   | PermissionGrantPermission;
 
-export type PermissionKey =
-  | `Profile:${ProfilePermission}`
-  | `Platform:${PlatformPermission}`
-  | `Tenant:${TenantPermission}`
-  | `Organization:${OrganizationPermission}`
-  | `Space:${SpacePermission}`
-  | `List:${ListPermission}`
-  | `Item:${ItemPermission}`
-  | `Role:${RolePermission}`
-  | `Permission:${PermissionGrantPermission}`;
-
 export const PROFILE_PERMISSIONS: readonly ProfilePermission[] = ["read", "update"];
 
 export const PLATFORM_PERMISSIONS: readonly PlatformPermission[] = [
@@ -70,7 +59,7 @@ export const TENANT_PERMISSIONS: readonly TenantPermission[] = [
   "configure",
   "manage_members",
   "create_organization",
-  "manage_office_types",
+  "manage_organization_types",
   "assign_admin",
   "assign_owner",
   "suspend",

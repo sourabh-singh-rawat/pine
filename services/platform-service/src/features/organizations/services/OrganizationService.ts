@@ -1,4 +1,4 @@
-import { OWNER, requirePermission, type IAuthorizationClient } from "@pine/authorization";
+import { requirePermission, type IAuthorizationClient } from "@pine/authorization";
 import {
   CloudEvent,
   createCloudEvent,
@@ -30,10 +30,10 @@ import type {
 } from "@/features/organizations/services/IOrganizationService";
 import { buildOrganizationForest, type OrganizationNode } from "@/features/organizations/utils";
 import {
-  InvalidParentOfficeTypeError,
-  OfficeTypeNotFoundError,
-} from "@/features/office-types/errors";
-import type { IOfficeTypeRepository } from "@/features/office-types/repositories";
+  InvalidParentOrganizationTypeError,
+  OrganizationTypeNotFoundError,
+} from "@/features/organization-types/errors";
+import type { IOrganizationTypeRepository } from "@/features/organization-types/repositories";
 import { TenantNotFoundError } from "@/features/tenants/errors";
 import type { ITenantRepository } from "@/features/tenants/repositories";
 
@@ -44,8 +44,8 @@ export class OrganizationService implements IOrganizationService {
     private readonly organizationRepository: IOrganizationRepository,
     @inject(TYPES.TenantRepository)
     private readonly tenantRepository: ITenantRepository,
-    @inject(TYPES.OfficeTypeRepository)
-    private readonly officeTypeRepository: IOfficeTypeRepository,
+    @inject(TYPES.OrganizationTypeRepository)
+    private readonly organizationTypeRepository: IOrganizationTypeRepository,
     @inject(TYPES.AuthorizationClient)
     private readonly authorizationClient: IAuthorizationClient,
     @inject(TYPES.OutboxService)
@@ -67,9 +67,13 @@ export class OrganizationService implements IOrganizationService {
       throw new TenantNotFoundError(`Tenant not found: ${input.tenantId}`);
     }
 
-    const officeType = await this.officeTypeRepository.findById(input.officeTypeId);
-    if (!officeType || officeType.tenantId !== input.tenantId) {
-      throw new OfficeTypeNotFoundError(`Office type not found in tenant: ${input.officeTypeId}`);
+    const organizationType = await this.organizationTypeRepository.findById(
+      input.organizationTypeId,
+    );
+    if (!organizationType || organizationType.tenantId !== input.tenantId) {
+      throw new OrganizationTypeNotFoundError(
+        `Organization type not found in tenant: ${input.organizationTypeId}`,
+      );
     }
 
     if (input.parentOrganizationId) {
@@ -79,14 +83,14 @@ export class OrganizationService implements IOrganizationService {
           `Parent organization not found in tenant: ${input.parentOrganizationId}`,
         );
       }
-      if (parent.officeTypeId !== officeType.parentOfficeTypeId) {
-        throw new InvalidParentOfficeTypeError(
-          `Parent organization type does not match office type: ${input.officeTypeId}`,
+      if (parent.organizationTypeId !== organizationType.parentOrganizationTypeId) {
+        throw new InvalidParentOrganizationTypeError(
+          `Parent organization type does not match organization type: ${input.organizationTypeId}`,
         );
       }
-    } else if (officeType.parentOfficeTypeId) {
+    } else if (organizationType.parentOrganizationTypeId) {
       throw new InvalidParentOrganizationError(
-        `Office type requires a parent organization: ${input.officeTypeId}`,
+        `Organization type requires a parent organization: ${input.organizationTypeId}`,
       );
     }
 
@@ -115,7 +119,7 @@ export class OrganizationService implements IOrganizationService {
         {
           tenantId: input.tenantId,
           parentOrganizationId: input.parentOrganizationId,
-          officeTypeId: input.officeTypeId,
+          organizationTypeId: input.organizationTypeId,
           name: input.name,
           slug: input.slug,
           description: input.description,
@@ -135,7 +139,7 @@ export class OrganizationService implements IOrganizationService {
           tenantId: organization.tenantId,
           name: organization.name,
           slug: organization.slug,
-          officeTypeId: organization.officeTypeId,
+          organizationTypeId: organization.organizationTypeId,
           isActive: organization.isActive,
           version: organization.version,
           createdAt: organization.createdAt.toISOString(),
@@ -158,7 +162,7 @@ export class OrganizationService implements IOrganizationService {
         { tx },
       );
 
-      const ownerRelationId = `${organization.id}:${OWNER}:${identityId}`;
+      const ownerRelationId = `${organization.id}:owners:${identityId}`;
       const ownerRelation: CloudEvent<OrganizationRelationCreatedData> = createCloudEvent({
         type: OrganizationRelationCreatedEvent.type,
         version: OrganizationRelationCreatedEvent.version,
@@ -169,7 +173,7 @@ export class OrganizationService implements IOrganizationService {
           id: ownerRelationId,
           organizationId: organization.id,
           identityId,
-          relation: OWNER,
+          relation: "owners",
           createdAt: new Date().toISOString(),
         },
       });
@@ -352,17 +356,19 @@ export class OrganizationService implements IOrganizationService {
     organization: Organization,
     parentOrganizationId: string | null,
   ): Promise<void> {
-    const officeType = await this.officeTypeRepository.findById(organization.officeTypeId);
-    if (!officeType || officeType.tenantId !== organization.tenantId) {
-      throw new OfficeTypeNotFoundError(
-        `Office type not found in tenant: ${organization.officeTypeId}`,
+    const organizationType = await this.organizationTypeRepository.findById(
+      organization.organizationTypeId,
+    );
+    if (!organizationType || organizationType.tenantId !== organization.tenantId) {
+      throw new OrganizationTypeNotFoundError(
+        `Organization type not found in tenant: ${organization.organizationTypeId}`,
       );
     }
 
     if (!parentOrganizationId) {
-      if (officeType.parentOfficeTypeId) {
+      if (organizationType.parentOrganizationTypeId) {
         throw new InvalidParentOrganizationError(
-          `Office type requires a parent organization: ${organization.officeTypeId}`,
+          `Organization type requires a parent organization: ${organization.organizationTypeId}`,
         );
       }
       return;
@@ -381,9 +387,9 @@ export class OrganizationService implements IOrganizationService {
       );
     }
 
-    if (parent.officeTypeId !== officeType.parentOfficeTypeId) {
-      throw new InvalidParentOfficeTypeError(
-        `Parent organization type does not match office type: ${organization.officeTypeId}`,
+    if (parent.organizationTypeId !== organizationType.parentOrganizationTypeId) {
+      throw new InvalidParentOrganizationTypeError(
+        `Parent organization type does not match organization type: ${organization.organizationTypeId}`,
       );
     }
 

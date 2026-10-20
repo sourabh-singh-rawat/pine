@@ -6,7 +6,7 @@ import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import {
   useCreateOrganizationMutation,
-  useGetOfficeTypesQuery,
+  useGetOrganizationTypesQuery,
   useGetOrganizationsQuery,
 } from "@generated/gql";
 import { PrimaryButton, SecondaryButton, TextField } from "@pine/ui";
@@ -19,7 +19,7 @@ export type CreateOrganizationFormValues = {
   slug: string;
   description: string;
   parentOrganizationId: string;
-  officeTypeId: string;
+  organizationTypeId: string;
 };
 
 export type CreateOrganizationFormProps = {
@@ -33,7 +33,7 @@ const defaultValues: CreateOrganizationFormValues = {
   slug: "",
   description: "",
   parentOrganizationId: "",
-  officeTypeId: "",
+  organizationTypeId: "",
 };
 
 const requiredString = (value: string, label: string): string | undefined => {
@@ -61,14 +61,14 @@ export const CreateOrganizationForm = ({
   );
 
   const parentOptions = organizationsQuery.data ?? [];
-  const officeTypesQuery = useGetOfficeTypesQuery(
+  const organizationTypesQuery = useGetOrganizationTypesQuery(
     { tenantId },
     {
-      select: (data) => data.getOfficeTypes ?? [],
+      select: (data) => data.getOrganizationTypes ?? [],
       enabled: Boolean(tenantId),
     },
   );
-  const officeTypes = officeTypesQuery.data ?? [];
+  const organizationTypes = organizationTypesQuery.data ?? [];
 
   const form = useForm({
     defaultValues,
@@ -82,7 +82,7 @@ export const CreateOrganizationForm = ({
             slug: value.slug.trim(),
             description: value.description.trim() || undefined,
             parentOrganizationId: parentOrganizationId || undefined,
-            officeTypeId: value.officeTypeId.trim(),
+            organizationTypeId: value.organizationTypeId.trim(),
           },
         });
 
@@ -143,15 +143,15 @@ export const CreateOrganizationForm = ({
         </form.Field>
 
         <form.Field
-          name="officeTypeId"
+          name="organizationTypeId"
           validators={{
-            onChange: ({ value }) => requiredString(value, "Office type"),
+            onChange: ({ value }) => requiredString(value, "Organization type"),
           }}
         >
           {(field) => (
             <Box>
               <Typography variant="body2" sx={{ pb: 1, fontWeight: 500 }}>
-                Office type
+                Organization type
               </Typography>
               <FormControl fullWidth size="small">
                 <Select
@@ -163,26 +163,26 @@ export const CreateOrganizationForm = ({
                   onChange={(event) => {
                     field.handleChange(event.target.value);
                   }}
-                  disabled={officeTypesQuery.isPending}
+                  disabled={organizationTypesQuery.isPending}
                 >
                   <MenuItem value="">
-                    <em>Select an office type</em>
+                    <em>Select an organization type</em>
                   </MenuItem>
-                  {officeTypes.map((officeType) => {
-                    const id = officeType.id;
+                  {organizationTypes.map((organizationType) => {
+                    const id = organizationType.id;
                     if (!id) {
                       return null;
                     }
                     return (
                       <MenuItem key={id} value={id}>
-                        {officeType.name ?? officeType.slug ?? id}
+                        {organizationType.name ?? organizationType.slug ?? id}
                       </MenuItem>
                     );
                   })}
                 </Select>
               </FormControl>
               <Typography variant="body1" color="text.secondary" sx={{ mt: 1 }}>
-                Create office types on the Office types tab when this list is empty.
+                Create organization types on the Organization types tab when this list is empty.
               </Typography>
             </Box>
           )}
