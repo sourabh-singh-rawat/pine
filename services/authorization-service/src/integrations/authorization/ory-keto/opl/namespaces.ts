@@ -36,52 +36,31 @@ export class Tenant implements Namespace {
     owners: Identity[];
     admins: Identity[];
     members: Identity[];
-    platform: Platform[];
   };
 
   permits = {
     read: (ctx: Context) =>
       this.related.members.includes(ctx.subject) ||
       this.related.admins.includes(ctx.subject) ||
-      this.related.owners.includes(ctx.subject) ||
-      this.related.platform.traverse((item) => item.permits.read(ctx)),
+      this.related.owners.includes(ctx.subject),
     read_list: (ctx: Context) =>
       this.related.members.includes(ctx.subject) ||
       this.related.admins.includes(ctx.subject) ||
-      this.related.owners.includes(ctx.subject) ||
-      this.related.platform.traverse((item) => item.permits.read(ctx)),
+      this.related.owners.includes(ctx.subject),
     configure: (ctx: Context) =>
-      this.related.admins.includes(ctx.subject) ||
-      this.related.owners.includes(ctx.subject) ||
-      this.related.platform.traverse((item) => item.related.owners.includes(ctx.subject)) ||
-      this.related.platform.traverse((item) => item.related.admins.includes(ctx.subject)),
+      this.related.admins.includes(ctx.subject) || this.related.owners.includes(ctx.subject),
     manage_members: (ctx: Context) =>
-      this.related.admins.includes(ctx.subject) ||
-      this.related.owners.includes(ctx.subject) ||
-      this.related.platform.traverse((item) => item.related.owners.includes(ctx.subject)) ||
-      this.related.platform.traverse((item) => item.related.admins.includes(ctx.subject)),
+      this.related.admins.includes(ctx.subject) || this.related.owners.includes(ctx.subject),
     create_organization: (ctx: Context) =>
       this.related.admins.includes(ctx.subject) || this.related.owners.includes(ctx.subject),
     manage_organization_types: (ctx: Context) =>
       this.related.admins.includes(ctx.subject) || this.related.owners.includes(ctx.subject),
     administer: (ctx: Context) =>
       this.related.admins.includes(ctx.subject) || this.related.owners.includes(ctx.subject),
-    assign_admin: (ctx: Context) =>
-      this.related.owners.includes(ctx.subject) ||
-      this.related.platform.traverse((item) => item.related.owners.includes(ctx.subject)) ||
-      this.related.platform.traverse((item) => item.related.admins.includes(ctx.subject)),
-    assign_owner: (ctx: Context) =>
-      this.related.owners.includes(ctx.subject) ||
-      this.related.platform.traverse((item) => item.related.owners.includes(ctx.subject)) ||
-      this.related.platform.traverse((item) => item.related.admins.includes(ctx.subject)),
-    suspend: (ctx: Context) =>
-      this.related.owners.includes(ctx.subject) ||
-      this.related.platform.traverse((item) => item.related.owners.includes(ctx.subject)) ||
-      this.related.platform.traverse((item) => item.related.admins.includes(ctx.subject)),
-    delete: (ctx: Context) =>
-      this.related.owners.includes(ctx.subject) ||
-      this.related.platform.traverse((item) => item.related.owners.includes(ctx.subject)) ||
-      this.related.platform.traverse((item) => item.related.admins.includes(ctx.subject)),
+    assign_admin: (ctx: Context) => this.related.owners.includes(ctx.subject),
+    assign_owner: (ctx: Context) => this.related.owners.includes(ctx.subject),
+    suspend: (ctx: Context) => this.related.owners.includes(ctx.subject),
+    delete: (ctx: Context) => this.related.owners.includes(ctx.subject),
   };
 }
 

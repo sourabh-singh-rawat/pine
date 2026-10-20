@@ -2,7 +2,7 @@ export type ProfileRelation = "identity";
 
 export type PlatformRelation = "owners" | "admins" | "members";
 
-export type TenantRelation = "owners" | "admins" | "members" | "platform";
+export type TenantRelation = "owners" | "admins" | "members";
 
 export type OrganizationRelation = "owners" | "admins" | "members" | "tenant" | "parents";
 
@@ -67,12 +67,7 @@ export const PROFILE_RELATIONS: readonly ProfileRelation[] = ["identity"];
 
 export const PLATFORM_RELATIONS: readonly PlatformRelation[] = ["owners", "admins", "members"];
 
-export const TENANT_RELATIONS: readonly TenantRelation[] = [
-  "owners",
-  "admins",
-  "members",
-  "platform",
-];
+export const TENANT_RELATIONS: readonly TenantRelation[] = ["owners", "admins", "members"];
 
 export const ORGANIZATION_RELATIONS: readonly OrganizationRelation[] = [
   "owners",
