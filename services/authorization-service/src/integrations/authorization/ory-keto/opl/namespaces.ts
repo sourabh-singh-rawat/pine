@@ -1,4 +1,4 @@
-import { Context, Namespace } from "@ory/keto-namespace-types";
+import { Context, Namespace, SubjectSet } from "@ory/keto-namespace-types";
 
 export class Identity implements Namespace {}
 
@@ -33,8 +33,8 @@ export class Platform implements Namespace {
 
 export class Tenant implements Namespace {
   related: {
-    owners: Identity[];
-    admins: Identity[];
+    owners: (Identity | SubjectSet<Platform, "owners">)[];
+    admins: (Identity | SubjectSet<Platform, "admins">)[];
     members: Identity[];
   };
 
