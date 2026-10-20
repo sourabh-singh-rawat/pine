@@ -195,9 +195,9 @@ export type CreateTenantInput = {
   slug: Scalars['String']['input'];
 };
 
-export type CreateTenantRelationInput = {
+export type CreateTenantMemberInput = {
   identityId: Scalars['String']['input'];
-  relation: Scalars['String']['input'];
+  role: Scalars['String']['input'];
   tenantId: Scalars['String']['input'];
 };
 
@@ -241,7 +241,15 @@ export type IdentityRelationsObject = {
   identityId?: Maybe<Scalars['String']['output']>;
   organizations?: Maybe<Array<OrganizationRelationObject>>;
   platform?: Maybe<Array<PlatformRelationObject>>;
-  tenants?: Maybe<Array<TenantRelationObject>>;
+  tenants?: Maybe<Array<IdentityTenantRelationObject>>;
+};
+
+export type IdentityTenantRelationObject = {
+  __typename?: 'IdentityTenantRelationObject';
+  id?: Maybe<Scalars['String']['output']>;
+  identityId?: Maybe<Scalars['String']['output']>;
+  relation?: Maybe<Scalars['String']['output']>;
+  tenantId?: Maybe<Scalars['String']['output']>;
 };
 
 export type ItemAttachmentObject = {
@@ -340,7 +348,7 @@ export type Mutation = {
   createStatus?: Maybe<StatusObject>;
   createTag?: Maybe<TagObject>;
   createTenant?: Maybe<TenantObject>;
-  createTenantRelation?: Maybe<TenantRelationObject>;
+  createTenantMember?: Maybe<TenantMemberObject>;
   deleteAttachment?: Maybe<Scalars['String']['output']>;
   deleteChecklist?: Maybe<Scalars['Boolean']['output']>;
   deleteChecklistEntry?: Maybe<Scalars['Boolean']['output']>;
@@ -354,7 +362,7 @@ export type Mutation = {
   deleteStatus?: Maybe<Scalars['Boolean']['output']>;
   deleteTag?: Maybe<Scalars['Boolean']['output']>;
   deleteTenant?: Maybe<Scalars['String']['output']>;
-  deleteTenantRelation?: Maybe<Scalars['Boolean']['output']>;
+  deleteTenantMember?: Maybe<Scalars['Boolean']['output']>;
   hello?: Maybe<Scalars['String']['output']>;
   reorderChecklistEntries?: Maybe<Array<ChecklistEntryObject>>;
   reorderListItems?: Maybe<Array<ItemObject>>;
@@ -371,6 +379,7 @@ export type Mutation = {
   updateSpace?: Maybe<Scalars['String']['output']>;
   updateStatus?: Maybe<StatusObject>;
   updateTag?: Maybe<TagObject>;
+  updateTenantMemberRole?: Maybe<TenantMemberObject>;
 };
 
 
@@ -459,8 +468,8 @@ export type MutationCreateTenantArgs = {
 };
 
 
-export type MutationCreateTenantRelationArgs = {
-  input: CreateTenantRelationInput;
+export type MutationCreateTenantMemberArgs = {
+  input: CreateTenantMemberInput;
 };
 
 
@@ -530,7 +539,7 @@ export type MutationDeleteTenantArgs = {
 };
 
 
-export type MutationDeleteTenantRelationArgs = {
+export type MutationDeleteTenantMemberArgs = {
   id: Scalars['String']['input'];
 };
 
@@ -608,6 +617,11 @@ export type MutationUpdateStatusArgs = {
 
 export type MutationUpdateTagArgs = {
   input: UpdateTagInput;
+};
+
+
+export type MutationUpdateTenantMemberRoleArgs = {
+  input: UpdateTenantMemberRoleInput;
 };
 
 export type OrganizationObject = {
@@ -745,8 +759,8 @@ export type Query = {
   getSubItems?: Maybe<Array<ItemObject>>;
   getTags?: Maybe<Array<TagObject>>;
   getTenant?: Maybe<TenantObject>;
-  getTenantRelation?: Maybe<TenantRelationObject>;
-  getTenantRelations?: Maybe<Array<TenantRelationObject>>;
+  getTenantMember?: Maybe<TenantMemberObject>;
+  getTenantMembers?: Maybe<Array<TenantMemberObject>>;
   getTenants?: Maybe<Array<TenantObject>>;
   hello?: Maybe<HelloXyz>;
   hello2?: Maybe<Scalars['String']['output']>;
@@ -888,14 +902,12 @@ export type QueryGetTenantArgs = {
 };
 
 
-export type QueryGetTenantRelationArgs = {
+export type QueryGetTenantMemberArgs = {
   id: Scalars['String']['input'];
 };
 
 
-export type QueryGetTenantRelationsArgs = {
-  identityId?: InputMaybe<Scalars['String']['input']>;
-  relation?: InputMaybe<Scalars['String']['input']>;
+export type QueryGetTenantMembersArgs = {
   tenantId: Scalars['String']['input'];
 };
 
@@ -955,6 +967,16 @@ export type TagObject = {
   spaceId?: Maybe<Scalars['String']['output']>;
 };
 
+export type TenantMemberObject = {
+  __typename?: 'TenantMemberObject';
+  createdAt?: Maybe<Scalars['DateTimeISO']['output']>;
+  id?: Maybe<Scalars['String']['output']>;
+  identityId?: Maybe<Scalars['String']['output']>;
+  role?: Maybe<Scalars['String']['output']>;
+  tenantId?: Maybe<Scalars['String']['output']>;
+  updatedAt?: Maybe<Scalars['DateTimeISO']['output']>;
+};
+
 export type TenantObject = {
   __typename?: 'TenantObject';
   createdAt?: Maybe<Scalars['DateTimeISO']['output']>;
@@ -964,14 +986,6 @@ export type TenantObject = {
   name?: Maybe<Scalars['String']['output']>;
   slug?: Maybe<Scalars['String']['output']>;
   updatedAt?: Maybe<Scalars['DateTimeISO']['output']>;
-};
-
-export type TenantRelationObject = {
-  __typename?: 'TenantRelationObject';
-  id?: Maybe<Scalars['String']['output']>;
-  identityId?: Maybe<Scalars['String']['output']>;
-  relation?: Maybe<Scalars['String']['output']>;
-  tenantId?: Maybe<Scalars['String']['output']>;
 };
 
 export type UpdateChecklistEntryInput = {
@@ -1033,6 +1047,11 @@ export type UpdateTagInput = {
   description?: InputMaybe<Scalars['String']['input']>;
   id: Scalars['String']['input'];
   name?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type UpdateTenantMemberRoleInput = {
+  id: Scalars['String']['input'];
+  role: Scalars['String']['input'];
 };
 
 export type Join__Graph =

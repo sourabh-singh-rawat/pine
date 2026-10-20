@@ -71,6 +71,13 @@
       "when": 1791564930638,
       "tag": "0009_milky_sleepwalker",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1792499173401,
+      "tag": "0010_nasty_luke_cage",
+      "breakpoints": true
     }
   ]
 }

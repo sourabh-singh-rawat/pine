@@ -27,27 +27,32 @@ features/<feature>/
 
 ## Interface
 
-Drop the noun already on the type. Domain verbs — not repository `save` / `findById`.
+Explicit domain verbs are preferred (e.g. `createTenantMember`, `getTenantMemberById`, `listTenantMembers`, `deleteTenantMember`, `updateTenantMemberRole`). Concise forms (`create`, `getById`, `list`, `update`, `delete`) are also permitted where clear.
 
-| Method              | Meaning                                                    |
-| ------------------- | ---------------------------------------------------------- |
-| `create`            | business create (authz + validate + tx + outbox as needed) |
-| `getById`           | one; **throws** not-found                                  |
-| `list` / `listMine` | many                                                       |
-| `update` / `delete` | mutate                                                     |
+| Method                                          | Meaning                                                    |
+| ----------------------------------------------- | ---------------------------------------------------------- |
+| `createFoo` / `create`                          | business create (authz + validate + tx + outbox as needed) |
+| `getFooById` / `getById`                        | one; **throws** not-found                                  |
+| `listFoos` / `list` / `listMine`                | many                                                       |
+| `updateFoo` / `update` / `deleteFoo` / `delete` | mutate                                                     |
 
 ```ts
-export interface IOrganizationService {
-  create: (input: CreateOrganizationInput, identityId: string) => Promise<Organization>;
-  getById: (id: string, identityId: string) => Promise<Organization>;
-  list: (input: ListOrganizationsInput, identityId: string) => Promise<Organization[]>;
-  listMine: (identityId: string) => Promise<OrganizationNode[]>;
-  update: (id: string, input: UpdateOrganizationInput, identityId: string) => Promise<Organization>;
-  delete: (id: string, identityId: string) => Promise<void>;
+export interface ITenantMemberService {
+  createTenantMember: (input: CreateTenantMemberInput, actorId: string) => Promise<TenantMember>;
+  getTenantMemberById: (id: string, actorId: string) => Promise<TenantMember>;
+  listTenantMembers: (tenantId: string, actorId: string) => Promise<TenantMember[]>;
+  updateTenantMemberRole: (
+    id: string,
+    role: string,
+    actorId: string,
+  ) => Promise<TenantMember>;
+  deleteTenantMember: (id: string, actorId: string) => Promise<void>;
 }
 ```
 
-If the type is not the resource, keep the resource: `IAdminService.createIdentity`. When editing a long-form service (`createIssue`, `getTenantById`), rename **that** service + internal callers only — never GraphQL fields / HTTP `operationId`s in the same cleanup.
+The parameter representing the authenticated caller checked for authorization is always named `actorId: string`. Reserve `identityId: string` for domain entities and target identities.
+
+Never rename GraphQL fields, HTTP `operationId`s, or event payloads as part of a service cleanup.
 
 ## Recipe
 
@@ -93,11 +98,11 @@ TYPES.OrganizationService = Symbol.for("IOrganizationService");
 container.bind<IOrganizationService>(TYPES.OrganizationService).to(OrganizationService);
 ```
 
-| Transport                 | Call                            |
-| ------------------------- | ------------------------------- |
+| Transport                    | Call                               |
+| ---------------------------- | ---------------------------------- |
 | GraphQL `createOrganization` | `organizationService.create(...)`  |
 | GraphQL `getOrganization`    | `organizationService.getById(...)` |
-| HTTP handler              | same short verbs                |
+| HTTP handler                 | same short verbs                   |
 
 Resolvers and routes: one service call after mapping args.
 
@@ -108,6 +113,7 @@ Resolvers and routes: one service call after mapping args.
 - GraphQL / HTTP parsing here
 - Publishing unmapped DB rows as CloudEvent data
 - Skipping colocated tests for non-trivial tx/outbox paths
+- Separate event factory or helper files (`events.ts`) — inline `createCloudEvent` and `outboxService.schedule` directly inside service methods or class private helpers
 
 ## Done when
 

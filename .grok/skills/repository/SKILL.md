@@ -57,35 +57,47 @@ Table TS only. Migration generate/apply: `AGENTS.md`.
 
 ## Interface
 
-Drop the entity noun. Persistence verbs — not domain `create` / `getById`.
+Explicit persistence method names (e.g. `saveTenantMember`, `findTenantMemberById`, `listTenantMembersByTenantId`) are preferred. Concise forms (`save`, `findById`, `findMany`) are also permitted where clear.
 
-| Method                                | Meaning                                       |
-| ------------------------------------- | --------------------------------------------- |
-| `save`                                | insert                                        |
-| `update`                              | patch; return row or `null`                   |
-| `findById` / `findByIds` / `findMany` | read; **null / empty**, never throw not-found |
-| `existsBy…`                           | boolean existence                             |
-| `softDelete` / `hardDelete`           | delete                                        |
+| Method                                                | Meaning                                       |
+| ----------------------------------------------------- | --------------------------------------------- |
+| `saveFoo` / `save`                                    | insert                                        |
+| `updateFoo` / `update`                                | patch; return row or `null`                   |
+| `findFooById` / `findById` / `findByIds` / `findMany` | read; **null / empty**, never throw not-found |
+| `existsBy…`                                           | boolean existence                             |
+| `deleteFoo` / `softDelete` / `hardDelete`             | delete                                        |
 
 ```ts
-export type OrganizationRepositoryOptions = { tx: DbClient };
+export type TenantMemberRepositoryOptions = { tx?: DbClient };
 
-export interface IOrganizationRepository {
-  save: (entity: CreateOrganizationEntity, options?: OrganizationRepositoryOptions) => Promise<Organization>;
-  update: (
+export interface ITenantMemberRepository {
+  saveTenantMember: (
+    data: NewTenantMember,
+    options?: TenantMemberRepositoryOptions,
+  ) => Promise<TenantMember>;
+  findTenantMemberById: (
     id: string,
-    entity: UpdateOrganizationEntity,
-    options?: OrganizationRepositoryOptions,
-  ) => Promise<Organization | null>;
-  findById: (id: string) => Promise<Organization | null>;
-  findByIds: (ids: string[]) => Promise<Organization[]>;
-  findMany: (filter: ListOrganizationsFilter) => Promise<Organization[]>;
-  existsBySlugInTenant: (tenantId: string, slug: string) => Promise<boolean>;
-  softDelete: (id: string, options?: OrganizationRepositoryOptions) => Promise<boolean>;
+    options?: TenantMemberRepositoryOptions,
+  ) => Promise<TenantMember | null>;
+  findTenantMemberByTenantAndIdentity: (
+    tenantId: string,
+    identityId: string,
+    options?: TenantMemberRepositoryOptions,
+  ) => Promise<TenantMember | null>;
+  listTenantMembersByTenantId: (
+    tenantId: string,
+    options?: TenantMemberRepositoryOptions,
+  ) => Promise<TenantMember[]>;
+  updateTenantMemberRole: (
+    id: string,
+    role: string,
+    options?: TenantMemberRepositoryOptions,
+  ) => Promise<TenantMember>;
+  deleteTenantMember: (id: string, options?: TenantMemberRepositoryOptions) => Promise<boolean>;
 }
 ```
 
-Qualify filters (`existsBySlugInTenant`), not the type name (`findOrganizationById`).
+Qualify filters (`existsBySlugInTenant`, `findTenantMemberByTenantAndIdentity`).
 
 ## Recipe
 

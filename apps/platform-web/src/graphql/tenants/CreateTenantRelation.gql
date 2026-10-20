@@ -1,8 +1,0 @@
-mutation CreateTenantRelation($input: CreateTenantRelationInput!) {
-  createTenantRelation(input: $input) {
-    id
-    tenantId
-    identityId
-    relation
-  }
-}

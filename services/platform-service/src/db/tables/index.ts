@@ -17,3 +17,9 @@ export {
   OrganizationTypes,
   OrganizationTypesRelations,
 } from "@/db/tables/OrganizationTypes";
+export {
+  type TenantMember,
+  type NewTenantMember,
+  TenantMembers,
+  TenantMembersRelations,
+} from "@/db/tables/TenantMembers";

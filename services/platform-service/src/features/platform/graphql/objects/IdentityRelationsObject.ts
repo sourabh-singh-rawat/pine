@@ -1,8 +1,8 @@
 import { builder } from "@pine/server";
 import { OrganizationRelationObject } from "@/features/organizations/graphql/objects/OrganizationRelationObject";
-import type { IdentityRelations } from "@/features/platform/services/IIdentityRelationService";
+import { IdentityTenantRelationObject } from "@/features/platform/graphql/objects/IdentityTenantRelationObject";
 import { PlatformRelationObject } from "@/features/platform/graphql/objects/PlatformRelationObject";
-import { TenantRelationObject } from "@/features/tenants/graphql/objects/TenantRelationObject";
+import type { IdentityRelations } from "@/features/platform/services/IIdentityRelationService";
 
 export const IdentityRelationsObject =
   builder.objectRef<IdentityRelations>("IdentityRelationsObject");
@@ -15,7 +15,7 @@ IdentityRelationsObject.implement({
       resolve: (parent) => parent.platform,
     }),
     tenants: t.field({
-      type: [TenantRelationObject],
+      type: [IdentityTenantRelationObject],
       resolve: (parent) => parent.tenants,
     }),
     organizations: t.field({

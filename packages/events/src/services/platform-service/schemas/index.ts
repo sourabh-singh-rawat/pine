@@ -32,3 +32,11 @@ export {
   TenantRelationDeletedDataSchema,
   type TenantRelationDeletedData,
 } from "./TenantRelationDeletedDataSchema";
+export {
+  TenantMemberCreatedDataSchema,
+  type TenantMemberCreatedData,
+} from "./TenantMemberCreatedDataSchema";
+export {
+  TenantMemberDeletedDataSchema,
+  type TenantMemberDeletedData,
+} from "./TenantMemberDeletedDataSchema";

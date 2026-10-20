@@ -45,9 +45,11 @@ import {
   OrganizationTypeRepository,
   OrganizationTypeService,
 } from "@/features/organization-types";
-import { type ITenantRelationService, TenantRelationService, type ITenantRepository, type ITenantService, TenantRepository } from "@/features/tenants";
+import { type ITenantRepository, type ITenantService, TenantRepository } from "@/features/tenants";
 import { TenantService } from "@/features/tenants/services/TenantService";
+import { type ITenantMemberRepository, type ITenantMemberService, TenantMemberRepository, TenantMemberService } from "@/features/tenant-members";
 import { createContext } from "@/graphql";
+
 import { routes } from "@/routes";
 
 export const container = new Container({ defaultScope: "Singleton" });
@@ -73,8 +75,10 @@ container.bind<IWorker>(TYPES.OutboxCleanupWorker).toConstantValue(new OutboxCle
 container.bind<IAuthorizationClient>(TYPES.AuthorizationClient).toConstantValue(new HttpAuthorizationClient({ baseUrl: env.AUTHORIZATION_SERVICE_URL }));
 container.bind<ITenantRepository>(TYPES.TenantRepository).to(TenantRepository);
 container.bind<ITenantService>(TYPES.TenantService).to(TenantService);
-container.bind<ITenantRelationService>(TYPES.TenantRelationService).to(TenantRelationService);
+container.bind<ITenantMemberRepository>(TYPES.TenantMemberRepository).to(TenantMemberRepository);
+container.bind<ITenantMemberService>(TYPES.TenantMemberService).to(TenantMemberService);
 container.bind<IOrganizationRepository>(TYPES.OrganizationRepository).to(OrganizationRepository);
+
 container.bind<IOrganizationPreferenceRepository>(TYPES.OrganizationPreferenceRepository).to(OrganizationPreferenceRepository);
 container.bind<IOrganizationService>(TYPES.OrganizationService).to(OrganizationService);
 container.bind<IOrganizationPreferenceService>(TYPES.OrganizationPreferenceService).to(OrganizationPreferenceService);

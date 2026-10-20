@@ -100,12 +100,12 @@ All JetStream consumers are durable. Names are **service-local** — never in `@
 
 `readonly consumer` is both `name` and `durable_name`. Convention: `<service>-<purpose>` (consuming service token).
 
-| Service token   | Example                        |
-| --------------- | ------------------------------ |
-| `platform`      | `platform-identity-sync`       |
-| `items`         | `items-identity-sync`          |
-| `attachment`    | `attachment-identity-sync`     |
-| `notification`  | `notification-identity-sync`   |
+| Service token   | Example                           |
+| --------------- | --------------------------------- |
+| `platform`      | `platform-identity-sync`          |
+| `items`         | `items-identity-sync`             |
+| `attachment`    | `attachment-identity-sync`        |
+| `notification`  | `notification-identity-sync`      |
 | `authorization` | `authorization-organization-sync` |
 
 Purpose is the projection, not one durable per event verb. One durable name per consumer class; never share across services.
@@ -119,6 +119,7 @@ Purpose is the projection, not one durable per event verb. One durable name per 
 - Inventing a `notification` (or other) stream that is not on `Streams`
 - Creating streams inside app/bootstrap code (`NatsBroker` / `ensureStream`)
 - Import `@pine/event-bus`
+- Separate event factory or helper files (`events.ts`) — inline `createCloudEvent` and outbox scheduling directly in the service methods or class private helpers
 
 ## Done when
 

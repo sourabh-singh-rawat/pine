@@ -18,8 +18,7 @@ import {
   AuthorizationOrganizationRelationSyncConsumer,
   AuthorizationOrganizationSyncConsumer,
   AuthorizationPlatformRelationSyncConsumer,
-  AuthorizationTenantRelationSyncConsumer,
-  AuthorizationTenantSyncConsumer,
+  AuthorizationTenantMemberSyncConsumer,
 } from "@/features/platform";
 
 import type { IAuthorizationGraphProvider } from "@/integrations/authorization";
@@ -34,13 +33,13 @@ container.bind<KetoClient>(TYPES.KetoClient).toConstantValue(ketoClient);
 container.bind<IAuthorizationGraphProvider>(TYPES.AuthorizationGraphProvider).to(KetoAuthorizationGraphProvider);
 container.bind<IAuthorizationService>(TYPES.AuthorizationService).to(AuthorizationService);
 container.bind<IAuthorizationClient>(TYPES.AuthorizationClient).toConstantValue(new HttpAuthorizationClient({ baseUrl: env.AUTHORIZATION_SERVICE_URL }));
-container.bind<AuthorizationTenantSyncConsumer>(TYPES.AuthorizationTenantSyncConsumer).to(AuthorizationTenantSyncConsumer);
 container.bind<AuthorizationOrganizationSyncConsumer>(TYPES.AuthorizationOrganizationSyncConsumer).to(AuthorizationOrganizationSyncConsumer);
 container
   .bind<AuthorizationOrganizationRelationSyncConsumer>(TYPES.AuthorizationOrganizationRelationSyncConsumer)
   .to(AuthorizationOrganizationRelationSyncConsumer);
-container.bind<AuthorizationTenantRelationSyncConsumer>(TYPES.AuthorizationTenantRelationSyncConsumer).to(AuthorizationTenantRelationSyncConsumer);
+container.bind<AuthorizationTenantMemberSyncConsumer>(TYPES.AuthorizationTenantMemberSyncConsumer).to(AuthorizationTenantMemberSyncConsumer);
 container.bind<AuthorizationPlatformRelationSyncConsumer>(TYPES.AuthorizationPlatformRelationSyncConsumer).to(AuthorizationPlatformRelationSyncConsumer);
+
 container.bind<AuthorizationProfileSyncConsumer>(TYPES.AuthorizationProfileSyncConsumer).to(AuthorizationProfileSyncConsumer);
 container.bind<AuthorizationSpaceSyncConsumer>(TYPES.AuthorizationSpaceSyncConsumer).to(AuthorizationSpaceSyncConsumer);
 container.bind<AuthorizationListSyncConsumer>(TYPES.AuthorizationListSyncConsumer).to(AuthorizationListSyncConsumer);

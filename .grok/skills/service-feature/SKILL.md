@@ -39,11 +39,11 @@ services/<svc>/src/
 
 ## Feature folders
 
-| Kind                | Folder             | Examples                                               |
-| ------------------- | ------------------ | ------------------------------------------------------ |
-| Entity aggregate    | plural kebab-case  | `organizations`, `identities`, `tenants`                  |
-| Use-case / protocol | the problem        | `signin`, `oauth`, `verification`, `attachment-upload` |
-| Foreign projection  | source entity name | `identities` / `tenants` in a consuming service        |
+| Kind                | Folder             | Examples                                                   |
+| ------------------- | ------------------ | ---------------------------------------------------------- |
+| Entity aggregate    | plural kebab-case  | `organizations`, `identities`, `tenants`, `tenant-members` |
+| Use-case / protocol | the problem        | `signin`, `oauth`, `verification`, `attachment-upload`     |
+| Foreign projection  | source entity name | `identities` / `tenants` in a consuming service            |
 
 Keep aggregate + relations + transport + repos + services + errors together. Split only when the lifecycle differs (`attachment` vs `attachment-upload`). Legacy singular folders stay until a dedicated rename.
 
@@ -88,6 +88,7 @@ Live vs dead package names: `orientation`.
 - Two aggregates in one folder, or a feature per field
 - Renaming GraphQL fields / HTTP `operationId`s during a service method cleanup
 - Auto-generating Drizzle migrations
+- Separate event factory or helper files (`events.ts`) — inline event creation and outbox scheduling in the service
 
 ## Done when
 

@@ -1,15 +1,16 @@
 import {
   PLATFORM_OBJECT_ID,
-  relationship,
   requirePermission,
   type IAuthorizationClient,
 } from "@pine/authorization";
 import {
-  CloudEvent,
   createCloudEvent,
   TenantCreatedEvent,
   TenantDeletedEvent,
+  TenantMemberCreatedEvent,
+  type CloudEvent,
   type TenantCreatedData,
+  type TenantMemberCreatedData,
 } from "@pine/events";
 import type { IOutboxService } from "@pine/outbox";
 import { inject, injectable } from "inversify";
@@ -22,12 +23,15 @@ import {
 } from "@/features/tenants/errors";
 import type { ITenantRepository } from "@/features/tenants/repositories";
 import type { CreateTenantInput, ITenantService } from "@/features/tenants/services/ITenantService";
+import { TenantMemberRole, type ITenantMemberRepository } from "@/features/tenant-members";
 
 @injectable()
 export class TenantService implements ITenantService {
   constructor(
     @inject(TYPES.TenantRepository)
     private readonly tenantRepository: ITenantRepository,
+    @inject(TYPES.TenantMemberRepository)
+    private readonly tenantMemberRepository: ITenantMemberRepository,
     @inject(TYPES.AuthorizationClient)
     private readonly authorizationClient: IAuthorizationClient,
     @inject(TYPES.OutboxService)
@@ -36,10 +40,10 @@ export class TenantService implements ITenantService {
     private readonly db: Database,
   ) {}
 
-  async createTenant(input: CreateTenantInput, identityId: string): Promise<Tenant> {
+  async createTenant(input: CreateTenantInput, actorId: string): Promise<Tenant> {
     await requirePermission(
       this.authorizationClient,
-      identityId,
+      actorId,
       "create_tenant",
       `Platform:${PLATFORM_OBJECT_ID}`,
     );
@@ -65,15 +69,16 @@ export class TenantService implements ITenantService {
         { tx },
       );
 
-      await this.authorizationClient.ensureRelationship(
-        relationship({
-          object: { namespace: "Tenant", id: tenant.id },
-          relation: "owners",
-          subject: { namespace: "Identity", id: identityId },
-        }),
+      const ownerMember = await this.tenantMemberRepository.saveTenantMember(
+        {
+          tenantId: tenant.id,
+          identityId: actorId,
+          role: TenantMemberRole.OWNER,
+        },
+        { tx },
       );
 
-      const event: CloudEvent<TenantCreatedData> = createCloudEvent({
+      const tenantCreatedEvent: CloudEvent<TenantCreatedData> = createCloudEvent({
         type: TenantCreatedEvent.type,
         version: TenantCreatedEvent.version,
         schema: TenantCreatedEvent.schema,
@@ -91,14 +96,41 @@ export class TenantService implements ITenantService {
         },
       });
 
+      const memberCreatedEvent: CloudEvent<TenantMemberCreatedData> = createCloudEvent({
+        type: TenantMemberCreatedEvent.type,
+        version: TenantMemberCreatedEvent.version,
+        schema: TenantMemberCreatedEvent.schema,
+        source: "pine/platform-service",
+        subject: ownerMember.id,
+        data: {
+          id: ownerMember.id,
+          tenantId: tenant.id,
+          identityId: actorId,
+          role: TenantMemberRole.OWNER,
+          createdAt: ownerMember.createdAt.toISOString(),
+        },
+      });
+
       await this.outboxService.schedule(
         {
-          eventId: event.id,
-          eventType: event.type,
+          eventId: tenantCreatedEvent.id,
+          eventType: tenantCreatedEvent.type,
           eventVersion: TenantCreatedEvent.version,
           aggregateType: "tenant",
           aggregateId: tenant.id,
-          payload: event,
+          payload: tenantCreatedEvent,
+        },
+        { tx },
+      );
+
+      await this.outboxService.schedule(
+        {
+          eventId: memberCreatedEvent.id,
+          eventType: memberCreatedEvent.type,
+          eventVersion: TenantMemberCreatedEvent.version,
+          aggregateType: "tenant-member",
+          aggregateId: tenant.id,
+          payload: memberCreatedEvent,
         },
         { tx },
       );
@@ -107,8 +139,8 @@ export class TenantService implements ITenantService {
     });
   }
 
-  async getTenantById(id: string, identityId: string): Promise<Tenant> {
-    await requirePermission(this.authorizationClient, identityId, "read", `Tenant:${id}`);
+  async getTenantById(id: string, actorId: string): Promise<Tenant> {
+    await requirePermission(this.authorizationClient, actorId, "read", `Tenant:${id}`);
 
     const tenant = await this.tenantRepository.findById(id);
     if (!tenant) {
@@ -118,10 +150,10 @@ export class TenantService implements ITenantService {
     return tenant;
   }
 
-  async listTenants(platformId: string, identityId: string): Promise<Tenant[]> {
+  async listTenants(platformId: string, actorId: string): Promise<Tenant[]> {
     await requirePermission(
       this.authorizationClient,
-      identityId,
+      actorId,
       "read",
       `Platform:${PLATFORM_OBJECT_ID}`,
     );
@@ -129,10 +161,10 @@ export class TenantService implements ITenantService {
     return this.tenantRepository.findAll();
   }
 
-  async listMyTenants(identityId: string): Promise<Tenant[]> {
+  async listMyTenants(actorId: string): Promise<Tenant[]> {
     const relationships = await this.authorizationClient.listRelationships({
       namespace: "Tenant",
-      subject: { namespace: "Identity", id: identityId },
+      subject: { namespace: "Identity", id: actorId },
     });
 
     const tenantIds = Array.from(
@@ -146,8 +178,8 @@ export class TenantService implements ITenantService {
     return this.tenantRepository.findByIds(tenantIds);
   }
 
-  async deleteTenant(id: string, platformId: string, identityId: string): Promise<void> {
-    await requirePermission(this.authorizationClient, identityId, "suspend", `Tenant:${id}`);
+  async deleteTenant(id: string, platformId: string, actorId: string): Promise<void> {
+    await requirePermission(this.authorizationClient, actorId, "suspend", `Tenant:${id}`);
 
     await this.db.transaction(async (tx) => {
       const deleted = await this.tenantRepository.softDelete(id, { tx });
