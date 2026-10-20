@@ -13,14 +13,13 @@ import { logger } from "@/bootstrap/logger";
 import { AuthorizationService, type IAuthorizationService } from "@/features/authorization";
 import { AuthorizationProfileSyncConsumer } from "@/features/identity";
 import { AuthorizationItemSyncConsumer, AuthorizationListSyncConsumer, AuthorizationSpaceSyncConsumer } from "@/features/issues";
-
 import {
   AuthorizationOrganizationRelationSyncConsumer,
   AuthorizationOrganizationSyncConsumer,
   AuthorizationPlatformRelationSyncConsumer,
   AuthorizationTenantMemberSyncConsumer,
+  AuthorizationTenantSyncConsumer,
 } from "@/features/platform";
-
 import type { IAuthorizationGraphProvider } from "@/integrations/authorization";
 import { KetoAuthorizationGraphProvider, KetoClient } from "@/integrations/authorization/ory-keto";
 import { routes } from "@/routes";
@@ -38,6 +37,7 @@ container
   .bind<AuthorizationOrganizationRelationSyncConsumer>(TYPES.AuthorizationOrganizationRelationSyncConsumer)
   .to(AuthorizationOrganizationRelationSyncConsumer);
 container.bind<AuthorizationTenantMemberSyncConsumer>(TYPES.AuthorizationTenantMemberSyncConsumer).to(AuthorizationTenantMemberSyncConsumer);
+container.bind<AuthorizationTenantSyncConsumer>(TYPES.AuthorizationTenantSyncConsumer).to(AuthorizationTenantSyncConsumer);
 container.bind<AuthorizationPlatformRelationSyncConsumer>(TYPES.AuthorizationPlatformRelationSyncConsumer).to(AuthorizationPlatformRelationSyncConsumer);
 
 container.bind<AuthorizationProfileSyncConsumer>(TYPES.AuthorizationProfileSyncConsumer).to(AuthorizationProfileSyncConsumer);
