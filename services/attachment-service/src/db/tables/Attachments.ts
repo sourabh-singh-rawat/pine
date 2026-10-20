@@ -1,7 +1,6 @@
 import { jsonb, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
 import { idColumn } from "@/db/columns";
 import { Identities } from "@/db/tables/Identities";
-import { Tenants } from "@/db/tables/Tenants";
 import type {
   AttachmentScopeType,
   AttachmentSecurityStatus,
@@ -10,7 +9,6 @@ import type {
 
 export const Attachments = pgTable("attachments", {
   ...idColumn,
-  tenantId: uuid("tenant_id").references(() => Tenants.id),
   scopeType: text("scope_type").$type<AttachmentScopeType>().notNull(),
   scopeId: uuid("scope_id").notNull(),
   currentVersionId: uuid("current_version_id"),

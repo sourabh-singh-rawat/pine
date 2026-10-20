@@ -4,7 +4,6 @@ import type { UploadTarget } from "@/integrations/storage";
 export type CreateAttachmentUploadInput = {
   scopeType: AttachmentScopeType;
   scopeId: string;
-  tenantId?: string;
   createdBy: string;
   filename: string;
   contentType: string;

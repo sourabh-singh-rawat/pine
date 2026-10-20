@@ -33,7 +33,6 @@ import {
 } from "@/features/attachment-metadatas";
 import { AttachmentUploadRepository, AttachmentUploadService, IAttachmentUploadRepository, IAttachmentUploadService } from "@/features/attachment-upload";
 import { AttachmentIdentitySyncConsumer, IIdentityRepository, IdentityRepository } from "@/features/identities";
-import { AttachmentTenantSyncConsumer, ITenantRepository, TenantRepository } from "@/features/tenants";
 import { createContext } from "@/graphql";
 import { IObjectStorage, SeaweedObjectStorage } from "@/integrations/storage";
 import { routes } from "@/routes";
@@ -61,7 +60,6 @@ container
 container.bind<IWorker>(TYPES.OutboxCleanupWorker).toConstantValue(new OutboxCleanupWorker(container.get<IOutboxCleanupService>(TYPES.OutboxCleanupService)));
 
 container.bind<IIdentityRepository>(TYPES.IdentityRepository).to(IdentityRepository);
-container.bind<ITenantRepository>(TYPES.TenantRepository).to(TenantRepository);
 container.bind<IAttachmentRepository>(TYPES.AttachmentRepository).to(AttachmentRepository);
 container.bind<IAttachmentUploadRepository>(TYPES.AttachmentUploadRepository).to(AttachmentUploadRepository);
 container.bind<IObjectStorage>(TYPES.ObjectStorage).to(SeaweedObjectStorage);
@@ -71,7 +69,6 @@ container.bind<IAttachmentDerivativeService>(TYPES.AttachmentDerivativeService).
 container.bind<IAttachmentMetadataRepository>(TYPES.AttachmentMetadataRepository).to(AttachmentMetadataRepository);
 container.bind<IAttachmentMetadataService>(TYPES.AttachmentMetadataService).to(AttachmentMetadataService);
 container.bind<AttachmentIdentitySyncConsumer>(TYPES.AttachmentIdentitySyncConsumer).to(AttachmentIdentitySyncConsumer);
-container.bind<AttachmentTenantSyncConsumer>(TYPES.AttachmentTenantSyncConsumer).to(AttachmentTenantSyncConsumer);
 
 export const bindHttpServer = async (): Promise<void> => {
   const { schema } = await import("@/graphql/schema");

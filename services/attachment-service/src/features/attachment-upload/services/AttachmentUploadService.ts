@@ -48,7 +48,6 @@ export class AttachmentUploadService implements IAttachmentUploadService {
       id,
       scopeType: input.scopeType,
       scopeId: input.scopeId,
-      tenantId: input.tenantId ?? null,
       operationId: input.operationId,
       metadata: input.metadata,
       status: ATTACHMENT_UPLOAD_STATUS.PENDING,
@@ -102,7 +101,6 @@ export class AttachmentUploadService implements IAttachmentUploadService {
         const attachment = await this.attachmentService.createFromUpload({
           scopeType: record.scopeType,
           scopeId: record.scopeId,
-          tenantId: record.tenantId ?? undefined,
           filename: record.filename,
           contentType,
           data: input.data,
@@ -126,7 +124,6 @@ export class AttachmentUploadService implements IAttachmentUploadService {
             id: attachment.id,
             scopeType: attachment.scopeType,
             scopeId: attachment.scopeId,
-            tenantId: attachment.tenantId ?? undefined,
             currentVersionId: attachment.currentVersionId ?? undefined,
             ...(attachment.operationId ? { operationId: attachment.operationId } : {}),
             ...(attachment.metadata ? { metadata: attachment.metadata } : {}),

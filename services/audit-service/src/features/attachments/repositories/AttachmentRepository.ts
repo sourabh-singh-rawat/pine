@@ -23,7 +23,6 @@ export class AttachmentRepository implements IAttachmentRepository {
       .insert(Attachments)
       .values({
         id: entity.id,
-        tenantId: entity.tenantId ?? null,
         scopeType: entity.scopeType,
         scopeId: entity.scopeId,
         status: entity.status,
@@ -44,7 +43,6 @@ export class AttachmentRepository implements IAttachmentRepository {
         scopeType: entity.scopeType,
         scopeId: entity.scopeId,
         status: entity.status,
-        ...(entity.tenantId !== undefined ? { tenantId: entity.tenantId } : {}),
         updatedAt: now,
         version: sql`${Attachments.version} + 1`,
       })

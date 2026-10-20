@@ -46,7 +46,6 @@ export class AuditAttachmentSyncConsumer extends Consumer<CloudEvent<AttachmentC
         await this.attachmentRepository.upsert(
           {
             id: data.id,
-            tenantId: data.tenantId ?? null,
             scopeType: data.scopeType,
             scopeId: data.scopeId,
             status: data.status,
@@ -60,7 +59,6 @@ export class AuditAttachmentSyncConsumer extends Consumer<CloudEvent<AttachmentC
             entityId: data.id,
             action: "created",
             actorId: data.createdBy,
-            tenantId: data.tenantId ?? null,
             payload: { ...data },
           },
           { tx },

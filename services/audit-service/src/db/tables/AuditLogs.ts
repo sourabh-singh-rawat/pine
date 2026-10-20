@@ -8,7 +8,6 @@ export const AuditLogs = pgTable("audit_logs", {
   action: text("action").notNull(),
   actorId: uuid("actor_id"),
   organizationId: uuid("organization_id"),
-  tenantId: uuid("tenant_id"),
   payload: jsonb("payload"),
   ...auditColumns,
 });

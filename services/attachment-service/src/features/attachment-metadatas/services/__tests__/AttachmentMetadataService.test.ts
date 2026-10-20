@@ -63,7 +63,6 @@ describe("AttachmentMetadataService", () => {
     id: "att-10",
     scopeType: ATTACHMENT_SCOPE_TYPE.ORGANIZATION,
     scopeId: "org-1",
-    tenantId: "tenant-1",
     currentVersionId: "ver-10",
     operationId: null,
     metadata: null,
