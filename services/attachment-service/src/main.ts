@@ -14,7 +14,6 @@ import { bindHttpServer, broker, container, initializeDb, logger, TYPES } from "
 import { openApiOutputPath } from "@/bootstrap/container";
 import { writeSchemaToDist } from "@/bootstrap/graphql";
 import { AttachmentIdentitySyncConsumer } from "@/features/identities";
-import { AttachmentTenantSyncConsumer } from "@/features/tenants";
 
 export { container, db } from "@/bootstrap";
 export { builder, createContext } from "@/graphql";
@@ -36,7 +35,6 @@ const main = async () => {
   void container.get<IWorker>(TYPES.OutboxWorker).start();
   void container.get<IWorker>(TYPES.OutboxCleanupWorker).start();
   void container.get<AttachmentIdentitySyncConsumer>(TYPES.AttachmentIdentitySyncConsumer).start();
-  void container.get<AttachmentTenantSyncConsumer>(TYPES.AttachmentTenantSyncConsumer).start();
 };
 
 main().catch((error) => {

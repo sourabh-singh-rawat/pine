@@ -8,7 +8,6 @@ export type UpsertAttachmentEntity = {
   scopeId: string;
   status: string;
   createdBy: string;
-  tenantId?: string | null;
 };
 
 export interface IAttachmentRepository {

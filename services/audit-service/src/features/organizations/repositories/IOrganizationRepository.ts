@@ -4,7 +4,6 @@ export type OrganizationRepositoryOptions = { tx?: DbClient };
 
 export type UpsertOrganizationEntity = {
   id: string;
-  tenantId: string;
   name: string;
   slug: string;
 };

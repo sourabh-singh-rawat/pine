@@ -23,7 +23,6 @@ export class OrganizationRepository implements IOrganizationRepository {
       .insert(Organizations)
       .values({
         id: entity.id,
-        tenantId: entity.tenantId,
         name: entity.name,
         slug: entity.slug,
         createdAt: now,

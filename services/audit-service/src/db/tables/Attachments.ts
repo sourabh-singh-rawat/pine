@@ -3,7 +3,6 @@ import { auditColumns, idColumn } from "@/db/columns";
 
 export const Attachments = pgTable("attachments", {
   ...idColumn,
-  tenantId: uuid("tenant_id"),
   scopeType: text("scope_type").notNull(),
   scopeId: uuid("scope_id").notNull(),
   status: text("status").notNull(),

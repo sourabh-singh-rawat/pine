@@ -49,7 +49,6 @@ export class AuditPlatformSyncConsumer extends Consumer<CloudEvent<OrganizationC
         await this.organizationRepository.upsert(
           {
             id: data.id,
-            tenantId: data.tenantId,
             name: data.name,
             slug: data.slug,
           },
@@ -61,7 +60,6 @@ export class AuditPlatformSyncConsumer extends Consumer<CloudEvent<OrganizationC
             entityId: data.id,
             action: "created",
             organizationId: data.id,
-            tenantId: data.tenantId,
             payload: { ...data },
           },
           { tx },

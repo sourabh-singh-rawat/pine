@@ -38,7 +38,6 @@ export const createUploadTarget: HttpRoute = {
     const target = await service.createUploadTarget({
       scopeType: body.scopeType,
       scopeId: body.scopeId,
-      tenantId: body.tenantId,
       createdBy: request.identity.id,
       filename: body.filename,
       contentType: body.contentType,

@@ -30,7 +30,6 @@ export class AuditLogRepository implements IAuditLogRepository {
         action: entity.action,
         actorId: entity.actorId ?? null,
         organizationId: entity.organizationId ?? null,
-        tenantId: entity.tenantId ?? null,
         payload: entity.payload ?? null,
         createdAt: now,
         version: 1,

@@ -9,7 +9,6 @@ export type CreateAuditLogEntity = {
   action: string;
   actorId?: string | null;
   organizationId?: string | null;
-  tenantId?: string | null;
   payload?: Record<string, unknown> | null;
 };
 

@@ -5,7 +5,6 @@ import type { AttachmentScopeType } from "@/features/attachment/constants";
 export type CreateAttachmentFromUploadInput = {
   scopeType: AttachmentScopeType;
   scopeId: string;
-  tenantId?: string;
   filename: string;
   contentType: string;
   data: Buffer | Uint8Array;

@@ -17,7 +17,6 @@ AuditLogObject.implement({
       resolve: (log) => log.actor,
     }),
     organizationId: t.exposeString("organizationId", { nullable: true }),
-    tenantId: t.exposeString("tenantId", { nullable: true }),
     createdAt: t.expose("createdAt", { type: "DateTimeISO" }),
     updatedAt: t.expose("updatedAt", { type: "DateTimeISO", nullable: true }),
   }),

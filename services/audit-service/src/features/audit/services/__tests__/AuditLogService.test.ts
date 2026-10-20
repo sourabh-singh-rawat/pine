@@ -17,7 +17,6 @@ const logWithActor: AuditLog = {
   action: "created",
   actorId: "user-1",
   organizationId,
-  tenantId: null,
   payload: null,
   createdAt,
   updatedAt: null,
