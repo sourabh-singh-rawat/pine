@@ -4,4 +4,5 @@ import "@/features/tenants/graphql/queries/getMyTenants";
 import "@/features/tenants/graphql/queries/getTenant";
 import "@/features/tenants/graphql/queries/getTenants";
 import "@/features/tenants/graphql/mutations/createTenant";
+import "@/features/tenants/graphql/mutations/suspendTenant";
 import "@/features/tenants/graphql/mutations/deleteTenant";

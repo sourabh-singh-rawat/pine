@@ -18,6 +18,7 @@ const tenant: Tenant = {
   slug: "lda",
   description: null,
   isActive: true,
+  suspendedAt: null,
   version: 1,
   createdAt: new Date("2026-01-01T00:00:00.000Z"),
   updatedAt: null,
@@ -58,6 +59,7 @@ const createTenantRepository = (overrides: Partial<ITenantRepository> = {}): ITe
   existsBySlug: vi.fn(),
   existsByName: vi.fn(),
   findAll: vi.fn().mockResolvedValue([]),
+  suspend: vi.fn(),
   softDelete: vi.fn(),
   ...overrides,
 });

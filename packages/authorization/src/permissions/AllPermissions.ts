@@ -2,7 +2,12 @@ import type { Resource } from "../resources";
 
 export type ProfilePermission = "read" | "update";
 
-export type PlatformPermission = "read" | "create_tenant" | "manage_admins";
+export type PlatformPermission =
+  | "read"
+  | "create_tenant"
+  | "suspend_tenant"
+  | "delete_tenant"
+  | "manage_admins";
 
 export type TenantPermission =
   | "read"
@@ -12,9 +17,7 @@ export type TenantPermission =
   | "create_organization"
   | "manage_organization_types"
   | "assign_admin"
-  | "assign_owner"
-  | "suspend"
-  | "delete";
+  | "assign_owner";
 
 export type OrganizationPermission =
   | "read"
@@ -50,6 +53,8 @@ export const PROFILE_PERMISSIONS: readonly ProfilePermission[] = ["read", "updat
 export const PLATFORM_PERMISSIONS: readonly PlatformPermission[] = [
   "read",
   "create_tenant",
+  "suspend_tenant",
+  "delete_tenant",
   "manage_admins",
 ];
 
@@ -62,8 +67,6 @@ export const TENANT_PERMISSIONS: readonly TenantPermission[] = [
   "manage_organization_types",
   "assign_admin",
   "assign_owner",
-  "suspend",
-  "delete",
 ];
 
 export const ORGANIZATION_PERMISSIONS: readonly OrganizationPermission[] = [

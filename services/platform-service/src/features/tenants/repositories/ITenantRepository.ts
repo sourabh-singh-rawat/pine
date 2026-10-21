@@ -11,11 +11,12 @@ export type CreateTenantEntity = {
 
 export interface ITenantRepository {
   save(entity: CreateTenantEntity, options?: TenantRepositoryOptions): Promise<Tenant>;
-  findById(id: string): Promise<Tenant | null>;
+  findById(id: string, options?: TenantRepositoryOptions): Promise<Tenant | null>;
   findByIds(ids: string[]): Promise<Tenant[]>;
   findBySlug(slug: string, options?: TenantRepositoryOptions): Promise<Tenant | null>;
   existsBySlug(slug: string): Promise<boolean>;
   existsByName(name: string): Promise<boolean>;
   findAll(): Promise<Tenant[]>;
+  suspend(id: string, options?: TenantRepositoryOptions): Promise<Tenant | null>;
   softDelete(id: string, options?: TenantRepositoryOptions): Promise<boolean>;
 }

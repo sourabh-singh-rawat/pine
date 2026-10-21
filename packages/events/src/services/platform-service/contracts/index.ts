@@ -5,6 +5,7 @@ export { OrganizationRelationCreatedEvent } from "./OrganizationRelationCreatedE
 export { PlatformRelationCreatedEvent } from "./PlatformRelationCreatedEvent";
 export { PlatformRelationDeletedEvent } from "./PlatformRelationDeletedEvent";
 export { TenantCreatedEvent } from "./TenantCreatedEvent";
+export { TenantSuspendedEvent } from "./TenantSuspendedEvent";
 export { TenantDeletedEvent } from "./TenantDeletedEvent";
 export { TenantRelationCreatedEvent } from "./TenantRelationCreatedEvent";
 export { TenantRelationDeletedEvent } from "./TenantRelationDeletedEvent";

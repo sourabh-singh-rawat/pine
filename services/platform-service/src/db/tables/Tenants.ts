@@ -1,5 +1,5 @@
 import { relations } from "drizzle-orm";
-import { boolean, pgTable, text, varchar } from "drizzle-orm/pg-core";
+import { boolean, pgTable, text, timestamp, varchar } from "drizzle-orm/pg-core";
 import { auditColumns, idColumn } from "@/db/columns";
 import { Organizations } from "@/db/tables/Organizations";
 
@@ -9,6 +9,7 @@ export const Tenants = pgTable("tenants", {
   slug: varchar("slug", { length: 100 }).notNull().unique(),
   description: text("description"),
   isActive: boolean("is_active").notNull().default(true),
+  suspendedAt: timestamp("suspended_at", { withTimezone: true }),
   ...auditColumns,
 });
 

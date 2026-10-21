@@ -13,5 +13,6 @@ export interface ITenantService {
   getTenantById: (id: string, actorId: string) => Promise<Tenant>;
   listTenants: (platformId: string, actorId: string) => Promise<Tenant[]>;
   listMyTenants: (actorId: string) => Promise<Tenant[]>;
+  suspendTenant: (id: string, platformId: string, actorId: string) => Promise<Tenant>;
   deleteTenant: (id: string, platformId: string, actorId: string) => Promise<void>;
 }

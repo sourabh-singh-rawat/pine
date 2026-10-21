@@ -1,4 +1,4 @@
-import { InsufficientPermissionError } from "@pine/authorization";
+import { InsufficientPermissionError, PLATFORM_OBJECT_ID } from "@pine/authorization";
 import { TenantDeletedEvent } from "@pine/events";
 import { describe, expect, it, vi } from "vitest";
 import { TenantNotFoundError } from "@/features/tenants/errors";
@@ -53,9 +53,9 @@ describe("TenantService deleteTenant", () => {
 
     await expect(service.deleteTenant("tenant-1", platformId, actorId)).resolves.toBeUndefined();
     expect(authorizationClient.checkRelationship).toHaveBeenCalledWith({
-      namespace: "Tenant",
-      object: "tenant-1",
-      relation: "suspend",
+      namespace: "Platform",
+      object: PLATFORM_OBJECT_ID,
+      relation: "delete_tenant",
       subject: `Identity:${actorId}`,
     });
     expect(tenantRepository.softDelete).toHaveBeenCalledWith("tenant-1", {
