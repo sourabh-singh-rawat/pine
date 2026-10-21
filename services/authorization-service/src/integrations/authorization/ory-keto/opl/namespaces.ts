@@ -1,3 +1,4 @@
+// oxlint-disable typescript/no-duplicate-type-constituents
 import { Context, Namespace, SubjectSet } from "@ory/keto-namespace-types";
 
 export class Identity implements Namespace {}
@@ -27,6 +28,9 @@ export class Platform implements Namespace {
       this.related.members.includes(ctx.subject),
     create_tenant: (ctx: Context) =>
       this.related.owners.includes(ctx.subject) || this.related.admins.includes(ctx.subject),
+    suspend_tenant: (ctx: Context) =>
+      this.related.owners.includes(ctx.subject) || this.related.admins.includes(ctx.subject),
+    delete_tenant: (ctx: Context) => this.related.owners.includes(ctx.subject),
     manage_admins: (ctx: Context) => this.related.owners.includes(ctx.subject),
   };
 }
@@ -59,8 +63,6 @@ export class Tenant implements Namespace {
       this.related.admins.includes(ctx.subject) || this.related.owners.includes(ctx.subject),
     assign_admin: (ctx: Context) => this.related.owners.includes(ctx.subject),
     assign_owner: (ctx: Context) => this.related.owners.includes(ctx.subject),
-    suspend: (ctx: Context) => this.related.owners.includes(ctx.subject),
-    delete: (ctx: Context) => this.related.owners.includes(ctx.subject),
   };
 }
 

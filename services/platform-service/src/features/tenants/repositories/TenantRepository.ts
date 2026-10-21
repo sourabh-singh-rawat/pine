@@ -37,8 +37,9 @@ export class TenantRepository implements ITenantRepository {
     return created;
   }
 
-  async findById(id: string): Promise<Tenant | null> {
-    const [row] = await this.db
+  async findById(id: string, options?: TenantRepositoryOptions): Promise<Tenant | null> {
+    const client = this.client(options);
+    const [row] = await client
       .select()
       .from(Tenants)
       .where(and(eq(Tenants.id, id), isNull(Tenants.deletedAt)))
@@ -96,6 +97,24 @@ export class TenantRepository implements ITenantRepository {
       .from(Tenants)
       .where(isNull(Tenants.deletedAt))
       .orderBy(desc(Tenants.createdAt));
+  }
+
+  async suspend(id: string, options?: TenantRepositoryOptions): Promise<Tenant | null> {
+    const client = this.client(options);
+    const now = new Date();
+
+    const [updated] = await client
+      .update(Tenants)
+      .set({
+        suspendedAt: now,
+        isActive: false,
+        updatedAt: now,
+        version: sql`${Tenants.version} + 1`,
+      })
+      .where(and(eq(Tenants.id, id), isNull(Tenants.deletedAt), isNull(Tenants.suspendedAt)))
+      .returning();
+
+    return updated ?? null;
   }
 
   async softDelete(id: string, options?: TenantRepositoryOptions): Promise<boolean> {

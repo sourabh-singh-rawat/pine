@@ -8,6 +8,7 @@ import {
   TenantCreatedEvent,
   TenantDeletedEvent,
   TenantMemberCreatedEvent,
+  TenantSuspendedEvent,
   type CloudEvent,
   type TenantCreatedData,
   type TenantMemberCreatedData,
@@ -17,6 +18,7 @@ import { inject, injectable } from "inversify";
 import { TYPES } from "@/bootstrap/container-types";
 import type { Database, Tenant } from "@/db";
 import {
+  TenantAlreadySuspendedError,
   TenantNameConflictError,
   TenantNotFoundError,
   TenantSlugConflictError,
@@ -178,8 +180,64 @@ export class TenantService implements ITenantService {
     return this.tenantRepository.findByIds(tenantIds);
   }
 
+  async suspendTenant(id: string, platformId: string, actorId: string): Promise<Tenant> {
+    await requirePermission(
+      this.authorizationClient,
+      actorId,
+      "suspend_tenant",
+      `Platform:${PLATFORM_OBJECT_ID}`,
+    );
+
+    return this.db.transaction(async (tx) => {
+      const existing = await this.tenantRepository.findById(id, { tx });
+      if (!existing) {
+        throw new TenantNotFoundError(`Tenant not found: ${id}`);
+      }
+      if (existing.suspendedAt) {
+        throw new TenantAlreadySuspendedError(`Tenant already suspended: ${id}`);
+      }
+
+      const suspended = await this.tenantRepository.suspend(id, { tx });
+      if (!suspended?.suspendedAt) {
+        throw new TenantNotFoundError(`Tenant not found: ${id}`);
+      }
+
+      const event = createCloudEvent({
+        type: TenantSuspendedEvent.type,
+        version: TenantSuspendedEvent.version,
+        schema: TenantSuspendedEvent.schema,
+        source: "pine/platform-service",
+        subject: id,
+        data: {
+          id,
+          platformId,
+          suspendedAt: suspended.suspendedAt.toISOString(),
+        },
+      });
+
+      await this.outboxService.schedule(
+        {
+          eventId: event.id,
+          eventType: event.type,
+          eventVersion: TenantSuspendedEvent.version,
+          aggregateType: "tenant",
+          aggregateId: id,
+          payload: event,
+        },
+        { tx },
+      );
+
+      return suspended;
+    });
+  }
+
   async deleteTenant(id: string, platformId: string, actorId: string): Promise<void> {
-    await requirePermission(this.authorizationClient, actorId, "suspend", `Tenant:${id}`);
+    await requirePermission(
+      this.authorizationClient,
+      actorId,
+      "delete_tenant",
+      `Platform:${PLATFORM_OBJECT_ID}`,
+    );
 
     await this.db.transaction(async (tx) => {
       const deleted = await this.tenantRepository.softDelete(id, { tx });

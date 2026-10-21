@@ -7,6 +7,7 @@ export {
   type PlatformRelationDeletedData,
 } from "./PlatformRelationDeletedDataSchema";
 export { TenantCreatedDataSchema, type TenantCreatedData } from "./TenantCreatedDataSchema";
+export { TenantSuspendedDataSchema, type TenantSuspendedData } from "./TenantSuspendedDataSchema";
 export { TenantDeletedDataSchema, type TenantDeletedData } from "./TenantDeletedDataSchema";
 export {
   OrganizationCreatedDataSchema,

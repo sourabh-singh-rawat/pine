@@ -15,6 +15,7 @@ const tenant = {
   slug: "acme",
   description: "Primary tenant",
   isActive: true,
+  suspendedAt: null,
   version: 1,
   createdAt: new Date("2026-01-01T00:00:00.000Z"),
   updatedAt: null,
