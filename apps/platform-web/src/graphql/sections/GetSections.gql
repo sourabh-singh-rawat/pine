@@ -1,0 +1,11 @@
+query GetSections($organizationId: String!) {
+  getSections(organizationId: $organizationId) {
+    id
+    tenantId
+    organizationId
+    name
+    slug
+    description
+    isActive
+  }
+}

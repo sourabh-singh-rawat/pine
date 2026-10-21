@@ -27,24 +27,29 @@ import { logger } from "@/bootstrap/logger";
 import {
   type IOrganizationPreferenceRepository,
   type IOrganizationPreferenceService,
-  type IOrganizationRelationService,
   type IOrganizationRepository,
   type IOrganizationService,
   OrganizationPreferenceRepository,
   OrganizationPreferenceService,
-  OrganizationRelationService,
   OrganizationRepository,
   OrganizationService,
 } from "@/features/organizations";
+import {
+  type IOrganizationMemberRepository,
+  type IOrganizationMemberService,
+  OrganizationMemberRepository,
+  OrganizationMemberService,
+} from "@/features/organization-members";
 import { type IIdentityRelationService, type IPlatformRelationService, IdentityRelationService, PlatformRelationService } from "@/features/platform";
 import { type IIdentityRepository, type IIdentityService, IdentityRepository, IdentityService, PlatformIdentitySyncConsumer } from "@/features/identities";
-import { type IOnboardingService, OnboardingService, PlatformUserOnboardingConsumer } from "@/features/onboarding";
+import { type IPersonalOnboardingService, PersonalOnboardingService, PersonalOnboardingConsumer } from "@/features/personal-onboarding";
 import {
   type IOrganizationTypeRepository,
   type IOrganizationTypeService,
   OrganizationTypeRepository,
   OrganizationTypeService,
 } from "@/features/organization-types";
+import { type ISectionRepository, type ISectionService, SectionRepository, SectionService } from "@/features/sections";
 import { type ITenantRepository, type ITenantService, TenantRepository } from "@/features/tenants";
 import { TenantService } from "@/features/tenants/services/TenantService";
 import { type ITenantMemberRepository, type ITenantMemberService, TenantMemberRepository, TenantMemberService } from "@/features/tenant-members";
@@ -82,16 +87,19 @@ container.bind<IOrganizationRepository>(TYPES.OrganizationRepository).to(Organiz
 container.bind<IOrganizationPreferenceRepository>(TYPES.OrganizationPreferenceRepository).to(OrganizationPreferenceRepository);
 container.bind<IOrganizationService>(TYPES.OrganizationService).to(OrganizationService);
 container.bind<IOrganizationPreferenceService>(TYPES.OrganizationPreferenceService).to(OrganizationPreferenceService);
-container.bind<IOrganizationRelationService>(TYPES.OrganizationRelationService).to(OrganizationRelationService);
+container.bind<IOrganizationMemberRepository>(TYPES.OrganizationMemberRepository).to(OrganizationMemberRepository);
+container.bind<IOrganizationMemberService>(TYPES.OrganizationMemberService).to(OrganizationMemberService);
 container.bind<IOrganizationTypeRepository>(TYPES.OrganizationTypeRepository).to(OrganizationTypeRepository);
 container.bind<IOrganizationTypeService>(TYPES.OrganizationTypeService).to(OrganizationTypeService);
+container.bind<ISectionRepository>(TYPES.SectionRepository).to(SectionRepository);
+container.bind<ISectionService>(TYPES.SectionService).to(SectionService);
 container.bind<IPlatformRelationService>(TYPES.PlatformRelationService).to(PlatformRelationService);
 container.bind<IIdentityRelationService>(TYPES.IdentityRelationService).to(IdentityRelationService);
 container.bind<IIdentityRepository>(TYPES.IdentityRepository).to(IdentityRepository);
 container.bind<IIdentityService>(TYPES.IdentityService).to(IdentityService);
-container.bind<IOnboardingService>(TYPES.OnboardingService).to(OnboardingService);
+container.bind<IPersonalOnboardingService>(TYPES.PersonalOnboardingService).to(PersonalOnboardingService);
 container.bind(TYPES.PlatformIdentitySyncConsumer).to(PlatformIdentitySyncConsumer);
-container.bind(TYPES.PlatformUserOnboardingConsumer).to(PlatformUserOnboardingConsumer);
+container.bind(TYPES.PersonalOnboardingConsumer).to(PersonalOnboardingConsumer);
 
 export const bindHttpServer = async (): Promise<void> => {
   const { schema } = await import("@/graphql/schema");

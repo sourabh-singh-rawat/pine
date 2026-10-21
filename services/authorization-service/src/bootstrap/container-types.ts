@@ -7,8 +7,8 @@ export const TYPES = {
   KetoClient: Symbol.for("KetoClient"),
   AuthorizationGraphProvider: Symbol.for("IAuthorizationGraphProvider"),
   AuthorizationOrganizationSyncConsumer: Symbol.for("AuthorizationOrganizationSyncConsumer"),
-  AuthorizationOrganizationRelationSyncConsumer: Symbol.for(
-    "AuthorizationOrganizationRelationSyncConsumer",
+  AuthorizationOrganizationMemberSyncConsumer: Symbol.for(
+    "AuthorizationOrganizationMemberSyncConsumer",
   ),
   AuthorizationTenantMemberSyncConsumer: Symbol.for("AuthorizationTenantMemberSyncConsumer"),
   AuthorizationTenantSyncConsumer: Symbol.for("AuthorizationTenantSyncConsumer"),

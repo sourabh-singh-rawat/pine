@@ -100,6 +100,10 @@ export class Organization implements Namespace {
       this.related.admins.includes(ctx.subject) ||
       this.related.owners.includes(ctx.subject) ||
       this.related.tenant.traverse((item) => item.permits.administer(ctx)),
+    manage_sections: (ctx: Context) =>
+      this.related.admins.includes(ctx.subject) ||
+      this.related.owners.includes(ctx.subject) ||
+      this.related.tenant.traverse((item) => item.permits.administer(ctx)),
     delete: (ctx: Context) =>
       this.related.owners.includes(ctx.subject) ||
       this.related.tenant.traverse((item) => item.related.owners.includes(ctx.subject)),

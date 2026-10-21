@@ -1,5 +1,7 @@
 export type {
+  IdentityOrganizationRelation,
   IdentityRelations,
+  IdentityTenantRelation,
   IIdentityRelationService,
 } from "@/features/platform/services/IIdentityRelationService";
 export { IdentityRelationService } from "@/features/platform/services/IdentityRelationService";

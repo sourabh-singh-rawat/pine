@@ -25,6 +25,7 @@ export type OrganizationPermission =
   | "manage_members"
   | "create_space"
   | "create_list"
+  | "manage_sections"
   | "delete";
 
 export type SpacePermission = "read" | "update" | "manage_members" | "create_list" | "delete";
@@ -75,6 +76,7 @@ export const ORGANIZATION_PERMISSIONS: readonly OrganizationPermission[] = [
   "manage_members",
   "create_space",
   "create_list",
+  "manage_sections",
   "delete",
 ];
 

@@ -8,11 +8,11 @@ import {
 import { inject, injectable } from "inversify";
 import { TYPES } from "@/bootstrap/container-types";
 import type {
+  IdentityOrganizationRelation,
   IdentityRelations,
   IdentityTenantRelation,
   IIdentityRelationService,
 } from "@/features/platform/services/IIdentityRelationService";
-import type { OrganizationRelation } from "@/features/organizations/services/IOrganizationRelationService";
 import type { PlatformRelation } from "@/features/platform/services/IPlatformRelationService";
 
 const PLATFORM_MEMBERSHIP_RELATIONS = new Set<string>(["owners", "admins", "members"]);
@@ -109,8 +109,8 @@ export class IdentityRelationService implements IIdentityRelationService {
   private toOrganizationRelations(
     identityId: string,
     relationships: GraphRelationship[],
-  ): OrganizationRelation[] {
-    const organizationRelations: OrganizationRelation[] = [];
+  ): IdentityOrganizationRelation[] {
+    const organizationRelations: IdentityOrganizationRelation[] = [];
     for (const relationship of relationships) {
       if (
         relationship.object.namespace !== "Organization" ||

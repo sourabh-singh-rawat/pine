@@ -21,10 +21,14 @@ export type UpdateOrganizationInput = {
 };
 
 export interface IOrganizationService {
-  create: (input: CreateOrganizationInput, identityId: string) => Promise<Organization>;
-  getById: (id: string, identityId: string) => Promise<Organization>;
-  list: (input: ListOrganizationsInput, identityId: string) => Promise<Organization[]>;
-  listMyOrganizations: (identityId: string) => Promise<OrganizationNode[]>;
-  update: (id: string, input: UpdateOrganizationInput, identityId: string) => Promise<Organization>;
-  delete: (id: string, identityId: string) => Promise<void>;
+  createOrganization: (input: CreateOrganizationInput, actorId: string) => Promise<Organization>;
+  getOrganizationById: (id: string, actorId: string) => Promise<Organization>;
+  listOrganizations: (input: ListOrganizationsInput, actorId: string) => Promise<Organization[]>;
+  listMyOrganizations: (actorId: string) => Promise<OrganizationNode[]>;
+  updateOrganization: (
+    id: string,
+    input: UpdateOrganizationInput,
+    actorId: string,
+  ) => Promise<Organization>;
+  deleteOrganization: (id: string, actorId: string) => Promise<void>;
 }

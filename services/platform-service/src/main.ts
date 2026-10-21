@@ -16,7 +16,7 @@ import { openApiOutputPath } from "@/bootstrap/container";
 import { writeSchemaToDist } from "@/bootstrap/graphql";
 import { logger } from "@/bootstrap/logger";
 import { PlatformIdentitySyncConsumer } from "@/features/identities";
-import { PlatformUserOnboardingConsumer } from "@/features/onboarding";
+import { PersonalOnboardingConsumer } from "@/features/personal-onboarding";
 
 export { container, db } from "@/bootstrap";
 export { builder, createContext } from "@/graphql";
@@ -47,7 +47,7 @@ const main = async () => {
   void container.get<IWorker>(TYPES.OutboxWorker).start();
   void container.get<IWorker>(TYPES.OutboxCleanupWorker).start();
   void container.get<PlatformIdentitySyncConsumer>(TYPES.PlatformIdentitySyncConsumer).start();
-  void container.get<PlatformUserOnboardingConsumer>(TYPES.PlatformUserOnboardingConsumer).start();
+  void container.get<PersonalOnboardingConsumer>(TYPES.PersonalOnboardingConsumer).start();
 };
 
 main().catch((error) => {
