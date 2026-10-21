@@ -1,0 +1,10 @@
+query GetOrganizationMembers($organizationId: String!) {
+  getOrganizationMembers(organizationId: $organizationId) {
+    id
+    organizationId
+    identityId
+    role
+    createdAt
+    updatedAt
+  }
+}

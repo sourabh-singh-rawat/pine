@@ -1,5 +1,5 @@
 import { builder } from "@pine/server";
-import { OrganizationRelationObject } from "@/features/organizations/graphql/objects/OrganizationRelationObject";
+import { IdentityOrganizationRelationObject } from "@/features/platform/graphql/objects/IdentityOrganizationRelationObject";
 import { IdentityTenantRelationObject } from "@/features/platform/graphql/objects/IdentityTenantRelationObject";
 import { PlatformRelationObject } from "@/features/platform/graphql/objects/PlatformRelationObject";
 import type { IdentityRelations } from "@/features/platform/services/IIdentityRelationService";
@@ -19,7 +19,7 @@ IdentityRelationsObject.implement({
       resolve: (parent) => parent.tenants,
     }),
     organizations: t.field({
-      type: [OrganizationRelationObject],
+      type: [IdentityOrganizationRelationObject],
       resolve: (parent) => parent.organizations,
     }),
   }),

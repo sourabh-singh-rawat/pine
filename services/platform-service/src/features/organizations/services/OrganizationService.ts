@@ -4,11 +4,11 @@ import {
   createCloudEvent,
   OrganizationCreatedEvent,
   OrganizationDeletedEvent,
-  OrganizationRelationCreatedEvent,
+  OrganizationMemberCreatedEvent,
   OrganizationUpdatedEvent,
   type OrganizationCreatedData,
   type OrganizationDeletedData,
-  type OrganizationRelationCreatedData,
+  type OrganizationMemberCreatedData,
   type OrganizationUpdatedData,
 } from "@pine/events";
 import type { IOutboxService } from "@pine/outbox";
@@ -34,6 +34,10 @@ import {
   OrganizationTypeNotFoundError,
 } from "@/features/organization-types/errors";
 import type { IOrganizationTypeRepository } from "@/features/organization-types/repositories";
+import {
+  OrganizationMemberRole,
+  type IOrganizationMemberRepository,
+} from "@/features/organization-members";
 import { TenantNotFoundError } from "@/features/tenants/errors";
 import type { ITenantRepository } from "@/features/tenants/repositories";
 
@@ -46,6 +50,8 @@ export class OrganizationService implements IOrganizationService {
     private readonly tenantRepository: ITenantRepository,
     @inject(TYPES.OrganizationTypeRepository)
     private readonly organizationTypeRepository: IOrganizationTypeRepository,
+    @inject(TYPES.OrganizationMemberRepository)
+    private readonly organizationMemberRepository: IOrganizationMemberRepository,
     @inject(TYPES.AuthorizationClient)
     private readonly authorizationClient: IAuthorizationClient,
     @inject(TYPES.OutboxService)
@@ -54,10 +60,10 @@ export class OrganizationService implements IOrganizationService {
     private readonly db: Database,
   ) {}
 
-  async create(input: CreateOrganizationInput, identityId: string): Promise<Organization> {
+  async createOrganization(input: CreateOrganizationInput, actorId: string): Promise<Organization> {
     await requirePermission(
       this.authorizationClient,
-      identityId,
+      actorId,
       "create_organization",
       `Tenant:${input.tenantId}`,
     );
@@ -70,17 +76,34 @@ export class OrganizationService implements IOrganizationService {
     const organizationType = await this.organizationTypeRepository.findById(
       input.organizationTypeId,
     );
-    if (!organizationType || organizationType.tenantId !== input.tenantId) {
+    if (!organizationType) {
+      throw new OrganizationTypeNotFoundError(
+        `Organization type not found in tenant: ${input.organizationTypeId}`,
+      );
+    }
+    if (organizationType.tenantId !== input.tenantId) {
       throw new OrganizationTypeNotFoundError(
         `Organization type not found in tenant: ${input.organizationTypeId}`,
       );
     }
 
-    if (input.parentOrganizationId) {
-      const parent = await this.organizationRepository.findById(input.parentOrganizationId);
-      if (!parent || parent.tenantId !== input.tenantId) {
+    const parentOrganizationId = input.parentOrganizationId ?? null;
+    if (!parentOrganizationId && organizationType.parentOrganizationTypeId) {
+      throw new InvalidParentOrganizationError(
+        `Organization type requires a parent organization: ${input.organizationTypeId}`,
+      );
+    }
+
+    if (parentOrganizationId) {
+      const parent = await this.organizationRepository.findById(parentOrganizationId);
+      if (!parent) {
         throw new InvalidParentOrganizationError(
-          `Parent organization not found in tenant: ${input.parentOrganizationId}`,
+          `Parent organization not found in tenant: ${parentOrganizationId}`,
+        );
+      }
+      if (parent.tenantId !== input.tenantId) {
+        throw new InvalidParentOrganizationError(
+          `Parent organization not found in tenant: ${parentOrganizationId}`,
         );
       }
       if (parent.organizationTypeId !== organizationType.parentOrganizationTypeId) {
@@ -88,10 +111,6 @@ export class OrganizationService implements IOrganizationService {
           `Parent organization type does not match organization type: ${input.organizationTypeId}`,
         );
       }
-    } else if (organizationType.parentOrganizationTypeId) {
-      throw new InvalidParentOrganizationError(
-        `Organization type requires a parent organization: ${input.organizationTypeId}`,
-      );
     }
 
     const slugExists = await this.organizationRepository.existsBySlugInTenant(
@@ -162,30 +181,38 @@ export class OrganizationService implements IOrganizationService {
         { tx },
       );
 
-      const ownerRelationId = `${organization.id}:owners:${identityId}`;
-      const ownerRelation: CloudEvent<OrganizationRelationCreatedData> = createCloudEvent({
-        type: OrganizationRelationCreatedEvent.type,
-        version: OrganizationRelationCreatedEvent.version,
-        schema: OrganizationRelationCreatedEvent.schema,
-        source: "pine/platform-service",
-        subject: ownerRelationId,
-        data: {
-          id: ownerRelationId,
+      const ownerMember = await this.organizationMemberRepository.saveOrganizationMember(
+        {
           organizationId: organization.id,
-          identityId,
-          relation: "owners",
-          createdAt: new Date().toISOString(),
+          identityId: actorId,
+          role: OrganizationMemberRole.OWNER,
+        },
+        { tx },
+      );
+
+      const memberCreated: CloudEvent<OrganizationMemberCreatedData> = createCloudEvent({
+        type: OrganizationMemberCreatedEvent.type,
+        version: OrganizationMemberCreatedEvent.version,
+        schema: OrganizationMemberCreatedEvent.schema,
+        source: "pine/platform-service",
+        subject: ownerMember.id,
+        data: {
+          id: ownerMember.id,
+          organizationId: organization.id,
+          identityId: actorId,
+          role: OrganizationMemberRole.OWNER,
+          createdAt: ownerMember.createdAt.toISOString(),
         },
       });
 
       await this.outboxService.schedule(
         {
-          eventId: ownerRelation.id,
-          eventType: ownerRelation.type,
-          eventVersion: OrganizationRelationCreatedEvent.version,
-          aggregateType: "organization-relation",
+          eventId: memberCreated.id,
+          eventType: memberCreated.type,
+          eventVersion: OrganizationMemberCreatedEvent.version,
+          aggregateType: "organization-member",
           aggregateId: organization.id,
-          payload: ownerRelation,
+          payload: memberCreated,
         },
         { tx },
       );
@@ -194,8 +221,8 @@ export class OrganizationService implements IOrganizationService {
     });
   }
 
-  async getById(id: string, identityId: string): Promise<Organization> {
-    await requirePermission(this.authorizationClient, identityId, "read", `Organization:${id}`);
+  async getOrganizationById(id: string, actorId: string): Promise<Organization> {
+    await requirePermission(this.authorizationClient, actorId, "read", `Organization:${id}`);
 
     const organization = await this.organizationRepository.findById(id);
     if (!organization) {
@@ -205,10 +232,10 @@ export class OrganizationService implements IOrganizationService {
     return organization;
   }
 
-  async list(input: ListOrganizationsInput, identityId: string): Promise<Organization[]> {
+  async listOrganizations(input: ListOrganizationsInput, actorId: string): Promise<Organization[]> {
     await requirePermission(
       this.authorizationClient,
-      identityId,
+      actorId,
       "read_list",
       `Tenant:${input.tenantId}`,
     );
@@ -224,10 +251,10 @@ export class OrganizationService implements IOrganizationService {
     });
   }
 
-  async listMyOrganizations(identityId: string): Promise<OrganizationNode[]> {
+  async listMyOrganizations(actorId: string): Promise<OrganizationNode[]> {
     const relationships = await this.authorizationClient.listRelationships({
       namespace: "Organization",
-      subject: { namespace: "Identity", id: identityId },
+      subject: { namespace: "Identity", id: actorId },
     });
 
     const organizationIds = Array.from(
@@ -240,12 +267,12 @@ export class OrganizationService implements IOrganizationService {
     return buildOrganizationForest(organizations);
   }
 
-  async update(
+  async updateOrganization(
     id: string,
     input: UpdateOrganizationInput,
-    identityId: string,
+    actorId: string,
   ): Promise<Organization> {
-    await requirePermission(this.authorizationClient, identityId, "update", `Organization:${id}`);
+    await requirePermission(this.authorizationClient, actorId, "update", `Organization:${id}`);
 
     const organization = await this.organizationRepository.findById(id);
     if (!organization) {
@@ -308,8 +335,8 @@ export class OrganizationService implements IOrganizationService {
     });
   }
 
-  async delete(id: string, identityId: string): Promise<void> {
-    await requirePermission(this.authorizationClient, identityId, "delete", `Organization:${id}`);
+  async deleteOrganization(id: string, actorId: string): Promise<void> {
+    await requirePermission(this.authorizationClient, actorId, "delete", `Organization:${id}`);
 
     const organization = await this.organizationRepository.findById(id);
     if (!organization) {

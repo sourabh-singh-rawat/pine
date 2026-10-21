@@ -1,7 +1,8 @@
 export { OrganizationCreatedEvent } from "./OrganizationCreatedEvent";
 export { OrganizationUpdatedEvent } from "./OrganizationUpdatedEvent";
 export { OrganizationDeletedEvent } from "./OrganizationDeletedEvent";
-export { OrganizationRelationCreatedEvent } from "./OrganizationRelationCreatedEvent";
+export { OrganizationMemberCreatedEvent } from "./OrganizationMemberCreatedEvent";
+export { OrganizationMemberDeletedEvent } from "./OrganizationMemberDeletedEvent";
 export { PlatformRelationCreatedEvent } from "./PlatformRelationCreatedEvent";
 export { PlatformRelationDeletedEvent } from "./PlatformRelationDeletedEvent";
 export { TenantCreatedEvent } from "./TenantCreatedEvent";

@@ -1,4 +1,3 @@
-import type { OrganizationRelation } from "@/features/organizations/services/IOrganizationRelationService";
 import type { PlatformRelation } from "@/features/platform/services/IPlatformRelationService";
 
 export type IdentityTenantRelation = {
@@ -8,11 +7,18 @@ export type IdentityTenantRelation = {
   relation: string;
 };
 
+export type IdentityOrganizationRelation = {
+  id: string;
+  organizationId: string;
+  identityId: string;
+  relation: string;
+};
+
 export type IdentityRelations = {
   identityId: string;
   platform: PlatformRelation[];
   tenants: IdentityTenantRelation[];
-  organizations: OrganizationRelation[];
+  organizations: IdentityOrganizationRelation[];
 };
 
 export interface IIdentityRelationService {

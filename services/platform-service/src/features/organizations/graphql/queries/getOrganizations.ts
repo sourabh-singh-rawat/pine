@@ -15,7 +15,7 @@ builder.queryFields((t) => ({
     resolve: async (_root, args, ctx) => {
       const service = container.get<IOrganizationService>(TYPES.OrganizationService);
 
-      return service.list(
+      return service.listOrganizations(
         {
           tenantId: args.tenantId,
           parentOrganizationId: args.parentOrganizationId ?? undefined,

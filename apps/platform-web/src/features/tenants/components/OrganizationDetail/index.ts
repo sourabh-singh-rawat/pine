@@ -1,2 +1,3 @@
 export * from "./OrganizationDetail";
-export * from "./OrganizationRelations";
+export * from "./OrganizationMembers";
+export * from "./OrganizationSections";

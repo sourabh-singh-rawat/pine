@@ -13,7 +13,7 @@ builder.queryFields((t) => ({
     },
     resolve: async (_root, { id }, ctx) => {
       const service = container.get<IOrganizationService>(TYPES.OrganizationService);
-      return service.getById(id, requireIdentityId(ctx));
+      return service.getOrganizationById(id, requireIdentityId(ctx));
     },
   }),
 }));

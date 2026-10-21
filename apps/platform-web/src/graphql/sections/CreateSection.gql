@@ -1,0 +1,11 @@
+mutation CreateSection($input: CreateSectionInput!) {
+  createSection(input: $input) {
+    id
+    tenantId
+    organizationId
+    name
+    slug
+    description
+    isActive
+  }
+}

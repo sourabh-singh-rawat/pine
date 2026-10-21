@@ -21,9 +21,10 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useNavigate, useParams, useSearch } from "@tanstack/react-router";
 import { getErrorMessage, useSnackbar } from "@shared/ui";
 import type { SyntheticEvent } from "react";
-import { OrganizationRelations } from "./OrganizationRelations";
+import { OrganizationMembers } from "./OrganizationMembers";
+import { OrganizationSections } from "./OrganizationSections";
 
-type OrganizationDetailTab = "overview" | "relations";
+type OrganizationDetailTab = "overview" | "members" | "sections";
 
 const formatDateTime = (value: unknown): string => {
   if (value == null) {
@@ -40,11 +41,12 @@ const formatDateTime = (value: unknown): string => {
 };
 
 const isOrganizationDetailTab = (value: unknown): value is OrganizationDetailTab =>
-  value === "overview" || value === "relations";
+  value === "overview" || value === "members" || value === "sections";
 
 const organizationDetailTabs: ReadonlyArray<{ value: OrganizationDetailTab; label: string }> = [
   { value: "overview", label: "Overview" },
-  { value: "relations", label: "Relations" },
+  { value: "members", label: "Members" },
+  { value: "sections", label: "Sections" },
 ];
 
 type ParentOrganizationFieldProps = {
@@ -290,7 +292,11 @@ export const OrganizationDetail = () => {
             ) : null
           ) : null}
 
-          {tab === "relations" ? <OrganizationRelations organizationId={organizationId} /> : null}
+          {tab === "members" ? <OrganizationMembers organizationId={organizationId} /> : null}
+
+          {tab === "sections" ? (
+            <OrganizationSections tenantId={tenantId} organizationId={organizationId} />
+          ) : null}
         </Box>
       ) : null}
     </Container>

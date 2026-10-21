@@ -23,3 +23,10 @@ export {
   TenantMembers,
   TenantMembersRelations,
 } from "@/db/tables/TenantMembers";
+export {
+  type OrganizationMember,
+  type NewOrganizationMember,
+  OrganizationMembers,
+  OrganizationMembersRelations,
+} from "@/db/tables/OrganizationMembers";
+export { type Section, type NewSection, Sections, SectionsRelations } from "@/db/tables/Sections";

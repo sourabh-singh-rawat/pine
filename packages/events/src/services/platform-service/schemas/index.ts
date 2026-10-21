@@ -22,9 +22,13 @@ export {
   type OrganizationDeletedData,
 } from "./OrganizationDeletedDataSchema";
 export {
-  OrganizationRelationCreatedDataSchema,
-  type OrganizationRelationCreatedData,
-} from "./OrganizationRelationCreatedDataSchema";
+  OrganizationMemberCreatedDataSchema,
+  type OrganizationMemberCreatedData,
+} from "./OrganizationMemberCreatedDataSchema";
+export {
+  OrganizationMemberDeletedDataSchema,
+  type OrganizationMemberDeletedData,
+} from "./OrganizationMemberDeletedDataSchema";
 export {
   TenantRelationCreatedDataSchema,
   type TenantRelationCreatedData,
