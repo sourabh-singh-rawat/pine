@@ -367,19 +367,20 @@ services:
     command:
       - |
         set -eu
-        bucket="$${S3_BUCKET}"
-        echo "ensuring S3 bucket '$${bucket}'"
-        status="$$(curl -s -o /tmp/create-bucket.xml -w "%{http_code}" -X PUT "http://seaweedfs:8333/$${bucket}")"
-        echo "CreateBucket HTTP $${status}"
-        if [ "$${status}" != "200" ] && [ "$${status}" != "409" ]; then
-          cat /tmp/create-bucket.xml
-          exit 1
-        fi
-        head_status="$$(curl -s -o /dev/null -w "%{http_code}" -I "http://seaweedfs:8333/$${bucket}")"
-        echo "HeadBucket HTTP $${head_status}"
-        if [ "$${head_status}" != "200" ]; then
-          exit 1
-        fi
+        for bucket in "$${S3_BUCKET}" identity-profiles; do
+          echo "ensuring S3 bucket '$${bucket}'"
+          status="$$(curl -s -o /tmp/create-bucket.xml -w "%{http_code}" -X PUT "http://seaweedfs:8333/$${bucket}")"
+          echo "CreateBucket HTTP $${status}"
+          if [ "$${status}" != "200" ] && [ "$${status}" != "409" ]; then
+            cat /tmp/create-bucket.xml
+            exit 1
+          fi
+          head_status="$$(curl -s -o /dev/null -w "%{http_code}" -I "http://seaweedfs:8333/$${bucket}")"
+          echo "HeadBucket HTTP $${head_status}"
+          if [ "$${head_status}" != "200" ]; then
+            exit 1
+          fi
+        done
 
   nats-exporter:
     image: natsio/prometheus-nats-exporter:0.20.1

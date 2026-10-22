@@ -1,4 +1,3 @@
-import { HttpAttachmentClient, type IAttachmentClient } from "@pine/attachment";
 import { HttpAuthorizationClient, type IAuthorizationClient } from "@pine/authorization";
 import type { IWorker } from "@pine/common";
 import { NatsPublisher, type IPublisher } from "@pine/events";
@@ -36,15 +35,8 @@ import { ISessionService, SessionService } from "@/features/session";
 import { IRegistrationService, RegistrationService } from "@/features/registration";
 import { IVerificationService, VerificationService } from "@/features/verification";
 import { IIdentityRepository, IIdentityService, IdentityRepository, IdentityService } from "@/features/identities";
-import {
-  IProfilePhotoUploadRequestRepository,
-  IProfileRepository,
-  IProfileService,
-  ProfilePhotoAttachmentConsumer,
-  ProfilePhotoUploadRequestRepository,
-  ProfileRepository,
-  ProfileService,
-} from "@/features/profiles";
+import { PROFILE_PHOTO_MAX_BYTES } from "@/features/profiles/constants";
+import { IProfileRepository, IProfileService, ProfileRepository, ProfileService } from "@/features/profiles";
 import {
   IIdentityAdminProvider,
   IRegistrationProvider,
@@ -57,6 +49,7 @@ import {
   KratosVerificationProvider,
 } from "@/integrations/identity";
 import { HttpOAuthFlowProvider, HttpOAuthTokenProvider, type IOAuthFlowProvider, type IOAuthTokenProvider } from "@/integrations/oauth";
+import { IProfilePhotoStorage, SeaweedProfilePhotoStorage } from "@/integrations/storage";
 import { routes } from "@/routes";
 
 export const container = new Container({ defaultScope: "Singleton" });
@@ -83,11 +76,9 @@ container.bind(TYPES.KratosErrorMapper).to(KratosErrorMapper);
 container.bind<IIdentityRepository>(TYPES.IdentityRepository).to(IdentityRepository);
 container.bind<IIdentityService>(TYPES.IdentityService).to(IdentityService);
 container.bind<IProfileRepository>(TYPES.ProfileRepository).to(ProfileRepository);
-container.bind<IProfilePhotoUploadRequestRepository>(TYPES.ProfilePhotoUploadRequestRepository).to(ProfilePhotoUploadRequestRepository);
 container.bind<IProfileService>(TYPES.ProfileService).to(ProfileService);
-container.bind<ProfilePhotoAttachmentConsumer>(TYPES.ProfilePhotoAttachmentConsumer).to(ProfilePhotoAttachmentConsumer);
+container.bind<IProfilePhotoStorage>(TYPES.ProfilePhotoStorage).to(SeaweedProfilePhotoStorage);
 container.bind<IAuthorizationClient>(TYPES.AuthorizationClient).toConstantValue(new HttpAuthorizationClient({ baseUrl: env.AUTHORIZATION_SERVICE_URL }));
-container.bind<IAttachmentClient>(TYPES.AttachmentClient).toConstantValue(new HttpAttachmentClient({ baseUrl: env.ATTACHMENT_SERVICE_URL }));
 container.bind<IRegistrationProvider>(TYPES.RegistrationProvider).to(KratosRegistrationProvider);
 container.bind<ISessionProvider>(TYPES.SessionProvider).to(KratosSessionProvider);
 container.bind<IIdentityAdminProvider>(TYPES.IdentityAdminProvider).to(KratosIdentityAdminProvider);
@@ -118,6 +109,8 @@ container.bind<IHttpServer>(TYPES.HttpServer).toConstantValue(
       rejectUnauthorized: true,
     },
     cookie: {},
+    bodyLimit: PROFILE_PHOTO_MAX_BYTES + 256 * 1024,
+    multipart: { fileSize: PROFILE_PHOTO_MAX_BYTES },
     openapi: {
       info: {
         title: "Identity Service",

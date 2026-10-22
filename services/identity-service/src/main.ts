@@ -15,8 +15,6 @@ import { broker, container, initializeDb, TYPES } from "@/bootstrap";
 import { openApiOutputPath } from "@/bootstrap/container";
 import { writeSchemaToDist } from "@/bootstrap/graphql";
 import { logger } from "@/bootstrap/logger";
-import { ProfilePhotoAttachmentConsumer } from "@/features/profiles";
-
 export { container, db } from "@/bootstrap";
 export { builder, createContext } from "@/graphql";
 export type { AuthContext } from "@/graphql";
@@ -46,7 +44,6 @@ const main = async () => {
 
   void container.get<IWorker>(TYPES.OutboxWorker).start();
   void container.get<IWorker>(TYPES.OutboxCleanupWorker).start();
-  void container.get<ProfilePhotoAttachmentConsumer>(TYPES.ProfilePhotoAttachmentConsumer).start();
 };
 
 main().catch((error) => {

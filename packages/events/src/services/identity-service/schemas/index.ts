@@ -13,3 +13,7 @@ export {
   ProfileNameUpdatedDataSchema,
   type ProfileNameUpdatedData,
 } from "./ProfileNameUpdatedDataSchema";
+export {
+  ProfilePhotoUpdatedDataSchema,
+  type ProfilePhotoUpdatedData,
+} from "./ProfilePhotoUpdatedDataSchema";
