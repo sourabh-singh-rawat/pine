@@ -1,4 +1,3 @@
-import { ATTACHMENT_SCOPE_TYPE, type IAttachmentClient } from "@pine/attachment";
 import { requirePermission, type IAuthorizationClient } from "@pine/authorization";
 import { UserProfileAlreadyExistsError, UserProfileNotFoundError } from "@pine/common";
 import {
@@ -7,23 +6,30 @@ import {
   ProfileDeletedEvent,
   ProfileGenderUpdatedEvent,
   ProfileNameUpdatedEvent,
+  ProfilePhotoUpdatedEvent,
 } from "@pine/events";
 import type { IOutboxService } from "@pine/outbox";
 import { inject, injectable } from "inversify";
+import { env } from "@/bootstrap/env";
 import { TYPES } from "@/bootstrap/container-types";
 import type { Database, DbClient, Profile } from "@/db";
-import type { IProfilePhotoUploadRequestRepository } from "@/features/profiles/repositories/IProfilePhotoUploadRequestRepository";
+import { PROFILE_PHOTO_MAX_BYTES, profilePhotoContentType } from "@/features/profiles/constants";
+import { InvalidProfilePhotoError, ProfilePhotoNotFoundError } from "@/features/profiles/errors";
 import type { IProfileRepository } from "@/features/profiles/repositories/IProfileRepository";
 import type {
-  CreatePhotoUploadRequestOptions,
-  CreatePhotoUploadRequestResult,
   CreateProfileOptions,
   DeleteProfileOptions,
   IProfileService,
   UpdateGenderOptions,
   UpdateNameOptions,
-  UpdatePhotoOptions,
+  UploadProfilePhotoOptions,
 } from "@/features/profiles/services/IProfileService";
+import type { IProfilePhotoStorage, ProfilePhotoObject } from "@/integrations/storage";
+
+const profilePhotoUrl = (identityId: string): string => {
+  const base = env.API_PUBLIC_URL.replace(/\/$/, "");
+  return `${base}/identity/profiles/${identityId}/photo?v=${Date.now()}`;
+};
 
 const buildFullName = (
   firstName?: string | null,
@@ -48,12 +54,10 @@ export class ProfileService implements IProfileService {
   constructor(
     @inject(TYPES.ProfileRepository)
     private readonly profileRepository: IProfileRepository,
-    @inject(TYPES.ProfilePhotoUploadRequestRepository)
-    private readonly photoUploadRequestRepository: IProfilePhotoUploadRequestRepository,
     @inject(TYPES.AuthorizationClient)
     private readonly authorizationClient: IAuthorizationClient,
-    @inject(TYPES.AttachmentClient)
-    private readonly attachmentClient: IAttachmentClient,
+    @inject(TYPES.ProfilePhotoStorage)
+    private readonly profilePhotoStorage: IProfilePhotoStorage,
     @inject(TYPES.OutboxService)
     private readonly outboxService: IOutboxService,
     @inject(TYPES.Database)
@@ -223,27 +227,74 @@ export class ProfileService implements IProfileService {
     return updated;
   }
 
-  async updatePhoto(options: UpdatePhotoOptions): Promise<Profile> {
-    const { identityId, photoUrl, uploadRequestId, attachmentId, tx } = options;
-    const repoOptions = tx === undefined ? undefined : { tx };
-    const profile = await this.profileRepository.findByIdentityId(identityId, repoOptions);
+  async uploadPhoto(options: UploadProfilePhotoOptions): Promise<Profile> {
+    const profile = await this.profileRepository.findByIdentityId(options.identityId);
     if (!profile) throw new UserProfileNotFoundError();
 
-    const updated = await this.profileRepository.update(profile.id, { photoUrl }, repoOptions);
+    await requirePermission(
+      this.authorizationClient,
+      options.identityId,
+      "update",
+      `Profile:${profile.id}`,
+    );
 
-    if (uploadRequestId) {
-      await this.photoUploadRequestRepository.update(
-        uploadRequestId,
-        {
-          status: "completed",
-          attachmentId,
-          completedAt: new Date(),
-        },
-        repoOptions,
-      );
+    const contentType = profilePhotoContentType(options.contentType);
+    if (!contentType) {
+      throw new InvalidProfilePhotoError("Profile photo must be a JPEG, PNG, or WebP image");
     }
 
-    return updated;
+    if (options.body.byteLength === 0 || options.body.byteLength > PROFILE_PHOTO_MAX_BYTES) {
+      throw new InvalidProfilePhotoError("Profile photo must be a non-empty image under 5 MB");
+    }
+
+    await this.profilePhotoStorage.putProfilePhoto({
+      identityId: options.identityId,
+      contentType,
+      body: options.body,
+    });
+
+    const photoUrl = profilePhotoUrl(options.identityId);
+
+    return this.db.transaction(async (tx) => {
+      const updated = await this.profileRepository.update(profile.id, { photoUrl }, { tx });
+
+      const event = createCloudEvent({
+        type: ProfilePhotoUpdatedEvent.type,
+        version: ProfilePhotoUpdatedEvent.version,
+        schema: ProfilePhotoUpdatedEvent.schema,
+        source: "pine/identity-service",
+        subject: updated.id,
+        data: {
+          id: updated.id,
+          identityId: options.identityId,
+          photoUrl,
+        },
+      });
+
+      await this.outboxService.schedule(
+        {
+          eventId: event.id,
+          eventType: event.type,
+          eventVersion: ProfilePhotoUpdatedEvent.version,
+          aggregateType: "profile",
+          aggregateId: updated.id,
+          payload: event,
+        },
+        { tx },
+      );
+
+      return updated;
+    });
+  }
+
+  async getProfilePhoto(identityId: string): Promise<ProfilePhotoObject> {
+    const profile = await this.profileRepository.findByIdentityId(identityId);
+    if (!profile?.photoUrl) throw new ProfilePhotoNotFoundError();
+
+    const stored = await this.profilePhotoStorage.getProfilePhoto(identityId);
+    if (!stored) throw new ProfilePhotoNotFoundError();
+
+    return stored;
   }
 
   async delete(options: DeleteProfileOptions): Promise<void> {
@@ -277,45 +328,5 @@ export class ProfileService implements IProfileService {
       },
       { tx: options.tx },
     );
-  }
-
-  async createPhotoUploadRequest(
-    options: CreatePhotoUploadRequestOptions,
-  ): Promise<CreatePhotoUploadRequestResult> {
-    const profile = await this.profileRepository.findByIdentityId(options.identityId);
-    if (!profile) throw new UserProfileNotFoundError();
-
-    await requirePermission(
-      this.authorizationClient,
-      options.identityId,
-      "update",
-      `Profile:${profile.id}`,
-    );
-
-    const requestRecord = await this.photoUploadRequestRepository.save({
-      profileId: profile.id,
-      status: "pending",
-    });
-
-    const uploadTarget = await this.attachmentClient.createUploadTarget({
-      input: {
-        scopeType: ATTACHMENT_SCOPE_TYPE.IDENTITY,
-        scopeId: options.identityId,
-        filename: options.filename,
-        contentType: options.contentType,
-        size: options.size,
-        operationId: requestRecord.id,
-        metadata: { profileId: profile.id, uploadRequestId: requestRecord.id },
-      },
-      identityId: options.identityId,
-      authMethod: options.authMethod,
-    });
-
-    return {
-      uploadRequestId: requestRecord.id,
-      url: uploadTarget.url,
-      headers: uploadTarget.headers,
-      expiresAt: uploadTarget.expiresAt,
-    };
   }
 }

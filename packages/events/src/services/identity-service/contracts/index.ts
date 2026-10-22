@@ -4,3 +4,4 @@ export { ProfileCreatedEvent } from "./ProfileCreatedEvent";
 export { ProfileDeletedEvent } from "./ProfileDeletedEvent";
 export { ProfileGenderUpdatedEvent } from "./ProfileGenderUpdatedEvent";
 export { ProfileNameUpdatedEvent } from "./ProfileNameUpdatedEvent";
+export { ProfilePhotoUpdatedEvent } from "./ProfilePhotoUpdatedEvent";

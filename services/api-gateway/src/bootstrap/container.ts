@@ -14,6 +14,8 @@ const resolveEnvironment = (value: string) => {
   return "development";
 };
 
+const PROXY_BODY_LIMIT_BYTES = 6 * 1024 * 1024;
+
 const identityClient = new HttpIdentityClient({ baseUrl: env.IDENTITY_SERVICE_URL });
 
 export const container = new Container({ defaultScope: "Singleton" });
@@ -35,6 +37,7 @@ container.bind<IHttpServer>(TYPES.HttpServer).toConstantValue(
       environment: resolveEnvironment(env.NODE_ENV),
       version: 1,
     },
+    bodyLimit: PROXY_BODY_LIMIT_BYTES,
     hooks: {
       onRequest: [(request) => identityClient.resolveRequestIdentity(request)],
     },

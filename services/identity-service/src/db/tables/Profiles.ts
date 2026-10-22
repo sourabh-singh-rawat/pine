@@ -2,7 +2,6 @@ import { relations } from "drizzle-orm";
 import { pgTable, text, uuid } from "drizzle-orm/pg-core";
 import { auditColumns, idColumn } from "@/db/columns";
 import { Identities } from "@/db/tables/Identities";
-import { ProfilePhotoUploadRequests } from "@/db/tables/ProfilePhotoUploadRequests";
 
 export const Profiles = pgTable("profiles", {
   ...idColumn,
@@ -18,12 +17,11 @@ export const Profiles = pgTable("profiles", {
   ...auditColumns,
 });
 
-export const ProfilesRelations = relations(Profiles, ({ one, many }) => ({
+export const ProfilesRelations = relations(Profiles, ({ one }) => ({
   identity: one(Identities, {
     fields: [Profiles.identityId],
     references: [Identities.id],
   }),
-  photoUploadRequests: many(ProfilePhotoUploadRequests),
 }));
 
 export type Profile = typeof Profiles.$inferSelect;

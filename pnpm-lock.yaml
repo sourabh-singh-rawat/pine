@@ -1222,12 +1222,12 @@ importers:
 
   services/identity-service:
     dependencies:
+      '@aws-sdk/client-s3':
+        specifier: ^3.1112.0
+        version: 3.1112.0
       '@ory/kratos-client':
         specifier: 26.2.0
         version: 26.2.0(debug@4.4.3(supports-color@7.2.0))(supports-color@7.2.0)
-      '@pine/attachment':
-        specifier: workspace:^
-        version: link:../../packages/attachment
       '@pine/authorization':
         specifier: workspace:^
         version: link:../../packages/authorization

@@ -2,7 +2,7 @@ import { describe, expect, it, vi } from "vitest";
 
 vi.mock("@/bootstrap/env", () => ({
   env: {
-    DATA_GATEWAY_URL: "https://localhost:4001",
+    API_PUBLIC_URL: "https://localhost/api",
   },
 }));
 
@@ -20,9 +20,9 @@ describe("toMeProfilePhotoUrl", () => {
     );
   });
 
-  it("prepends DATA_GATEWAY_URL when relative path", () => {
-    expect(toMeProfilePhotoUrl("/attachments/att-1")).toBe(
-      "https://localhost:4001/attachments/att-1",
+  it("prepends API_PUBLIC_URL when relative path", () => {
+    expect(toMeProfilePhotoUrl("/identity/profiles/identity-1/photo")).toBe(
+      "https://localhost/api/identity/profiles/identity-1/photo",
     );
   });
 });

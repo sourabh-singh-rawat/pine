@@ -4,8 +4,8 @@ import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
+import { httpClient } from "@bootstrap/http-client";
 import { useGetCurrentUserQuery } from "@generated/api/@tanstack/react-query.gen";
-import { useCreatePhotoUploadRequestMutation } from "@generated/gql/hooks";
 import { isMeProfile } from "@features/home/utils";
 import { getErrorMessage, useSnackbar } from "@shared/ui";
 
@@ -18,7 +18,6 @@ export const ProfilePhotoBlock = ({ photoUrl, fullName }: ProfilePhotoBlockProps
   const fileInputRef = useRef<HTMLInputElement>(null);
   const snackbar = useSnackbar();
   const currentUserQuery = useGetCurrentUserQuery();
-  const createPhotoUploadRequestMutation = useCreatePhotoUploadRequestMutation();
   const [isUploading, setIsUploading] = useState(false);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const identityId = currentUserQuery.data?.data?.identity?.id;
@@ -26,7 +25,6 @@ export const ProfilePhotoBlock = ({ photoUrl, fullName }: ProfilePhotoBlockProps
   const rawProfile = currentUserQuery.data?.data?.profile;
   const profile = isMeProfile(rawProfile) ? rawProfile : null;
 
-  const isPending = createPhotoUploadRequestMutation.isPending || isUploading;
   const activePhotoUrl = previewUrl ?? photoUrl ?? profile?.photoUrl ?? undefined;
   const displayName = fullName ?? profile?.fullName ?? "";
 
@@ -48,50 +46,15 @@ export const ProfilePhotoBlock = ({ photoUrl, fullName }: ProfilePhotoBlockProps
     setIsUploading(true);
 
     try {
-      const result = await createPhotoUploadRequestMutation.mutateAsync({
-        input: {
-          filename: file.name,
-          contentType: file.type || "application/octet-stream",
-          size: file.size,
-        },
-      });
-
-      const target = result.createPhotoUploadRequest;
-      if (!target?.url) {
-        throw new Error("Missing upload target URL");
-      }
-
       const formData = new FormData();
       formData.append("file", file);
-
-      const headers: Record<string, string> = {};
-      if (target.headers) {
-        for (const item of target.headers) {
-          if (item.key && item.value && item.key.toLowerCase() !== "content-type") {
-            headers[item.key] = item.value;
-          }
-        }
-      }
-
-      const response = await fetch(target.url, {
-        method: "PUT",
-        headers,
-        body: formData,
-      });
-
-      if (!response.ok) {
-        throw new Error(`Upload failed with status ${response.status}`);
-      }
-
+      await httpClient.post("/identity/me/photo", formData);
       snackbar.success("Profile photo uploaded.");
-
-      setTimeout(() => {
-        void currentUserQuery.refetch();
-      }, 1000);
-      setTimeout(() => {
-        void currentUserQuery.refetch();
-      }, 3000);
+      await currentUserQuery.refetch();
+      URL.revokeObjectURL(localPreview);
+      setPreviewUrl(null);
     } catch (error) {
+      URL.revokeObjectURL(localPreview);
       setPreviewUrl(null);
       snackbar.error(getErrorMessage(error, "Could not upload profile photo. Please try again."));
     } finally {
@@ -140,16 +103,22 @@ export const ProfilePhotoBlock = ({ photoUrl, fullName }: ProfilePhotoBlockProps
             </Typography>
           </Box>
         </Box>
-        <input ref={fileInputRef} type="file" accept="image/*" hidden onChange={handleSelectFile} />
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept="image/jpeg,image/png,image/webp"
+          hidden
+          onChange={handleSelectFile}
+        />
         <Button
           variant="outlined"
           size="small"
-          disabled={isPending}
+          disabled={isUploading}
           onClick={() => {
             fileInputRef.current?.click();
           }}
         >
-          {isPending ? "Uploading…" : activePhotoUrl ? "Change" : "Upload"}
+          {isUploading ? "Uploading…" : activePhotoUrl ? "Change" : "Upload"}
         </Button>
       </Box>
     </Paper>

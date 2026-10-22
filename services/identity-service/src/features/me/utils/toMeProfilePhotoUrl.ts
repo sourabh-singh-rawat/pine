@@ -8,5 +8,5 @@ export const toMeProfilePhotoUrl = (photoUrl?: string | null): string | null => 
     return photoUrl;
   }
   const cleanPath = photoUrl.startsWith("/") ? photoUrl : `/${photoUrl}`;
-  return `${env.DATA_GATEWAY_URL}${cleanPath}`;
+  return `${env.API_PUBLIC_URL.replace(/\/$/, "")}${cleanPath}`;
 };

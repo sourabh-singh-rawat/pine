@@ -1,4 +1,4 @@
-import { ATTACHMENT_SCOPE_TYPE } from "@pine/attachment";
+import { Readable } from "node:stream";
 import { InsufficientPermissionError } from "@pine/authorization";
 import { UserProfileAlreadyExistsError, UserProfileNotFoundError } from "@pine/common";
 import {
@@ -6,10 +6,13 @@ import {
   ProfileDeletedEvent,
   ProfileGenderUpdatedEvent,
   ProfileNameUpdatedEvent,
+  ProfilePhotoUpdatedEvent,
 } from "@pine/events";
 import { describe, expect, it, vi } from "vitest";
 import { ProfileGender } from "@/features/profiles/constants";
+import { InvalidProfilePhotoError, ProfilePhotoNotFoundError } from "@/features/profiles/errors";
 import { ProfileService } from "@/features/profiles/services/ProfileService";
+import type { IProfilePhotoStorage } from "@/integrations/storage";
 
 const allowAuthorizationClient = () => ({
   checkRelationship: vi.fn().mockResolvedValue(true),
@@ -22,26 +25,12 @@ const createOutbox = () => ({
   schedule: vi.fn().mockResolvedValue({ id: "outbox-1" }),
 });
 
-const createAttachmentClient = () => ({
-  createUploadTarget: vi.fn().mockResolvedValue({
-    objectId: "target-object-id",
-    url: "http://data-gateway/attachments/upload/123",
-    headers: { "Content-Type": "image/png" },
-    expiresAt: "2026-08-23T18:00:00.000Z",
-  }),
-});
-
-const createPhotoUploadRequestRepo = () => ({
-  save: vi.fn().mockResolvedValue({
-    id: "req-1",
-    profileId: "profile-1",
-    status: "pending",
-    attachmentId: null,
-    createdAt: new Date(),
-    completedAt: null,
-  }),
-  findById: vi.fn(),
-  update: vi.fn().mockResolvedValue({}),
+const createProfilePhotoStorage = (
+  overrides: Partial<IProfilePhotoStorage> = {},
+): IProfilePhotoStorage => ({
+  putProfilePhoto: vi.fn().mockResolvedValue(undefined),
+  getProfilePhoto: vi.fn().mockResolvedValue(null),
+  ...overrides,
 });
 
 const createDb = () => ({
@@ -70,15 +59,12 @@ describe("ProfileService", () => {
     };
     const authorizationClient = allowAuthorizationClient();
     const outboxService = createOutbox();
-    const photoUploadRequestRepo = createPhotoUploadRequestRepo();
-    const attachmentClient = createAttachmentClient();
     const db = createDb();
 
     const service = new ProfileService(
       profileRepository,
-      photoUploadRequestRepo,
       authorizationClient,
-      attachmentClient,
+      createProfilePhotoStorage(),
       outboxService,
       db,
     );
@@ -143,9 +129,8 @@ describe("ProfileService", () => {
 
     const service = new ProfileService(
       profileRepository,
-      createPhotoUploadRequestRepo(),
       authorizationClient,
-      createAttachmentClient(),
+      createProfilePhotoStorage(),
       outboxService,
       db,
     );
@@ -198,9 +183,8 @@ describe("ProfileService", () => {
 
     const service = new ProfileService(
       profileRepository,
-      createPhotoUploadRequestRepo(),
       authorizationClient,
-      createAttachmentClient(),
+      createProfilePhotoStorage(),
       outboxService,
       createDb(),
     );
@@ -228,9 +212,8 @@ describe("ProfileService", () => {
 
     const service = new ProfileService(
       profileRepository,
-      createPhotoUploadRequestRepo(),
       allowAuthorizationClient(),
-      createAttachmentClient(),
+      createProfilePhotoStorage(),
       createOutbox(),
       createDb(),
     );
@@ -250,9 +233,8 @@ describe("ProfileService", () => {
 
     const service = new ProfileService(
       profileRepository,
-      createPhotoUploadRequestRepo(),
       allowAuthorizationClient(),
-      createAttachmentClient(),
+      createProfilePhotoStorage(),
       createOutbox(),
       createDb(),
     );
@@ -278,9 +260,8 @@ describe("ProfileService", () => {
 
     const service = new ProfileService(
       profileRepository,
-      createPhotoUploadRequestRepo(),
       authorizationClient,
-      createAttachmentClient(),
+      createProfilePhotoStorage(),
       outboxService,
       db,
     );
@@ -347,9 +328,8 @@ describe("ProfileService", () => {
 
     const service = new ProfileService(
       profileRepository,
-      createPhotoUploadRequestRepo(),
       authorizationClient,
-      createAttachmentClient(),
+      createProfilePhotoStorage(),
       createOutbox(),
       createDb(),
     );
@@ -372,9 +352,8 @@ describe("ProfileService", () => {
 
     const service = new ProfileService(
       profileRepository,
-      createPhotoUploadRequestRepo(),
       allowAuthorizationClient(),
-      createAttachmentClient(),
+      createProfilePhotoStorage(),
       createOutbox(),
       createDb(),
     );
@@ -400,9 +379,8 @@ describe("ProfileService", () => {
 
     const service = new ProfileService(
       profileRepository,
-      createPhotoUploadRequestRepo(),
       authorizationClient,
-      createAttachmentClient(),
+      createProfilePhotoStorage(),
       outboxService,
       createDb(),
     );
@@ -457,9 +435,8 @@ describe("ProfileService", () => {
 
     const service = new ProfileService(
       profileRepository,
-      createPhotoUploadRequestRepo(),
       authorizationClient,
-      createAttachmentClient(),
+      createProfilePhotoStorage(),
       outboxService,
       createDb(),
     );
@@ -484,9 +461,8 @@ describe("ProfileService", () => {
 
     const service = new ProfileService(
       profileRepository,
-      createPhotoUploadRequestRepo(),
       allowAuthorizationClient(),
-      createAttachmentClient(),
+      createProfilePhotoStorage(),
       outboxService,
       createDb(),
     );
@@ -513,9 +489,8 @@ describe("ProfileService", () => {
 
     const service = new ProfileService(
       profileRepository,
-      createPhotoUploadRequestRepo(),
       authorizationClient,
-      createAttachmentClient(),
+      createProfilePhotoStorage(),
       outboxService,
       createDb(),
     );
@@ -559,9 +534,8 @@ describe("ProfileService", () => {
 
     const service = new ProfileService(
       profileRepository,
-      createPhotoUploadRequestRepo(),
       authorizationClient,
-      createAttachmentClient(),
+      createProfilePhotoStorage(),
       outboxService,
       createDb(),
     );
@@ -573,34 +547,36 @@ describe("ProfileService", () => {
     expect(outboxService.schedule).not.toHaveBeenCalled();
   });
 
-  it("creates a photo upload request and returns target details", async () => {
+  it("stores a profile photo and schedules ProfilePhotoUpdated", async () => {
     const profileRepository = {
       save: vi.fn(),
       findByIdentityId: vi.fn().mockResolvedValue(existingProfile),
-      update: vi.fn(),
+      update: vi.fn().mockImplementation(async () => ({
+        ...existingProfile,
+        photoUrl: "https://localhost/api/identity/profiles/identity-1/photo?v=1",
+      })),
       softDelete: vi.fn(),
       existsById: vi.fn(),
       findById: vi.fn(),
     };
-    const photoUploadRequestRepo = createPhotoUploadRequestRepo();
     const authorizationClient = allowAuthorizationClient();
-    const attachmentClient = createAttachmentClient();
+    const profilePhotoStorage = createProfilePhotoStorage();
     const outboxService = createOutbox();
+    const db = createDb();
+    const body = Buffer.from("image");
 
     const service = new ProfileService(
       profileRepository,
-      photoUploadRequestRepo,
       authorizationClient,
-      attachmentClient,
+      profilePhotoStorage,
       outboxService,
-      createDb(),
+      db,
     );
 
-    const result = await service.createPhotoUploadRequest({
+    const result = await service.uploadPhoto({
       identityId: "identity-1",
-      filename: "avatar.png",
       contentType: "image/png",
-      size: 1024,
+      body,
     });
 
     expect(authorizationClient.checkRelationship).toHaveBeenCalledWith({
@@ -609,79 +585,124 @@ describe("ProfileService", () => {
       relation: "update",
       subject: "Identity:identity-1",
     });
-    expect(photoUploadRequestRepo.save).toHaveBeenCalledWith({
-      profileId: "profile-1",
-      status: "pending",
-    });
-    expect(attachmentClient.createUploadTarget).toHaveBeenCalledWith({
-      input: {
-        scopeType: ATTACHMENT_SCOPE_TYPE.IDENTITY,
-        scopeId: "identity-1",
-        filename: "avatar.png",
-        contentType: "image/png",
-        size: 1024,
-        operationId: "req-1",
-        metadata: {
-          profileId: "profile-1",
-          uploadRequestId: "req-1",
-        },
-      },
+    expect(profilePhotoStorage.putProfilePhoto).toHaveBeenCalledWith({
       identityId: "identity-1",
-      authMethod: undefined,
+      contentType: "image/png",
+      body,
     });
-    expect(result).toEqual({
-      uploadRequestId: "req-1",
-      url: "http://data-gateway/attachments/upload/123",
-      headers: { "Content-Type": "image/png" },
-      expiresAt: "2026-08-23T18:00:00.000Z",
-    });
+    expect(profileRepository.update).toHaveBeenCalledWith(
+      "profile-1",
+      {
+        photoUrl: expect.stringMatching(
+          /^https:\/\/localhost\/api\/identity\/profiles\/identity-1\/photo\?v=\d+$/,
+        ),
+      },
+      { tx: {} },
+    );
+    expect(outboxService.schedule).toHaveBeenCalledWith(
+      expect.objectContaining({
+        eventType: ProfilePhotoUpdatedEvent.type,
+        eventVersion: ProfilePhotoUpdatedEvent.version,
+        aggregateType: "profile",
+        aggregateId: "profile-1",
+        payload: expect.objectContaining({
+          type: ProfilePhotoUpdatedEvent.type,
+          subject: "profile-1",
+          data: expect.objectContaining({
+            id: "profile-1",
+            identityId: "identity-1",
+          }),
+        }),
+      }),
+      { tx: {} },
+    );
+    expect(result.photoUrl).toEqual(expect.any(String));
+    expect(db.transaction).toHaveBeenCalledOnce();
   });
 
-  it("updates profile photo and completes upload request", async () => {
-    const updated = { ...existingProfile, photoUrl: "/attachments/att-1" };
+  it("rejects a profile photo that is not an image", async () => {
     const profileRepository = {
       save: vi.fn(),
       findByIdentityId: vi.fn().mockResolvedValue(existingProfile),
-      update: vi.fn().mockResolvedValue(updated),
+      update: vi.fn(),
       softDelete: vi.fn(),
       existsById: vi.fn(),
       findById: vi.fn(),
     };
-    const photoUploadRequestRepo = createPhotoUploadRequestRepo();
-    const authorizationClient = allowAuthorizationClient();
-    const attachmentClient = createAttachmentClient();
-    const outboxService = createOutbox();
+    const profilePhotoStorage = createProfilePhotoStorage();
 
     const service = new ProfileService(
       profileRepository,
-      photoUploadRequestRepo,
-      authorizationClient,
-      attachmentClient,
-      outboxService,
+      allowAuthorizationClient(),
+      profilePhotoStorage,
+      createOutbox(),
       createDb(),
     );
 
-    const result = await service.updatePhoto({
-      identityId: "identity-1",
-      photoUrl: "/attachments/att-1",
-      uploadRequestId: "req-1",
-      attachmentId: "att-1",
+    await expect(
+      service.uploadPhoto({
+        identityId: "identity-1",
+        contentType: "text/plain",
+        body: Buffer.from("nope"),
+      }),
+    ).rejects.toBeInstanceOf(InvalidProfilePhotoError);
+    expect(profilePhotoStorage.putProfilePhoto).not.toHaveBeenCalled();
+  });
+
+  it("returns the stored profile photo", async () => {
+    const stored = {
+      body: Readable.from(Buffer.from("image")),
+      contentType: "image/png",
+      contentLength: 5,
+    };
+    const profileRepository = {
+      save: vi.fn(),
+      findByIdentityId: vi.fn().mockResolvedValue({
+        ...existingProfile,
+        photoUrl: "https://localhost/api/identity/profiles/identity-1/photo?v=1",
+      }),
+      update: vi.fn(),
+      softDelete: vi.fn(),
+      existsById: vi.fn(),
+      findById: vi.fn(),
+    };
+    const profilePhotoStorage = createProfilePhotoStorage({
+      getProfilePhoto: vi.fn().mockResolvedValue(stored),
     });
 
-    expect(profileRepository.findByIdentityId).toHaveBeenCalledWith("identity-1", undefined);
-    expect(profileRepository.update).toHaveBeenCalledWith(
-      "profile-1",
-      { photoUrl: "/attachments/att-1" },
-      undefined,
+    const service = new ProfileService(
+      profileRepository,
+      allowAuthorizationClient(),
+      profilePhotoStorage,
+      createOutbox(),
+      createDb(),
     );
-    expect(photoUploadRequestRepo.update).toHaveBeenCalledWith(
-      "req-1",
-      expect.objectContaining({
-        status: "completed",
-        attachmentId: "att-1",
-      }),
-      undefined,
+
+    await expect(service.getProfilePhoto("identity-1")).resolves.toEqual(stored);
+  });
+
+  it("throws when the profile has no photo", async () => {
+    const profileRepository = {
+      save: vi.fn(),
+      findByIdentityId: vi.fn().mockResolvedValue(existingProfile),
+      update: vi.fn(),
+      softDelete: vi.fn(),
+      existsById: vi.fn(),
+      findById: vi.fn(),
+    };
+    const profilePhotoStorage = createProfilePhotoStorage();
+
+    const service = new ProfileService(
+      profileRepository,
+      allowAuthorizationClient(),
+      profilePhotoStorage,
+      createOutbox(),
+      createDb(),
     );
-    expect(result).toEqual(updated);
+
+    await expect(service.getProfilePhoto("identity-1")).rejects.toBeInstanceOf(
+      ProfilePhotoNotFoundError,
+    );
+    expect(profilePhotoStorage.getProfilePhoto).not.toHaveBeenCalled();
   });
 });

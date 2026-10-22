@@ -1,5 +1,6 @@
 import type { DbClient, Profile } from "@/db";
 import type { ProfileGender } from "@/features/profiles/constants";
+import type { ProfilePhotoObject } from "@/integrations/storage";
 
 export type CreateProfileOptions = {
   tx?: DbClient;
@@ -28,27 +29,10 @@ export type DeleteProfileOptions = {
   identityId: string;
 };
 
-export type CreatePhotoUploadRequestOptions = {
+export type UploadProfilePhotoOptions = {
   identityId: string;
-  authMethod?: "access_token" | "session";
-  filename: string;
   contentType: string;
-  size: number;
-};
-
-export type CreatePhotoUploadRequestResult = {
-  uploadRequestId: string;
-  url: string;
-  headers: Record<string, string>;
-  expiresAt: string;
-};
-
-export type UpdatePhotoOptions = {
-  identityId: string;
-  photoUrl: string;
-  uploadRequestId?: string;
-  attachmentId?: string;
-  tx?: DbClient;
+  body: Buffer;
 };
 
 export interface IProfileService {
@@ -56,9 +40,7 @@ export interface IProfileService {
   getByIdentityId: (identityId: string) => Promise<Profile>;
   updateName: (options: UpdateNameOptions) => Promise<Profile>;
   updateGender: (options: UpdateGenderOptions) => Promise<Profile>;
-  updatePhoto: (options: UpdatePhotoOptions) => Promise<Profile>;
+  uploadPhoto: (options: UploadProfilePhotoOptions) => Promise<Profile>;
+  getProfilePhoto: (identityId: string) => Promise<ProfilePhotoObject>;
   delete: (options: DeleteProfileOptions) => Promise<void>;
-  createPhotoUploadRequest: (
-    options: CreatePhotoUploadRequestOptions,
-  ) => Promise<CreatePhotoUploadRequestResult>;
 }
